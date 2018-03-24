@@ -7,12 +7,22 @@
 
 apply plugin: 'java'
 
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    compile 'org.jetbrains:annotations:13.0'
+
     // https://mvnrepository.com/artifact/org.hibernate/hibernate-core
     compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.15.Final'
 
+    // https://mvnrepository.com/artifact/org.hsqldb/hsqldb
+    compile group: 'org.hsqldb', name: 'hsqldb', version: '2.4.0'
+
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
+
+    testCompile 'junit:junit:4.11'
+    testCompile 'org.assertj:assertj-core:1.6.0'
 }
