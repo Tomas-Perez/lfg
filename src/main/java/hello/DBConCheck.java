@@ -6,7 +6,7 @@ package hello;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-public class DatabaseTest {
+public class DBConCheck {
     public static void main(String[] args) {
         Connection con;
 
