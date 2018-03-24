@@ -12,6 +12,49 @@ out
 persistence.xml
 
 
+# compiled output
+/dist
+/dist-server
+/tmp
+/out-tsc
+
+# dependencies
+/node_modules
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# e2e
+/e2e/*.js
+/e2e/*.map
+
+# System Files
+Thumbs.db
+
+
 # Compiled class file
 *.class
 
@@ -37,7 +80,6 @@ hs_err_pid*
 
 DS_Store
 
-.gradle
 /build/
 
 # Ignore Gradle GUI config
@@ -77,7 +119,6 @@ gradle-app.setting
 .idea/**/mongoSettings.xml
 
 ## File-based project format:
-*.iws
 
 ## Plugin-specific files:
 
@@ -85,7 +126,6 @@ gradle-app.setting
 /out/
 
 # mpeltonen/sbt-idea plugin
-.idea_modules/
 
 # JIRA plugin
 atlassian-ide-plugin.xml
