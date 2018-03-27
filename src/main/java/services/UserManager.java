@@ -11,46 +11,12 @@ import java.util.Iterator;
 import java.util.List;
 
 public class UserManager {
-    private static SessionFactory factory;
-
-    private void buildFactory(){
-        try {
-            factory = new Configuration().configure().buildSessionFactory();
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-    }
-
-    public static void main(String[] args) {
-
-        try {
-            factory = new Configuration().configure().buildSessionFactory();
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-
-        UserManager ME = new UserManager();
 
 
-        /* Add few User records in database */
-        Integer userID1 = ME.addUser("admin", "123", "admin@lfg.com", true);
-        Integer userID2 = ME.addUser("User1", "pass1", "user1@lfg.com", false);
-        Integer userID3 = ME.addUser("User2", "pass2", "user2@lfg.com", false);
+    private SessionFactory factory;
 
-        /* List down all the Users */
-        ME.listUsers();
-
-        /* Update User's records */
-        //ME.updateUser(userID1, "PASS1");
-
-        /* Delete an User from the database */
-
-        /* List down new list of the Users */
-        ME.listUsers();
-
-        factory.close();
+    public UserManager(SessionFactory factory){
+        this.factory = factory;
     }
 
     /* Method to CREATE an User in the database */
