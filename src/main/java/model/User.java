@@ -1,4 +1,4 @@
-package src;
+package model;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -12,6 +12,16 @@ public class User {
     private String password;
     private String email;
     private boolean isadmin;
+
+    public User(String username, String password, String email, boolean isadmin) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.isadmin = isadmin;
+    }
+
+    public User() {
+    }
 
     @Id
     @Column(name = "USER_ID")

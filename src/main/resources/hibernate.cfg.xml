@@ -24,7 +24,7 @@
 
         <!-- List of XML mapping files -->
         <mapping resource = "src/Employee.hbm.xml"/>
-        <mapping class="src.User"/>
+        <mapping class="model.User"/>
         <mapping resource="src/User.hbm.xml"/>
 
     </session-factory>

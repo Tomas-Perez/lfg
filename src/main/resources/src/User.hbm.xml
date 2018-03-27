@@ -4,8 +4,10 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-    <class name="src.User" table="USER" schema="PUBLIC" catalog="PUBLIC">
-        <id name="userId" column="USER_ID"/>
+    <class name="model.User" table="USER" schema="PUBLIC" catalog="PUBLIC">
+        <id name="userId" column="USER_ID">
+            <generator class="native"/>
+        </id>
         <property name="username" column="USERNAME"/>
         <property name="password" column="PASSWORD"/>
         <property name="email" column="EMAIL"/>
