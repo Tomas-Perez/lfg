@@ -1,4 +1,4 @@
-package hello;
+package employeeExample;
 
 /**
  * @author Tomas Perez Molina

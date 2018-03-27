@@ -1,4 +1,4 @@
-package hello;
+package dbConnection;
 
 /**
  * @author Tomas Perez Molina
