@@ -1,10 +1,12 @@
 package services.dbConnection;
 
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+
 /**
  * @author Tomas Perez Molina
  */
-import java.sql.Connection;
-import java.sql.DriverManager;
 
 public class DBConCheck {
     public static void main(String[] args) {

@@ -1,8 +1,13 @@
 package employeeExample;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 /**
  * @author Tomas Perez Molina
  */
+@Entity
+@Table(name = "EMPLOYEE")
 public class Employee {
     private int id;
     private String firstName;

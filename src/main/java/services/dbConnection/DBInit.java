@@ -15,13 +15,13 @@ public class DBInit {
         init();
     }
 
-    public static void init() throws Exception {
+    private static void init() throws Exception {
         try {
             System.out.println("Starting Database");
-            HsqlProperties p = new HsqlProperties();
+            var p = new HsqlProperties();
             p.setProperty("server.database.0", "file:db/demodb");
             p.setProperty("server.dbname.0", "testdb");
-            Server server = new Server();
+            var server = new Server();
             server.setProperties(p);
             server.setLogWriter(new PrintWriter(System.out));
             server.setErrWriter(new PrintWriter(System.out));
