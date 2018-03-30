@@ -34,16 +34,18 @@ public class UserManager {
     /* Method to  READ all the Users */
     public void listUsers( ){
         Transaction tx = null;
-        try (var session = factory.openSession()) {
+        try {
+            var session = factory.getCurrentSession();
             tx = session.beginTransaction();
             var Users = session.createQuery("FROM User").list();
             for (var User : Users) {
                 var user = (User) User;
                 System.out.print("Id: " + user.getUsername());
-                System.out.print("Username: " + user.getUsername());
-                System.out.print("Password: " + user.getPassword());
-                System.out.println("Email: " + user.getEmail());
+                System.out.print(" Username: " + user.getUsername());
+                System.out.print(" Password: " + user.getPassword());
+                System.out.println(" Email: " + user.getEmail());
                 System.out.println("Is admin: " + user.isIsadmin());
+                System.out.println("------------------------");
             }
             tx.commit();
         } catch (HibernateException e) {

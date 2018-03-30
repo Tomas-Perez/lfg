@@ -22,6 +22,8 @@
             password
         </property>
 
+        <property name="current_session_context_class">thread</property>
+
         <!-- List of XML mapping files -->
         <mapping resource = "src/Employee.hbm.xml"/>
         <mapping class="model.User"/>
