@@ -1,0 +1,37 @@
+apply plugin: 'java'
+apply plugin: 'war'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+ext{
+    jerseyVersion = '2.25.1'
+}
+
+
+dependencies {
+    compile 'org.jetbrains:annotations:13.0'
+
+    // https://mvnrepository.com/artifact/org.hibernate/hibernate-core
+    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.15.Final'
+
+    // https://mvnrepository.com/artifact/org.hsqldb/hsqldb
+    compile group: 'org.hsqldb', name: 'hsqldb', version: '2.4.0'
+
+    // https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
+    providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.0'
+
+    testCompile 'junit:junit:4.12'
+
+    // https://mvnrepository.com/artifact/org.assertj/assertj-core
+    testCompile group: 'org.assertj', name: 'assertj-core', version: '3.9.1'
+
+    compile 'javax.ws.rs:javax.ws.rs-api:2.0.1'
+    compile "org.glassfish.jersey.core:jersey-server:$jerseyVersion"
+    compile "org.glassfish.jersey:jersey-bom:$jerseyVersion"
+    compile "org.glassfish.jersey.containers:jersey-container-servlet-core:$jerseyVersion"
+
+}

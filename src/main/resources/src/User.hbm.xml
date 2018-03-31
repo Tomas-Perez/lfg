@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="model.User" table="USER" schema="PUBLIC" catalog="PUBLIC">
+        <id name="userId" column="USER_ID">
+            <generator class="native"/>
+        </id>
+        <property name="username" column="USERNAME"/>
+        <property name="password" column="PASSWORD"/>
+        <property name="email" column="EMAIL"/>
+        <property name="isadmin" column="ISADMIN"/>
+    </class>
+</hibernate-mapping>
