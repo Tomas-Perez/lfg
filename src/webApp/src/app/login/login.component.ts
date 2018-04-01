@@ -9,12 +9,11 @@ import {UserService} from '../user.service';
 })
 export class LoginComponent implements OnInit {
 
-  loginInfo: LogInInfo;
+  loginInfo: LogInInfo = new LogInInfo();
 
   constructor(private userService: UserService) { }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   log(): void {
     console.log('Email: ' + this.loginInfo.email);

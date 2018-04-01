@@ -5,7 +5,7 @@ import {LogInInfo} from './logInInfo';
 @Injectable()
 export class UserService {
 
-  private loginUrl = '/login';
+  private loginUrl = 'http://localhost:8080/login';
 
   constructor(private http: HttpClient) { }
 
