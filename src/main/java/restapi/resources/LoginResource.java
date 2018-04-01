@@ -1,11 +1,7 @@
 package restapi.resources;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import model.User;
-import restapi.LoginJSON;
-import restapi.SimpleJSONObject;
+import restapi.pojos.LoginJSON;
+import restapi.pojos.SimpleJSONObject;
 import restapi.services.LoginService;
 
 import javax.ws.rs.*;

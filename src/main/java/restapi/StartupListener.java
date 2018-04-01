@@ -1,6 +1,6 @@
 package restapi;
 
-import utils.dbConnection.FactoryProvider;
+import managers.FactoryProvider;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

@@ -1,9 +1,9 @@
 package restapi.services;
 
 import model.User;
-import restapi.SimpleJSONObject;
-import utils.UserManager;
-import utils.dbConnection.FactoryProvider;
+import restapi.pojos.SimpleJSONObject;
+import managers.UserManager;
+import managers.FactoryProvider;
 
 import javax.persistence.NoResultException;
 

@@ -1,4 +1,4 @@
-package utils;
+package managers;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -6,6 +6,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import model.User;
 import org.hibernate.query.Query;
+import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class UserManager {
     }
 
     /* Method to CREATE an User in the database */
-    public Integer addUser(String username, String password, String email, boolean isAdmin){
+    public Integer addUser(String username, String password, String email, boolean isAdmin) throws ConstraintException {
         Session session = factory.getCurrentSession();
         Transaction tx = null;
         Integer userID = null;
@@ -29,6 +30,9 @@ public class UserManager {
             User user = new User(username, password, email, isAdmin);
             userID = (Integer) session.save(user);
             tx.commit();
+        } catch (ConstraintViolationException e){
+            if (tx!=null) tx.rollback();
+            throw new ConstraintException(e);
         } catch (HibernateException e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();

@@ -1,4 +1,4 @@
-package restapi;
+package restapi.pojos;
 
 /**
  * @author Tomas Perez Molina
@@ -32,7 +32,7 @@ public class SimpleJSONObject {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(Object data) {
         this.data = data;
     }
 

@@ -1,4 +1,4 @@
-package employeeExample;
+package employee_example;
 
 /**
  * @author Tomas Perez Molina

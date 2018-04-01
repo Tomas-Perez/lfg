@@ -1,4 +1,4 @@
-package utils.dbConnection;
+package utils.dbconnection;
 
 /**
  * @author Tomas Perez Molina

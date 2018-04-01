@@ -1,7 +1,8 @@
 package utils;
 
+import managers.UserManager;
 import org.hibernate.SessionFactory;
-import utils.dbConnection.FactoryProvider;
+import managers.FactoryProvider;
 
 public class Main {
 

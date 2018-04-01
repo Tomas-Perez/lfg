@@ -1,4 +1,4 @@
-package restapi;
+package restapi.pojos;
 
 /**
  * @author Tomas Perez Molina
