@@ -1,7 +1,7 @@
-package services;
+package utils;
 
 import org.hibernate.SessionFactory;
-import services.dbConnection.FactoryProvider;
+import utils.dbConnection.FactoryProvider;
 
 public class Main {
 
@@ -21,22 +21,23 @@ public class Main {
         /* List down all the Users */
         userManager.listUsers();
 
-        System.out.println("\nChanging password user 2");
-
-        userManager.updateUser(userID2, "new_password");
-
-        userManager.listUsers();
-
-        userManager.deleteUser(userID1);
-        userManager.deleteUser(userID2);
-        userManager.deleteUser(userID3);
-
-        System.out.println("\nAll users deleted");
-
-        /* Delete an User from the database */
-
-        /* List down new list of the Users */
-        userManager.listUsers();
+//        System.out.println(userManager.getByUsername("User1"));
+////        System.out.println("\nChanging password user 2");
+////
+////        userManager.updateUser(userID2, "new_password");
+////
+////        userManager.listUsers();
+//
+////        userManager.deleteUser(userID1);
+////        userManager.deleteUser(userID2);
+////        userManager.deleteUser(userID3);
+////
+////        System.out.println("\nAll users deleted");
+//
+//        /* Delete an User from the database */
+//
+//        /* List down new list of the Users */
+//        userManager.listUsers();
 
         FactoryProvider.getFactory().close();
     }

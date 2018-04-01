@@ -18,6 +18,8 @@
             SA
         </property>
 
+        <property name="current_session_context_class">thread</property>
+
         <property name="hibernate.connection.password">
             password
         </property>

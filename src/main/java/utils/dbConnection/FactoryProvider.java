@@ -1,4 +1,4 @@
-package services.dbConnection;
+package utils.dbConnection;
 
 import org.hibernate.cfg.Configuration;
 import org.hibernate.SessionFactory;

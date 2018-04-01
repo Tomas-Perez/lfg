@@ -1,4 +1,4 @@
-package services.dbConnection;
+package utils.dbConnection;
 
 import org.hsqldb.Server;
 import org.hsqldb.persist.HsqlProperties;
