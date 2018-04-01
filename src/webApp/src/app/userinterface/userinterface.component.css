@@ -1,0 +1,29 @@
+.user-navigation {
+  height: 100%;
+}
+
+.max-height{
+  height: 100%;
+}
+
+.container{
+  min-width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.post-flow-container{
+  height: 70%;
+}
+
+.chat-container{
+  height: 30%;
+}
+
+/* TODO change later (768px = md)*/
+@media (max-width: 768px) {
+  .user-navigation, .max-height, .friends-container{
+    height: auto;
+  }
+}

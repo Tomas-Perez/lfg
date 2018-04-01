@@ -1,0 +1,26 @@
+.container{
+  min-width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.lfg-navbar{
+  height: 100%;
+}
+
+.spekbar{
+  height: 100%;
+}
+
+/* TODO change later (768px = md)*/
+@media (max-width: 768px) {
+  .max-height{
+    height: auto;
+  }
+}
+
+.max-height{
+  height: 100%;
+}
+

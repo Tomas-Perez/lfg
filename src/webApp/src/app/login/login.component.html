@@ -1,0 +1,20 @@
+<div class="container">
+  <div class="row">
+    <div class="col-10 offset-1 col-md-4 offset-md-4">
+      <form >
+        <div class="form-group">
+          <label for="InputEmail">Email address</label>
+          <input name="InputEmail" [(ngModel)]="loginInfo.email" type="email" id="InputEmail" class="form-control" aria-describedby="emailHelp" placeholder="Email">
+        </div>
+        <div class="form-group">
+          <label for="InputPassword">Email address</label>
+          <input name="InputPassword" [(ngModel)]="loginInfo.password" type="password" id="InputPassword" class="form-control" placeholder="Password">
+        </div>
+        <div class="form-group text-center">
+          <button type="button" class="btn btn-primary" (click)="log()">Log in</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
