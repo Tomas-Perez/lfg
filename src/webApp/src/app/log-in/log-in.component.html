@@ -1,0 +1,39 @@
+<div class="container">
+  <div class="row">
+    <div class="login-container col-10 offset-1 col-md-4 offset-md-4 border round-border border-dark">
+      <h1 class="text-center">Log in</h1>
+
+      <form #logInForm="ngForm" (ngSubmit)="logInForm.valid && verifyCredentials()" novalidate>
+
+        <div *ngIf="wrong" class="form-group alert alert-danger">
+          Wrong username or password.
+        </div>
+
+        <div class="form-group">
+          <label for="InputEmail">Email address</label>
+          <input name="InputEmail" [(ngModel)]="loginInfo.email" type="email" id="InputEmail" class="form-control" aria-describedby="emailHelp" placeholder="Email" email required #email="ngModel">
+
+          <div [hidden]="email.valid || email.pristine || email.untouched"
+               class="alert alert-danger">
+            Email is required
+          </div>
+
+        </div>
+        <div class="form-group">
+          <label for="InputPassword">Email address</label>
+          <input name="InputPassword" [(ngModel)]="loginInfo.password" type="password" id="InputPassword" class="form-control" placeholder="Password" required #password="ngModel">
+
+          <div [hidden]="password.valid || password.pristine || email.untouched"
+               class="alert alert-danger">
+            Password is required
+          </div>
+
+        </div>
+        <div class="form-group text-center">
+          <button type="submit" class="btn btn-primary">Log in</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
