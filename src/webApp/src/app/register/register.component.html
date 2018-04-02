@@ -1,0 +1,50 @@
+<div class="container">
+  <div class="row">
+    <div class="register-container col-10 offset-1 col-md-4 offset-md-4 border round-border border-dark">
+
+      <h1 class="text-center">Sign up</h1>
+
+      <form #logInForm="ngForm" (ngSubmit)="logInForm.valid && registerUser()" novalidate>
+
+        <div class="form-group">
+          <label for="InputUsername">Username</label>
+          <input name="InputUsername" [(ngModel)]="registerInfo.username" id="InputUsername" class="form-control" placeholder="Username" required #username="ngModel">
+
+          <div [hidden]="username.valid || username.pristine || username.untouched"
+               class="alert alert-danger">
+            Username is required
+          </div>
+
+        </div>
+
+        <div class="form-group">
+          <label for="InputEmail">Email address</label>
+          <input name="InputEmail" [(ngModel)]="registerInfo.email" type="email" id="InputEmail" class="form-control" aria-describedby="emailHelp" placeholder="Email" email required #email="ngModel">
+
+          <div [hidden]="email.valid || email.pristine || email.untouched"
+               class="alert alert-danger">
+            Email is required
+          </div>
+
+        </div>
+        <div class="form-group">
+          <label for="InputPassword">Password</label>
+          <input name="InputPassword" [(ngModel)]="registerInfo.password" type="password" id="InputPassword" class="form-control" placeholder="Password" required #password="ngModel">
+
+          <div [hidden]="password.valid || password.pristine || password.untouched"
+               class="alert alert-danger">
+            Password is required
+          </div>
+
+        </div>
+
+
+
+
+        <div class="form-group text-center">
+          <button type="submit" class="btn btn-primary">Sign up</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
