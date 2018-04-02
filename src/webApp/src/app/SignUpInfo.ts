@@ -1,4 +1,4 @@
-export class RegisterInfo {
+export class SignUpInfo {
   email: String;
   username: String;
   password: String;

@@ -9,7 +9,7 @@ import { LoginComponent } from './login/login.component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { UserService } from './user.service';
-import { RegisterComponent } from './register/register.component';
+import { SignUpComponent } from './sign-up/sign-up.component';
 
 
 @NgModule({
@@ -18,7 +18,7 @@ import { RegisterComponent } from './register/register.component';
     UserinterfaceComponent,
     UserNavigationComponent,
     LoginComponent,
-    RegisterComponent
+    SignUpComponent
   ],
   imports: [
     HttpClientModule,

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {LogInInfo} from './LogInInfo';
-import {RegisterInfo} from './RegisterInfo';
+import {SignUpInfo} from './SignUpInfo';
 import {User} from './User';
 import {ApiResponse} from './ApiResponse';
 import {Observable} from 'rxjs/Observable';
@@ -29,8 +29,8 @@ export class UserService {
       );
   }
 
-  register(registerInfo: RegisterInfo): Observable<ApiResponse<number>> {
-    return this.http.post<ApiResponse<number>>(this.registerUrl, registerInfo)
+  signUp(signUpInfo: SignUpInfo): Observable<ApiResponse<number>> {
+    return this.http.post<ApiResponse<number>>(this.registerUrl, signUpInfo)
       .pipe(
         tap(response => console.log(response))
       );

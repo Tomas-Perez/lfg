@@ -4,11 +4,11 @@
 
       <h1 class="text-center">Sign up</h1>
 
-      <form #logInForm="ngForm" (ngSubmit)="logInForm.valid && registerUser()" novalidate>
+      <form #logInForm="ngForm" (ngSubmit)="logInForm.valid && signUpUser()" novalidate>
 
         <div class="form-group">
           <label for="InputUsername">Username</label>
-          <input name="InputUsername" [(ngModel)]="registerInfo.username" id="InputUsername" class="form-control" placeholder="Username" required #username="ngModel">
+          <input name="InputUsername" [(ngModel)]="signUpInfo.username" id="InputUsername" class="form-control" placeholder="Username" required #username="ngModel">
 
           <div [hidden]="username.valid || username.pristine || username.untouched"
                class="alert alert-danger">
@@ -19,7 +19,7 @@
 
         <div class="form-group">
           <label for="InputEmail">Email address</label>
-          <input name="InputEmail" [(ngModel)]="registerInfo.email" type="email" id="InputEmail" class="form-control" aria-describedby="emailHelp" placeholder="Email" email required #email="ngModel">
+          <input name="InputEmail" [(ngModel)]="signUpInfo.email" type="email" id="InputEmail" class="form-control" aria-describedby="emailHelp" placeholder="Email" email required #email="ngModel">
 
           <div [hidden]="email.valid || email.pristine || email.untouched"
                class="alert alert-danger">
@@ -29,7 +29,7 @@
         </div>
         <div class="form-group">
           <label for="InputPassword">Password</label>
-          <input name="InputPassword" [(ngModel)]="registerInfo.password" type="password" id="InputPassword" class="form-control" placeholder="Password" required #password="ngModel">
+          <input name="InputPassword" [(ngModel)]="signUpInfo.password" type="password" id="InputPassword" class="form-control" placeholder="Password" required #password="ngModel">
 
           <div [hidden]="password.valid || password.pristine || password.untouched"
                class="alert alert-danger">
