@@ -1,38 +1,39 @@
 import { Component, OnInit } from '@angular/core';
-import {LogInInfo} from '../LogInInfo';
 import {UserService} from '../user.service';
 import {User} from '../User';
+import {SignInInfo} from '../SignInInfo';
 
 @Component({
-  selector: 'app-log-in',
-  templateUrl: './log-in.component.html',
-  styleUrls: ['./log-in.component.css']
+  selector: 'app-sign-in',
+  templateUrl: './sign-in.component.html',
+  styleUrls: ['./sign-in.component.css']
 })
-export class LogInComponent implements OnInit {
 
-  loginInfo: LogInInfo;
+export class SignInComponent implements OnInit {
+
+  signInInfo: SignInInfo;
   wrong: boolean;
 
   constructor(private userService: UserService) { }
 
   ngOnInit() {
-    this.loginInfo = new LogInInfo();
+    this.signInInfo = new SignInInfo();
     this.wrong = false;
   }
 
   verifyCredentials(): void {
-    this.userService.logIn(this.loginInfo)
+    this.userService.signIn(this.signInInfo)
       .subscribe(response => {
         if (response.status === 'ERROR') {
           this.notifyError();
         } else if (response.status === 'SUCCESS') {
-          this.logIn(response.data);
+          this.signIn(response.data);
         }
       });
   }
 
   // TODO actually log in
-  logIn(user: User): void {
+  signIn(user: User): void {
     console.log(
       'LOGGED IN\n' +
       'Username: ' + user.username + '\n' +

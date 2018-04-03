@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {LogInInfo} from './LogInInfo';
+import {SignInInfo} from './SignInInfo';
 import {SignUpInfo} from './SignUpInfo';
 import {User} from './User';
 import {ApiResponse} from './ApiResponse';
@@ -8,7 +8,7 @@ import {Observable} from 'rxjs/Observable';
 import {map, tap} from 'rxjs/operators';
 
 const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  headers: new HttpHeaders({ 'Content-Type': 'application/json'})
 };
 
 @Injectable()
@@ -19,8 +19,8 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  logIn (logInInfo: LogInInfo): Observable<ApiResponse<User>> {
-    return this.http.post<ApiResponse<User>>(this.loginUrl, logInInfo, httpOptions)
+  signIn (signInInfo: SignInInfo): Observable<ApiResponse<User>> {
+    return this.http.post<ApiResponse<User>>(this.loginUrl, signInInfo, httpOptions)
       .pipe(
         tap(response => {
           console.log(response);

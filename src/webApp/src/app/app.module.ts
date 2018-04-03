@@ -8,8 +8,9 @@ import { UserNavigationComponent } from './user-navigation/user-navigation.compo
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { UserService } from './user.service';
-import { LogInComponent } from './log-in/log-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
+import { AppRoutingModule } from './app-routing.module';
+import { SignInComponent } from './sign-in/sign-in.component';
 
 
 @NgModule({
@@ -18,13 +19,14 @@ import { SignUpComponent } from './sign-up/sign-up.component';
     UserinterfaceComponent,
     UserNavigationComponent,
     SignUpComponent,
-    LogInComponent
+    SignInComponent
   ],
   imports: [
     HttpClientModule,
     FormsModule,
     BrowserModule,
-    NgbModule.forRoot()
+    NgbModule.forRoot(),
+    AppRoutingModule
   ],
   providers: [UserService],
   bootstrap: [AppComponent]

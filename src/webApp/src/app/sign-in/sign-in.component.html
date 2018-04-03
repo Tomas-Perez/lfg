@@ -1,9 +1,9 @@
 <div class="container">
   <div class="row">
     <div class="login-container col-10 offset-1 col-md-4 offset-md-4 border round-border border-dark">
-      <h1 class="text-center">Log in</h1>
+      <h1 class="text-center">Sign in</h1>
 
-      <form #logInForm="ngForm" (ngSubmit)="logInForm.valid && verifyCredentials()" novalidate>
+      <form #signInForm="ngForm" (ngSubmit)="signInForm.valid && verifyCredentials()" novalidate>
 
         <div *ngIf="wrong" class="form-group alert alert-danger">
           Wrong username or password.
@@ -11,7 +11,7 @@
 
         <div class="form-group">
           <label for="InputEmail">Email address</label>
-          <input name="InputEmail" [(ngModel)]="loginInfo.email" type="email" id="InputEmail" class="form-control" aria-describedby="emailHelp" placeholder="Email" email required #email="ngModel">
+          <input name="InputEmail" [(ngModel)]="signInInfo.email" type="email" id="InputEmail" class="form-control" aria-describedby="emailHelp" placeholder="Email" email required #email="ngModel">
 
           <div [hidden]="email.valid || email.pristine || email.untouched"
                class="alert alert-danger">
@@ -20,8 +20,8 @@
 
         </div>
         <div class="form-group">
-          <label for="InputPassword">Email address</label>
-          <input name="InputPassword" [(ngModel)]="loginInfo.password" type="password" id="InputPassword" class="form-control" placeholder="Password" required #password="ngModel">
+          <label for="InputPassword">Password</label>
+          <input name="InputPassword" [(ngModel)]="signInInfo.password" type="password" id="InputPassword" class="form-control" placeholder="Password" required #password="ngModel">
 
           <div [hidden]="password.valid || password.pristine || email.untouched"
                class="alert alert-danger">
@@ -30,7 +30,7 @@
 
         </div>
         <div class="form-group text-center">
-          <button type="submit" class="btn btn-primary">Log in</button>
+          <button type="submit" class="btn btn-primary">Sign in</button>
         </div>
       </form>
     </div>
