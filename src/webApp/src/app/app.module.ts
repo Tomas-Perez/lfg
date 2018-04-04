@@ -11,6 +11,8 @@ import { UserService } from './user.service';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SignInComponent } from './sign-in/sign-in.component';
+import { HomeComponent } from './home/home.component';
+import { HomeNavbarComponent } from './home-navbar/home-navbar.component';
 
 
 @NgModule({
@@ -19,7 +21,9 @@ import { SignInComponent } from './sign-in/sign-in.component';
     UserinterfaceComponent,
     UserNavigationComponent,
     SignUpComponent,
-    SignInComponent
+    SignInComponent,
+    HomeComponent,
+    HomeNavbarComponent
   ],
   imports: [
     HttpClientModule,
