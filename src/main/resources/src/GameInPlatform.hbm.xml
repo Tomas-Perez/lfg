@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="model.GameInPlatform" table="GAME_IN_PLATFORM" schema="PUBLIC" catalog="PUBLIC">
+        <composite-id mapped="true" class="model.GameInPlatformPK">
+            <key-property name="gameId" column="GAME_ID"/>
+            <key-property name="gamePlatformId" column="GAME_PLATFORM_ID"/>
+        </composite-id>
+        <many-to-one name="gameByGameId" class="model.Game">
+            <column name="GAME_ID"/>
+        </many-to-one>
+        <many-to-one name="gamePlatformByGamePlatformId" class="model.GamePlatform">
+            <column name="GAME_PLATFORM_ID"/>
+        </many-to-one>
+    </class>
+</hibernate-mapping>
