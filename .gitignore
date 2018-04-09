@@ -147,3 +147,4 @@ fabric.properties
 # gradle/wrapper/gradle-wrapper.properties
 
 *.lck
+/db/demodb.properties
