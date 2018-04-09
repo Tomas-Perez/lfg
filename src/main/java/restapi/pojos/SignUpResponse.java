@@ -3,13 +3,13 @@ package restapi.pojos;
 /**
  * @author Tomas Perez Molina
  */
-public class RegisterResponse {
+public class SignUpResponse {
     private Integer id;
 
-    public RegisterResponse() {
+    public SignUpResponse() {
     }
 
-    public RegisterResponse(Integer id) {
+    public SignUpResponse(Integer id) {
         this.id = id;
     }
 

@@ -10,14 +10,14 @@ import javax.persistence.NoResultException;
 /**
  * @author Tomas Perez Molina
  */
-public class LoginService {
+public class SignInService {
     private UserManager userManager;
 
-    public LoginService() {
+    public SignInService() {
         this.userManager = new UserManager(FactoryProvider.getFactory());
     }
 
-    public SimpleJSONObject login(String email, String password){
+    public SimpleJSONObject signIn(String email, String password){
         User user;
         SimpleJSONObject result;
 

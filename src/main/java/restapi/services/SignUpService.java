@@ -1,7 +1,7 @@
 package restapi.services;
 
 import managers.ConstraintException;
-import restapi.pojos.RegisterResponse;
+import restapi.pojos.SignUpResponse;
 import restapi.pojos.SimpleJSONObject;
 import managers.UserManager;
 import managers.FactoryProvider;
@@ -9,19 +9,19 @@ import managers.FactoryProvider;
 /**
  * @author Tomas Perez Molina
  */
-public class RegisterService {
+public class SignUpService {
     private UserManager userManager;
 
-    public RegisterService() {
+    public SignUpService() {
         this.userManager = new UserManager(FactoryProvider.getFactory());
     }
 
-    public SimpleJSONObject register(String email, String password, String username){
+    public SimpleJSONObject signUp(String email, String password, String username){
         SimpleJSONObject result;
 
         try {
             Integer id = userManager.addUser(username, password, email, false);
-            RegisterResponse r = new RegisterResponse(id);
+            SignUpResponse r = new SignUpResponse(id);
             result = new SimpleJSONObject(SimpleJSONObject.Status.SUCCESS, r, null);
         } catch (ConstraintException e) {
             result = new SimpleJSONObject(new SimpleJSONObject.Error(0, e.getMessage()));
