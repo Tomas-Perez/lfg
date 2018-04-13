@@ -21,32 +21,34 @@ body{
   font-family: Whitney,Helvetica Neue,Helvetica,Arial,sans-serif
 }
 
-.auth-background{
-  background: url('/assets/backgrounds/sign-in.jpg') 50%;
-  z-index: -1;
-  background-size: cover;
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
-
 h1{
   font-size: 18px;
   font-weight: 700;
 }
 
-.auth-form label{
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
+input, textarea, select, button{
+  font: 400 13.3333px Arial;
 }
 
-.auth-form-container{
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  background: rgba(40,43,48,.75)
+.form-group{
+  font-size: 13.3333px;
+  line-height: normal;
+}
+
+.form-input, .form-input:focus {
+  font: 400 13.3333px Arial;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid #f0f0f0;
+  border-bottom-color: hsla(0,0%,100%,.1);
+  color: #ffffff;
+  box-shadow: none;
+  outline: none;
+}
+
+.form-input:focus{
+  border-bottom-color: hsla(0,0%,100%,1);;
 }
 
 app-root{
@@ -77,10 +79,6 @@ app-userinterface, app-user-navigation{
   box-shadow: none;
 }
 
-.btn-primary-lfg:focus {
-  box-shadow: none;
-}
-
 .btn-primary-lfg:active,
 .btn-primary-lfg.active,
 .btn-primary-lfg:active:focus,
@@ -88,7 +86,9 @@ app-userinterface, app-user-navigation{
   background-color: #91a2ff;
 }
 
-.btn-primary-lfg:hover {
+.btn-primary-lfg:hover,
+.btn-primary-lfg:focus {
+  box-shadow: none;
   background-color: #5d6bb9;
 }
 

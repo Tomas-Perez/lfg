@@ -6,19 +6,23 @@ import {User} from '../../User';
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
-  styleUrls: ['./sign-in.component.css']
+  styleUrls: ['./sign-in.component.css', '../home.component.css']
 })
 
 export class SignInComponent implements OnInit {
 
   signInInfo: SignInInfo;
-  wrong: boolean;
+  formValid: boolean;
+  emailValid: boolean;
+  passwordValid: boolean;
 
   constructor(private userService: UserService) { }
 
   ngOnInit() {
     this.signInInfo = new SignInInfo();
-    this.wrong = false;
+    this.formValid = false;
+    this.emailValid = true;
+    this.passwordValid = true;
   }
 
   verifyCredentials(): void {
@@ -44,7 +48,12 @@ export class SignInComponent implements OnInit {
   }
 
   notifyError(): void {
-    this.wrong = true;
+    this.formValid = true;
+  }
+
+  checkErrors(email, password): void{
+    this.emailValid = email;
+    this.passwordValid = password;
   }
 
 }

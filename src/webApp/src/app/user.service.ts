@@ -14,13 +14,13 @@ const httpOptions = {
 @Injectable()
 export class UserService {
 
-  private loginUrl = 'http://localhost:8080/login';
-  private registerUrl = 'http://localhost:8080/register';
+  private signInUrl = 'http://localhost:8080/sign-in';
+  private signUpUrl = 'http://localhost:8080/sign-up';
 
   constructor(private http: HttpClient) { }
 
   signIn (signInInfo: SignInInfo): Observable<ApiResponse<User>> {
-    return this.http.post<ApiResponse<User>>(this.loginUrl, signInInfo, httpOptions)
+    return this.http.post<ApiResponse<User>>(this.signInUrl, signInInfo, httpOptions)
       .pipe(
         tap(response => {
           console.log(response);
@@ -30,7 +30,7 @@ export class UserService {
   }
 
   signUp(signUpInfo: SignUpInfo): Observable<ApiResponse<number>> {
-    return this.http.post<ApiResponse<number>>(this.registerUrl, signUpInfo)
+    return this.http.post<ApiResponse<number>>(this.signUpUrl, signUpInfo)
       .pipe(
         tap(response => console.log(response))
       );

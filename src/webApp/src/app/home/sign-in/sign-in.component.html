@@ -4,34 +4,41 @@
     <div class="auth-form-container col-10 offset-1 col-lg-4 offset-lg-4 col-md-6 offset-md-3 border round-border border-dark">
       <h1 class="text-center">SIGN IN</h1>
 
-      <form class="auth-form" #signInForm="ngForm" (ngSubmit)="signInForm.valid && verifyCredentials()" novalidate>
+      <form class="auth-form" #signInForm="ngForm" (ngSubmit)="checkErrors(email.valid, password.valid); signInForm.valid && verifyCredentials()" novalidate>
 
         <div *ngIf="wrong" class="form-group alert alert-danger">
           Wrong username or password.
         </div>
 
         <div class="form-group">
-          <label for="InputEmail">Email address</label>
-          <input name="InputEmail" [(ngModel)]="signInInfo.email" type="email" id="InputEmail" class="form-control" aria-describedby="emailHelp" placeholder="Email" email required #email="ngModel">
+          <label for="InputEmail" [ngClass]="{'error':!emailValid}">Email
+            <span *ngIf="!emailValid && email.pristine" class="error">(field required)</span>
+            <span *ngIf="!emailValid && !email.pristine" class="error">(not a valid email address)</span>
+          </label>
+          <input name="InputEmail" [(ngModel)]="signInInfo.email" type="email" id="InputEmail" class="form-control form-input" aria-describedby="emailHelp" placeholder="Email" email required #email="ngModel">
 
+          <!--
           <div [hidden]="email.valid || email.pristine || email.untouched"
                class="alert alert-danger">
             Email is required
           </div>
-
+          -->
         </div>
         <div class="form-group">
-          <label for="InputPassword">Password</label>
-          <input name="InputPassword" [(ngModel)]="signInInfo.password" type="password" id="InputPassword" class="form-control" placeholder="Password" required #password="ngModel">
+          <label for="InputPassword" [ngClass]="{'error':!passwordValid}">Password
+            <span *ngIf="!passwordValid" class="error">(field required)</span>
+          </label>
+          <input name="InputPassword" [(ngModel)]="signInInfo.password" type="password" id="InputPassword" class="form-control form-input" placeholder="Password" required #password="ngModel">
 
+          <!--
           <div [hidden]="password.valid || password.pristine || email.untouched"
                class="alert alert-danger">
             Password is required
           </div>
-
+          -->
         </div>
         <div class="form-group text-center">
-          <button type="submit" class="btn btn-primary-lfg">Sign in</button>
+          <button type="submit" class="btn btn-primary-lfg submit-button">Sign in</button>
         </div>
       </form>
     </div>
