@@ -2,9 +2,10 @@
 
   <a class="navbar-brand" [routerLink]="['/home']" (click)="navbarCollapsed = true">LFG</a>
 
-  <button class="navbar-toggler navbar-toggler-right" type="button" (click)="navbarCollapsed = !navbarCollapsed"
+  <button class="navbar-toggler navbar-toggler-right custom-toggler" type="button" (click)="navbarCollapsed = !navbarCollapsed"
           [attr.aria-expanded]="!navbarCollapsed" aria-controls="navbarContent" aria-expanded="false"
-          aria-label="Toggle navigation">
+          aria-label="Toggle navigation"
+          [ngClass]="{'hamburger-open':!navbarCollapsed}">
     <span class="navbar-toggler-icon"></span>
   </button>
 

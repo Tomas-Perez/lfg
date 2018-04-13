@@ -1,9 +1,10 @@
+<div class="auth-background"></div>
 <div class="container">
   <div class="row">
-    <div class="login-container col-10 offset-1 col-md-4 offset-md-4 border round-border border-dark">
-      <h1 class="text-center">Sign in</h1>
+    <div class="auth-form-container col-10 offset-1 col-lg-4 offset-lg-4 col-md-6 offset-md-3 border round-border border-dark">
+      <h1 class="text-center">SIGN IN</h1>
 
-      <form #signInForm="ngForm" (ngSubmit)="signInForm.valid && verifyCredentials()" novalidate>
+      <form class="auth-form" #signInForm="ngForm" (ngSubmit)="signInForm.valid && verifyCredentials()" novalidate>
 
         <div *ngIf="wrong" class="form-group alert alert-danger">
           Wrong username or password.
@@ -30,7 +31,7 @@
 
         </div>
         <div class="form-group text-center">
-          <button type="submit" class="btn btn-primary">Sign in</button>
+          <button type="submit" class="btn btn-primary-lfg">Sign in</button>
         </div>
       </form>
     </div>

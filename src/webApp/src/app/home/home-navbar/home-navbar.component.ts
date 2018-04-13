@@ -8,6 +8,8 @@ import { RouterLinkActive } from '@angular/router';
 })
 export class HomeNavbarComponent implements OnInit {
 
+  navbarCollapsed = true;
+
   constructor() { }
 
   ngOnInit() {

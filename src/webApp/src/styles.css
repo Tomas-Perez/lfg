@@ -7,6 +7,7 @@
 }
 */
 
+
 html{
   height: 100%;
   min-height: 100%;
@@ -15,6 +16,37 @@ html{
 
 body{
   height: 100%;
+  background: #18191c;
+  color: white;
+  font-family: Whitney,Helvetica Neue,Helvetica,Arial,sans-serif
+}
+
+.auth-background{
+  background: url('/assets/backgrounds/sign-in.jpg') 50%;
+  z-index: -1;
+  background-size: cover;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+h1{
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.auth-form label{
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.auth-form-container{
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  background: rgba(40,43,48,.75)
 }
 
 app-root{
@@ -36,5 +68,27 @@ app-userinterface, app-user-navigation{
 
 .no-margin{
   margin: 0;
+}
+
+.btn-primary-lfg{
+  color: white;
+  background-color: #7289da;
+  border: none;
+  box-shadow: none;
+}
+
+.btn-primary-lfg:focus {
+  box-shadow: none;
+}
+
+.btn-primary-lfg:active,
+.btn-primary-lfg.active,
+.btn-primary-lfg:active:focus,
+.btn-primary-lfg.active:focus{
+  background-color: #91a2ff;
+}
+
+.btn-primary-lfg:hover {
+  background-color: #5d6bb9;
 }
 
