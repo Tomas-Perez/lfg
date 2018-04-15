@@ -3,7 +3,7 @@ package restapi.signup.service;
 import manager.ConstraintException;
 import manager.UserManager;
 import manager.FactoryProvider;
-import restapi.authentication.exception.AuthenticationException;
+import restapi.security.authentication.exception.AuthenticationException;
 
 /**
  * @author Tomas Perez Molina
