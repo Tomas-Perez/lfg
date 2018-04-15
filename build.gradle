@@ -40,4 +40,9 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
     compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
 
+    compile "io.jsonwebtoken:jjwt:0.9.0"
+
+    compile "org.jboss.weld.servlet:weld-servlet-core:3.0.3.Final"
+
 }
+
