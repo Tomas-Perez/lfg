@@ -16,32 +16,12 @@
 
         <property name="current_session_context_class">thread</property>
 
+        <property name="hibernate.connection.username">SA</property>
+        <property name="hibernate.connection.password">password</property>
+
         <!-- List of XML mapping files -->
-        <mapping resource ="src/Employee.hbm.xml"/>
         <mapping class="model.User"/>
         <mapping resource="src/User.hbm.xml"/>
-        <mapping class="model.Activity"/>
-        <mapping resource="src/Activity.hbm.xml"/>
-        <mapping resource="src/ChatPlatform.hbm.xml"/>
-        <mapping class="model.ChatPlatform"/>
-        <mapping class="model.ChatPlatformForPost"/>
-        <mapping resource="src/ChatPlatformForPost.hbm.xml"/>
-        <mapping class="model.Game"/>
-        <mapping resource="src/Game.hbm.xml"/>
-        <mapping resource="src/GameInPlatform.hbm.xml"/>
-        <mapping class="model.GameInPlatform"/>
-        <mapping resource="src/GamePlatform.hbm.xml"/>
-        <mapping class="model.GamePlatform"/>
-        <mapping resource="src/Group.hbm.xml"/>
-        <mapping class="model.Group"/>
-        <mapping resource="src/GroupMember.hbm.xml"/>
-        <mapping class="model.GroupMember"/>
-        <mapping resource="src/OwnsGame.hbm.xml"/>
-        <mapping class="model.OwnsGame"/>
-        <mapping resource="src/Post.hbm.xml"/>
-        <mapping class="model.Post"/>
-        <mapping class="model.GamePlatformForPost"/>
-        <mapping resource="src/GamePlatformForPost.hbm.xml"/>
 
     </session-factory>
 </hibernate-configuration>

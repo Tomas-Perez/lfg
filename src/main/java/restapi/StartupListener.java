@@ -16,7 +16,7 @@ public class StartupListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         System.out.println("INIT!");
-        FactoryProvider.getFactory().openSession();
+        FactoryProvider.createFactory();
     }
 
     @Override
