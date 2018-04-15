@@ -18,7 +18,7 @@ public class SignInService {
     public User signIn(String email, String password){
         User user;
 
-        user = userManager.getByEmail(email).orElseThrow(() -> new AuthenticationException("User not found"));
+        user = userManager.getByEmail(email).orElseThrow(AuthenticationException::noUser);
 
         if(!password.equals(user.getPassword()))
             throw new AuthenticationException("Wrong password");
