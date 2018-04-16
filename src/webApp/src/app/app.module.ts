@@ -6,7 +6,7 @@ import { UserinterfaceComponent } from './userinterface/userinterface.component'
 import { UserNavigationComponent } from './user-navigation/user-navigation.component';
 import { HttpClientModule } from '@angular/common/http';
 
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 import { AppRoutingModule } from './app-routing.module';
 import {HomeModule} from './home/home.module';
 
@@ -23,7 +23,7 @@ import {HomeModule} from './home/home.module';
     HomeModule,
     AppRoutingModule
   ],
-  providers: [UserService],
+  providers: [AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

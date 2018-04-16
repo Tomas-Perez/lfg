@@ -74,7 +74,8 @@ app-userinterface, app-user-navigation{
 
 .btn-primary-lfg{
   color: white;
-  background-color: #7289da;
+  background-color: rgba(114,137,218,.85);
+
   border: none;
   box-shadow: none;
 }
@@ -82,13 +83,14 @@ app-userinterface, app-user-navigation{
 .btn-primary-lfg:active,
 .btn-primary-lfg.active,
 .btn-primary-lfg:active:focus,
-.btn-primary-lfg.active:focus{
-  background-color: #91a2ff;
+.btn-primary-lfg.active:focus {
+
+  background-color: rgba(145,162,255,.85);
 }
 
 .btn-primary-lfg:hover,
-.btn-primary-lfg:focus {
+.btn-primary-lfg:focus{
   box-shadow: none;
-  background-color: #5d6bb9;
+  background-color: rgba(93,107,185,.85);
 }
 

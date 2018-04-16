@@ -2,11 +2,11 @@
 <div class="container">
   <div class="row">
     <div class="auth-form-container col-10 offset-1 col-lg-4 offset-lg-4 col-md-6 offset-md-3 border round-border border-dark">
-      <h1 class="text-center">SIGN IN</h1>
+      <h1 class="text-center">Sign in</h1>
 
-      <form class="auth-form" #signInForm="ngForm" (ngSubmit)="checkErrors(email.valid, password.valid); signInForm.valid && verifyCredentials()" novalidate>
+      <form #signInForm="ngForm" class="auth-form" (ngSubmit)="checkErrors(email.valid, password.valid); signInForm.valid && verifyCredentials()" novalidate>
 
-        <div *ngIf="wrong" class="form-group alert alert-danger">
+        <div *ngIf="wrongInfo" class="form-group alert alert-danger">
           Wrong username or password.
         </div>
 

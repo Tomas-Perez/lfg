@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {SignInInfo} from '../../SignInInfo';
-import {UserService} from '../../user.service';
-import {User} from '../../User';
+import {SignInInfo} from '../../models/json/SignInInfo';
+import {AuthService} from '../../auth.service';
+import {User} from '../../models/User';
 
 @Component({
   selector: 'app-sign-in',
@@ -12,28 +12,31 @@ import {User} from '../../User';
 export class SignInComponent implements OnInit {
 
   signInInfo: SignInInfo;
+  wrongInfo: boolean;
   formValid: boolean;
   emailValid: boolean;
   passwordValid: boolean;
 
-  constructor(private userService: UserService) { }
+  constructor(private authService: AuthService) { }
 
   ngOnInit() {
-    this.signInInfo = new SignInInfo();
+    this.signInInfo = new SignInInfo;
     this.formValid = false;
     this.emailValid = true;
     this.passwordValid = true;
   }
 
   verifyCredentials(): void {
-    this.userService.signIn(this.signInInfo)
-      .subscribe(response => {
-        if (response.status === 'ERROR') {
+    this.authService.signIn(this.signInInfo)
+      .subscribe(valid => {
+        if (valid) {
+          console.log('logged in');
+        } else {
+          console.log('nope');
           this.notifyError();
-        } else if (response.status === 'SUCCESS') {
-          this.signIn(response.data);
         }
       });
+
   }
 
   // TODO actually log in
@@ -48,10 +51,10 @@ export class SignInComponent implements OnInit {
   }
 
   notifyError(): void {
-    this.formValid = true;
+    this.wrongInfo = true;
   }
 
-  checkErrors(email, password): void{
+  checkErrors(email, password): void {
     this.emailValid = email;
     this.passwordValid = password;
   }

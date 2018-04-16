@@ -1,48 +1,36 @@
+<div class="auth-background"></div>
 <div class="container">
   <div class="row">
-    <div class="register-container col-10 offset-1 col-md-4 offset-md-4 border round-border border-dark">
-
+    <div class="auth-form-container col-10 offset-1 col-lg-4 offset-lg-4 col-md-6 offset-md-3 border round-border border-dark">
       <h1 class="text-center">Sign up</h1>
 
-      <form #logInForm="ngForm" (ngSubmit)="logInForm.valid && signUpUser()" novalidate>
+      <form #logInForm="ngForm" class="auth-form" (ngSubmit)="checkErrors(username.valid, email.valid, password.valid); logInForm.valid && signUpUser()" novalidate>
 
         <div class="form-group">
-          <label for="InputUsername">Username</label>
-          <input name="InputUsername" [(ngModel)]="signUpInfo.username" id="InputUsername" class="form-control" placeholder="Username" required #username="ngModel">
-
-          <div [hidden]="username.valid || username.pristine || username.untouched"
-               class="alert alert-danger">
-            Username is required
-          </div>
-
+          <label for="InputUsername" [ngClass]="{'error':!usernameValid}">Username
+            <span *ngIf="!usernameValid && email.pristine" class="error">(field required)</span>
+            <span *ngIf="!usernameValid && !email.pristine" class="error">(username is taken!)</span>
+          </label>
+          <input name="InputUsername" [(ngModel)]="signUpInfo.username" id="InputUsername" class="form-control form-input" aria-describedby="usernameHelp" placeholder="Username" required #username="ngModel">
         </div>
 
-        <div class="form-group">
-          <label for="InputEmail">Email address</label>
-          <input name="InputEmail" [(ngModel)]="signUpInfo.email" type="email" id="InputEmail" class="form-control" aria-describedby="emailHelp" placeholder="Email" email required #email="ngModel">
-
-          <div [hidden]="email.valid || email.pristine || email.untouched"
-               class="alert alert-danger">
-            Email is required
-          </div>
+        <div class="form-group" [ngClass]="{'error':!emailValid}">
+          <label for="InputEmail">Email address
+            <span *ngIf="!emailValid && email.pristine" class="error">(field required)</span>
+            <span *ngIf="!emailValid && !email.pristine" class="error">(not a valid email address)</span>
+          </label>
+          <input name="InputEmail" [(ngModel)]="signUpInfo.email" type="email" id="InputEmail" class="form-control form-input" aria-describedby="emailHelp" placeholder="Email" email required #email="ngModel">
 
         </div>
-        <div class="form-group">
-          <label for="InputPassword">Password</label>
-          <input name="InputPassword" [(ngModel)]="signUpInfo.password" type="password" id="InputPassword" class="form-control" placeholder="Password" required #password="ngModel">
-
-          <div [hidden]="password.valid || password.pristine || password.untouched"
-               class="alert alert-danger">
-            Password is required
-          </div>
-
+        <div class="form-group" [ngClass]="{'error':!passwordValid}">
+          <label for="InputPassword">Password
+            <span *ngIf="!passwordValid" class="error">(field required)</span>
+          </label>
+          <input name="InputPassword" [(ngModel)]="signUpInfo.password" type="password" id="InputPassword" class="form-control form-input" placeholder="Password" required #password="ngModel">
         </div>
-
-
-
 
         <div class="form-group text-center">
-          <button type="submit" class="btn btn-primary">Sign up</button>
+          <button type="submit" class="btn btn-primary-lfg submit-button">Sign up</button>
         </div>
       </form>
     </div>
