@@ -29,10 +29,19 @@ export class SignInComponent implements OnInit {
   verifyCredentials(): void {
     this.authService.signIn(this.signInInfo)
       .subscribe(valid => {
+        console.log(valid);
         if (valid) {
-          console.log('logged in');
+          console.log('Credentials correct');
         } else {
-          console.log('nope');
+          console.log('Credentials with errors');
+          this.notifyError();
+          return;
+        }
+      });
+    this.authService.getCurrentUserInfo()
+      .subscribe(valid => {
+        console.log(valid);
+        if (!valid) {
           this.notifyError();
         }
       });

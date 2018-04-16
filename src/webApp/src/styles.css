@@ -35,9 +35,21 @@ input, textarea, select, button{
   line-height: normal;
 }
 
-.form-input, .form-input:focus {
+@-webkit-keyframes autofill {
+  to {
+    color: #ffffff;
+    background: transparent;
+  }
+}
+
+input:-webkit-autofill {
+  -webkit-animation-name: autofill;
+  -webkit-animation-fill-mode: both;
+}
+
+.form-input, .form-input:focus{
   font: 400 13.3333px Arial;
-  background: transparent;
+  background: transparent !important;
   border: none;
   border-radius: 0;
   border-bottom: 1px solid #f0f0f0;
