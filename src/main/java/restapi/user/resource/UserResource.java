@@ -40,6 +40,7 @@ public class UserResource {
     }
 
     @OPTIONS
+    @Path("me")
     @PermitAll
     public Response options(){
         return Response.ok().build();
