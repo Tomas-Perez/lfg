@@ -40,10 +40,4 @@ public class SignInResource {
 
         return Response.ok(new AuthenticationToken(token)).build();
     }
-
-    @OPTIONS
-    @PermitAll
-    public Response options(){
-        return Response.ok().build();
-    }
 }

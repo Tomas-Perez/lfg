@@ -38,11 +38,4 @@ public class UserResource {
         User user = service.getUserByEmail(principal.getName());
         return Response.ok(new UserData(user)).build();
     }
-
-    @OPTIONS
-    @Path("me")
-    @PermitAll
-    public Response options(){
-        return Response.ok().build();
-    }
 }

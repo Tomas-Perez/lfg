@@ -38,10 +38,4 @@ public class SignUpResource {
         );
         return Response.status(Response.Status.CREATED).build();
     }
-
-    @OPTIONS
-    @PermitAll
-    public Response options(){
-        return Response.ok().build();
-    }
 }
