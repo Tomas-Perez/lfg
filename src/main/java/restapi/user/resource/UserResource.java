@@ -8,6 +8,7 @@ import restapi.user.service.UserService;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -36,5 +37,11 @@ public class UserResource {
 
         User user = service.getUserByEmail(principal.getName());
         return Response.ok(new UserData(user)).build();
+    }
+
+    @OPTIONS
+    @PermitAll
+    public Response options(){
+        return Response.ok().build();
     }
 }
