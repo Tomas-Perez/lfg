@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {SignInInfo} from '../../models/json/SignInInfo';
-import {AuthService} from '../../auth.service';
-import {User} from '../../models/User';
+import {SignInInfo} from '../../_models/json/SignInInfo';
+import {AuthService} from '../../_services/auth.service';
+import {User} from '../../_models/User';
 
 @Component({
   selector: 'app-sign-in',
@@ -41,7 +41,9 @@ export class SignInComponent implements OnInit {
     this.authService.getCurrentUserInfo()
       .subscribe(valid => {
         console.log(valid);
-        if (!valid) {
+        if (valid) {
+          //TODO reroute user
+        } else {
           this.notifyError();
         }
       });

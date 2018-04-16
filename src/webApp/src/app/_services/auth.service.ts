@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
-import {SignInInfo} from './models/json/SignInInfo';
-import {SignUpInfo} from './models/json/SignUpInfo';
-import {ApiResponse} from './models/ApiResponse';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {SignInInfo} from '../_models/json/SignInInfo';
 import {Observable} from 'rxjs/Observable';
-import {catchError, map, retry, switchMap, tap} from 'rxjs/operators';
+import {catchError, map, tap} from 'rxjs/operators';
 import 'rxjs/add/observable/of';
 
 const httpOptions = {
@@ -15,7 +13,6 @@ const httpOptions = {
 export class AuthService {
 
   private signInUrl = 'http://localhost:8080/sign-in';
-  private signUpUrl = 'http://localhost:8080/sign-up';
   private userMeUrl = 'http://localhost:8080/users/me';
 
   constructor(private http: HttpClient) { }
@@ -41,7 +38,7 @@ export class AuthService {
   }
 
   /**
-   * Retrieves the user with the current token in local storage and saves it to local storage.
+   * Retrieves the user with the current local storage token and saves it to local storage.
     */
   getCurrentUserInfo(): Observable<boolean> {
     return this.http.get<any>(this.userMeUrl,
@@ -59,13 +56,6 @@ export class AuthService {
           return true;
         }),
         catchError(err => Observable.of(false))
-      );
-  }
-
-  signUp(signUpInfo: SignUpInfo): Observable<ApiResponse<number>> {
-    return this.http.post<ApiResponse<number>>(this.signUpUrl, signUpInfo)
-      .pipe(
-        tap(response => console.log(response))
       );
   }
 

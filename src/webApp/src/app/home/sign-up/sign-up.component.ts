@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import {SignUpInfo} from '../../models/json/SignUpInfo';
-import {AuthService} from '../../auth.service';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {SignUpInfo} from '../../_models/json/SignUpInfo';
+import {UserService} from '../../_services/user.service';
+import {SignUpStatus} from '../../_models/SignUpStatus';
+import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-sign-up',
@@ -12,26 +14,56 @@ export class SignUpComponent implements OnInit {
   signUpInfo: SignUpInfo;
   formValid: boolean;
   usernameValid: boolean;
+  usernameTaken: boolean;
   emailValid: boolean;
+  emailTaken: boolean;
   passwordValid: boolean;
+  @ViewChild('signUpForm') form: FormGroup;
 
-  constructor(private authService: AuthService) { }
+
+  constructor(private userService: UserService) { }
 
   ngOnInit() {
     this.signUpInfo = new SignUpInfo;
     this.formValid = false;
     this.usernameValid = true;
+    this.usernameTaken = false;
     this.emailValid = true;
     this.passwordValid = true;
   }
 
+  sendForm() {
+    this.resetTakenVariables();
+    this.signUpUser();
+  }
+
+  resetTakenVariables() {
+    this.usernameTaken = false;
+    this.emailTaken = false;
+  }
+
   signUpUser(): void {
-    this.authService.signUp(this.signUpInfo)
+    this.userService.signUp(this.signUpInfo)
       .subscribe(response => {
-        if (response.status === 'ERROR') {
-          this.notifyError();
-        } else if (response.status === 'SUCCESS') {
-          // this.logIn(response.data);
+        switch (response) {
+          case SignUpStatus.success: {
+            //TODO sign in, route user
+            console.log('succcccccc');
+            break;
+          }
+          case SignUpStatus.emailTaken: {
+            console.log('email taken');
+            break;
+          }
+          case SignUpStatus.userTaken: {
+            this.usernameTaken = true;
+            console.log('user taken');
+            break;
+          }
+          case SignUpStatus.error: {
+            console.log('error occured');
+            break;
+          }
         }
       });
   }

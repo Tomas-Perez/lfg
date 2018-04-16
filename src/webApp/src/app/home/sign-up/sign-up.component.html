@@ -4,20 +4,21 @@
     <div class="auth-form-container col-10 offset-1 col-lg-4 offset-lg-4 col-md-6 offset-md-3 border round-border border-dark">
       <h1 class="text-center">Sign up</h1>
 
-      <form #logInForm="ngForm" class="auth-form" (ngSubmit)="checkErrors(username.valid, email.valid, password.valid); logInForm.valid && signUpUser()" novalidate>
+      <form #signUpForm="ngForm" class="auth-form" (ngSubmit)="checkErrors(username.valid, email.valid, password.valid); signUpForm.valid && sendForm()" novalidate>
 
         <div class="form-group">
-          <label for="InputUsername" [ngClass]="{'error':!usernameValid}">Username
-            <span *ngIf="!usernameValid && email.pristine" class="error">(field required)</span>
-            <span *ngIf="!usernameValid && !email.pristine" class="error">(username is taken!)</span>
+          <label for="InputUsername" [ngClass]="{'error':!usernameValid || usernameTaken}">Username
+            <span *ngIf="!usernameValid" class="error">(field required)</span>
+            <span *ngIf="usernameValid && usernameTaken" class="error">(username already taken!)</span>
           </label>
           <input name="InputUsername" [(ngModel)]="signUpInfo.username" id="InputUsername" class="form-control form-input" aria-describedby="usernameHelp" placeholder="Username" required #username="ngModel">
         </div>
 
-        <div class="form-group" [ngClass]="{'error':!emailValid}">
+        <div class="form-group" [ngClass]="{'error':!emailValid || emailTaken}">
           <label for="InputEmail">Email address
             <span *ngIf="!emailValid && email.pristine" class="error">(field required)</span>
             <span *ngIf="!emailValid && !email.pristine" class="error">(not a valid email address)</span>
+            <span *ngIf="emailValid && emailTaken" class="error">(email address already taken!)</span>
           </label>
           <input name="InputEmail" [(ngModel)]="signUpInfo.email" type="email" id="InputEmail" class="form-control form-input" aria-describedby="emailHelp" placeholder="Email" email required #email="ngModel">
 

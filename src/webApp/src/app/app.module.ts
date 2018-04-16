@@ -6,9 +6,10 @@ import { UserinterfaceComponent } from './userinterface/userinterface.component'
 import { UserNavigationComponent } from './user-navigation/user-navigation.component';
 import { HttpClientModule } from '@angular/common/http';
 
-import { AuthService } from './auth.service';
+import { AuthService } from './_services/auth.service';
 import { AppRoutingModule } from './app-routing.module';
 import {HomeModule} from './home/home.module';
+import { UserService } from './_services/user.service';
 
 
 @NgModule({
@@ -23,7 +24,7 @@ import {HomeModule} from './home/home.module';
     HomeModule,
     AppRoutingModule
   ],
-  providers: [AuthService],
+  providers: [AuthService, UserService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
