@@ -11,32 +11,20 @@
         </div>
 
         <div class="form-group">
-          <label for="InputEmail" [ngClass]="{'error':!emailValid}">Email
+          <label for="InputEmail">
+            <span class="bold" [ngClass]="{'error':!emailValid}">Email</span>
             <span *ngIf="!emailValid && email.pristine" class="error">(field required)</span>
             <span *ngIf="!emailValid && !email.pristine" class="error">(not a valid email address)</span>
           </label>
-          <input name="InputEmail" [(ngModel)]="signInInfo.email" type="email" id="InputEmail" class="form-control form-input" aria-describedby="emailHelp" placeholder="Email" email required #email="ngModel">
-
-          <!--
-          <div [hidden]="email.valid || email.pristine || email.untouched"
-               class="alert alert-danger">
-            Email is required
-          </div>
-          -->
+          <input name="InputEmail" [(ngModel)]="emailInput" type="email" id="InputEmail" class="form-control form-input" aria-describedby="emailHelp" placeholder="Email" email required #email="ngModel">
         </div>
         <div class="form-group">
-          <label for="InputPassword" [ngClass]="{'error':!passwordValid}">Password
+          <label for="InputPassword">
+            <span class="bold" [ngClass]="{'error':!passwordValid}">Password</span>
             <span *ngIf="!passwordValid" class="error">(field required)</span>
           </label>
-          <input name="InputPassword" [(ngModel)]="signInInfo.password" type="password" id="InputPassword" class="form-control form-input" placeholder="Password" required #password="ngModel">
-
-          <!--
-          <div [hidden]="password.valid || password.pristine || email.untouched"
-               class="alert alert-danger">
-            Password is required
-          </div>
-          -->
-        </div>
+          <input name="InputPassword" [(ngModel)]="passwordInput" type="password" id="InputPassword" class="form-control form-input" placeholder="Password" required #password="ngModel">
+       </div>
         <div class="form-group text-center">
           <button type="submit" class="btn btn-primary-lfg submit-button">Sign in</button>
         </div>

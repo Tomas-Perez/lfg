@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {SignInInfo} from '../_models/json/SignInInfo';
 import {Observable} from 'rxjs/Observable';
 import {catchError, map, tap} from 'rxjs/operators';
 import 'rxjs/add/observable/of';
+import 'rxjs/add/observable/empty';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json'})
@@ -12,18 +12,26 @@ const httpOptions = {
 @Injectable()
 export class AuthService {
 
-  private signInUrl = 'http://localhost:8080/sign-in';
+  private authUrl = 'http://localhost:8080/sign-in';
   private userMeUrl = 'http://localhost:8080/users/me';
 
   constructor(private http: HttpClient) { }
 
+
+  getAuthUrl(): string {
+    return this.authUrl;
+  }
+
+  getAccessToken(): string {
+    return localStorage.getItem('token');
+  }
+
   /**
    * Authenticates user, saves token to localStorage.
-   * @param {SignInInfo} signInInfo
    * @returns {Observable<boolean>}
    */
-  signIn (signInInfo: SignInInfo): Observable<boolean> {
-    return this.http.post<any>(this.signInUrl, {email: signInInfo.email, password: signInInfo.password}, {
+  authenticate(email: string, password: string): Observable<boolean> {
+    return this.http.post<any>(this.authUrl, {email: email, password: password}, {
       headers: new HttpHeaders({ 'Content-Type': 'application/json'}),
       observe: 'response'
     })
@@ -37,6 +45,11 @@ export class AuthService {
       );
   }
 
+  refreshToken(): Observable<any> {
+    return Observable.empty();
+    // TODO
+  }
+
   /**
    * Retrieves the user with the current local storage token and saves it to local storage.
     */
@@ -45,7 +58,7 @@ export class AuthService {
       {
         headers: new HttpHeaders({
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
+          'Authorization': 'Bearer ' + this.getAccessToken()
         }),
         observe: 'response'
       })
@@ -57,6 +70,12 @@ export class AuthService {
         }),
         catchError(err => Observable.of(false))
       );
+  }
+
+  // TODO
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
   }
 
 }

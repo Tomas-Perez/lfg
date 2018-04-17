@@ -47,6 +47,7 @@ export class SignUpComponent implements OnInit {
       .subscribe(response => {
         switch (response) {
           case SignUpStatus.success: {
+
             //TODO sign in, route user
             console.log('succcccccc');
             break;

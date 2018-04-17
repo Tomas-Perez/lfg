@@ -23,7 +23,6 @@ h1{
 
 .auth-form label{
   font-size: 11px;
-  font-weight: 700;
   text-transform: uppercase;
 }
 
@@ -35,4 +34,8 @@ h1{
 
 .error{
   color: red;
+}
+
+.bold{
+  font-weight: 700;
 }

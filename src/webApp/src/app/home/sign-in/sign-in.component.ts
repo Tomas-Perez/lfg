@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {SignInInfo} from '../../_models/json/SignInInfo';
 import {AuthService} from '../../_services/auth.service';
 import {User} from '../../_models/User';
 
@@ -11,7 +10,8 @@ import {User} from '../../_models/User';
 
 export class SignInComponent implements OnInit {
 
-  signInInfo: SignInInfo;
+  emailInput: string;
+  passwordInput: string;
   wrongInfo: boolean;
   formValid: boolean;
   emailValid: boolean;
@@ -20,35 +20,43 @@ export class SignInComponent implements OnInit {
   constructor(private authService: AuthService) { }
 
   ngOnInit() {
-    this.signInInfo = new SignInInfo;
     this.formValid = false;
     this.emailValid = true;
     this.passwordValid = true;
   }
 
+  /**
+   * Calls authService authenticate() to get token.
+   */
   verifyCredentials(): void {
-    this.authService.signIn(this.signInInfo)
-      .subscribe(valid => {
-        console.log(valid);
-        if (valid) {
+    this.authService.authenticate(this.emailInput, this.passwordInput)
+      .subscribe(correct => {
+        console.log(correct);
+        if (correct) {
           console.log('Credentials correct');
+          this.getUserInfo();
         } else {
           console.log('Credentials with errors');
           this.notifyError();
           return;
         }
       });
-    this.authService.getCurrentUserInfo()
-      .subscribe(valid => {
-        console.log(valid);
-        if (valid) {
-          //TODO reroute user
-        } else {
-          this.notifyError();
-        }
-      });
-
   }
+
+  /**
+   * Calls authService getCurrentUserInfo to get user info.
+   */
+  private getUserInfo(): void {
+      this.authService.getCurrentUserInfo()
+        .subscribe(valid => {
+          console.log(valid);
+            if (valid) {
+              // TODO reroute user
+            } else {
+            this.notifyError();
+            }
+        });
+    }
 
   // TODO actually log in
   signIn(user: User): void {
