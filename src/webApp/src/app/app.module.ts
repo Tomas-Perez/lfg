@@ -10,6 +10,7 @@ import { AuthService } from './_services/auth.service';
 import { AppRoutingModule } from './app-routing.module';
 import {HomeModule} from './home/home.module';
 import { UserService } from './_services/user.service';
+import {httpInterceptorProviders} from "./_http-interceptors/index";
 
 
 @NgModule({
@@ -24,7 +25,7 @@ import { UserService } from './_services/user.service';
     HomeModule,
     AppRoutingModule
   ],
-  providers: [AuthService, UserService],
+  providers: [httpInterceptorProviders, AuthService, UserService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
