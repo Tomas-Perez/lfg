@@ -3,7 +3,9 @@ package restapi.common.persistence;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Initialized;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManager;
@@ -43,5 +45,11 @@ public class EntityManagerProducer {
         if (factory.isOpen()) {
             factory.close();
         }
+    }
+
+    //Eager factory instantiation
+    public void init(@Observes @Initialized(ApplicationScoped.class) Object init) {
+        System.out.println("QUICKLY");
+        factory.createEntityManager().close();
     }
 }

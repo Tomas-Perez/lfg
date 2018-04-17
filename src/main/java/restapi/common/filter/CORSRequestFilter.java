@@ -1,5 +1,6 @@
 package restapi.common.filter;
 
+import javax.enterprise.context.Dependent;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
@@ -13,6 +14,7 @@ import javax.ws.rs.ext.Provider;
  */
 @Provider
 @PreMatching
+@Dependent
 public class CORSRequestFilter implements ContainerRequestFilter {
 
     @Override
