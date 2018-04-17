@@ -2,17 +2,21 @@ package restapi.security.authentication.service;
 
 import restapi.security.authentication.exception.AuthenticationTokenRefreshmentException;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-
+@ApplicationScoped
 public class AuthenticationTokenService {
     private final Long validFor = 100000L;
     private final Integer refreshLimit = 1000;
 
-    private AuthenticationTokenIssuer tokenIssuer = new AuthenticationTokenIssuer();
+    @Inject
+    private AuthenticationTokenIssuer tokenIssuer;
 
-    private AuthenticationTokenParser tokenParser = new AuthenticationTokenParser();
+    @Inject
+    private AuthenticationTokenParser tokenParser;
 
     public String issueToken(String email) {
 
@@ -51,7 +55,7 @@ public class AuthenticationTokenService {
     public String refreshToken(AuthenticationTokenDetails currentTokenDetails) {
 
         if (!currentTokenDetails.isEligibleForRefreshment()) {
-            throw new AuthenticationTokenRefreshmentException("This token cannot be refreshed");
+            throw new AuthenticationTokenRefreshmentException("The authentication token cannot be refreshed.");
         }
 
         ZonedDateTime issuedDate = ZonedDateTime.now();

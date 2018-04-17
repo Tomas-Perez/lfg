@@ -1,6 +1,8 @@
 package manager;
 
-import org.hibernate.exception.ConstraintViolationException;
+
+import javax.persistence.PersistenceException;
+import javax.validation.ConstraintViolationException;
 
 /**
  * @author Tomas Perez Molina
@@ -11,8 +13,8 @@ public class ConstraintException extends RuntimeException{
 
     private String constraintName;
 
-    public ConstraintException(ConstraintViolationException exc) {
-        super(exc.getCause().getMessage());
+    public ConstraintException(PersistenceException exc) {
+        super(exc.getCause().getCause().getMessage());
         constraintName = this.getMessage().substring(FORMAT.length());
     }
 

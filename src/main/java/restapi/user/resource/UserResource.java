@@ -1,12 +1,11 @@
 package restapi.user.resource;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
-import manager.UserManager;
 import model.User;
 import restapi.user.model.UserData;
 import restapi.user.service.UserService;
 
-import javax.annotation.security.PermitAll;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.Path;
@@ -22,11 +21,13 @@ import java.security.Principal;
  */
 
 @Path("users")
+@RequestScoped
 public class UserResource {
     @Context
     private SecurityContext securityContext;
 
-    private UserService service = new UserService();
+    @Inject
+    private UserService service;
 
     @GET
     @Path("me")
@@ -34,7 +35,7 @@ public class UserResource {
     public Response getAuthenticatedUser() {
 
         Principal principal = securityContext.getUserPrincipal();
-
+        System.out.println(principal.getName());
         User user = service.getUserByEmail(principal.getName());
         return Response.ok(new UserData(user)).build();
     }

@@ -4,6 +4,8 @@ import io.jsonwebtoken.*;
 import restapi.security.authentication.exception.InvalidAuthenticationTokenException;
 import restapi.security.common.domain.Authority;
 
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -17,9 +19,12 @@ import java.util.stream.Collectors;
  * Component which provides operations for parsing JWT tokens.
  *
  */
+
+@Dependent
 class AuthenticationTokenParser {
 
-    private AuthenticationTokenSettings settings = new AuthenticationTokenSettings();
+    @Inject
+    private AuthenticationTokenSettings settings;
 
     /**
      * Parse a JWT token.
@@ -95,6 +100,7 @@ class AuthenticationTokenParser {
      * @param claims
      * @return User authorities from the JWT token
      */
+    @SuppressWarnings("unchecked")
     private Set<Authority> extractAuthoritiesFromClaims(@NotNull Claims claims) {
         List<String> rolesAsString = (List<String>) claims.getOrDefault(settings.getAuthoritiesClaimName(), new ArrayList<>());
         return rolesAsString.stream().map(Authority::valueOf).collect(Collectors.toSet());

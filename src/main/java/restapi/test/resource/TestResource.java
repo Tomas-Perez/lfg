@@ -1,6 +1,7 @@
 package restapi.test.resource;
 
 import javax.annotation.security.RolesAllowed;
+import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
@@ -8,6 +9,7 @@ import javax.ws.rs.core.MediaType;
  * @author Tomas Perez Molina
  */
 @Path("test")
+@RequestScoped
 public class TestResource {
 
     @GET

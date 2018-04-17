@@ -4,6 +4,8 @@ import restapi.signup.model.SignUpJSON;
 import restapi.signup.service.SignUpService;
 
 import javax.annotation.security.PermitAll;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -13,12 +15,11 @@ import javax.ws.rs.core.Response;
  */
 
 @Path("sign-up")
+@RequestScoped
 public class SignUpResource {
-    private SignUpService service;
 
-    public SignUpResource() {
-        this.service = new SignUpService();
-    }
+    @Inject
+    private SignUpService service;
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)

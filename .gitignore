@@ -9,7 +9,6 @@ out
 *.iws
 *.iml
 *.ipr
-persistence.xml
 
 
 # compiled output

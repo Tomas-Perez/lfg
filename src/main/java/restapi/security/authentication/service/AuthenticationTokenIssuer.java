@@ -2,11 +2,16 @@ package restapi.security.authentication.service;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 import java.util.Date;
 
-public class AuthenticationTokenIssuer {
+@Dependent
+class AuthenticationTokenIssuer {
 
-    private AuthenticationTokenSettings settings = new AuthenticationTokenSettings();
+    @Inject
+    private AuthenticationTokenSettings settings;
 
     public String issueToken(AuthenticationTokenDetails authenticationTokenDetails){
         return Jwts.builder()

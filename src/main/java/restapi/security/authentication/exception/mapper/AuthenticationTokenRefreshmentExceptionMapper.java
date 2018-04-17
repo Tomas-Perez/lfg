@@ -30,7 +30,7 @@ public class AuthenticationTokenRefreshmentExceptionMapper implements ExceptionM
         ApiErrorDetails errorDetails = new ApiErrorDetails.Builder()
                 .withStatus(status.getStatusCode())
                 .withTitle(status.getReasonPhrase())
-                .withMessage("The authentication token cannot be refreshed.")
+                .withMessage(exception.getMessage())
                 .withPath(uriInfo.getAbsolutePath().getPath())
                 .build();
 

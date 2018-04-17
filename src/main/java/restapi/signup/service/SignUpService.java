@@ -2,18 +2,21 @@ package restapi.signup.service;
 
 import manager.ConstraintException;
 import manager.UserManager;
-import manager.FactoryProvider;
 import restapi.security.authentication.exception.AuthenticationException;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 /**
  * @author Tomas Perez Molina
  */
+
+@ApplicationScoped
 public class SignUpService {
+
+    @Inject
     private UserManager userManager;
 
-    public SignUpService() {
-        this.userManager = new UserManager(FactoryProvider.getFactory());
-    }
 
     public void signUp(String email, String password, String username){
         try {

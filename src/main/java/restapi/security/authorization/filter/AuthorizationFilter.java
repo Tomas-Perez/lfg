@@ -6,6 +6,7 @@ import javax.annotation.Priority;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.enterprise.context.Dependent;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -20,6 +21,7 @@ import java.lang.reflect.Method;
  */
 @Provider
 @Priority(Priorities.AUTHORIZATION)
+@Dependent
 public class AuthorizationFilter implements ContainerRequestFilter {
 
     @Context
@@ -27,7 +29,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(final ContainerRequestContext requestContext) throws IOException {
-
+        System.out.println("Authorization");
         Method method = resourceInfo.getResourceMethod();
 
         // @DenyAll on the method takes precedence over @RolesAllowed and @PermitAll

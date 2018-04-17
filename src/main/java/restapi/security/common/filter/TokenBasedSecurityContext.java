@@ -27,6 +27,7 @@ public class TokenBasedSecurityContext implements SecurityContext {
 
     @Override
     public Principal getUserPrincipal() {
+        System.out.println(authenticatedUserDetails);
         return authenticatedUserDetails;
     }
 

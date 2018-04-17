@@ -29,7 +29,7 @@ public class AccessDeniedExceptionMapper implements ExceptionMapper<AccessDenied
         ApiErrorDetails errorDetails = new ApiErrorDetails.Builder()
                 .withStatus(status.getStatusCode())
                 .withTitle(status.getReasonPhrase())
-                .withMessage("You don't have enough permissions to perform this action.")
+                .withMessage(exception.getMessage())
                 .withPath(uriInfo.getAbsolutePath().getPath())
                 .build();
 

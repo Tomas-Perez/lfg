@@ -1,10 +1,12 @@
 package restapi.security.authentication.service;
 
+import javax.enterprise.context.Dependent;
+
 /**
  * Settings for signing and verifying JWT tokens.
  *
  */
-
+@Dependent
 class AuthenticationTokenSettings {
 
     /**

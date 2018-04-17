@@ -2,17 +2,22 @@ package restapi.security.authentication.service;
 
 import model.User;
 import manager.UserManager;
-import manager.FactoryProvider;
 import restapi.security.authentication.exception.AuthenticationException;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 /**
  * @author Tomas Perez Molina
  */
+@ApplicationScoped
 public class SignInService {
+
+    @Inject
     private UserManager userManager;
 
     public SignInService() {
-        this.userManager = new UserManager(FactoryProvider.getFactory());
+        System.out.println("Initiating sign in service");
     }
 
     public User signIn(String email, String password){

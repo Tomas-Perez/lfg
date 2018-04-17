@@ -1,6 +1,5 @@
 package restapi.security.authentication.filter;
 
-import manager.FactoryProvider;
 import manager.UserManager;
 import model.User;
 import restapi.security.authentication.exception.AuthenticationException;
@@ -11,7 +10,9 @@ import restapi.security.common.filter.TokenBasedSecurityContext;
 import restapi.security.common.domain.Authority;
 
 import javax.annotation.Priority;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -25,17 +26,23 @@ import javax.ws.rs.ext.Provider;
  */
 @Provider
 @Priority(Priorities.AUTHENTICATION)
+@Dependent
 public class AuthenticationFilter implements ContainerRequestFilter {
 
     private static final String REALM = "example";
     private static final String AUTHENTICATION_SCHEME = "Bearer";
 
-    private AuthenticationTokenService authenticationTokenService = new AuthenticationTokenService();
-    private UserManager userManager = new UserManager(FactoryProvider.getFactory());
+    @Inject
+    private AuthenticationTokenService authenticationTokenService;
+
+    @Inject
+    private UserManager userManager;
+
+
 
     @Override
     public void filter(ContainerRequestContext requestContext){
-
+        System.out.println("Authentication");
         String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
 
         if (isTokenBasedAuthentication(authorizationHeader)) {
@@ -49,7 +56,6 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             }
             return;
         }
-
     }
 
     private boolean isTokenBasedAuthentication(String authorizationHeader) {
