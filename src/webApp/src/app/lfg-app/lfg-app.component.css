@@ -1,0 +1,80 @@
+.app-mount{
+  -webkit-box-direction: normal;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  overflow: hidden;
+  position: absolute;
+  width: 100vw;
+}
+
+.nav-bar {
+  flex-direction: column;
+  flex-shrink: 0;
+  -webkit-box-direction: normal;
+  -webkit-box-orient: vertical;
+  background-color: #202225;
+  contain: layout;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  width: 70px;
+}
+
+.spekbar{
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  background-color: #2f3136;
+  width: 240px;
+  -webkit-box-direction: normal;
+  -webkit-box-orient: vertical;
+}
+
+.post-message-container{
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  -webkit-box-flex: 1;
+  -webkit-box-direction: normal;
+  -webkit-box-orient: vertical;
+  position: relative;
+  min-width: 1px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.post-flow-container{
+  background-color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  overflow: hidden;
+  z-index: 0;
+  -webkit-box-flex: 1;
+  flex: 1;
+  position: relative;
+}
+
+.message-container{
+  background-color: orange;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-shrink: 0;
+  position: relative;
+  height: 200px;
+}
+
+.friends-container{
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  min-width: 240px;
+  position: relative;
+}

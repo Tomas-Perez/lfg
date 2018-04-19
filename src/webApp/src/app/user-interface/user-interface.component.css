@@ -1,3 +1,7 @@
+div {
+  border: solid white 1px;
+}
+
 .user-navigation {
   height: 100%;
 }
@@ -13,7 +17,7 @@
   margin: 0;
 }
 
-.post-flow-container{
+.post-message-container{
   height: 70%;
 }
 
