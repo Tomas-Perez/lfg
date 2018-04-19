@@ -31,6 +31,7 @@ public class UserManager {
             tx.commit();
         } catch (PersistenceException e){
             if (tx!=null) tx.rollback();
+            e.printStackTrace();
             throw new ConstraintException(e);
         } catch (Exception e) {
             if (tx!=null) tx.rollback();

@@ -4,14 +4,21 @@
              version="2.0">
     <persistence-unit name="lfg" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <class>model.User</class>
+        <class>model.Activity</class>
+        <class>model.Game</class>
+        <class>model.GamePlatform</class>
+        <class>model.ChatPlatform</class>
+        <class>model.Group</class>
+        <class>model.Post</class>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
             <property name="tomee.jpa.factory.lazy" value="true"/>
             <property name ="hibernate.dialect" value ="org.hibernate.dialect.HSQLDialect"/>
-            <property name ="javax.persistence.jdbc.url" value="jdbc:hsqldb:hsql://localhost/testdb"/>
+            <property name ="javax.persistence.jdbc.url" value="jdbc:hsqldb:hsql://localhost/testdb2"/>
             <property name="javax.persistence.jdbc.user" value="SA"/>
-            <property name="javax.persistence.jdbc.password" value="password"/>
-
+            <property name="javax.persistence.jdbc.password" value=""/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
         </properties>
     </persistence-unit>
 </persistence>

@@ -1,27 +1,51 @@
 package model;
 
 import javax.persistence.*;
+import java.util.Objects;
+import java.util.Set;
 
+/**
+ * @author Tomas Perez Molina
+ */
 @Entity
+@Table(name="user")
 public class User {
+    @Id
+    @GeneratedValue
+    @Column(name = "id")
     private int userId;
-    private String username;
-    private String password;
-    private String email;
-    private boolean isadmin;
 
-    public User(String username, String password, String email, boolean isadmin) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.isadmin = isadmin;
-    }
+    @Column(name = "username", unique = true, nullable = false)
+    private String username;
+
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
+
+    @Column(name = "admin")
+    private boolean admin;
+
+    @ManyToMany(mappedBy = "members", cascade = CascadeType.PERSIST)
+    private Set<Group> groups;
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "owns_game",
+            joinColumns = @JoinColumn(name = "owner_id"),
+            inverseJoinColumns = @JoinColumn(name = "game_id"))
+    private Set<Game> games;
 
     public User() {
     }
 
-    @Id
-    @Column(name = "USER_ID")
+    public User(String username, String password, String email, boolean admin) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.admin = admin;
+    }
+
     public int getUserId() {
         return userId;
     }
@@ -30,8 +54,6 @@ public class User {
         this.userId = userId;
     }
 
-    @Basic
-    @Column(name = "USERNAME")
     public String getUsername() {
         return username;
     }
@@ -40,8 +62,6 @@ public class User {
         this.username = username;
     }
 
-    @Basic
-    @Column(name = "PASSWORD")
     public String getPassword() {
         return password;
     }
@@ -50,8 +70,6 @@ public class User {
         this.password = password;
     }
 
-    @Basic
-    @Column(name = "EMAIL")
     public String getEmail() {
         return email;
     }
@@ -60,50 +78,47 @@ public class User {
         this.email = email;
     }
 
-    @Basic
-    @Column(name = "ISADMIN")
-    public boolean isIsadmin() {
-        return isadmin;
+    public boolean isAdmin() {
+        return admin;
     }
 
-    public void setIsadmin(boolean isadmin) {
-        this.isadmin = isadmin;
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
+    }
+
+    public Set<Game> getGames() {
+        return games;
+    }
+
+    public void setGames(Set<Game> games) {
+        this.games = games;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         User user = (User) o;
-
-        if (userId != user.userId) return false;
-        if (isadmin != user.isadmin) return false;
-        if (username != null ? !username.equals(user.username) : user.username != null) return false;
-        if (password != null ? !password.equals(user.password) : user.password != null) return false;
-        if (email != null ? !email.equals(user.email) : user.email != null) return false;
-
-        return true;
+        return userId == user.userId &&
+                admin == user.admin &&
+                Objects.equals(username, user.username) &&
+                Objects.equals(password, user.password) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(groups, user.groups) &&
+                Objects.equals(games, user.games);
     }
 
     @Override
     public int hashCode() {
-        int result = userId;
-        result = 31 * result + (username != null ? username.hashCode() : 0);
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (isadmin ? 1 : 0);
-        return result;
-    }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                ", isadmin=" + isadmin +
-                '}';
+        return Objects.hash(userId, username, password, email, admin, groups, games);
     }
 }

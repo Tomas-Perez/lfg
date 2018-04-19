@@ -10,7 +10,6 @@ import restapi.security.common.filter.TokenBasedSecurityContext;
 import restapi.security.common.domain.Authority;
 
 import javax.annotation.Priority;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.ws.rs.Priorities;
@@ -79,7 +78,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
         AuthenticatedUserDetails userDetails = new AuthenticatedUserDetails(
                 user.getEmail(),
-                Authority.getAuthoritySet(user.isIsadmin())
+                Authority.getAuthoritySet(user.isAdmin())
         );
 
         boolean isSecure = requestContext.getSecurityContext().isSecure();

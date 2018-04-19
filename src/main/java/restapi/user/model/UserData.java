@@ -24,7 +24,7 @@ public class UserData {
     public UserData(User user) {
         this.username = user.getUsername();
         this.email = user.getEmail();
-        this.isAdmin = user.isIsadmin();
+        this.isAdmin = user.isAdmin();
     }
 
     public String getUsername() {

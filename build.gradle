@@ -7,13 +7,10 @@ repositories {
     mavenCentral()
 }
 
-ext{
-    jerseyVersion = '2.25.1'
-    jacksonVersion = '2.9.4'
-}
-
-
 dependencies {
+    def jerseyVersion = '2.25.1'
+    def jacksonVersion = '2.9.4'
+
     compile 'org.jetbrains:annotations:13.0'
 
     // https://mvnrepository.com/artifact/org.hibernate/hibernate-core

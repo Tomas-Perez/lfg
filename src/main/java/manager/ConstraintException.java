@@ -15,7 +15,11 @@ public class ConstraintException extends RuntimeException{
 
     public ConstraintException(PersistenceException exc) {
         super(exc.getCause().getCause().getMessage());
-        constraintName = this.getMessage().substring(FORMAT.length());
+        try {
+            constraintName = this.getMessage().substring(FORMAT.length());
+        } catch (Exception e){
+            constraintName = null;
+        }
     }
 
     public String getConstraintName() {

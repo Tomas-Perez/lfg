@@ -19,8 +19,8 @@ public class DBInit {
         try {
             System.out.println("Starting Database");
             HsqlProperties p = new HsqlProperties();
-            p.setProperty("server.database.0", "file:db/demodb");
-            p.setProperty("server.dbname.0", "testdb");
+            p.setProperty("server.database.0", "file:db/demodb2");
+            p.setProperty("server.dbname.0", "testdb2");
             Server server = new Server();
             server.setProperties(p);
             server.setLogWriter(new PrintWriter(System.out));

@@ -1,7 +1,7 @@
 package restapi.security.authentication.service;
 
-import model.User;
 import manager.UserManager;
+import model.User;
 import restapi.security.authentication.exception.AuthenticationException;
 
 import javax.enterprise.context.ApplicationScoped;
