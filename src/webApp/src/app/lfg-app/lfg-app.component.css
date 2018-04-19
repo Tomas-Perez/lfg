@@ -16,7 +16,7 @@
   flex-shrink: 0;
   -webkit-box-direction: normal;
   -webkit-box-orient: vertical;
-  background-color: #202225;
+  background-color: #18191c;
   contain: layout;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -26,18 +26,34 @@
   width: 70px;
 }
 
-.spekbar{
+.spekbar-user-wrapper{
+  background-color: #282a2d;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  background-color: #2f3136;
   width: 240px;
   -webkit-box-direction: normal;
   -webkit-box-orient: vertical;
 }
 
-.post-message-container{
-  background-color: black;
+.spekbar {
+  display: flex;
+  flex: 1 1 auto;
+  -ms-flex-direction: column;
+  -webkit-box-direction: normal;
+  -webkit-box-orient: vertical;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  contain: layout;
+  min-height: 0;
+  position: relative;
+  -ms-flex-pack: start;
+  -webkit-box-pack: start;
+  justify-content: flex-start;
+}
+
+.posts-chat-wrapper{
+  background-color: #2f3136;
   display: flex;
   flex-direction: column;
   -webkit-box-flex: 1;
@@ -49,8 +65,7 @@
   overflow: hidden;
 }
 
-.post-flow-container{
-  background-color: white;
+.post-flow-wrapper{
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -61,20 +76,58 @@
   position: relative;
 }
 
-.message-container{
-  background-color: orange;
+.chat-wrapper{
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   flex-shrink: 0;
   position: relative;
   height: 200px;
+  padding: 0 3rem;
 }
 
-.friends-container{
+.chat-container{
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  -webkit-box-shadow: 0 -1px 0 rgba(0,0,0,.1);
+  -ms-flex-direction: column;
+  -webkit-box-direction: normal;
+  -webkit-box-orient: vertical;
+  box-shadow: 0 -1px 0 rgba(0,0,0,.1);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  position: relative;
+  border-top: solid 1px #343a40;
+  height: 100%;
+  width: 100%;
+}
+
+.friends-wrapper{
+  background-color: #282a2d;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   min-width: 240px;
   position: relative;
 }
+
+.user-info{
+  color: #fff;
+  background: #202225;
+  display: flex;
+  flex-shrink: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  -ms-flex-align: center;
+  -webkit-box-align: center;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 400;
+  height: 52px;
+  margin-bottom: 1px;
+  padding: 0 10px;
+}
+

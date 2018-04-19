@@ -17,17 +17,17 @@ div {
   margin: 0;
 }
 
-.post-message-container{
+.posts-chat-wrapper{
   height: 70%;
 }
 
-.chat-container{
+.chat-wrapper{
   height: 30%;
 }
 
 /* TODO change later (768px = md)*/
 @media (max-width: 768px) {
-  .user-navigation, .max-height, .friends-container{
+  .user-navigation, .max-height, .friends-wrapper{
     height: auto;
   }
 }
