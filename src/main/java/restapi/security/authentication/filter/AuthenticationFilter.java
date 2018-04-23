@@ -1,7 +1,7 @@
 package restapi.security.authentication.filter;
 
-import manager.UserManager;
-import model.User;
+import persistence.manager.UserManager;
+import persistence.model.User;
 import restapi.security.authentication.exception.AuthenticationException;
 import restapi.security.authentication.service.AuthenticationTokenDetails;
 import restapi.security.authentication.service.AuthenticationTokenService;
@@ -34,10 +34,13 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     @Inject
     private AuthenticationTokenService authenticationTokenService;
 
-    @Inject
+
     private UserManager userManager;
 
-
+    @Inject
+    public AuthenticationFilter(UserManager manager){
+        this.userManager = manager;
+    }
 
     @Override
     public void filter(ContainerRequestContext requestContext){

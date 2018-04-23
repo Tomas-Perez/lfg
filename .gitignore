@@ -147,3 +147,5 @@ fabric.properties
 
 *.lck
 /db/demodb.properties
+
+!db-init.jar

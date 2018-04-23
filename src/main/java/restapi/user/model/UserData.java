@@ -1,6 +1,6 @@
 package restapi.user.model;
 
-import model.User;
+import persistence.model.User;
 
 /**
  * @author Tomas Perez Molina

@@ -1,4 +1,4 @@
-package restapi.common.persistence;
+package persistence.manager;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -24,7 +24,7 @@ public class EntityManagerProducer {
     @PostConstruct
     public void init() {
         System.out.println("Initiating EntityManagerProducer");
-        factory = Persistence.createEntityManagerFactory("lfg");
+        factory = Persistence.createEntityManagerFactory("test");
     }
 
     @Produces

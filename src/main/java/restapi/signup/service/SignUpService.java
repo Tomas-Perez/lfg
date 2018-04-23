@@ -1,7 +1,7 @@
 package restapi.signup.service;
 
-import manager.ConstraintException;
-import manager.UserManager;
+import persistence.manager.ConstraintException;
+import persistence.manager.UserManager;
 import restapi.security.authentication.exception.AuthenticationException;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -16,7 +16,6 @@ public class SignUpService {
 
     @Inject
     private UserManager userManager;
-
 
     public void signUp(String email, String password, String username){
         try {

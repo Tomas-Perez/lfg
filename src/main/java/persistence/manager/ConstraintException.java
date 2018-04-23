@@ -1,8 +1,7 @@
-package manager;
+package persistence.manager;
 
 
 import javax.persistence.PersistenceException;
-import javax.validation.ConstraintViolationException;
 
 /**
  * @author Tomas Perez Molina

@@ -1,6 +1,6 @@
 package restapi.user.resource;
 
-import model.User;
+import persistence.model.User;
 import restapi.user.model.UserData;
 import restapi.user.service.UserService;
 

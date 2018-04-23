@@ -1,6 +1,6 @@
 package restapi.security.authentication.resource;
 
-import model.User;
+import persistence.model.User;
 import restapi.security.authentication.model.AuthenticationToken;
 import restapi.security.authentication.model.SignInJSON;
 import restapi.security.authentication.service.AuthenticationTokenService;

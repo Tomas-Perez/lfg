@@ -1,6 +1,6 @@
-package manager;
+package persistence.manager;
 
-import model.User;
+import persistence.model.User;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -13,12 +13,15 @@ import java.util.Optional;
 @ApplicationScoped
 public class UserManager {
 
-    @Inject
     private EntityManager manager;
 
-    public UserManager() {
+    @Inject
+    public UserManager(EntityManager manager) {
+        this.manager = manager;
         System.out.println("Initiating User manager");
     }
+
+    public UserManager(){ }
 
     /* Method to CREATE an User in the database */
     public void addUser(String username, String password, String email, boolean isAdmin) throws ConstraintException {
