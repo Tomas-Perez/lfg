@@ -85,3 +85,15 @@ gretty {
     servletContainer = 'tomcat7'
 }
 
+task startTestDB {
+    doLast{
+        javaexec {
+            main ="-jar"
+            args =  [
+                    "./db/db-init.jar",
+                    "db/schemas/test",
+                    "test"
+            ]
+        }
+    }
+}
