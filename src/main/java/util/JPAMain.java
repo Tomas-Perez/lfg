@@ -16,8 +16,7 @@ public class JPAMain {
         emp.init();
         EntityManager em = emp.createEntityManager();
         UserManager manager = new UserManager(em);
-        manager.addUser("testerino", "123123", "teaetda", false);
-
+        System.out.println(manager.getByEmail("wewey@lfg.com").get());
         emp.closeEntityManager(em);
         emp.destroy();
 //        EntityManagerProducer emp = new EntityManagerProducer();

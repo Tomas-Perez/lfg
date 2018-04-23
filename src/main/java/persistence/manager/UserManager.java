@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +25,11 @@ public class UserManager {
     public UserManager(){ }
 
     /* Method to CREATE an User in the database */
-    public void addUser(String username, String password, String email, boolean isAdmin) throws ConstraintException {
+    public void addUser(
+            @NotNull String username,
+            @NotNull String password,
+            @NotNull String email,
+            boolean isAdmin) throws ConstraintException {
         EntityTransaction tx = manager.getTransaction();
 
         try {
@@ -42,14 +47,17 @@ public class UserManager {
         }
     }
 
-    /* Method to  READ all the Users */
-    public void listUsers(){
-        List<?> users = manager.createQuery("FROM User").getResultList();
-        users.forEach(System.out::println);
+    /**
+     *
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public List<User> listUsers(){
+        return manager.createQuery("FROM User").getResultList();
     }
 
     /* Method to UPDATE password for an User */
-    public void updateUser(Integer userID, String password){
+    public void updateUser(int userID, @NotNull String password){
         EntityTransaction tx = manager.getTransaction();
 
         try {
@@ -63,8 +71,8 @@ public class UserManager {
         }
     }
 
-    /* Method to DELETE an User from the records */
-    public void deleteUser(Integer userID){
+
+    public void deleteUser(int userID){
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
@@ -77,8 +85,7 @@ public class UserManager {
         }
     }
 
-    public Optional<User> getByEmail(String email){
-        System.out.println(manager);
+    public Optional<User> getByEmail(@NotNull String email){
         List<User> users = manager.createQuery("FROM User U WHERE U.email = :email", User.class)
                 .setParameter("email", email)
                 .getResultList();

@@ -27,6 +27,10 @@ public class SignInResource {
     @Inject
     private AuthenticationTokenService authenticationTokenService;
 
+    public SignInResource() {
+        System.out.println("Sign-in resource created");
+    }
+
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String getIt() {

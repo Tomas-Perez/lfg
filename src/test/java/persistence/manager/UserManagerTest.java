@@ -3,12 +3,14 @@ package persistence.manager;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.gradle.archive.importer.embedded.EmbeddedGradleImporter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import persistence.model.User;
+
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 
 import javax.inject.Inject;
 
@@ -51,6 +53,36 @@ public class UserManagerTest {
         Optional<User> optional = manager.getByEmail(email);
         assertTrue(optional.isPresent());
         manager.deleteUser(optional.get().getUserId());
+    }
+
+    @Test
+    public void changePass(){
+        String email = "aylmaotest@mail.com";
+        String pass = "123123";
+        manager.addUser(
+                "testUser",
+                pass,
+                email,
+                true
+        );
+
+        String newPass = "123456";
+
+        Optional<User> optional = manager.getByEmail(email);
+        User user = optional.orElseThrow(() -> new RuntimeException("No user"));
+        assertThat(user.getPassword(), is(pass));
+        assertThat(user.getPassword(), is(not(newPass)));
+
+
+        manager.updateUser(user.getUserId(), newPass);
+
+        optional = manager.getByEmail(email);
+        user = optional.orElseThrow(() -> new RuntimeException("No user"));
+
+        assertThat(user.getPassword(), is(not(pass)));
+        assertThat(user.getPassword(), is(newPass));
+
+        manager.deleteUser(user.getUserId());
     }
 
 }

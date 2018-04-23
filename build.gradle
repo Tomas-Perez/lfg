@@ -38,7 +38,8 @@ dependencies {
             junit:                      '4.12',
             tomcat:                     '1.0.1.Final',
             arquillian:                 '1.4.0.Final',
-            shrinkWrapResolverGradle:   '3.1.3'
+            shrinkWrapResolverGradle:   '3.1.3',
+            arquillianRestClient:      '1.0.0.Alpha4'
     ]
 
     compile "org.jetbrains:annotations:${libraryVersions.annotations}"
@@ -70,6 +71,7 @@ dependencies {
     testCompile "org.jboss.arquillian.protocol:arquillian-protocol-servlet:${libraryVersions.arquillian}"
     testCompile "org.jboss.arquillian.container:arquillian-tomcat-managed-7:${libraryVersions.tomcat}"
     testCompile "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-gradle-depchain:${libraryVersions.shrinkWrapResolverGradle}"
+    testCompile "org.jboss.arquillian.extension:arquillian-rest-client-impl-jersey:${libraryVersions.arquillianRestClient}"
 }
 
 test {

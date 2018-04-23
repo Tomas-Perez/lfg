@@ -16,7 +16,7 @@ public class Activity {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @ManyToOne(optional = false)

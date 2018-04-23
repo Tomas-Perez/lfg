@@ -13,7 +13,7 @@ import java.io.PrintWriter;
 public class DBInit {
 
     public static void main(String[] args) throws Exception{
-        init(Database.PROD);
+        init(Database.TEST);
     }
 
     public static void init(Database db) throws Exception {
