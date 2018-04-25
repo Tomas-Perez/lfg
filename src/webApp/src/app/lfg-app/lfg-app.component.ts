@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import * as SimpleBar from 'simplebar';
+import 'SimpleBar';
 
 @Component({
   selector: 'app-lfg-app',
@@ -8,12 +8,9 @@ import * as SimpleBar from 'simplebar';
 })
 export class LfgAppComponent implements OnInit {
 
-  bar: any;
-
   constructor() { }
 
   ngOnInit() {
-    this.bar = new SimpleBar(<HTMLElement>document.querySelector('.scrollable'), { autoHide: true });
   }
 
 }

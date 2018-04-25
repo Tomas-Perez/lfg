@@ -68,6 +68,10 @@
 
 
 .chat-wrapper{
+  background-color: #202225;
+  -webkit-box-shadow: 0 -1px 0 rgba(0,0,0,.1);
+  box-shadow: 0 -1px 0 rgba(0,0,0,.1);
+  border-top: solid 1px #343a40;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -81,17 +85,14 @@
   display: flex;
   flex-shrink: 0;
   flex-direction: column;
-  -webkit-box-shadow: 0 -1px 0 rgba(0,0,0,.1);
   -ms-flex-direction: column;
   -webkit-box-direction: normal;
   -webkit-box-orient: vertical;
-  box-shadow: 0 -1px 0 rgba(0,0,0,.1);
   display: -webkit-box;
   display: -ms-flexbox;
   display: -webkit-box;
   display: -ms-flexbox;
   position: relative;
-  border-top: solid 1px #343a40;
   height: 100%;
   width: 100%;
 }
