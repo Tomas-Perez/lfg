@@ -13,7 +13,6 @@ import { UserService } from './_services/user.service';
 import {httpInterceptorProviders} from './_http-interceptors/index';
 import { LfgAppComponent } from './lfg-app/lfg-app.component';
 
-
 @NgModule({
   declarations: [
     AppComponent,

@@ -29,7 +29,7 @@ h1{
 .auth-form-container{
    margin-top: 15vh;
    padding-top: 1.5rem;
-   background: rgba(40,43,48,.75)
+   background: rgba(40,43,48,.75);
  }
 
 .error{
