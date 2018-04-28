@@ -149,3 +149,4 @@ fabric.properties
 /db/demodb.properties
 
 !db-init.jar
+!tomcat

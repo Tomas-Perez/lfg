@@ -6,7 +6,7 @@
 
     <container qualifier="tomcat7" default="true">
         <configuration>
-            <property name="catalinaHome">${user.home}/tomcat</property>
+            <property name="catalinaHome">tomcat</property>
             <property name="user">arquillian</property>
             <property name="pass">arquillian</property>
         </configuration>
