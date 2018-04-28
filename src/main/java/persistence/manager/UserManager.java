@@ -1,5 +1,6 @@
 package persistence.manager;
 
+import org.jetbrains.annotations.NotNull;
 import persistence.model.User;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -7,7 +8,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,11 +25,11 @@ public class UserManager {
     public UserManager(){ }
 
     /* Method to CREATE an User in the database */
-    public void addUser(
-            @NotNull String username,
-            @NotNull String password,
-            @NotNull String email,
-            boolean isAdmin) throws ConstraintException {
+    public void addUser(@NotNull String username,
+                        @NotNull String password,
+                        @NotNull String email,
+                        boolean isAdmin) throws ConstraintException
+    {
         EntityTransaction tx = manager.getTransaction();
 
         try {
@@ -59,7 +59,6 @@ public class UserManager {
     /* Method to UPDATE password for an User */
     public void updateUser(int userID, @NotNull String password){
         EntityTransaction tx = manager.getTransaction();
-
         try {
             tx.begin();
             User user = manager.find(User.class, userID);
@@ -86,7 +85,8 @@ public class UserManager {
     }
 
     public Optional<User> getByEmail(@NotNull String email){
-        List<User> users = manager.createQuery("FROM User U WHERE U.email = :email", User.class)
+        List<User> users = manager
+                .createQuery("FROM User U WHERE U.email = :email", User.class)
                 .setParameter("email", email)
                 .getResultList();
         return users.stream().findFirst();

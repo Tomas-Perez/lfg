@@ -48,14 +48,19 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "chat_platform_id"))
     private Set<ChatPlatform> chatPlatforms;
 
-    public Post(String description, LocalDateTime date, Activity activity, User user, Group group, Set<GamePlatform> gamePlatforms, Set<ChatPlatform> chatPlatforms) {
+    public Post(String description, LocalDateTime date, Activity activity, User user) {
         this.description = description;
         this.date = date;
         this.activity = activity;
         this.user = user;
+    }
+
+    public Post(String description, LocalDateTime date, Group group) {
+        this.description = description;
+        this.date = date;
         this.group = group;
-        this.gamePlatforms = gamePlatforms;
-        this.chatPlatforms = chatPlatforms;
+        this.activity = group.getActivity();
+        this.user = group.getOwner();
     }
 
     public Post() {

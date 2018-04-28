@@ -42,13 +42,12 @@ public class Group {
             inverseJoinColumns = @JoinColumn(name = "member_id"))
     private Set<User> members;
 
-    public Group(int slots, Activity activity, User owner, ChatPlatform chatPlatform, GamePlatform gamePlatform, Set<User> members) {
+    public Group(int slots, Activity activity, User owner, ChatPlatform chatPlatform, GamePlatform gamePlatform) {
         this.slots = slots;
         this.activity = activity;
         this.owner = owner;
         this.chatPlatform = chatPlatform;
         this.gamePlatform = gamePlatform;
-        this.members = members;
     }
 
     public Group() {
@@ -108,6 +107,14 @@ public class Group {
 
     public void setMembers(Set<User> members) {
         this.members = members;
+    }
+
+    public void addMember(User member){
+        members.add(member);
+    }
+
+    public void removeMember(User member){
+        members.remove(member);
     }
 
     @Override
