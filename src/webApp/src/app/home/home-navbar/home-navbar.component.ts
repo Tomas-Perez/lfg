@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterLinkActive } from '@angular/router';
+import {AuthService} from '../../_services/auth.service';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'app-home-navbar',
@@ -9,10 +11,14 @@ import { RouterLinkActive } from '@angular/router';
 export class HomeNavbarComponent implements OnInit {
 
   navbarCollapsed = true;
+  isLoggedIn: Observable<boolean>;
 
-  constructor() { }
+  constructor(public authService: AuthService) {
+    this.isLoggedIn = this.authService.isLoggedIn();
+  }
 
   ngOnInit() {
+
   }
 
 }

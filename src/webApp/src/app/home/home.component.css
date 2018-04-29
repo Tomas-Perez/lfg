@@ -11,7 +11,7 @@ h1{
 }
 
 .auth-background{
-  background: url(/assets/backgrounds/sign-in.jpg) 50%;
+  background: url(/assets/backgrounds/sign-in.png) 50%;
   z-index: -1;
   background-size: cover;
   height: 100%;

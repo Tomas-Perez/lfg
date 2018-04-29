@@ -18,7 +18,6 @@ export class SignUpComponent implements OnInit {
   emailValid: boolean;
   emailTaken: boolean;
   passwordValid: boolean;
-  @ViewChild('signUpForm') form: FormGroup;
 
 
   constructor(private userService: UserService) { }
@@ -42,14 +41,13 @@ export class SignUpComponent implements OnInit {
     this.emailTaken = false;
   }
 
+  // TODO
   signUpUser(): void {
     this.userService.signUp(this.signUpInfo)
       .subscribe(response => {
         switch (response) {
           case SignUpStatus.success: {
-
-            //TODO sign in, route user
-            console.log('succcccccc');
+            // TODO sign in, route user
             break;
           }
           case SignUpStatus.emailTaken: {

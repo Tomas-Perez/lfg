@@ -1,22 +1,36 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
-import {catchError, map, tap} from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/empty';
+import 'rxjs/add/operator/share';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json'})
-};
 
 @Injectable()
 export class AuthService {
 
-  private authUrl = 'http://localhost:8080/sign-in';
-  private userMeUrl = 'http://localhost:8080/users/me';
+  private authUrl = 'http://localhost:8080/lfg/sign-in';
+  private userMeUrl = 'http://localhost:8080/lfg/users/me';
 
-  constructor(private http: HttpClient) { }
+  private loggedIn = false;
+  loggedIn$ = new BehaviorSubject<boolean>(this.loggedIn);
 
+  constructor(private http: HttpClient) {
+    if (this.tokenValid()) {
+      this.setLoggedIn(true);
+    }
+  }
+
+  tokenValid() {
+    return this.getAccessToken() != null; // TODO check expiration time
+  }
+
+  setLoggedIn(value: boolean) {
+    this.loggedIn$.next(value);
+    this.loggedIn = value;
+  }
 
   getAuthUrl(): string {
     return this.authUrl;
@@ -26,13 +40,16 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
+  isLoggedIn(): Observable<boolean> {
+    return this.loggedIn$.asObservable().share();
+  }
+
   /**
    * Authenticates user, saves token to localStorage.
    * @returns {Observable<boolean>}
    */
   authenticate(email: string, password: string): Observable<boolean> {
     return this.http.post<any>(this.authUrl, {email: email, password: password}, {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json'}),
       observe: 'response'
     })
       .pipe(
@@ -45,9 +62,9 @@ export class AuthService {
       );
   }
 
+  // TODO
   refreshToken(): Observable<any> {
     return Observable.empty();
-    // TODO
   }
 
   /**
@@ -57,7 +74,6 @@ export class AuthService {
     return this.http.get<any>(this.userMeUrl,
       {
         headers: new HttpHeaders({
-          'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + this.getAccessToken()
         }),
         observe: 'response'
@@ -66,16 +82,24 @@ export class AuthService {
         map(response => {
           console.log(response);
           localStorage.setItem('user', JSON.stringify(response.body));
+          this.setLoggedIn(true);
           return true;
         }),
-        catchError(err => Observable.of(false))
+        catchError(err => this.handleUserInfoError())
       );
   }
 
-  // TODO
+  handleUserInfoError(): Observable<boolean> {
+    console.log('User info retrieval error');
+    this.logout();
+    return Observable.of(false);
+  }
+
   logout() {
+    console.log('logging out');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    this.setLoggedIn(false);
   }
 
 }

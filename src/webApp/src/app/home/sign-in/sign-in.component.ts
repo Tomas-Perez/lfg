@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {AuthService} from '../../_services/auth.service';
 import {User} from '../../_models/User';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-sign-in',
@@ -17,7 +18,7 @@ export class SignInComponent implements OnInit {
   emailValid: boolean;
   passwordValid: boolean;
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
     this.formValid = false;
@@ -30,7 +31,8 @@ export class SignInComponent implements OnInit {
    */
   verifyCredentials(): void {
     this.authService.authenticate(this.emailInput, this.passwordInput)
-      .subscribe(correct => {
+      .subscribe(
+        correct => {
         console.log(correct);
         if (correct) {
           console.log('Credentials correct');
@@ -51,14 +53,13 @@ export class SignInComponent implements OnInit {
         .subscribe(valid => {
           console.log(valid);
             if (valid) {
-              // TODO reroute user
+              this.router.navigate(['/app']);
             } else {
-            this.notifyError();
+              this.notifyError(); // TODO notify SERVER error, not users fault.
             }
         });
     }
 
-  // TODO actually log in
   signIn(user: User): void {
     console.log(
       'LOGGED IN\n' +

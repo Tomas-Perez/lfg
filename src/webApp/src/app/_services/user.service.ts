@@ -8,7 +8,7 @@ import {SignUpStatus} from '../_models/SignUpStatus';
 @Injectable()
 export class UserService {
 
-  private signUpUrl = 'http://localhost:8080/sign-up';
+  private signUpUrl = 'http://localhost:8080/lfg/sign-up';
 
   constructor(private http: HttpClient) { }
 
@@ -26,6 +26,7 @@ export class UserService {
       );
   }
 
+  // TODO signUpErrors
   private signUpErrorHandle(err: any): Observable<SignUpStatus> {
     console.log(err);
     console.log(err.error.status);
