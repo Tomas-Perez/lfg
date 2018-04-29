@@ -1,13 +1,13 @@
 package persistence.manager;
 
 import org.jetbrains.annotations.NotNull;
+import persistence.manager.exception.ConstraintException;
 import persistence.model.Game;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceException;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,18 +26,15 @@ public class GameManager {
 
     public GameManager(){ }
 
-    public void addGame(@NotNull String name, String image){
-        EntityTransaction tx = manager.getTransaction();
+    public void addGame(@NotNull String name, String image) throws ConstraintException {
+        checkValidCreation(name);
 
+        EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
             Game game = new Game(name, image);
             manager.persist(game);
             tx.commit();
-        } catch (PersistenceException e){
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-            throw new ConstraintException(e);
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
@@ -46,8 +43,10 @@ public class GameManager {
 
     public void updateGame(int gameID,
                            @NotNull String name,
-                           String image)
+                           String image)  throws ConstraintException
     {
+        checkValidCreation(name);
+
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
@@ -55,10 +54,6 @@ public class GameManager {
             game.setName(name);
             game.setImage(image);
             tx.commit();
-        } catch (PersistenceException e){
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-            throw new ConstraintException(e);
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
@@ -89,5 +84,28 @@ public class GameManager {
                 .setParameter("name", name)
                 .getResultList();
         return users.stream().findFirst();
+    }
+
+    private void checkValidCreation(@NotNull String name) throws ConstraintException{
+        if(gameExists(name)) throw new ConstraintException(name);
+    }
+
+    public boolean gameExists(@NotNull String name){
+        return manager
+                .createQuery("SELECT 1 FROM Game G WHERE G.name = :name")
+                .setParameter("name", name)
+                .getResultList().size() > 0;
+    }
+
+    public void wipeAllRecords(){
+        EntityTransaction tx = manager.getTransaction();
+        try {
+            tx.begin();
+            manager.createQuery("DELETE FROM Game").executeUpdate();
+            tx.commit();
+        } catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+        }
     }
 }

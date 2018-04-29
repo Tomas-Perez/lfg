@@ -1,6 +1,9 @@
 package persistence.model;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -48,6 +51,8 @@ public class Group {
         this.owner = owner;
         this.chatPlatform = chatPlatform;
         this.gamePlatform = gamePlatform;
+        this.members = new HashSet<>(this.slots);
+        this.members.add(owner);
     }
 
     public Group() {
@@ -109,12 +114,17 @@ public class Group {
         this.members = members;
     }
 
-    public void addMember(User member){
+    public void addMember(@NotNull User member){
+        if(full()) return;
         members.add(member);
     }
 
-    public void removeMember(User member){
+    public void removeMember(@NotNull User member){
         members.remove(member);
+    }
+
+    public boolean full(){
+        return members.size() == slots;
     }
 
     @Override

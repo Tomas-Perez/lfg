@@ -30,7 +30,7 @@ public class Post {
 
     @ManyToOne(optional = false)
     @JoinColumn(name="owner_id", referencedColumnName="id")
-    private User user;
+    private User owner;
 
     @ManyToOne
     @JoinColumn(name="group_id", referencedColumnName="id")
@@ -48,11 +48,11 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "chat_platform_id"))
     private Set<ChatPlatform> chatPlatforms;
 
-    public Post(String description, LocalDateTime date, Activity activity, User user) {
+    public Post(String description, LocalDateTime date, Activity activity, User owner) {
         this.description = description;
         this.date = date;
         this.activity = activity;
-        this.user = user;
+        this.owner = owner;
     }
 
     public Post(String description, LocalDateTime date, Group group) {
@@ -60,7 +60,7 @@ public class Post {
         this.date = date;
         this.group = group;
         this.activity = group.getActivity();
-        this.user = group.getOwner();
+        this.owner = group.getOwner();
     }
 
     public Post() {
@@ -98,12 +98,12 @@ public class Post {
         this.activity = activity;
     }
 
-    public User getUser() {
-        return user;
+    public User getOwner() {
+        return owner;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setOwner(User user) {
+        this.owner = user;
     }
 
     public Group getGroup() {
@@ -139,7 +139,7 @@ public class Post {
                 Objects.equals(description, post.description) &&
                 Objects.equals(date, post.date) &&
                 Objects.equals(activity, post.activity) &&
-                Objects.equals(user, post.user) &&
+                Objects.equals(owner, post.owner) &&
                 Objects.equals(group, post.group) &&
                 Objects.equals(gamePlatforms, post.gamePlatforms) &&
                 Objects.equals(chatPlatforms, post.chatPlatforms);
@@ -148,6 +148,6 @@ public class Post {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, description, date, activity, user, group, gamePlatforms, chatPlatforms);
+        return Objects.hash(id, description, date, activity, owner, group, gamePlatforms, chatPlatforms);
     }
 }

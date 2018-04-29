@@ -10,7 +10,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -41,10 +40,6 @@ public class PostManager {
             Post post = new Post(description, date, activity, owner);
             manager.persist(post);
             tx.commit();
-        } catch (PersistenceException e){
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-            throw new ConstraintException(e);
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
@@ -62,10 +57,6 @@ public class PostManager {
             Post post = new Post(description, date, group);
             manager.persist(post);
             tx.commit();
-        } catch (PersistenceException e){
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-            throw new ConstraintException(e);
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
@@ -88,5 +79,17 @@ public class PostManager {
     @SuppressWarnings("unchecked")
     public List<Post> listPosts(){
         return manager.createQuery("FROM Post").getResultList();
+    }
+
+    public void wipeAllRecords(){
+        EntityTransaction tx = manager.getTransaction();
+        try {
+            tx.begin();
+            manager.createQuery("DELETE FROM Post").executeUpdate();
+            tx.commit();
+        } catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+        }
     }
 }

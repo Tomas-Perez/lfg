@@ -1,6 +1,8 @@
 package persistence.manager;
 
 import org.jetbrains.annotations.NotNull;
+import persistence.manager.exception.ConstraintException;
+import persistence.manager.patcher.ActivityPatcher;
 import persistence.model.Activity;
 import persistence.model.Game;
 
@@ -8,7 +10,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceException;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +28,9 @@ public class ActivityManager {
 
     public ActivityManager(){ }
 
-    public void addActivity(@NotNull String name, @NotNull Game game){
+    public void addActivity(@NotNull String name, @NotNull Game game) throws ConstraintException {
+        checkValidCreation(name, game);
+
         EntityTransaction tx = manager.getTransaction();
 
         try {
@@ -35,28 +38,20 @@ public class ActivityManager {
             Activity activity = new Activity(name, game);
             manager.persist(activity);
             tx.commit();
-        } catch (PersistenceException e){
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-            throw new ConstraintException(e);
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
         }
     }
 
-    public void updateActivity(int activityID, @NotNull String name, @NotNull Game game){
+    public void updateActivity(int activityID, @NotNull ActivityPatcher patcher) throws ConstraintException{
+        Activity activity = manager.find(Activity.class, activityID);
+        checkValidUpdate(activity, patcher);
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
-            Activity activity = manager.find(Activity.class, activityID);
-            activity.setName(name);
-            activity.setGame(game);
+            patcher.patch(activity);
             tx.commit();
-        } catch (PersistenceException e){
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-            throw new ConstraintException(e);
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
@@ -77,15 +72,62 @@ public class ActivityManager {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Activity> listActivity(){
+    public Optional<Activity> getActivity(String name, Game game){
+        return manager
+                .createQuery("FROM Activity A WHERE A.name = :name AND A.game = :game")
+                .setParameter("name", name)
+                .setParameter("game", game)
+                .getResultList()
+                .stream()
+                .findFirst();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Activity> listActivities(){
         return manager.createQuery("FROM Activity").getResultList();
     }
 
-    public Optional<Activity> getByName(@NotNull String name){
-        List<Activity> users = manager
-                .createQuery("FROM Activity A WHERE A.name = :name", Activity.class)
+    public boolean activityExists(@NotNull String name, @NotNull Game game){
+        return manager
+                .createQuery("SELECT 1 FROM Activity A WHERE A.name = :name AND A.game = :game")
                 .setParameter("name", name)
-                .getResultList();
-        return users.stream().findFirst();
+                .setParameter("game", game)
+                .getResultList().size() > 0;
+    }
+
+    private void checkValidCreation(@NotNull String name, @NotNull Game game) throws ConstraintException{
+        if(activityExists(name, game)) throw new ConstraintException(String.format("%s for %s", name, game.getName()));
+    }
+
+    private void checkValidUpdate(@NotNull Activity activity, @NotNull ActivityPatcher patcher) throws ConstraintException {
+        String nameToCheck = null;
+        Game gameToCheck = null;
+        boolean check = false;
+        if (patcher.patchesGame()) {
+            gameToCheck = patcher.getGame();
+            check = true;
+        }
+        if (patcher.patchesName()){
+            nameToCheck = patcher.getName();
+            check = true;
+        }
+
+        if(check){
+            if(nameToCheck == null) nameToCheck = activity.getName();
+            if(gameToCheck == null) gameToCheck = activity.getGame();
+            checkValidCreation(nameToCheck, gameToCheck);
+        }
+    }
+
+    public void wipeAllRecords(){
+        EntityTransaction tx = manager.getTransaction();
+        try {
+            tx.begin();
+            manager.createQuery("DELETE FROM Activity").executeUpdate();
+            tx.commit();
+        } catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+        }
     }
 }

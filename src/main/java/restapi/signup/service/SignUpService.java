@@ -1,6 +1,6 @@
 package restapi.signup.service;
 
-import persistence.manager.ConstraintException;
+import persistence.manager.exception.ConstraintException;
 import persistence.manager.UserManager;
 import restapi.security.authentication.exception.AuthenticationException;
 

@@ -13,7 +13,7 @@ public class User {
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private int userId;
+    private int id;
 
     @Column(name = "username", unique = true, nullable = false)
     private String username;
@@ -46,12 +46,12 @@ public class User {
         this.admin = admin;
     }
 
-    public int getUserId() {
-        return userId;
+    public int getId() {
+        return id;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setId(int userId) {
+        this.id = userId;
     }
 
     public String getUsername() {
@@ -107,7 +107,7 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return userId == user.userId &&
+        return id == user.id &&
                 admin == user.admin &&
                 Objects.equals(username, user.username) &&
                 Objects.equals(password, user.password) &&
@@ -119,6 +119,6 @@ public class User {
     @Override
     public int hashCode() {
 
-        return Objects.hash(userId, username, password, email, admin, groups, games);
+        return Objects.hash(id, username, password, email, admin, groups, games);
     }
 }

@@ -8,7 +8,7 @@ import java.util.Objects;
  */
 
 @Entity
-@Table(name = "activity")
+@Table(name = "activity", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "game_id"}))
 public class Activity {
 
     @Id
