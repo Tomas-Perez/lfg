@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -73,6 +74,9 @@ public class UserManager {
             User user = manager.find(User.class, userID);
             manager.remove(user);
             tx.commit();
+        } catch (NullPointerException | IllegalArgumentException exc){
+            if (tx!=null) tx.rollback();
+            throw new NoSuchElementException();
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();

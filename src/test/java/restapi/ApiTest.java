@@ -8,13 +8,19 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Before;
 import persistence.manager.*;
+import restapi.activity.model.CreateActivityJSON;
+import restapi.game.model.CreateGameJSON;
 import restapi.security.authentication.model.AuthenticationToken;
 import util.ManagerUtil;
 import util.RequestUtil;
 
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 import java.net.URL;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Tomas Perez Molina
@@ -35,7 +41,7 @@ public abstract class ApiTest {
     }
 
     @ArquillianResource
-    private URL base;
+    protected URL base;
 
     @Before
     public void setup() throws Exception{
@@ -79,5 +85,21 @@ public abstract class ApiTest {
         userManager = new UserManager(emp.createEntityManager());
         userManager.wipeAllRecords();
         emp.destroy();
+    }
+
+    protected int addGame(WebTarget webTarget, String name){
+        final Response postResponse = RequestUtil.post(webTarget, token, new CreateGameJSON(name));
+        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        final String location = postResponse.getHeaderString("Location");
+        final WebTarget gameTarget = RequestUtil.newTarget(location);
+        return Integer.parseInt(RequestUtil.getRelativePathDiff(webTarget, gameTarget));
+    }
+
+    protected int addActivity(WebTarget webTarget, String name, int gameID){
+        final Response postResponse = RequestUtil.post(webTarget, token, new CreateActivityJSON(name, gameID));
+        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        final String location = postResponse.getHeaderString("Location");
+        final WebTarget gameTarget = RequestUtil.newTarget(location);
+        return Integer.parseInt(RequestUtil.getRelativePathDiff(webTarget, gameTarget));
     }
 }

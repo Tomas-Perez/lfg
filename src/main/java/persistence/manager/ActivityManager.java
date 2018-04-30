@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -66,6 +67,9 @@ public class ActivityManager {
             Activity activity = manager.find(Activity.class, activityID);
             manager.remove(activity);
             tx.commit();
+        } catch (NullPointerException | IllegalArgumentException exc){
+            if (tx!=null) tx.rollback();
+            throw new NoSuchElementException();
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();

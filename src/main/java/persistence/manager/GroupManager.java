@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * @author Tomas Perez Molina
@@ -81,6 +82,9 @@ public class GroupManager {
             Group group = manager.find(Group.class, groupID);
             manager.remove(group);
             tx.commit();
+        } catch (NullPointerException | IllegalArgumentException exc){
+            if (tx!=null) tx.rollback();
+            throw new NoSuchElementException();
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();

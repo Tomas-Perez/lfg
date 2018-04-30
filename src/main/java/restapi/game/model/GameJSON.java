@@ -3,6 +3,7 @@ package restapi.game.model;
 import persistence.model.Game;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -64,7 +65,7 @@ public class GameJSON {
         GameJSON gameJSON = (GameJSON) o;
         return id == gameJSON.id &&
                 Objects.equals(name, gameJSON.name) &&
-                Objects.equals(activities, gameJSON.activities);
+                new HashSet<>(activities).equals(new HashSet<>(gameJSON.activities));
     }
 
     @Override

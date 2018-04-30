@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * @author Tomas Perez Molina
@@ -74,6 +75,9 @@ public class PostManager {
             Post post = manager.find(Post.class, postID);
             manager.remove(post);
             tx.commit();
+        } catch (NullPointerException | IllegalArgumentException exc){
+            if (tx!=null) tx.rollback();
+            throw new NoSuchElementException();
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();

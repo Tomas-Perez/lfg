@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import persistence.model.Activity;
 import persistence.model.Game;
 import restapi.ApiTest;
+import restapi.activity.model.CreateActivityJSON;
 import restapi.game.model.ActivityJSON;
 import restapi.game.model.CreateGameJSON;
 import restapi.game.model.GameJSON;
@@ -92,6 +93,35 @@ public class GameResourceTest extends ApiTest {
     }
 
     @Test
+    public void updateGameExc(@ArquillianResteasyResource("games") final WebTarget webTarget) throws Exception{
+        final String overwatch = "Overwatch";
+        final Response postResponse = RequestUtil.post(webTarget, token, new CreateGameJSON(overwatch));
+
+        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+
+        final String location = postResponse.getHeaderString("Location");
+        final WebTarget gameTarget = RequestUtil.newTarget(location);
+
+        final String gow = "God of War";
+        RequestUtil.post(webTarget, token, new CreateGameJSON(gow));
+        final String image = "Dog";
+
+        final Response updateResponse = RequestUtil.post(gameTarget, token, new UpdateGameJSON(gow, image));
+
+        assertThat(updateResponse.getStatus(), is(Response.Status.CONFLICT.getStatusCode()));
+
+        final Response getResponse = RequestUtil.get(gameTarget, token);
+        assertThat(getResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
+
+        GameJSON actual = RequestUtil.parseResponse(getResponse, GameJSON.class);
+
+        final String id = RequestUtil.getRelativePathDiff(webTarget, gameTarget);
+        GameJSON expected = new GameJSON(Integer.parseInt(id), overwatch);
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
     public void getAll(@ArquillianResteasyResource("games") final WebTarget webTarget) throws Exception{
         final Response response = RequestUtil.get(webTarget, token);
 
@@ -121,13 +151,5 @@ public class GameResourceTest extends ApiTest {
         assertTrue(games2.contains(gameJSON1));
         assertTrue(games2.contains(gameJSON2));
         assertTrue(games2.contains(gameJSON3));
-    }
-
-    private int addGame(WebTarget webTarget, String name){
-        final Response postResponse = RequestUtil.post(webTarget, token, new CreateGameJSON(name));
-        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
-        final String location = postResponse.getHeaderString("Location");
-        final WebTarget gameTarget = RequestUtil.newTarget(location);
-        return Integer.parseInt(RequestUtil.getRelativePathDiff(webTarget, gameTarget));
     }
 }

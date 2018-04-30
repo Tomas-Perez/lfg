@@ -83,4 +83,9 @@ public class RequestUtil {
         final String difference = StringUtils.difference(path1, path2);
         return difference.substring(1);
     }
+
+    public static WebTarget newRelativeTarget(URL base, String path) throws Exception {
+        Client client = ClientBuilder.newClient();
+        return client.target(URI.create(new URL(base, path).toExternalForm()));
+    }
 }
