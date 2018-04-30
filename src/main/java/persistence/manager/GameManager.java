@@ -2,6 +2,7 @@ package persistence.manager;
 
 import org.jetbrains.annotations.NotNull;
 import persistence.manager.exception.ConstraintException;
+import persistence.manager.patcher.GamePatcher;
 import persistence.model.Game;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -9,6 +10,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -26,47 +28,50 @@ public class GameManager {
 
     public GameManager(){ }
 
-    public void addGame(@NotNull String name, String image) throws ConstraintException {
+    public int addGame(@NotNull String name, String image) throws ConstraintException {
         checkValidCreation(name);
-
+        Game game = new Game(name, image);
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
-            Game game = new Game(name, image);
             manager.persist(game);
             tx.commit();
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
         }
+        return game.getId();
     }
 
-    public void updateGame(int gameID,
-                           @NotNull String name,
-                           String image)  throws ConstraintException
+    public void updateGame(int gameID, GamePatcher patcher)  throws ConstraintException
     {
-        checkValidCreation(name);
+        checkValidUpdate(patcher);
 
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
             Game game = manager.find(Game.class, gameID);
-            game.setName(name);
-            game.setImage(image);
+            patcher.patch(game);
             tx.commit();
+        } catch (NullPointerException exc){
+            if (tx!=null) tx.rollback();
+            throw new NoSuchElementException();
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
         }
     }
 
-    public void deleteGame(int gameID){
+    public void deleteGame(int gameID) throws NoSuchElementException{
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
             Game game = manager.find(Game.class, gameID);
             manager.remove(game);
             tx.commit();
+        } catch (NullPointerException | IllegalArgumentException exc){
+            if (tx!=null) tx.rollback();
+            throw new NoSuchElementException();
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
@@ -90,6 +95,11 @@ public class GameManager {
         if(gameExists(name)) throw new ConstraintException(name);
     }
 
+    private void checkValidUpdate(@NotNull GamePatcher patcher){
+        if(patcher.patchesName())
+            checkValidCreation(patcher.getName());
+    }
+
     public boolean gameExists(@NotNull String name){
         return manager
                 .createQuery("SELECT 1 FROM Game G WHERE G.name = :name")
@@ -107,5 +117,9 @@ public class GameManager {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
         }
+    }
+
+    public Game getGame(int gameID){
+        return manager.find(Game.class, gameID);
     }
 }

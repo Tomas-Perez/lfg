@@ -48,11 +48,10 @@ public class Group {
     public Group(int slots, Activity activity, User owner, ChatPlatform chatPlatform, GamePlatform gamePlatform) {
         this.slots = slots;
         this.activity = activity;
-        this.owner = owner;
+        this.members = new HashSet<>(this.slots);
         this.chatPlatform = chatPlatform;
         this.gamePlatform = gamePlatform;
-        this.members = new HashSet<>(this.slots);
-        this.members.add(owner);
+        setOwner(owner);
     }
 
     public Group() {
@@ -87,7 +86,21 @@ public class Group {
     }
 
     public void setOwner(User owner) {
+        if(sameAsFormer(owner))
+            return;
+
+        User oldOwner = this.owner;
         this.owner = owner;
+
+        if(oldOwner != null)
+            oldOwner.removeFromGroup(this);
+
+        if(owner != null)
+            owner.addToGroup(this);
+    }
+
+    private boolean sameAsFormer(User newOwner){
+        return owner == null ? newOwner == null : owner.equals(newOwner);
     }
 
     public ChatPlatform getChatPlatform() {
@@ -116,11 +129,26 @@ public class Group {
 
     public void addMember(@NotNull User member){
         if(full()) return;
+
+        if(members.contains(member))
+            return;
+
         members.add(member);
+        member.addToGroup(this);
     }
 
     public void removeMember(@NotNull User member){
+        if(!members.contains(member))
+            return;
+
         members.remove(member);
+        member.removeFromGroup(this);
+        if(owner.equals(member)) {
+            if (!members.isEmpty())
+                owner = members.iterator().next();
+            else
+                owner = null;
+        }
     }
 
     public boolean full(){
@@ -132,18 +160,11 @@ public class Group {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Group group = (Group) o;
-        return id == group.id &&
-                slots == group.slots &&
-                Objects.equals(activity, group.activity) &&
-                Objects.equals(owner, group.owner) &&
-                Objects.equals(chatPlatform, group.chatPlatform) &&
-                Objects.equals(gamePlatform, group.gamePlatform) &&
-                Objects.equals(members, group.members);
+        return id == group.id;
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(id, slots, activity, owner, chatPlatform, gamePlatform, members);
+        return Objects.hash(id);
     }
 }

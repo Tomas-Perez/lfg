@@ -235,6 +235,32 @@ public class ActivityManagerTest {
         gameManager.wipeAllRecords();
     }
 
+    @Test
+    public void addsActivitiesToGame(){
+        activityManager.wipeAllRecords();
+        gameManager.wipeAllRecords();
+
+        String owName = "Overwatch";
+        Game ow = addGame(owName);
+
+        String ranked = "Ranked";
+        String casual = "Casual";
+        String ptr = "PTR";
+
+        addAllActivities(
+                new ActivityGamePair(ranked, ow),
+                new ActivityGamePair(casual, ow),
+                new ActivityGamePair(ptr, ow)
+        );
+
+        Game actualOw = gameManager.getByName(owName).get();
+
+        System.out.println(actualOw.getActivities());
+
+        activityManager.wipeAllRecords();
+        gameManager.wipeAllRecords();
+    }
+
     private List<Game> addAllGames(String... names){
         return Arrays.stream(names).map(this::addGame).collect(Collectors.toList());
     }

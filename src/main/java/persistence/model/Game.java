@@ -1,6 +1,7 @@
 package persistence.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -34,6 +35,9 @@ public class Game {
     public Game(String name, String image) {
         this.name = name;
         this.image = image;
+        this.activities = new HashSet<>();
+        this.gamePlatforms = new HashSet<>();
+        this.owners = new HashSet<>();
     }
 
     public Game() {
@@ -71,20 +75,58 @@ public class Game {
         this.activities = activities;
     }
 
+    public Set<GamePlatform> getGamePlatforms() {
+        return gamePlatforms;
+    }
+
+    public void setGamePlatforms(Set<GamePlatform> gamePlatforms) {
+        this.gamePlatforms = gamePlatforms;
+    }
+
+    public Set<User> getOwners() {
+        return owners;
+    }
+
+    public void setOwners(Set<User> owners) {
+        this.owners = owners;
+    }
+
+    public void addActivity(Activity activity){
+        if(activities.contains(activity))
+            return;
+
+        activities.add(activity);
+        activity.setGame(this);
+    }
+
+    public void removeActivity(Activity activity){
+        if(!activities.contains(activity))
+            return;
+
+        activities.remove(activity);
+        activity.setGame(null);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Game game = (Game) o;
-        return id == game.id &&
-                Objects.equals(name, game.name) &&
-                Objects.equals(image, game.image) &&
-                Objects.equals(activities, game.activities);
+        return id == game.id;
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, name, image, activities);
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Game{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", image='" + image + '\'' +
+                '}';
     }
 }

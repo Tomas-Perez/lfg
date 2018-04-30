@@ -8,6 +8,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import persistence.manager.exception.ConstraintException;
+import persistence.manager.patcher.GamePatcher;
 import persistence.model.Game;
 
 import javax.inject.Inject;
@@ -115,8 +116,11 @@ public class GameManagerTest {
         Game ow = manager.getByName(oldName).get();
 
         assertTrue(manager.gameExists(newName));
+
+        GamePatcher patcher = new GamePatcher.Builder().withName(newName).build();
+
         try {
-            manager.updateGame(ow.getId(), newName, null);
+            manager.updateGame(ow.getId(), patcher);
             fail();
         } catch (ConstraintException exc){
             assertThat(exc.getConstraintName(), is(newName));

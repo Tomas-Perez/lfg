@@ -8,10 +8,8 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import persistence.model.*;
-
 import javax.inject.Inject;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -69,16 +67,8 @@ public class GroupManagerTest {
         User user = addUser(username, password, email, admin);
 
         final int slots = 5;
-        final ChatPlatform chatPlatform = null;
-        final GamePlatform gamePlatform = null;
 
-        groupManager.addGroup(slots, ranked, user, chatPlatform, gamePlatform);
-
-        List<Group> groups = groupManager.listGroups();
-
-        assertThat(groups.size(), is(1));
-
-        Group group = groups.get(0);
+        Group group = addGroup(slots, ranked, user);
 
         assertThat(group.getActivity(), is(ranked));
 

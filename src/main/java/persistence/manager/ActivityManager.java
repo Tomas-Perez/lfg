@@ -28,20 +28,21 @@ public class ActivityManager {
 
     public ActivityManager(){ }
 
-    public void addActivity(@NotNull String name, @NotNull Game game) throws ConstraintException {
+    public int addActivity(@NotNull String name, @NotNull Game game) throws ConstraintException {
         checkValidCreation(name, game);
-
+        Activity activity = new Activity(name, game);
         EntityTransaction tx = manager.getTransaction();
 
         try {
             tx.begin();
-            Activity activity = new Activity(name, game);
             manager.persist(activity);
             tx.commit();
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
         }
+
+        return activity.getId();
     }
 
     public void updateActivity(int activityID, @NotNull ActivityPatcher patcher) throws ConstraintException{
@@ -129,5 +130,9 @@ public class ActivityManager {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
         }
+    }
+
+    public Activity getActivity(int activityID){
+        return manager.find(Activity.class, activityID);
     }
 }

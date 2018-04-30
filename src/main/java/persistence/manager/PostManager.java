@@ -28,39 +28,43 @@ public class PostManager {
 
     public PostManager(){ }
 
-    public void addPost(String description,
+    public int addPost(String description,
                         @NotNull LocalDateTime date,
                         Activity activity,
                         @NotNull User owner)
     {
         EntityTransaction tx = manager.getTransaction();
+        Post post = new Post(description, date, activity, owner);
 
         try {
             tx.begin();
-            Post post = new Post(description, date, activity, owner);
             manager.persist(post);
             tx.commit();
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
         }
+
+        return post.getId();
     }
 
-    public void addGroupPost(String description,
+    public int addGroupPost(String description,
                              @NotNull LocalDateTime date,
                              @NotNull Group group)
     {
         EntityTransaction tx = manager.getTransaction();
+        Post post = new Post(description, date, group);
 
         try {
             tx.begin();
-            Post post = new Post(description, date, group);
             manager.persist(post);
             tx.commit();
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
         }
+
+        return post.getId();
     }
 
     public void deletePost(int postID){
@@ -91,5 +95,9 @@ public class PostManager {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
         }
+    }
+
+    public Post getPost(int postID){
+        return manager.find(Post.class, postID);
     }
 }

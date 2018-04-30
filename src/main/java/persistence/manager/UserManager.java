@@ -25,23 +25,25 @@ public class UserManager {
 
     public UserManager(){ }
 
-    public void addUser(@NotNull String username,
+    public int addUser(@NotNull String username,
                         @NotNull String password,
                         @NotNull String email,
                         boolean isAdmin) throws ConstraintException
     {
         checkValidCreation(username, email);
         EntityTransaction tx = manager.getTransaction();
+        User user = new User(username, password, email, isAdmin);
 
         try {
             tx.begin();
-            User user = new User(username, password, email, isAdmin);
             manager.persist(user);
             tx.commit();
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
         }
+
+        return user.getId();
     }
 
     @SuppressWarnings("unchecked")
@@ -122,5 +124,9 @@ public class UserManager {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
         }
+    }
+
+    public User getUser(int userID){
+        return manager.find(User.class, userID);
     }
 }

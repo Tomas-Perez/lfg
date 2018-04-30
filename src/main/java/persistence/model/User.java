@@ -1,6 +1,7 @@
 package persistence.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -44,6 +45,8 @@ public class User {
         this.password = password;
         this.email = email;
         this.admin = admin;
+        this.groups = new HashSet<>();
+        this.games = new HashSet<>();
     }
 
     public int getId() {
@@ -102,23 +105,32 @@ public class User {
         this.games = games;
     }
 
+    public void removeFromGroup(Group group){
+        if(!groups.contains(group))
+            return;
+
+        groups.remove(group);
+        group.removeMember(this);
+    }
+
+    public void addToGroup(Group group){
+        if(groups.contains(group))
+            return;
+
+        groups.add(group);
+        group.addMember(this);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id &&
-                admin == user.admin &&
-                Objects.equals(username, user.username) &&
-                Objects.equals(password, user.password) &&
-                Objects.equals(email, user.email) &&
-                Objects.equals(groups, user.groups) &&
-                Objects.equals(games, user.games);
+        return id == user.id;
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(id, username, password, email, admin, groups, games);
+        return Objects.hash(id);
     }
 }

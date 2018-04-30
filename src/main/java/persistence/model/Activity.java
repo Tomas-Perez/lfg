@@ -1,5 +1,7 @@
 package persistence.model;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -44,12 +46,26 @@ public class Activity {
     }
 
     public void setGame(Game game) {
+        if(sameAsFormer(game))
+            return;
+
+        Game oldGame = this.game;
         this.game = game;
+
+        if(oldGame != null)
+            oldGame.removeActivity(this);
+
+        if(game != null)
+            game.addActivity(this);
+    }
+
+    private boolean sameAsFormer(Game newGame){
+        return game == null ? newGame == null : game.equals(newGame);
     }
 
     public Activity(String name, Game game) {
         this.name = name;
-        this.game = game;
+        setGame(game);
     }
 
     public Activity() {
@@ -60,14 +76,20 @@ public class Activity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Activity activity = (Activity) o;
-        return id == activity.id &&
-                Objects.equals(name, activity.name) &&
-                Objects.equals(game, activity.game);
+        return id == activity.id;
     }
 
     @Override
     public int hashCode() {
+        return Objects.hash(id);
+    }
 
-        return Objects.hash(id, name, game);
+    @Override
+    public String toString() {
+        return "Activity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", game=" + game.getName() +
+                '}';
     }
 }

@@ -2,6 +2,7 @@ package persistence.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -53,6 +54,8 @@ public class Post {
         this.date = date;
         this.activity = activity;
         this.owner = owner;
+        this.gamePlatforms = new HashSet<>();
+        this.chatPlatforms = new HashSet<>();
     }
 
     public Post(String description, LocalDateTime date, Group group) {
@@ -61,6 +64,8 @@ public class Post {
         this.group = group;
         this.activity = group.getActivity();
         this.owner = group.getOwner();
+        this.gamePlatforms = new HashSet<>();
+        this.chatPlatforms = new HashSet<>();
     }
 
     public Post() {
@@ -135,19 +140,11 @@ public class Post {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Post post = (Post) o;
-        return id == post.id &&
-                Objects.equals(description, post.description) &&
-                Objects.equals(date, post.date) &&
-                Objects.equals(activity, post.activity) &&
-                Objects.equals(owner, post.owner) &&
-                Objects.equals(group, post.group) &&
-                Objects.equals(gamePlatforms, post.gamePlatforms) &&
-                Objects.equals(chatPlatforms, post.chatPlatforms);
+        return id == post.id;
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(id, description, date, activity, owner, group, gamePlatforms, chatPlatforms);
+        return Objects.hash(id);
     }
 }
