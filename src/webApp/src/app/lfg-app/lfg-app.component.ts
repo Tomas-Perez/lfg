@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import 'SimpleBar';
+import {User} from '../_models/User';
+import {UserService} from '../_services/user.service';
 
 @Component({
   selector: 'app-lfg-app',
@@ -8,9 +10,15 @@ import 'SimpleBar';
 })
 export class LfgAppComponent implements OnInit {
 
-  constructor() { }
+  user: User;
+
+  constructor(private userService: UserService) { }
 
   ngOnInit() {
+    this.userService.getCurrentUser().subscribe(
+      user => {
+        this.user = user;
+      });
   }
 
 }

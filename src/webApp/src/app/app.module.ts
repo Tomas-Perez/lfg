@@ -8,8 +8,8 @@ import {HomeModule} from './home/home.module';
 import { UserService } from './_services/user.service';
 import {httpInterceptorProviders} from './_http-interceptors/index';
 import {LfgAppModule} from './lfg-app/lfg-app.module';
-import {AuthUserGuardService} from './_services/auth-user-guard.service';
-import {UnauthUserGuardService} from './_services/unauth-user-guard.service';
+import {AuthUserGuardService} from './_services/guards/auth-user-guard.service';
+import {UnauthUserGuardService} from './_services/guards/unauth-user-guard.service';
 
 @NgModule({
   declarations: [

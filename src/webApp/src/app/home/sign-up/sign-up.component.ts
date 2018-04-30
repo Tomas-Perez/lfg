@@ -1,8 +1,7 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {SignUpInfo} from '../../_models/json/SignUpInfo';
+import {Component, OnInit} from '@angular/core';
 import {UserService} from '../../_services/user.service';
 import {SignUpStatus} from '../../_models/SignUpStatus';
-import {FormGroup} from '@angular/forms';
+import {User} from '../../_models/User';
 
 @Component({
   selector: 'app-sign-up',
@@ -10,8 +9,7 @@ import {FormGroup} from '@angular/forms';
   styleUrls: ['./sign-up.component.css', '../home.component.css']
 })
 export class SignUpComponent implements OnInit {
-
-  signUpInfo: SignUpInfo;
+  signUpInfo: User;
   formValid: boolean;
   usernameValid: boolean;
   usernameTaken: boolean;
@@ -23,7 +21,7 @@ export class SignUpComponent implements OnInit {
   constructor(private userService: UserService) { }
 
   ngOnInit() {
-    this.signUpInfo = new SignUpInfo;
+    this.signUpInfo = new User;
     this.formValid = false;
     this.usernameValid = true;
     this.usernameTaken = false;

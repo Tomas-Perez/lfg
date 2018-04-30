@@ -1,11 +1,16 @@
 import { Injectable } from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
+import {
+  ActivatedRouteSnapshot, CanActivate,
+  Router, RouterStateSnapshot
+} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
-import {AuthService} from './auth.service';
+import {AuthService} from '../auth.service';
+import 'rxjs/add/operator/take';
 import {map} from 'rxjs/operators';
 
+
 @Injectable()
-export class UnauthUserGuardService implements CanActivate {
+export class AuthUserGuardService implements CanActivate {
 
   constructor(private authService: AuthService, private router: Router) { }
 
@@ -14,14 +19,13 @@ export class UnauthUserGuardService implements CanActivate {
       map(
         b => {
           if (b) {
-            this.router.navigate(['/home']);
-            return false;
-          } else {
             return true;
+          } else {
+            this.router.navigate(['/home/sign-in']);
+            return false;
           }
         }
       )
     );
   }
-
 }

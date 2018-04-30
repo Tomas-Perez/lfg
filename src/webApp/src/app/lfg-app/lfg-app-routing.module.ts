@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {LfgAppComponent} from './lfg-app.component';
-import {AuthUserGuardService} from '../_services/auth-user-guard.service';
+import {AuthUserGuardService} from '../_services/guards/auth-user-guard.service';
 
 const routes: Routes = [
   { path: 'app', component: LfgAppComponent, canActivate: [AuthUserGuardService]}

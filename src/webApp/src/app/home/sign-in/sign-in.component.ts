@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {AuthService} from '../../_services/auth.service';
 import {User} from '../../_models/User';
-import {Router} from "@angular/router";
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-sign-in',
@@ -50,9 +50,9 @@ export class SignInComponent implements OnInit {
    */
   private getUserInfo(): void {
       this.authService.getCurrentUserInfo()
-        .subscribe(valid => {
-          console.log(valid);
-            if (valid) {
+        .subscribe(user => {
+          console.log(user);
+            if (user != null) {
               this.router.navigate(['/app']);
             } else {
               this.notifyError(); // TODO notify SERVER error, not users fault.
@@ -66,8 +66,8 @@ export class SignInComponent implements OnInit {
       'Username: ' + user.username + '\n' +
       'Password: ' + user.password + '\n' +
       'Email: ' + user.email + '\n' +
-      'UserId: ' + user.userId + '\n' +
-      'isAdmin: ' + user.isadmin);
+      'UserId: ' + user.id + '\n' +
+      'isAdmin: ' + user.admin);
   }
 
   notifyError(): void {

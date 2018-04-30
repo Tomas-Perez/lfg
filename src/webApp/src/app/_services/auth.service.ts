@@ -6,13 +6,17 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/empty';
 import 'rxjs/add/operator/share';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {User} from '../_models/User';
+import {JsonConvert} from 'json2typescript';
 
 
 @Injectable()
 export class AuthService {
 
-  private authUrl = 'http://localhost:8080/lfg/sign-in';
+  static authUrl = 'http://localhost:8080/lfg/sign-in';
   private userMeUrl = 'http://localhost:8080/lfg/users/me';
+
+  private jsonConvert: JsonConvert = new JsonConvert();
 
   private loggedIn = false;
   loggedIn$ = new BehaviorSubject<boolean>(this.loggedIn);
@@ -20,6 +24,8 @@ export class AuthService {
   constructor(private http: HttpClient) {
     if (this.tokenValid()) {
       this.setLoggedIn(true);
+    } else {
+      this.logout();
     }
   }
 
@@ -30,10 +36,6 @@ export class AuthService {
   setLoggedIn(value: boolean) {
     this.loggedIn$.next(value);
     this.loggedIn = value;
-  }
-
-  getAuthUrl(): string {
-    return this.authUrl;
   }
 
   getAccessToken(): string {
@@ -49,7 +51,7 @@ export class AuthService {
    * @returns {Observable<boolean>}
    */
   authenticate(email: string, password: string): Observable<boolean> {
-    return this.http.post<any>(this.authUrl, {email: email, password: password}, {
+    return this.http.post<any>(AuthService.authUrl, {email: email, password: password}, {
       observe: 'response'
     })
       .pipe(
@@ -70,7 +72,7 @@ export class AuthService {
   /**
    * Retrieves the user with the current local storage token and saves it to local storage.
     */
-  getCurrentUserInfo(): Observable<boolean> {
+  getCurrentUserInfo(): Observable<User> {
     return this.http.get<any>(this.userMeUrl,
       {
         headers: new HttpHeaders({
@@ -80,17 +82,38 @@ export class AuthService {
       })
       .pipe(
         map(response => {
-          console.log(response);
-          localStorage.setItem('user', JSON.stringify(response.body));
+          const userS = JSON.stringify(response.body);
+          localStorage.setItem('user', userS);
           this.setLoggedIn(true);
-          return true;
+          return this.jsonConvert.deserialize(response.body, User);
         }),
         catchError(err => this.handleUserInfoError())
       );
   }
 
-  handleUserInfoError(): Observable<boolean> {
+  handleUserInfoError(): Observable<User> {
     console.log('User info retrieval error');
+    this.logout();
+    return Observable.of(null);
+  }
+
+  authAdmin(): Observable<boolean> {
+    return this.http.get<any>(this.userMeUrl,
+      {
+        headers: new HttpHeaders({
+          'Authorization': 'Bearer ' + this.getAccessToken()
+        }),
+        observe: 'response'
+      })
+      .pipe(
+        map(response => {
+          return response.body.admin;
+        }),
+        catchError(err => this.handleAdminAuthError())
+      );
+  }
+
+  private handleAdminAuthError() {
     this.logout();
     return Observable.of(false);
   }

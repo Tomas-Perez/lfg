@@ -16,7 +16,7 @@ export class ContentTypeInterceptor implements HttpInterceptor {
   private addContentTypeHeader(request: HttpRequest<any>) {
     return request.clone({
         setHeaders: {
-          ContentType: 'application/json'
+          ContentType: 'application/info'
         }
     });
   }

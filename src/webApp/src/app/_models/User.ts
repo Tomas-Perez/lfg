@@ -1,7 +1,20 @@
+import {JsonObject, JsonProperty} from 'json2typescript';
+
+@JsonObject
 export class User {
-  userId?: number;
-  username: string;
-  email: string;
-  password: string;
-  isadmin?: boolean;
+
+  @JsonProperty('id', Number, true)
+  id?: number = undefined;
+
+  @JsonProperty('username', String)
+  username: string = undefined;
+
+  @JsonProperty('email', String)
+  email: string = undefined;
+
+  @JsonProperty('password', String, true)
+  password?: string = undefined;
+
+  @JsonProperty('admin', Boolean, true)
+  admin?: boolean = undefined;
 }

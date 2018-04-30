@@ -59,6 +59,10 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
+    if (request.url === AuthService.authUrl) {
+      next.handle(request);
+    }
+
     this.authService = this.injector.get(AuthService);
     console.log('intercepted request:');
     console.log(request);
@@ -84,7 +88,6 @@ export class AuthInterceptor implements HttpInterceptor {
             return Observable.empty();
           });
       }
-
       return Observable.throw(error);
     });
   }
