@@ -36,6 +36,7 @@ public abstract class ApiTest {
     private GameManager gameManager;
     private ActivityManager activityManager;
     private GroupManager groupManager;
+    private PostManager postManager;
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
@@ -52,6 +53,7 @@ public abstract class ApiTest {
     protected WebTarget gamesTarget;
     protected WebTarget activitiesTarget;
     protected WebTarget groupsTarget;
+    protected WebTarget postsTarget;
     protected WebTarget signInTarget;
     protected WebTarget signUpTarget;
     protected WebTarget usersTarget;
@@ -62,6 +64,8 @@ public abstract class ApiTest {
     public void setup() throws Exception{
         emp = new EntityManagerProducer();
         emp.init();
+        postManager = new PostManager(emp.createEntityManager());
+        postManager.wipeAllRecords();
         groupManager = new GroupManager(emp.createEntityManager());
         groupManager.wipeAllRecords();
         userManager = new UserManager(emp.createEntityManager());
@@ -91,6 +95,7 @@ public abstract class ApiTest {
         gamesTarget = RequestUtil.newRelativeTarget(base, "games");
         activitiesTarget = RequestUtil.newRelativeTarget(base, "activities");
         groupsTarget = RequestUtil.newRelativeTarget(base, "groups");
+        postsTarget = RequestUtil.newRelativeTarget(base, "posts");
         signInTarget = RequestUtil.newRelativeTarget(base, "sign-in");
         signUpTarget = RequestUtil.newRelativeTarget(base, "sign-up");
         usersTarget = RequestUtil.newRelativeTarget(base, "users");
@@ -99,6 +104,8 @@ public abstract class ApiTest {
 
     @After
     public void cleanUp(){
+        postManager = new PostManager(emp.createEntityManager());
+        postManager.wipeAllRecords();
         groupManager = new GroupManager(emp.createEntityManager());
         groupManager.wipeAllRecords();
         activityManager = new ActivityManager(emp.createEntityManager());
@@ -134,18 +141,28 @@ public abstract class ApiTest {
         return Integer.parseInt(RequestUtil.getRelativePathDiff(groupsTarget, groupTarget));
     }
 
-    protected int addUser(String username, String password, String email) throws Exception{
+    protected int addUser(String username, String password, String email){
         final Response signUpResponse = RequestUtil.post(signUpTarget, token, new SignUpJSON(email, password, username));
         assertThat(signUpResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
 
         final Response signInResponse = RequestUtil.post(signInTarget, token, new SignInJSON(email, password));
         assertThat(signUpResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
 
-        AuthenticationToken userToken = RequestUtil.parseResponse(signInResponse, AuthenticationToken.class);
+        AuthenticationToken userToken;
+        try {
+            userToken = RequestUtil.parseResponse(signInResponse, AuthenticationToken.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         final Response getUserResponse = RequestUtil.get(meTarget, userToken);
 
 
-        UserData userData = RequestUtil.parseResponse(getUserResponse, UserData.class);
+        UserData userData;
+        try {
+            userData = RequestUtil.parseResponse(getUserResponse, UserData.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         return userData.getId();
     }

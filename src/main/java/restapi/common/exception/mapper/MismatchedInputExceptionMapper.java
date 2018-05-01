@@ -22,6 +22,7 @@ public class MismatchedInputExceptionMapper implements ExceptionMapper<Mismatche
 
     @Override
     public Response toResponse(MismatchedInputException exception) {
+        System.out.println("JSON ERROR?");
         Response.Status status = Response.Status.BAD_REQUEST;
 
         ApiErrorDetails errorDetails = new ApiErrorDetails.Builder()

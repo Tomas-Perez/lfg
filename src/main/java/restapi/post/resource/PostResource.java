@@ -61,7 +61,9 @@ public class PostResource {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("id") int id){
+        System.out.println(id);
         Post post = service.getPost(id);
+        System.out.println(post);
         return Response.ok(new PostJSON(post)).build();
     }
 

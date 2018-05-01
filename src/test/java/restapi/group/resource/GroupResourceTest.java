@@ -17,6 +17,9 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
@@ -162,44 +165,94 @@ public class GroupResourceTest extends ApiTest {
         return new GroupJSON(id, slots, activityJSON, memberJSON, Collections.singletonList(memberJSON));
     }
     @Test
-    public void getAll(@ArquillianResteasyResource("groups") final WebTarget webTarget) throws Exception{
-//        final Response response = RequestUtil.get(webTarget, token);
-//
-//        assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
-//        List<GroupJSON> groups = RequestUtil.parseListResponse(response, GroupJSON.class);
-//
-//        assertTrue(groups.isEmpty());
-//
-//        Game game = ManagerUtil.addGame(gameManager, "God of war");
-//        Activity activity = ManagerUtil.addActivity(activityManager, "Campaign", game);
-//        User owner = ManagerUtil.addUser(userManager, "owner", "123", "owner@mail.com", true);
-//        User member1 = ManagerUtil.addUser(userManager, "member1", "123", "member1@mail.com", false);
-//        User member2 = ManagerUtil.addUser(userManager, "member2", "123", "member2@mail.com", false);
-//
-//        groupManager = new GroupManager(emp.createEntityManager());
-//        Group group = ManagerUtil.addGroup(groupManager, 5, activity, userManager.getByEmail("owner@mail.com").get());
-//        assertNotNull(group);
-//        assertNotNull(groupManager);
-//        groupManager.addMemberToGroup(group.getId(), member1);
-//        groupManager.addMemberToGroup(group.getId(), member2);
-//
-//        GameJSON gameJSON = new GameJSON(game);
-//        ActivityJSON activityJSON = new ActivityJSON(activity);
-//        MemberJSON ownerJSON = new MemberJSON(owner);
-//        MemberJSON member1JSON = new MemberJSON(member1);
-//        MemberJSON member2JSON = new MemberJSON(member2);
-//        GroupJSON groupJSON = new GroupJSON(group);
-//
-//        final Response response2 = RequestUtil.get(webTarget, token);
-//
-//        assertThat(response2.getStatus(), is(Response.Status.OK.getStatusCode()));
-//
-//        List<GroupJSON> groups2 = RequestUtil.parseListResponse(response2, GroupJSON.class);
-//
-//        assertFalse(groups2.isEmpty());
-//        assertTrue(groups2.contains(groupJSON));
-//
-//        GroupJSON actual = groups2.get(0);
-//        assertThat(actual, is(groupJSON));
+    public void getAll() throws Exception{
+        List<UserDetails> group1Members = Arrays.asList(
+                new UserDetails("member11", "132", "member11@mail.com"),
+                new UserDetails("member21", "132", "member21@mail.com"),
+                new UserDetails("member31", "132", "member31@mail.com"),
+                new UserDetails("member41", "132", "member41@mail.com")
+        );
+        GroupJSON group1 = fullExpected("Overwatch1", "Ranked1", new UserDetails("owner1", "123", "owner1@mail.com"), group1Members);
+
+        List<UserDetails> group2Members = Arrays.asList(
+                new UserDetails("member12", "132", "member12@mail.com"),
+                new UserDetails("member22", "132", "member22@mail.com"),
+                new UserDetails("member32", "132", "member32@mail.com"),
+                new UserDetails("member42", "132", "member42@mail.com")
+        );
+        GroupJSON group2 = fullExpected("Overwatch2", "Ranked2", new UserDetails("owner2", "123", "owner2@mail.com"), group2Members);
+
+        List<UserDetails> group3Members = Arrays.asList(
+                new UserDetails("member13", "132", "member13@mail.com"),
+                new UserDetails("member23", "132", "member23@mail.com"),
+                new UserDetails("member33", "132", "member33@mail.com"),
+                new UserDetails("member43", "132", "member43@mail.com")
+        );
+        GroupJSON group3 = fullExpected("Overwatch3", "Ranked3", new UserDetails("owner3", "123", "owner3@mail.com"), group3Members);
+
+        final Response getAllResponse = RequestUtil.get(groupsTarget, token);
+        List<GroupJSON> actual = RequestUtil.parseListResponse(getAllResponse, GroupJSON.class);
+
+        assertFalse(actual.isEmpty());
+        assertThat(actual.size(), is(3));
+        assertTrue(actual.contains(group1));
+        assertTrue(actual.contains(group2));
+        assertTrue(actual.contains(group3));
+    }
+
+    public GroupJSON fullExpected(String gameName, String activityName, UserDetails owner, List<UserDetails> members) throws Exception{
+        int gameID = addGame(gameName);
+        int activityID = addActivity(activityName, gameID);
+        int ownerID = addUser(owner.getUsername(), owner.getPassword(), owner.getEmail());
+        List<MemberJSON> membersJSON = members.stream().map(this::userDetailToMemberJSON).collect(Collectors.toList());
+        List<AddMemberJSON> addMemberJSONS = membersJSON.stream().map(memberJSON -> new AddMemberJSON(memberJSON.getId())).collect(Collectors.toList());
+        final int slots = 5;
+        int groupID = addGroup(slots, activityID, ownerID);
+
+        WebTarget groupMembersTarget = RequestUtil.newRelativeTarget(base, String.format("groups/%d/members", groupID));
+
+        addMemberJSONS.forEach(addMemberJSON -> RequestUtil.post(groupMembersTarget, token, addMemberJSON));
+
+        GroupJSON expected = createExpectedJSON(
+                gameID, gameName,
+                activityID, activityName,
+                ownerID, owner.getUsername(),
+                groupID, slots
+        );
+
+        membersJSON.add(new MemberJSON(ownerID, owner.getUsername()));
+
+        expected.setMembers(membersJSON);
+
+        return expected;
+    }
+
+    private MemberJSON userDetailToMemberJSON(UserDetails details){
+        int id = addUser(details.getUsername(), details.getPassword(), details.getEmail());
+        return new MemberJSON(id, details.getUsername());
+    }
+
+    private class UserDetails{
+        String username;
+        String password;
+        String email;
+
+        public UserDetails(String username, String password, String email) {
+            this.username = username;
+            this.password = password;
+            this.email = email;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public String getEmail() {
+            return email;
+        }
     }
 }

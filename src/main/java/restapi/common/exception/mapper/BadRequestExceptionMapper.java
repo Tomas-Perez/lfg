@@ -24,6 +24,7 @@ public class BadRequestExceptionMapper implements ExceptionMapper<BadRequestExce
     @Override
     public Response toResponse(BadRequestException exception) {
         Response.Status status = Response.Status.BAD_REQUEST;
+        System.out.println("MAPPING something");
 
         ApiErrorDetails errorDetails = new ApiErrorDetails.Builder()
                 .withStatus(status.getStatusCode())
