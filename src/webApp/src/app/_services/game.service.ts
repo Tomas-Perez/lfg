@@ -5,6 +5,7 @@ import {catchError, map} from 'rxjs/operators';
 import {Game} from '../_models/Game';
 import {JsonConvert} from 'json2typescript';
 import {DbGame} from '../_models/DbGame';
+import {DbActivity} from '../_models/DbActivity';
 
 @Injectable()
 export class GameService {
@@ -16,16 +17,17 @@ export class GameService {
   constructor(private http: HttpClient) {
     this.games = this.requestGames();
 
-    console.log('asdf');
     const game = new DbGame();
     game.name = 'testGame';
     this.newGame(game).subscribe();
   }
 
   gameToDbGame(game: Game): DbGame {
-    const dbGame = game;
+    const dbGame = new DbGame();
+    dbGame.name = game.name;
     return dbGame;
   }
+
 
   newGame(game: DbGame): Observable<boolean> {
 
