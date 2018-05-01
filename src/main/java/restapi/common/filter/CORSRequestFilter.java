@@ -25,7 +25,6 @@ public class CORSRequestFilter implements ContainerRequestFilter {
                     .header("Access-Control-Allow-Credentials", "true")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
                     .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With")
-                    .header("Access-Control-Expose-Headers", "Location")
                     .build();
             requestContext.abortWith(r);
         }
