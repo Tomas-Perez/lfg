@@ -20,12 +20,7 @@ public class CORSRequestFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext){
         if ("OPTIONS".equals(requestContext.getRequest().getMethod())) {
-            Response r = Response.ok()
-                    .header("Access-Control-Allow-Origin", "*")
-                    .header("Access-Control-Allow-Credentials", "true")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                    .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With")
-                    .build();
+            Response r = Response.ok().build();
             requestContext.abortWith(r);
         }
     }
