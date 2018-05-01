@@ -6,13 +6,15 @@ import persistence.model.User;
  * @author Tomas Perez Molina
  */
 public class UserData {
+    private int id;
     private String username;
     private String email;
     private boolean isAdmin;
 
 
 
-    public UserData(String username, String email, boolean isAdmin) {
+    public UserData(int id, String username, String email, boolean isAdmin) {
+        this.id = id;
         this.username = username;
         this.email = email;
         this.isAdmin = isAdmin;
@@ -22,9 +24,18 @@ public class UserData {
     }
 
     public UserData(User user) {
+        this.id = user.getId();
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.isAdmin = user.isAdmin();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUsername() {

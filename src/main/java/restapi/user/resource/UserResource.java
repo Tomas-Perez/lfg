@@ -32,7 +32,6 @@ public class UserResource {
     @Path("me")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAuthenticatedUser() {
-
         Principal principal = securityContext.getUserPrincipal();
         System.out.println(principal.getName());
         User user = service.getUserByEmail(principal.getName());
