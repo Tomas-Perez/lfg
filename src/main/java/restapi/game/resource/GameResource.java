@@ -47,7 +47,7 @@ public class GameResource {
     public Response post(CreateGameJSON gameJSON){
         int id = service.newGame(gameJSON.getName(), null);
         URI path = uriInfo.getAbsolutePathBuilder().path(Integer.toString(id)).build();
-        return Response.created(path).build();
+        return Response.created(path).header("Access-Control-Expose-Headers", "Location").build();
     }
 
     @DELETE
