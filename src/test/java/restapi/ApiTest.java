@@ -55,6 +55,7 @@ public abstract class ApiTest {
     protected WebTarget signInTarget;
     protected WebTarget signUpTarget;
     protected WebTarget usersTarget;
+    protected WebTarget meTarget;
 
 
     @Before
@@ -93,6 +94,7 @@ public abstract class ApiTest {
         signInTarget = RequestUtil.newRelativeTarget(base, "sign-in");
         signUpTarget = RequestUtil.newRelativeTarget(base, "sign-up");
         usersTarget = RequestUtil.newRelativeTarget(base, "users");
+        meTarget = RequestUtil.newRelativeTarget(base, "users/me");
     }
 
     @After
@@ -140,7 +142,8 @@ public abstract class ApiTest {
         assertThat(signUpResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
 
         AuthenticationToken userToken = RequestUtil.parseResponse(signInResponse, AuthenticationToken.class);
-        final Response getUserResponse = RequestUtil.get(signUpTarget, userToken);
+        final Response getUserResponse = RequestUtil.get(meTarget, userToken);
+
 
         UserData userData = RequestUtil.parseResponse(getUserResponse, UserData.class);
 

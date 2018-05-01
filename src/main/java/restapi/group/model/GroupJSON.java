@@ -15,10 +15,10 @@ public class GroupJSON {
     private int id;
     private int slots;
     private ActivityJSON activity;
-    private UserJSON owner;
-    private List<UserJSON> members;
+    private MemberJSON owner;
+    private List<MemberJSON> members;
 
-    public GroupJSON(int id, int slots, ActivityJSON activity, UserJSON owner, List<UserJSON> members) {
+    public GroupJSON(int id, int slots, ActivityJSON activity, MemberJSON owner, List<MemberJSON> members) {
         this.id = id;
         this.slots = slots;
         this.activity = activity;
@@ -33,8 +33,8 @@ public class GroupJSON {
         this.id = group.getId();
         this.slots = group.getSlots();
         this.activity = new ActivityJSON(group.getActivity());
-        this.owner = new UserJSON(group.getOwner());
-        this.members = group.getMembers().stream().map(UserJSON::new).collect(Collectors.toList());
+        this.owner = new MemberJSON(group.getOwner());
+        this.members = group.getMembers().stream().map(MemberJSON::new).collect(Collectors.toList());
     }
 
     public int getId() {
@@ -61,19 +61,19 @@ public class GroupJSON {
         this.activity = activity;
     }
 
-    public UserJSON getOwner() {
+    public MemberJSON getOwner() {
         return owner;
     }
 
-    public void setOwner(UserJSON owner) {
+    public void setOwner(MemberJSON owner) {
         this.owner = owner;
     }
 
-    public List<UserJSON> getMembers() {
+    public List<MemberJSON> getMembers() {
         return members;
     }
 
-    public void setMembers(List<UserJSON> members) {
+    public void setMembers(List<MemberJSON> members) {
         this.members = members;
     }
 
@@ -92,5 +92,16 @@ public class GroupJSON {
     @Override
     public int hashCode() {
         return Objects.hash(id, slots, activity, owner, members);
+    }
+
+    @Override
+    public String toString() {
+        return "GroupJSON{" +
+                "id=" + id +
+                ", slots=" + slots +
+                ", activity=" + activity +
+                ", owner=" + owner +
+                ", members=" + members +
+                '}';
     }
 }

@@ -61,6 +61,7 @@ public class GroupResource {
 
     @GET
     @Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("id") int id){
         Group group = service.getGroup(id);
         return Response.ok(new GroupJSON(group)).build();

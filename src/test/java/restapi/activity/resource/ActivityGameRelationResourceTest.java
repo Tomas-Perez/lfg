@@ -8,6 +8,7 @@ import restapi.game.model.ActivityJSON;
 import restapi.game.model.GameJSON;
 import util.RequestUtil;
 
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
@@ -62,5 +63,46 @@ public class ActivityGameRelationResourceTest extends ApiTest {
         assertFalse(games.isEmpty());
         assertTrue(games.contains(gameJSON1));
         assertTrue(games.contains(gameJSON2));
+    }
+
+    @Test
+    public void deleteGameWithActivities() throws Exception{
+
+        final String name1 = "God of war";
+        int gameID1 = addGame(name1);
+
+        GameJSON gameJSON1 = new GameJSON(gameID1, name1);
+        final String activityName1 = "Casual";
+        final String activityName2 = "Campaign";
+
+        int activityID1 = addActivity(activityName1, gameID1);
+        int activityID2 = addActivity(activityName2, gameID1);
+
+        ActivityJSON activityJSON1 = new ActivityJSON(activityID1, activityName1);
+        ActivityJSON activityJSON2 = new ActivityJSON(activityID2, activityName2);
+
+        List<ActivityJSON> game1Activities = Arrays.asList(activityJSON1, activityJSON2);
+        gameJSON1.setActivities(game1Activities);
+
+        final Response response = RequestUtil.get(gamesTarget, token);
+
+        assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+
+        List<GameJSON> games = RequestUtil.parseListResponse(response, GameJSON.class);
+
+        assertFalse(games.isEmpty());
+        assertTrue(games.contains(gameJSON1));
+
+        WebTarget gameTarget = RequestUtil.newRelativeTarget(base, String.format("games/%d", gameID1));
+        RequestUtil.delete(gameTarget, token);
+
+        WebTarget activity1Target = RequestUtil.newRelativeTarget(base, String.format("activities/%d", activityID1));
+        WebTarget activity2Target = RequestUtil.newRelativeTarget(base, String.format("activities/%d", activityID2));
+
+        Response get1 = RequestUtil.get(activity1Target, token);
+        Response get2 = RequestUtil.get(activity2Target, token);
+
+        assertThat(get1.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+        assertThat(get2.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
     }
 }

@@ -59,6 +59,7 @@ public class GameResource {
 
     @GET
     @Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("id") int id){
         Game game = service.getGame(id);
         return Response.ok(new GameJSON(game)).build();
