@@ -12,7 +12,7 @@
   <div class="navbar-collapse" [ngbCollapse]="navbarCollapsed" id="navbarContent">
     <ul class="navbar-nav ml-auto">
       <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{ exact: true }">
-        <span *ngIf="(isLoggedIn | async)">LOGGED IN  {{(isLoggedIn | async)}}</span>
+        <span *ngIf="(isLoggedIn | async)">LOGGED IN</span>
       </li>
       <li class="nav-item" [routerLinkActive]="['active']">
         <a class="nav-link" [routerLink]="['sign-in']" (click)="navbarCollapsed = true">

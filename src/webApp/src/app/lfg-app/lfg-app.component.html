@@ -1,12 +1,16 @@
 <div class="app-mount">
   <div class="nav-bar">
+    <button class="btn-primary btn-primary-lfg" (click)="logOut()">Log Out</button>
+    <a class="nav-link" (click)="navigate()">
+        New post
+    </a>
   </div>
   <div class="spekbar-user-wrapper">
     <div class="user-info-wrapper">
       {{user.username}}
     </div>
     <div class="spekbar">
-
+      <router-outlet name="spekbar"></router-outlet>
     </div>
 
   </div>

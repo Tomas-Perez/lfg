@@ -1,0 +1,12 @@
+table{
+  width: 100%;
+}
+
+th, td{
+  border: #737674 1px solid;
+  text-align: center;
+}
+
+li{
+  text-align: left;
+}

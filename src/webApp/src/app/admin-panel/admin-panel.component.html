@@ -1,0 +1,16 @@
+<div class="container-fluid h-100 pt-5">
+  <div class="row h-100">
+    <div class="options-bar col-2 h-100">
+      <a class="nav-link" [routerLink]="['/app']">
+        < Back
+      </a>
+      <a [routerLinkActive]="['active']" class="nav-link" [routerLink]="['games']">
+        Games
+      </a>
+    </div>
+    <div class="col-10 h-100">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
+

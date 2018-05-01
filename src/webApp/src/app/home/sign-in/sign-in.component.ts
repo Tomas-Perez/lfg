@@ -33,7 +33,6 @@ export class SignInComponent implements OnInit {
     this.authService.authenticate(this.emailInput, this.passwordInput)
       .subscribe(
         correct => {
-        console.log(correct);
         if (correct) {
           console.log('Credentials correct');
           this.getUserInfo();
@@ -51,7 +50,6 @@ export class SignInComponent implements OnInit {
   private getUserInfo(): void {
       this.authService.getCurrentUserInfo()
         .subscribe(user => {
-          console.log(user);
             if (user != null) {
               this.router.navigate(['/app']);
             } else {

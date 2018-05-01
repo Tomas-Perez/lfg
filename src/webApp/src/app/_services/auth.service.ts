@@ -22,6 +22,49 @@ export class AuthService {
   loggedIn$ = new BehaviorSubject<boolean>(this.loggedIn);
 
   constructor(private http: HttpClient) {
+
+    /*
+       const lul = this.jsonConvert.deserialize({
+           'posts': [
+             {
+               'id': 123,
+               'activity': {
+                 'id': 111,
+                 'name': 'activityyy',
+                 'game': {
+                   'id': 222,
+                   'name': 'gameee'
+                 }
+               },
+               'owner': {
+                 'id': 11234123,
+                 'name': 'ownerName',
+               },
+               'date': '1995-12-17T03:24:00',
+               'description': 'descriptionnnn'
+             },
+             {
+               'id': 123,
+               'activity': {
+                 'id': 111,
+                 'name': 'activityyy',
+                 'game': {
+                   'id': 222,
+                   'name': 'gameee'
+                 }
+               },
+               "owner": {
+                 "id": 11234123,
+                 "name": "ownerName",
+               },
+               'date': '1995-12-17T03:24:00',
+               'description': 'descriptionnnn'
+             }
+           ]}.posts,
+         Post);
+       console.log(lul);
+    */
+
     if (this.tokenValid()) {
       this.setLoggedIn(true);
     } else {
@@ -75,9 +118,6 @@ export class AuthService {
   getCurrentUserInfo(): Observable<User> {
     return this.http.get<any>(this.userMeUrl,
       {
-        headers: new HttpHeaders({
-          'Authorization': 'Bearer ' + this.getAccessToken()
-        }),
         observe: 'response'
       })
       .pipe(
@@ -100,9 +140,6 @@ export class AuthService {
   authAdmin(): Observable<boolean> {
     return this.http.get<any>(this.userMeUrl,
       {
-        headers: new HttpHeaders({
-          'Authorization': 'Bearer ' + this.getAccessToken()
-        }),
         observe: 'response'
       })
       .pipe(

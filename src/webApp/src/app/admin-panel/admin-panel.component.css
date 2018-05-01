@@ -1,0 +1,35 @@
+.options-bar{
+  text-align: center;
+  height: 100%;
+  border-right: 1px solid rgba(40,43,48,.75);;
+}
+
+
+
+
+h1{
+  text-transform: uppercase;
+}
+
+.round-border{
+  border-radius: 0.20rem;
+}
+
+.game-form label{
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.game-form-container{
+  margin-top: 15vh;
+  padding-top: 1.5rem;
+  background: rgba(40,43,48,.75);
+}
+
+.error{
+  color: red;
+}
+
+.bold{
+  font-weight: 700;
+}

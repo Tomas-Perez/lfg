@@ -66,14 +66,8 @@ export class AuthInterceptor implements HttpInterceptor {
     this.authService = this.injector.get(AuthService);
     console.log('intercepted request:');
     console.log(request);
-    /* Don't add auth header to every request.
-    // Handle request
     request = this.addAuthHeader(request);
-
-
-    console.log('Added headers:');
-    console.log(request);
-    */
+    console.log('Added headers');
 
     // Handle response
     return next.handle(request).catch(error => {
