@@ -4,7 +4,6 @@ import persistence.model.Group;
 import persistence.model.Post;
 import restapi.activity.model.ActivityJSON;
 import restapi.group.model.MemberJSON;
-import restapi.group.model.GroupJSON;
 
 import java.time.LocalDateTime;
 
