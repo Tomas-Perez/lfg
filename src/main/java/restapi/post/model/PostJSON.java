@@ -15,17 +15,17 @@ public class PostJSON {
     private int id;
     private String description;
     private LocalDateTime date;
-    private ActivityJSON activityJSON;
-    private MemberJSON ownerJSON;
-    private GroupJSON groupJSON;
+    private ActivityJSON activity;
+    private MemberJSON owner;
+    private GroupJSON group;
 
-    public PostJSON(int id, String description, LocalDateTime date, ActivityJSON activityJSON, MemberJSON ownerJSON, GroupJSON groupJSON) {
+    public PostJSON(int id, String description, LocalDateTime date, ActivityJSON activity, MemberJSON owner, GroupJSON group) {
         this.id = id;
         this.description = description;
         this.date = date;
-        this.activityJSON = activityJSON;
-        this.ownerJSON = ownerJSON;
-        this.groupJSON = groupJSON;
+        this.activity = activity;
+        this.owner = owner;
+        this.group = group;
     }
 
     public PostJSON() {
@@ -35,9 +35,9 @@ public class PostJSON {
         this.id = post.getId();
         this.description = post.getDescription();
         this.date = post.getDate();
-        this.activityJSON = new ActivityJSON(post.getActivity());
-        this.ownerJSON = new MemberJSON(post.getOwner());
+        this.activity = new ActivityJSON(post.getActivity());
+        this.owner = new MemberJSON(post.getOwner());
         final Group group = post.getGroup();
-        this.groupJSON = group == null ? null : new GroupJSON(group);
+        this.group = group == null ? null : new GroupJSON(group);
     }
 }
