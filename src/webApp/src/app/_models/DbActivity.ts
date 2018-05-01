@@ -7,6 +7,8 @@ export class DbActivity {
   id?: number = undefined;
   @JsonProperty('name', String)
   name: string = undefined;
-  @JsonProperty('game', DbGame)
-  game: DbGame = undefined;
+  @JsonProperty('game', DbGame, true)
+  game?: DbGame = undefined;
+  @JsonProperty('gameID', Number, true)
+  gameID?: number = undefined;
 }
