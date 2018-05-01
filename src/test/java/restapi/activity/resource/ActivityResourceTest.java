@@ -1,28 +1,14 @@
 package restapi.activity.resource;
 
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.extension.rest.client.ArquillianResteasyResource;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.gradle.archive.importer.embedded.EmbeddedGradleImporter;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import persistence.manager.ActivityManager;
-import persistence.manager.EntityManagerProducer;
-import persistence.manager.GameManager;
-import persistence.manager.UserManager;
-import persistence.model.Activity;
-import persistence.model.Game;
 import restapi.ApiTest;
 import restapi.activity.model.ActivityJSON;
 import restapi.activity.model.CreateActivityJSON;
 import restapi.activity.model.GameJSON;
 import restapi.activity.model.UpdateActivityJSON;
-import util.ManagerUtil;
 import util.RequestUtil;
 
 import javax.ws.rs.client.WebTarget;
@@ -41,11 +27,9 @@ public class ActivityResourceTest extends ApiTest {
 
     @Test
     public void create() throws Exception{
-        final WebTarget gamesTarget = RequestUtil.newRelativeTarget(base, "games");
-        final WebTarget activitiesTarget = RequestUtil.newRelativeTarget(base, "activities");
 
         final String gameName = "Overwatch";
-        int gameID = addGame(gamesTarget, gameName);
+        int gameID = addGame(gameName);
 
         final String activityName = "Ranked";
         final Response postResponse = RequestUtil.post(
@@ -74,30 +58,27 @@ public class ActivityResourceTest extends ApiTest {
     }
 
     @Test
-    public void notFoundGet(@ArquillianResteasyResource("activities/1") final WebTarget webTarget) throws Exception{
+    public void notFoundGet(@ArquillianResteasyResource("activities/1") final WebTarget webTarget){
         final Response response = RequestUtil.get(webTarget, token);
         assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
     }
 
     @Test
-    public void notFoundDelete(@ArquillianResteasyResource("activities/1") final WebTarget webTarget) throws Exception{
+    public void notFoundDelete(@ArquillianResteasyResource("activities/1") final WebTarget webTarget){
         final Response response = RequestUtil.delete(webTarget, token);
         assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
     }
 
     @Test
     public void update() throws Exception{
-        final WebTarget gamesTarget = RequestUtil.newRelativeTarget(base, "games");
-        final WebTarget activitiesTarget = RequestUtil.newRelativeTarget(base, "activities");
-
         final String gameName = "Overwatch";
-        int gameID = addGame(gamesTarget, gameName);
+        int gameID = addGame(gameName);
 
         final String gameName2 = "God of War";
-        int gameID2 = addGame(gamesTarget, gameName2);
+        int gameID2 = addGame(gameName2);
 
         final String gameName3 = "FIFA";
-        int gameID3 = addGame(gamesTarget, gameName3);
+        addGame(gameName3);
 
         final String activityName = "Ranked";
 
@@ -132,17 +113,14 @@ public class ActivityResourceTest extends ApiTest {
 
     @Test
     public void updateConflictExc() throws Exception{
-        final WebTarget gamesTarget = RequestUtil.newRelativeTarget(base, "games");
-        final WebTarget activitiesTarget = RequestUtil.newRelativeTarget(base, "activities");
-
         final String gameName = "Overwatch";
-        int gameID = addGame(gamesTarget, gameName);
+        int gameID = addGame(gameName);
 
         final String gameName2 = "God of War";
-        int gameID2 = addGame(gamesTarget, gameName2);
+        int gameID2 = addGame(gameName2);
 
         final String gameName3 = "FIFA";
-        int gameID3 = addGame(gamesTarget, gameName3);
+        addGame(gameName3);
 
         final String activityName = "Ranked";
         final String activityName2 = "Casual";
@@ -197,8 +175,6 @@ public class ActivityResourceTest extends ApiTest {
 
     @Test
     public void getAll() throws Exception{
-        final WebTarget gamesTarget = RequestUtil.newRelativeTarget(base, "games");
-        final WebTarget activitiesTarget = RequestUtil.newRelativeTarget(base, "activities");
 
         final Response response = RequestUtil.get(activitiesTarget, token);
 
@@ -208,9 +184,9 @@ public class ActivityResourceTest extends ApiTest {
         assertTrue(activities.isEmpty());
 
         final String name1 = "God of war";
-        int gameID1 = addGame(gamesTarget, name1);
+        int gameID1 = addGame(name1);
         final String name2 = "Overwatch";
-        int gameID2 = addGame(gamesTarget, name2);
+        int gameID2 = addGame(name2);
 
         GameJSON gameJSON1 = new GameJSON(gameID1, name1);
         GameJSON gameJSON2 = new GameJSON(gameID2, name2);
@@ -219,10 +195,10 @@ public class ActivityResourceTest extends ApiTest {
         final String activityName2 = "Casual";
         final String activityName3 = "Campaign";
 
-        int activityID1 = addActivity(activitiesTarget, activityName1, gameID2);
-        int activityID2 = addActivity(activitiesTarget, activityName2, gameID2);
-        int activityID3 = addActivity(activitiesTarget, activityName3, gameID1);
-        int activityID4 = addActivity(activitiesTarget, activityName2, gameID1);
+        int activityID1 = addActivity(activityName1, gameID2);
+        int activityID2 = addActivity(activityName2, gameID2);
+        int activityID3 = addActivity(activityName3, gameID1);
+        int activityID4 = addActivity(activityName2, gameID1);
 
         ActivityJSON activityJSON1 = new ActivityJSON(activityID1, activityName1, gameJSON2);
         ActivityJSON activityJSON2 = new ActivityJSON(activityID2, activityName2, gameJSON2);

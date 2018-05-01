@@ -1,16 +1,20 @@
 package restapi.group.resource;
 
 import persistence.model.Group;
+import restapi.group.model.AddMemberJSON;
+import restapi.group.model.CreateGroupJSON;
 import restapi.group.model.GroupJSON;
 import restapi.group.service.GroupService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,11 +28,66 @@ public class GroupResource {
     @Inject
     private GroupService service;
 
+    @Context
+    private UriInfo uriInfo;
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(){
         List<Group> groups = service.getAll();
         List<GroupJSON> groupJSONS = groups.stream().map(GroupJSON::new).collect(Collectors.toList());
         return Response.ok(groupJSONS).build();
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response post(CreateGroupJSON groupJSON){
+        int id = service.newGroup(
+                groupJSON.getSlots(),
+                groupJSON.getActivityID(),
+                groupJSON.getOwnerID()
+        );
+        URI path = uriInfo.getAbsolutePathBuilder().path(Integer.toString(id)).build();
+        return Response.created(path).build();
+    }
+
+    @DELETE
+    @RolesAllowed({"ADMIN"})
+    public Response wipe(){
+        service.wipe();
+        return Response.noContent().build();
+    }
+
+    @GET
+    @Path("{id}")
+    public Response get(@PathParam("id") int id){
+        Group group = service.getGroup(id);
+        return Response.ok(new GroupJSON(group)).build();
+    }
+
+    @DELETE
+    @Path("{id}")
+    public Response delete(@PathParam("id") int id){
+        service.deleteGroup(id);
+        return Response.noContent().build();
+    }
+
+    @POST
+    @Path("{id}/members")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addMember(@PathParam("id") int id, AddMemberJSON addMemberJSON){
+        service.addMember(id, addMemberJSON.getId());
+        return Response.noContent().build();
+    }
+
+    @DELETE
+    @Path("{id}/members/{memberID}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeMember(@PathParam("id") int id, @PathParam("memberID") int memberID){
+        service.removeMember(id, memberID);
+        return Response.noContent().build();
     }
 }

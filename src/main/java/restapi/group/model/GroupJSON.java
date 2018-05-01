@@ -3,6 +3,7 @@ package restapi.group.model;
 import persistence.model.Group;
 import restapi.activity.model.ActivityJSON;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -85,7 +86,7 @@ public class GroupJSON {
                 slots == groupJSON.slots &&
                 Objects.equals(activity, groupJSON.activity) &&
                 Objects.equals(owner, groupJSON.owner) &&
-                Objects.equals(members, groupJSON.members);
+                new HashSet<>(members).equals(new HashSet<>(groupJSON.members));
     }
 
     @Override

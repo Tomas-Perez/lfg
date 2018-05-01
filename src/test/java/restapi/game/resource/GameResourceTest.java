@@ -1,25 +1,18 @@
 package restapi.game.resource;
 
-import org.codehaus.plexus.util.StringUtils;
 import org.jboss.arquillian.extension.rest.client.ArquillianResteasyResource;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import persistence.model.Activity;
-import persistence.model.Game;
 import restapi.ApiTest;
-import restapi.activity.model.CreateActivityJSON;
-import restapi.game.model.ActivityJSON;
 import restapi.game.model.CreateGameJSON;
 import restapi.game.model.GameJSON;
 import restapi.game.model.UpdateGameJSON;
-import util.ManagerUtil;
 import util.RequestUtil;
 
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import java.net.URI;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -54,13 +47,13 @@ public class GameResourceTest extends ApiTest {
     }
 
     @Test
-    public void notFoundGet(@ArquillianResteasyResource("games/1") final WebTarget webTarget) throws Exception{
+    public void notFoundGet(@ArquillianResteasyResource("games/1") final WebTarget webTarget){
         final Response response = RequestUtil.get(webTarget, token);
         assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
     }
 
     @Test
-    public void notFoundDelete(@ArquillianResteasyResource("games/1") final WebTarget webTarget) throws Exception{
+    public void notFoundDelete(@ArquillianResteasyResource("games/1") final WebTarget webTarget){
         final Response response = RequestUtil.delete(webTarget, token);
         assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
     }
@@ -131,11 +124,11 @@ public class GameResourceTest extends ApiTest {
         assertTrue(games.isEmpty());
 
         final String name1 = "God of war";
-        int id1 = addGame(webTarget, name1);
+        int id1 = addGame(name1);
         final String name2 = "Overwatch";
-        int id2 = addGame(webTarget, name2);
+        int id2 = addGame(name2);
         final String name3 = "FIFA";
-        int id3 = addGame(webTarget, name3);
+        int id3 = addGame(name3);
 
         GameJSON gameJSON1 = new GameJSON(id1, name1);
         GameJSON gameJSON2 = new GameJSON(id2, name2);

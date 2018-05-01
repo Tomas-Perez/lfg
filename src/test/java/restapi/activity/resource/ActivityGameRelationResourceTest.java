@@ -8,9 +8,7 @@ import restapi.game.model.ActivityJSON;
 import restapi.game.model.GameJSON;
 import util.RequestUtil;
 
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,13 +25,11 @@ public class ActivityGameRelationResourceTest extends ApiTest {
 
     @Test
     public void getAll() throws Exception{
-        final WebTarget gamesTarget = RequestUtil.newRelativeTarget(base, "games");
-        final WebTarget activitiesTarget = RequestUtil.newRelativeTarget(base, "activities");
 
         final String name1 = "God of war";
-        int gameID1 = addGame(gamesTarget, name1);
+        int gameID1 = addGame(name1);
         final String name2 = "Overwatch";
-        int gameID2 = addGame(gamesTarget, name2);
+        int gameID2 = addGame(name2);
 
         GameJSON gameJSON1 = new GameJSON(gameID1, name1);
         GameJSON gameJSON2 = new GameJSON(gameID2, name2);
@@ -42,10 +38,10 @@ public class ActivityGameRelationResourceTest extends ApiTest {
         final String activityName2 = "Casual";
         final String activityName3 = "Campaign";
 
-        int activityID1 = addActivity(activitiesTarget, activityName1, gameID2);
-        int activityID2 = addActivity(activitiesTarget, activityName2, gameID2);
-        int activityID3 = addActivity(activitiesTarget, activityName3, gameID1);
-        int activityID4 = addActivity(activitiesTarget, activityName2, gameID1);
+        int activityID1 = addActivity(activityName1, gameID2);
+        int activityID2 = addActivity(activityName2, gameID2);
+        int activityID3 = addActivity(activityName3, gameID1);
+        int activityID4 = addActivity(activityName2, gameID1);
 
         ActivityJSON activityJSON1 = new ActivityJSON(activityID1, activityName1);
         ActivityJSON activityJSON2 = new ActivityJSON(activityID2, activityName2);
