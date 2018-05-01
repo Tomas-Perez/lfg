@@ -1,7 +1,6 @@
 <div class="w-100">
-    <h1 class="text-center">New Post</h1>
-    <form #postForm="ngForm" class="game-form" (ngSubmit)="postForm.valid && newPost()" novalidate>
-
+    <h1 class="text-center">Filter posts</h1>
+    <form #filterForm="ngForm" class="game-form" (ngSubmit)="filterForm.valid && addFilter()" novalidate>
       <div class="form-group">
         <label for="SelectGame">
           <span class="bold">Game</span>
@@ -15,18 +14,12 @@
           <span class="bold">Activity</span>
         </label>
         <select class="form-control" id="SelectActivity" [(ngModel)]="selectedActivityIndex" name="activity" required>
+          <option selected [value]="-1">Any</option>
           <option *ngFor="let activity of games[selectedGameIndex].activities; index as j" [value]="j">{{activity.name}}</option>
         </select>
       </div>
-      <div class="form-group">
-        <label for="InputDescription">
-          <span class="bold">Description</span>
-        </label>
-        <input name="InputDescription" [(ngModel)]="description" id="InputDescription" class="form-control form-input"
-               aria-describedby="descriptionHelp">
-      </div>
       <div class="form-group text-center">
-        <button type="submit" class="btn btn-primary-lfg submit-button">Post</button>
+        <button type="submit" class="btn btn-primary-lfg submit-button">Add filter</button>
       </div>
     </form>
   {{selectedGameIndex}}

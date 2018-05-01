@@ -42,7 +42,60 @@ export class GameEditComponent implements OnInit {
   }
 
   updateGame() {
-    // TODO request update game
+
+    const dbGame = this.gameService.gameToDbGame(this.editGame);
+    if (this.game.name !== this.editGame.name) {
+      this.gameService.updateGame(dbGame, this.game.id).subscribe(
+        response => {
+          if (response) {
+            console.log(this.game.name + ' updated to ' + this.editGame.name);
+          }
+        }
+      );
+    }
+
+    for (const activity of this.game.activities) {
+      let found = false;
+      for (const eActivity of this.editGame.activities) {
+        if (activity.id === eActivity.id) {
+          found = true;
+          if (activity.name !== eActivity.name) {
+            const dbActivity = this.gameService.activityToDbActivity(eActivity, this.game.id);
+            this.gameService.updateActivity(dbActivity, activity.id).subscribe(
+              response => {
+                if (response) {
+                  console.log(activity.name + ' updated to ' + eActivity.name);
+                }
+              }
+            );
+          }
+          break;
+        }
+      }
+      console.log(found);
+      if (!found) {
+        this.gameService.deleteActivity(activity.id).subscribe(
+          response => {
+            if (response) {
+              console.log(activity.name + ' deleted');
+            }
+          }
+        );
+      }
+    }
+    for (const eActivity of this.editGame.activities) {
+      if (!eActivity.id) {
+        const dbActivity = this.gameService.activityToDbActivity(eActivity, this.game.id);
+        this.gameService.newActivity(dbActivity).subscribe(
+          response => {
+            if (response) {
+              console.log(dbActivity.name + ' added');
+            }
+          }
+        );
+      }
+    }
+    //this.getGame(); // TODO reload game when everything is finished
     //this.goBack();
   }
 

@@ -8,6 +8,7 @@ import {Subject} from 'rxjs/Subject';
 import {Router} from '@angular/router';
 import {AuthService} from '../_services/auth.service';
 import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/do';
 import 'rxjs/add/observable/empty';
 import 'rxjs/add/observable/throw';
 
@@ -64,10 +65,9 @@ export class AuthInterceptor implements HttpInterceptor {
     }
 
     this.authService = this.injector.get(AuthService);
+    request = this.addAuthHeader(request);
     console.log('intercepted request:');
     console.log(request);
-    request = this.addAuthHeader(request);
-    console.log('Added headers');
 
     // Handle response
     return next.handle(request).catch(error => {

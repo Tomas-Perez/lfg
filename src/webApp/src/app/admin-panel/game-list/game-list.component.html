@@ -4,6 +4,7 @@
     <th>Name</th>
     <th>Activities</th>
     <th>Edit</th>
+    <th>Delete</th>
   </tr>
   <tr *ngFor="let game of games$ | async">
     <td>{{game.id}}</td>
@@ -19,6 +20,11 @@
     <td>
       <a class="" [routerLink]="['../edit-game', game.id]">
         Edit
+      </a>
+    </td>
+    <td>
+      <a class="" (click)="deleteGame(game.id)">
+        Delete
       </a>
     </td>
   </tr>

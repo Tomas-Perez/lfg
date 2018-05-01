@@ -33,4 +33,16 @@ export class GameListComponent implements OnInit {
       });
   }
 
+  deleteGame(id: number) {
+    this.gameService.deleteGame(id).subscribe(
+      response => {
+        if (response) {
+          console.log('Game deleted'); // TODO notify
+        } else {
+          console.log('Error deleting game');
+        }
+      }
+    );
+  }
+
 }

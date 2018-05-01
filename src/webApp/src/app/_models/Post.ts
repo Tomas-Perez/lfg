@@ -5,8 +5,8 @@ import {DbActivity} from './DbActivity';
 class Owner {
   @JsonProperty('id', Number)
   id: number = undefined;
-  @JsonProperty('name', String)
-  name: string = undefined;
+  @JsonProperty('username', String)
+  username: string = undefined;
 }
 
 @JsonObject

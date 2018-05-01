@@ -7,12 +7,16 @@ import {LfgAppComponent} from './lfg-app.component';
 import {LfgAppRoutingModule} from './lfg-app-routing.module';
 import {PostService} from '../_services/post.service';
 import { NewPostComponent } from './new-post/new-post.component';
+import { NewGroupComponent } from './new-group/new-group.component';
+import { PostFilterComponent } from './post-filter/post-filter.component';
 
 
 @NgModule({
   declarations: [
     LfgAppComponent,
-    NewPostComponent
+    NewPostComponent,
+    NewGroupComponent,
+    PostFilterComponent
   ],
   imports: [
     CommonModule,

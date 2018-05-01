@@ -14,10 +14,9 @@ export class GameService {
   private jsonConvert: JsonConvert = new JsonConvert();
   private gamesUrl = 'http://localhost:8080/lfg/games';
   private activitiesUrl = 'http://localhost:8080/lfg/activities';
-  private games: Observable<Game[]>;
+  private games: Game[];
 
   constructor(private http: HttpClient) {
-    this.games = this.requestGames();
   }
 
   gameToDbGame(game: Game): DbGame {
@@ -67,6 +66,25 @@ export class GameService {
     return Observable.of(code);
   }
 
+  updateGame(game: DbGame, id: number): Observable<boolean> {
+    return this.http.post<any>(this.gamesUrl + '/' + id, this.jsonConvert.serialize(game), {
+      observe: 'response'
+    })
+      .pipe(
+        map(response => {
+          console.log(response);
+          return true;
+        }),
+        catchError((err: any) => this.updateGameErrorHandle(err))
+      );
+  }
+
+  private updateGameErrorHandle(err: any) {
+    console.log('Error updating Game');
+    console.log(err);
+    return Observable.of(false);
+  }
+
   newActivity(activity: DbActivity): Observable<boolean> {
     return this.http.post<any>(this.activitiesUrl, this.jsonConvert.serialize(activity), {
       observe: 'response'
@@ -86,8 +104,51 @@ export class GameService {
     return Observable.of(false);
   }
 
+  updateActivity(activity: DbActivity, id: number): Observable<boolean> {
+    return this.http.post<any>(this.activitiesUrl + '/' + id, this.jsonConvert.serialize(activity), {
+      observe: 'response'
+    })
+      .pipe(
+        map(response => {
+          console.log(response);
+          return true;
+        }),
+        catchError((err: any) => this.updateActivityErrorHandle(err))
+      );
+  }
+
+  private updateActivityErrorHandle(err: any) {
+    console.log('Error updating Activity');
+    console.log(err);
+    return Observable.of(false);
+  }
+
+  deleteActivity(id: number): Observable<boolean> {
+    return this.http.delete<any>(this.activitiesUrl + '/' + id, {
+      observe: 'response'
+    })
+      .pipe(
+        map(response => {
+          console.log(response);
+          return true;
+        }),
+        catchError((err: any) => this.deleteActivityErrorHandle(err))
+      );
+  }
+
+  private deleteActivityErrorHandle(err: any) {
+    console.log('Error deleting Activity');
+    console.log(err);
+    return Observable.of(false);
+  }
+
   getGameList(): Observable<Game[]> {
-    return this.games;
+    return this.requestGames().pipe(
+      map(games => {
+        this.games = games;
+        return this.games;
+      })
+    );
   }
 
   requestGames(): Observable<Game[]> {
@@ -116,6 +177,31 @@ export class GameService {
         }),
         catchError(err => Observable.throw(err))
       );
+  }
+
+  deleteGame(id: number): Observable<boolean> {
+    return this.http.delete<any>(this.gamesUrl + '/' + id,
+      {
+        observe: 'response'
+      })
+      .pipe(
+        map(response => {
+          console.log(response);
+          let i = 0;
+          for (const game of this.games) {
+            if (game.id === id ) {
+              this.games.splice(i, 1);
+              return true;
+            }
+            i++;
+          }
+        }),
+        catchError(err => this.deleteGameErrorHandling(err))
+      );
+  }
+
+  private deleteGameErrorHandling(err) {
+    return Observable.of(false);
   }
 
 }

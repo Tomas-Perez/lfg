@@ -12,6 +12,7 @@ import {AuthUserGuardService} from './_services/guards/auth-user-guard.service';
 import {UnauthUserGuardService} from './_services/guards/unauth-user-guard.service';
 import {AdminPanelModule} from './admin-panel/admin-panel.module';
 import {GameService} from './_services/game.service';
+import { GroupService } from './_services/group.service';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import {GameService} from './_services/game.service';
     UserService,
     AuthUserGuardService,
     GameService,
-    UnauthUserGuardService
+    UnauthUserGuardService,
+    GroupService
   ],
   bootstrap: [AppComponent]
 })

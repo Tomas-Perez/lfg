@@ -5,6 +5,7 @@ import {UserService} from '../_services/user.service';
 import {PostService} from '../_services/post.service';
 import {AuthService} from '../_services/auth.service';
 import {Router, NavigationExtras, ActivatedRoute} from '@angular/router';
+import {Post} from '../_models/Post';
 
 @Component({
   selector: 'app-lfg-app',
@@ -14,6 +15,7 @@ import {Router, NavigationExtras, ActivatedRoute} from '@angular/router';
 export class LfgAppComponent implements OnInit {
 
   user: User;
+  posts: Post[];
 
   constructor(private userService: UserService,
               private postService: PostService,
@@ -27,6 +29,11 @@ export class LfgAppComponent implements OnInit {
       user => {
         this.user = user;
       });
+    this.postService.getPosts().subscribe(
+      posts => {
+        this.posts = posts;
+      }
+    );
   }
 
   logOut() {
@@ -34,8 +41,8 @@ export class LfgAppComponent implements OnInit {
     this.router.navigate(['/home']);
   }
 
-  navigate() {
-    this.router.navigate([{ outlets: {spekbar: ['new-post'] }}],
+  navigate(url: string) {
+    this.router.navigate([{ outlets: {spekbar: [url] }}],
       {
         relativeTo: this.route,
         skipLocationChange: true
@@ -43,5 +50,6 @@ export class LfgAppComponent implements OnInit {
   }
 
   // [routerLink]="[{ outlets: {'spekbar':['new-post'] }}]"
+
 
 }

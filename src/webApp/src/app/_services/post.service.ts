@@ -1,20 +1,22 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
-import {catchError, filter, map} from 'rxjs/operators';
+import {catchError, filter, map, tap} from 'rxjs/operators';
 import {Post} from '../_models/Post';
 import {PostFilter} from '../_models/post-filters/PostFilter';
 import {JsonConvert} from 'json2typescript';
 import {Filter} from '../_models/post-filters/Filter';
+import {DbPost} from '../_models/DbPost';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class PostService {
 
-  private posts: Observable<Post[]>;
+  private posts: BehaviorSubject<Post[]>;
   private filters: PostFilter[];
   private jsonConvert: JsonConvert = new JsonConvert();
 
-  private postUrl = 'http://localhost:8080/lfg/post';
+  private postUrl = 'http://localhost:8080/lfg/posts';
 
   constructor(private http: HttpClient) {
 
@@ -59,21 +61,32 @@ export class PostService {
          Post);
     this.posts = Observable.of(lul);
     */
-    this.posts = Observable.of([]);
+    this.posts = new BehaviorSubject([]);
     this.filters = [];
 
   }
 
-  getPosts(): Observable<Post[]> {
+  requestPosts() {
     const filterer = new Filter;
     return this.http.get<any>(this.postUrl, {
       observe: 'response'
     })
       .pipe(
-        map(response => this.jsonConvert.deserialize(response.body.posts, Post)),
+        tap(response => console.log(response)),
+        map(response => this.jsonConvert.deserialize(response.body, Post)),
         map(posts => posts.filter(post => filterer.filter(post, this.filters))),
+        map(posts => {
+            console.log(this.filters);
+            console.log(posts);
+            this.posts.next(posts);
+          }),
         catchError(err => Observable.of([]))
       );
+  }
+
+  getPosts(): BehaviorSubject<Post[]> {
+    this.requestPosts().subscribe();
+    return this.posts;
     /*
     const filterer = new Filter;
     return <Observable<Post[]>>(this.posts)
@@ -83,6 +96,31 @@ export class PostService {
         catchError(err => Observable.of([]))
       );
     */
+  }
+
+  newPost(post: DbPost): Observable<boolean> {
+    return this.http.post<any>(this.postUrl, this.jsonConvert.serialize(post), {
+      observe: 'response'
+    })
+      .pipe(
+        map(response => {
+          console.log(response);
+          return true;
+        }),
+        catchError((err: any) => this.newPostErrorHandle(err))
+      );
+  }
+
+  private newPostErrorHandle(err: any) {
+    console.log('Error creating new post');
+    console.log(err);
+    return Observable.of(false);
+  }
+
+  addFilter(filt: PostFilter) {
+    this.filters.push(filt);
+    this.requestPosts().subscribe();
+    console.log(this.posts.getValue());
   }
 
 }

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import {Game} from '../../_models/Game';
 import {Activity} from '../../_models/Activity';
 import {GameService} from '../../_services/game.service';
-import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'app-game-new',
@@ -30,8 +29,6 @@ export class GameNewComponent implements OnInit {
 
   newGame() {
     console.log(this.game);
-    let gameId = -3;
-
     this.gameService.newGame(this.game).subscribe(
       id => {
         console.log('Game id:');
@@ -41,13 +38,11 @@ export class GameNewComponent implements OnInit {
         } else if (id === -2) {
           return;
         }
-        gameId = id;
-
         const activitiesState = []; // boolean[] -> index matching with game.activities. Made for future interface notifications.
         for (let i = 0; i < this.game.activities.length ; i++) {
           activitiesState.push(undefined);
           const activity = this.game.activities[i];
-          const dbActivity = this.gameService.activityToDbActivity(activity, gameId);
+          const dbActivity = this.gameService.activityToDbActivity(activity, id);
           this.gameService.newActivity(dbActivity).subscribe(
             state => {
               activitiesState[i] = state;

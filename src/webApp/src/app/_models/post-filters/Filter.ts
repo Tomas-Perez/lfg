@@ -5,11 +5,11 @@ export class Filter {
 
   filter(post: Post, filters: PostFilter[]): boolean {
     for (const filter of filters) {
-      if (!filter.filter(post)) {
-        return false;
+      if (filter.filter(post)) {
+        return true;
       }
     }
-    return true;
+    return !(filters.length > 0);
   }
 
 }

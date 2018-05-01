@@ -1,9 +1,10 @@
 <div class="app-mount">
   <div class="nav-bar">
-    <button class="btn-primary btn-primary-lfg" (click)="logOut()">Log Out</button>
-    <a class="nav-link" (click)="navigate()">
-        New post
-    </a>
+    <a class="nav-link" (click)="logOut()">Log Out</a>
+    <a class="nav-link" [routerLink]="['/admin-panel']">Admin panel</a>
+    <a class="nav-link" (click)="navigate('filter-posts')">Filter posts</a>
+    <a class="nav-link" (click)="navigate('new-post')">New post</a>
+    <a class="nav-link" (click)="navigate('new-group')">New group</a>
   </div>
   <div class="spekbar-user-wrapper">
     <div class="user-info-wrapper">
@@ -17,24 +18,15 @@
   <div class="posts-chat-wrapper">
     <div data-simplebar class="h-100">
       <div class="post-flow-wrapper">
-        <div class="post-wrapper">
+        <div *ngFor="let post of posts" class="post-wrapper">
           <div class="post-container">
             <div class="post-user-group">
-
+              Username: {{post.owner.username}}
             </div>
             <div class="post-game-activity-description">
-
-            </div>
-          </div>
-        </div>
-
-        <div class="post-wrapper">
-          <div class="post-container">
-            <div class="post-user-group">
-
-            </div>
-            <div class="post-game-activity-description">
-
+              Game: {{post.activity.game.name}} <br>
+              Activity: {{post.activity.name}} <br>
+              Description: {{post.description}}
             </div>
           </div>
         </div>
