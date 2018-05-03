@@ -9,6 +9,7 @@ import {PostService} from '../_services/post.service';
 import { NewPostComponent } from './new-post/new-post.component';
 import { NewGroupComponent } from './new-group/new-group.component';
 import { PostFilterComponent } from './post-filter/post-filter.component';
+import { PostFlowComponent } from './post-flow/post-flow.component';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { PostFilterComponent } from './post-filter/post-filter.component';
     LfgAppComponent,
     NewPostComponent,
     NewGroupComponent,
-    PostFilterComponent
+    PostFilterComponent,
+    PostFlowComponent
   ],
   imports: [
     CommonModule,

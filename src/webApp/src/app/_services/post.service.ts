@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
-import {catchError, filter, map, tap} from 'rxjs/operators';
+import {catchError, map, tap} from 'rxjs/operators';
 import {Post} from '../_models/Post';
 import {PostFilter} from '../_models/post-filters/PostFilter';
 import {JsonConvert} from 'json2typescript';
@@ -76,8 +76,6 @@ export class PostService {
         map(response => this.jsonConvert.deserialize(response.body, Post)),
         map(posts => posts.filter(post => filterer.filter(post, this.filters))),
         map(posts => {
-            console.log(this.filters);
-            console.log(posts);
             this.posts.next(posts);
           }),
         catchError(err => Observable.of([]))
@@ -120,7 +118,15 @@ export class PostService {
   addFilter(filt: PostFilter) {
     this.filters.push(filt);
     this.requestPosts().subscribe();
-    console.log(this.posts.getValue());
+  }
+
+  resetFilters() {
+    this.filters = [];
+    this.requestPosts().subscribe();
+  }
+
+  getFiltersLength(): number {
+    return this.filters.length;
   }
 
 }

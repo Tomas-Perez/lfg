@@ -1,0 +1,12 @@
+<div *ngFor="let post of posts" class="post-wrapper">
+  <div class="post-container">
+    <div class="post-user-group">
+      Username: {{post.owner.username}}
+    </div>
+    <div class="post-game-activity-description">
+      Game: {{post.activity.game.name}} <br>
+      Activity: {{post.activity.name}} <br>
+      Description: {{post.description}}
+    </div>
+  </div>
+</div>

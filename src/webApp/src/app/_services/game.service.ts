@@ -7,6 +7,7 @@ import {JsonConvert} from 'json2typescript';
 import {DbGame} from '../_models/DbGame';
 import {DbActivity} from '../_models/DbActivity';
 import {Activity} from '../_models/Activity';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class GameService {
@@ -14,9 +15,22 @@ export class GameService {
   private jsonConvert: JsonConvert = new JsonConvert();
   private gamesUrl = 'http://localhost:8080/lfg/games';
   private activitiesUrl = 'http://localhost:8080/lfg/activities';
-  private games: Game[];
+  private games: BehaviorSubject<Game[]>;
 
   constructor(private http: HttpClient) {
+    this.games = new BehaviorSubject([]);
+    this.updateGameList();
+  }
+
+  getGameList(): BehaviorSubject<Game[]> {
+    return this.games;
+  }
+
+  /**
+   * Requests a new game list and updates this.games
+   */
+  updateGameList() {
+    this.requestGames().subscribe(games => this.games.next(games));
   }
 
   gameToDbGame(game: Game): DbGame {
@@ -32,14 +46,22 @@ export class GameService {
     return dbActivity;
   }
 
-  newGame(game: Game): Observable<number> {
-    /*
-    console.log(this.jsonConvert.serialize(this.gameToDbGame(game)));
-    console.log(this.jsonConvert.serialize(this.gameToDbActivities(game, 1)));
+  requestGames(): Observable<Game[]> {
+    return this.http.get<any>(this.gamesUrl,
+      {
+        observe: 'response'
+      })
+      .pipe(
+        map(response => {
+          console.log(response);
+          return this.jsonConvert.deserializeArray(response.body, Game);
+        }),
+        catchError(err => Observable.throw(err))
+      );
+  }
 
-    return Observable.of(false);
-    */
-    return this.http.post<any>(this.gamesUrl, this.jsonConvert.serialize(this.gameToDbGame(game)), {
+  newGame(game: DbGame): Observable<number> {
+    return this.http.post<any>(this.gamesUrl, this.jsonConvert.serialize(game), {
       observe: 'response'
     })
       .pipe(
@@ -50,7 +72,15 @@ export class GameService {
           })
             .pipe(
               switchMap( getGameResponse => {
-                  return Observable.of(this.jsonConvert.deserialize(getGameResponse.body, Game).id);
+                  const newGame = this.jsonConvert.deserialize(getGameResponse.body, Game);
+
+                  /*
+                  const games = this.games.getValue();
+                  games.push(newGame);
+                  this.games.next(games);
+                  */
+
+                  return Observable.of(newGame.id);
                 }
               ),
               catchError((err: any) => this.newGameErrorHandle(-2))
@@ -142,28 +172,6 @@ export class GameService {
     return Observable.of(false);
   }
 
-  getGameList(): Observable<Game[]> {
-    return this.requestGames().pipe(
-      map(games => {
-        this.games = games;
-        return this.games;
-      })
-    );
-  }
-
-  requestGames(): Observable<Game[]> {
-    return this.http.get<any>(this.gamesUrl,
-      {
-        observe: 'response'
-      })
-      .pipe(
-        map(response => {
-          console.log(response);
-          return this.jsonConvert.deserializeArray(response.body, Game);
-        }),
-        catchError(err => Observable.throw(err))
-      );
-  }
 
   getGame(id: number) {
     return this.http.get<any>(this.gamesUrl + '/' + id,
@@ -188,9 +196,11 @@ export class GameService {
         map(response => {
           console.log(response);
           let i = 0;
-          for (const game of this.games) {
+          for (const game of this.games.getValue()) {
             if (game.id === id ) {
-              this.games.splice(i, 1);
+              const newGames = this.games.getValue();
+              newGames.splice(i, 1);
+              this.games.next(newGames);
               return true;
             }
             i++;

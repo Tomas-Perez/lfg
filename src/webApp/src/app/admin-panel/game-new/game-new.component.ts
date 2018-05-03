@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {Game} from '../../_models/Game';
 import {Activity} from '../../_models/Activity';
 import {GameService} from '../../_services/game.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-game-new',
@@ -11,25 +12,29 @@ import {GameService} from '../../_services/game.service';
 export class GameNewComponent implements OnInit {
 
   game: Game;
+  activitiesState: Boolean[];
 
-  constructor(private gameService: GameService) { }
+  constructor(private gameService: GameService, private router: Router) { }
 
   ngOnInit() {
     this.game = new Game;
     this.game.activities = [];
+    this.activitiesState = []; // boolean[] -> index matching with game.activities. Made for future interface notifications.
   }
 
   addActivity() {
     this.game.activities.push(new Activity);
+    this.activitiesState.push(undefined);
   }
 
   removeActivity(i: number) {
     this.game.activities.splice(i, 1);
+    this.activitiesState.splice(i, 1);
   }
 
   newGame() {
     console.log(this.game);
-    this.gameService.newGame(this.game).subscribe(
+    this.gameService.newGame(this.gameService.gameToDbGame(this.game)).subscribe(
       id => {
         console.log('Game id:');
         console.log(id);
@@ -38,24 +43,33 @@ export class GameNewComponent implements OnInit {
         } else if (id === -2) {
           return;
         }
-        const activitiesState = []; // boolean[] -> index matching with game.activities. Made for future interface notifications.
         for (let i = 0; i < this.game.activities.length ; i++) {
-          activitiesState.push(undefined);
           const activity = this.game.activities[i];
           const dbActivity = this.gameService.activityToDbActivity(activity, id);
           this.gameService.newActivity(dbActivity).subscribe(
             state => {
-              activitiesState[i] = state;
-              console.log('Activity:', i);
-              console.log(dbActivity.name);
-              console.log(activitiesState);
+              this.activitiesState[i] = state;
+              this.goBackIfDoneUploading();
             }
           );
         }
-
+        this.goBackIfDoneUploading();
       }
     );
+  }
 
+  goBackIfDoneUploading() {
+    let done = true;
+    for (const activityState of this.activitiesState){
+      if (activityState === undefined) {
+        done = false;
+      }
+    }
+    if (done) {
+      console.log('done');
+      this.gameService.updateGameList();
+      this.router.navigate(['/admin-panel/games']);
+    }
   }
 
 }

@@ -21,7 +21,11 @@
       <div class="form-group text-center">
         <button type="submit" class="btn btn-primary-lfg submit-button">Add filter</button>
       </div>
+      <div class="form-group text-center">
+        <button type="button" class="btn btn-primary-lfg" (click)="resetFilters()">Reset all filters</button>
+      </div>
+      <div class="form-group text-center">
+        <span class="bold">Active filters: {{filterLenght}}</span>
+      </div>
     </form>
-  {{selectedGameIndex}}
-  {{selectedActivityIndex}}
 </div>

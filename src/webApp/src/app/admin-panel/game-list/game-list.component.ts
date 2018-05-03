@@ -11,8 +11,7 @@ import {ActivatedRoute, ParamMap} from '@angular/router';
 })
 export class GameListComponent implements OnInit {
 
-  // private games: Game[];
-  private games$: Observable<Game[]>;
+  private games: Game[];
 
   constructor(
     private gameService: GameService,
@@ -21,16 +20,12 @@ export class GameListComponent implements OnInit {
 
   ngOnInit() {
     /*
-    this.gameService.getGameList().subscribe(games => {
-        this.games = games;
-      }
-    );
-    */
-    this.games$ = this.route.paramMap
+    this.route.paramMap
       .switchMap((params: ParamMap) => {
         //this.selectedId = +params.get('id');
-        return this.gameService.getGameList();
       });
+      */
+    this.gameService.getGameList().subscribe(games => this.games = games);
   }
 
   deleteGame(id: number) {

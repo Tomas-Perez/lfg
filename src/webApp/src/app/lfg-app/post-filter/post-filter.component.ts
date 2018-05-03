@@ -15,6 +15,7 @@ export class PostFilterComponent implements OnInit {
   private games: Game[];
   private selectedGameIndex: number;
   private selectedActivityIndex: number;
+  private filterLenght: number;
 
   constructor(
     private gameService: GameService,
@@ -26,6 +27,7 @@ export class PostFilterComponent implements OnInit {
       games => {
         this.games = games;
       });
+    this.filterLenght = this.postService.getFiltersLength();
   }
 
   addFilter() {
@@ -38,6 +40,12 @@ export class PostFilterComponent implements OnInit {
         this.postService.addFilter(new FilterByGame(gameId));
       }
     }
+    this.filterLenght = this.postService.getFiltersLength();
+  }
+
+  resetFilters() {
+    this.postService.resetFilters();
+    this.filterLenght = this.postService.getFiltersLength();
   }
 
 }

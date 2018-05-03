@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import 'SimpleBar';
+import 'simplebar';
 import {User} from '../_models/User';
 import {UserService} from '../_services/user.service';
 import {PostService} from '../_services/post.service';
