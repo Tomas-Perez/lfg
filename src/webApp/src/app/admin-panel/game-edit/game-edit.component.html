@@ -8,16 +8,16 @@
             <label for="InputName">
               <span class="bold" >Name</span>
             </label>
-            <input name="InputName" [(ngModel)]="editGame.name" id="InputName" class="form-control form-input"
-                   aria-describedby="emailHelp" required>
+            <input name="InputName" [(ngModel)]="editName" id="InputName" class="form-control form-input"
+                   aria-describedby="nameHelp" required>
           </div>
           Activities:
-          <div *ngFor="let activity of editGame.activities; index as i">
+          <div *ngFor="let actState of activityState; index as i">
             <label for="InputActivity{{i}}">
-              <span class="bold" >Name</span>
+              <span class="bold" >Name</span>  {{actState.status}}
             </label>
-            <input name="InputActivity{{i}}" [(ngModel)]="activity.name" id="InputActivity{{i}}" class="form-control form-input"
-                   aria-describedby="emailHelp" required>
+            <input name="InputActivity{{i}}" [(ngModel)]="activityState[i].activity.name" id="InputActivity{{i}}" class="form-control form-input"
+                   aria-describedby="activityHelp" required>
             <button class="button" (click)="removeActivity(i)">Remove</button>
           </div>
           <div class="form-group text-center">

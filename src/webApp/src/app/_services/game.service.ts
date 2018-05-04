@@ -39,10 +39,10 @@ export class GameService {
     return dbGame;
   }
 
-  activityToDbActivity(activity: Activity, id: number): DbActivity {
+  activityToDbActivity(activity: Activity, gameID: number): DbActivity {
     const dbActivity = new DbActivity();
     dbActivity.name = activity.name;
-    dbActivity.gameID = id;
+    dbActivity.gameID = gameID;
     return dbActivity;
   }
 
@@ -92,7 +92,6 @@ export class GameService {
 
   private newGameErrorHandle(code: any) {
     console.log('Error adding new game');
-    console.log(code);
     return Observable.of(code);
   }
 
@@ -111,8 +110,35 @@ export class GameService {
 
   private updateGameErrorHandle(err: any) {
     console.log('Error updating Game');
-    console.log(err);
     return Observable.of(false);
+  }
+
+  newActivityWithId(activity: DbActivity): Observable<number> {
+    return this.http.post<any>(this.activitiesUrl, this.jsonConvert.serialize(activity), {
+      observe: 'response'
+    })
+      .pipe(
+        switchMap(response => {
+          const createdActivityUrl = response.headers.get('location');
+          return this.http.get<any>(createdActivityUrl, {
+            observe: 'response'
+          })
+            .pipe(
+              switchMap( getActivityResponse => {
+                  const newActivity = this.jsonConvert.deserialize(getActivityResponse.body, DbActivity);
+                  return Observable.of(newActivity.id);
+                }
+              ),
+              catchError((err: any) => this.newActivityWithIdErrorHandle(-2))
+            );
+        }),
+        catchError((err: any) => this.newActivityWithIdErrorHandle(-1))
+      );
+  }
+
+  private newActivityWithIdErrorHandle(code: any) {
+    console.log('Error adding new activity');
+    return Observable.of(code);
   }
 
   newActivity(activity: DbActivity): Observable<boolean> {
@@ -173,7 +199,7 @@ export class GameService {
   }
 
 
-  getGame(id: number) {
+  getGame(id: number): Observable<Game> {
     return this.http.get<any>(this.gamesUrl + '/' + id,
       {
         observe: 'response'
