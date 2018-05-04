@@ -11,10 +11,10 @@ import {Observable} from 'rxjs/Observable';
 export class HomeNavbarComponent implements OnInit {
 
   navbarCollapsed = true;
-  isLoggedIn: Observable<boolean>;
+  isLoggedIn: boolean;
 
   constructor(public authService: AuthService) {
-    this.isLoggedIn = this.authService.isLoggedIn();
+    this.authService.isLoggedInBS().subscribe(isLoggedIn => this.isLoggedIn = isLoggedIn);
   }
 
   ngOnInit() {

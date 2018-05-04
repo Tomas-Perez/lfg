@@ -6,6 +6,7 @@ import 'rxjs/add/operator/switchMap';
 import {Activity} from '../../_models/Activity';
 import {Status} from '../../_models/Status';
 import {DbGame} from '../../_models/DbGame';
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'app-game-edit',
@@ -25,7 +26,8 @@ export class GameEditComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private gameService: GameService,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) { }
 
   ngOnInit() {
@@ -35,7 +37,7 @@ export class GameEditComponent implements OnInit {
     this.getGame(true);
   }
 
-  getGame(firsTime: boolean) {// TODO goBack() if error
+  getGame(firsTime: boolean) {
     /*
     this.game$ = this.route.paramMap
       .switchMap((params: ParamMap) =>
@@ -52,28 +54,26 @@ export class GameEditComponent implements OnInit {
           this.setUpActivityState();
         }
       })
-      .catch(err => this.router.navigate(['/admin-panel/games']));
+      .catch(err => this.location.back());
   }
 
   setUpActivityState() {
     this.activityState = [];
     for (let i = 0; i < this.game.activities.length; i++) {
-      this.activityState.push({activity: this.game.activities[i], status: Status.NOTHING});
+      this.activityState.push({activity: JSON.parse(JSON.stringify(this.game.activities[i])), status: Status.NOTHING});
     }
     console.log(this.activityState);
   }
 
-  restartActivityState() {
+  restartActivityStateAndTrim() {
     for (let i = 0; i < this.activityState.length; i++) {
       this.activityState[i].status = Status.NOTHING;
+      this.activityState[i].activity.name = this.activityState[i].activity.name.trim();
     }
   }
 
   updateGame() {
-    this.restartActivityState();
-    console.log(this.game.activities);
-    console.log(this.activityState);
-    console.log(this.activityToDeleteState);
+    this.restartActivityStateAndTrim();
 
     // Update Game
     if (this.game.name !== this.editName) {
@@ -92,8 +92,10 @@ export class GameEditComponent implements OnInit {
 
     // Update activities
     for (const activity of this.game.activities) {
+      console.log(activity.name);
       for (const eActivity of this.activityState) {
         if (activity.id === eActivity.activity.id) {
+          console.log(eActivity.activity.name);
           if (activity.name !== eActivity.activity.name) {
             eActivity.status = Status.PROCESS;
             const dbActivity = this.gameService.activityToDbActivity(eActivity.activity, this.game.id);
@@ -141,7 +143,7 @@ export class GameEditComponent implements OnInit {
             if (id >= 0) {
               console.log(dbActivity.name + ' added');
               eActivity.activity.id = id;
-              this.game.activities.push(eActivity.activity);
+              this.game.activities.push(JSON.parse(JSON.stringify(eActivity.activity)));
             }
             eActivity.status = Status.successOrError(id >= 0);
           }
@@ -169,15 +171,21 @@ export class GameEditComponent implements OnInit {
   }
 
   addActivity() {
-    this.activityState.push({activity: new Activity, status: Status.NOTHING});
-    console.log(this.activityState);
+    const array = JSON.parse(JSON.stringify(this.activityState));
+    array.push({activity: new Activity(''), status: Status.NOTHING});
+    this.activityState = array;
   }
 
   removeActivity(i: number) {
-    const activity = this.activityState.splice(i, 1)[0];
-    this.activityToDeleteState.push({activity: activity.activity, status: Status.NOTHING});
-    console.log(this.activityState);
+    const activitySt = this.activityState.splice(i, 1)[0];
+    if (activitySt.activity.name.trim()) {
+      this.activityToDeleteState.push({activity: activitySt.activity, status: Status.NOTHING});
+    }
     console.log(this.activityToDeleteState);
+  }
+
+  getStatus(status: Status): string {
+    return Status[status];
   }
 
 }

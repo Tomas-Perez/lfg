@@ -13,6 +13,7 @@ import {UnauthUserGuardService} from './_services/guards/unauth-user-guard.servi
 import {AdminPanelModule} from './admin-panel/admin-panel.module';
 import {GameService} from './_services/game.service';
 import { GroupService } from './_services/group.service';
+import {AdminGuardService} from "./_services/guards/admin-guard.service";
 
 @NgModule({
   declarations: [
@@ -31,8 +32,9 @@ import { GroupService } from './_services/group.service';
     httpInterceptorProviders,
     UserService,
     AuthUserGuardService,
-    GameService,
     UnauthUserGuardService,
+    AdminGuardService,
+    GameService,
     GroupService
   ],
   bootstrap: [AppComponent]

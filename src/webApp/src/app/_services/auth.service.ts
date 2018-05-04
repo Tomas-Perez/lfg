@@ -19,7 +19,7 @@ export class AuthService {
   private jsonConvert: JsonConvert = new JsonConvert();
 
   private loggedIn = false;
-  loggedIn$ = new BehaviorSubject<boolean>(this.loggedIn);
+  private loggedIn$ = new BehaviorSubject<boolean>(this.loggedIn);
 
   constructor(private http: HttpClient) {
 
@@ -85,8 +85,12 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  isLoggedIn(): Observable<boolean> {
-    return this.loggedIn$.asObservable().share();
+  isLoggedIn(): boolean {
+    return this.loggedIn;
+  }
+
+  isLoggedInBS(): BehaviorSubject<boolean> {
+    return this.loggedIn$;
   }
 
   /**
@@ -137,6 +141,10 @@ export class AuthService {
     return Observable.of(null);
   }
 
+  /**
+   * Retrieves current user info and returns its admin value
+   * @returns {Observable<boolean>}
+   */
   authAdmin(): Observable<boolean> {
     return this.http.get<any>(this.userMeUrl,
       {
@@ -156,7 +164,7 @@ export class AuthService {
   }
 
   logout() {
-    console.log('logging out');
+    console.log('logged out');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     this.setLoggedIn(false);

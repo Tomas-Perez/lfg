@@ -12,11 +12,11 @@
                    aria-describedby="nameHelp" required>
           </div>
           Activities:
-          <div *ngFor="let actState of activityState; index as i">
+          <div *ngFor="let actState of activityState; let i = index">
             <label for="InputActivity{{i}}">
-              <span class="bold" >Name</span>  {{actState.status}}
+              <span class="bold" >Name</span><span *ngIf="actState.status != 0">{{getStatus(actState.status)}}</span>
             </label>
-            <input name="InputActivity{{i}}" [(ngModel)]="activityState[i].activity.name" id="InputActivity{{i}}" class="form-control form-input"
+            <input name="InputActivity{{i}}" [(ngModel)]="actState.activity.name" id="InputActivity{{i}}" class="form-control form-input"
                    aria-describedby="activityHelp" required>
             <button class="button" (click)="removeActivity(i)">Remove</button>
           </div>
