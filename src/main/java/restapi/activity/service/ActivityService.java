@@ -35,6 +35,7 @@ public class ActivityService {
 
     public Activity getActivity(int id){
         final Activity activity = activityManager.getActivity(id);
+        System.out.println(activity);
         if(activity == null) throw new NotFoundException();
         return activity;
     }
@@ -53,6 +54,7 @@ public class ActivityService {
 
     public void updateActivity(int id, String name, int gameID){
         final Game game = getGame(gameID);
+        System.out.println(game);
         ActivityPatcher patcher = new ActivityPatcher.Builder()
                 .withName(name)
                 .withGame(game)

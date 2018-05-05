@@ -1,5 +1,7 @@
 package persistence.model;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
@@ -13,7 +15,6 @@ import java.util.Set;
 @Table(name = "game")
 public class Game {
     @Id
-    @GeneratedValue
     @Column(name = "id")
     private int id;
 
@@ -23,7 +24,7 @@ public class Game {
     @Column(name = "image")
     private String image;
 
-    @OneToMany(mappedBy = "game", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "game", cascade = {CascadeType.ALL})
     private Set<Activity> activities;
 
     @ManyToMany(mappedBy = "games", cascade = CascadeType.PERSIST)
@@ -32,7 +33,8 @@ public class Game {
     @ManyToMany(mappedBy = "games", cascade = CascadeType.PERSIST)
     private Set<User> owners;
 
-    public Game(String name, String image) {
+    public Game(int id, String name, String image) {
+        this.id = id;
         this.name = name;
         this.image = image;
         this.activities = new HashSet<>();

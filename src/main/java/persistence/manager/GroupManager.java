@@ -1,6 +1,7 @@
 package persistence.manager;
 
 import org.jetbrains.annotations.NotNull;
+import persistence.manager.generator.KeyGenerator;
 import persistence.model.*;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -16,10 +17,12 @@ import java.util.NoSuchElementException;
 @ApplicationScoped
 public class GroupManager {
     private EntityManager manager;
+    private KeyGenerator generator;
 
     @Inject
-    public GroupManager(EntityManager manager) {
+    public GroupManager(EntityManager manager, KeyGenerator generator) {
         this.manager = manager;
+        this.generator = generator;
     }
 
     public GroupManager(){ }
@@ -31,7 +34,8 @@ public class GroupManager {
                          GamePlatform gamePlatform)
     {
         EntityTransaction tx = manager.getTransaction();
-        Group group = new Group(slots, activity, owner, chatPlatform, gamePlatform);
+        int id = generator.generate("group");
+        Group group = new Group(id, slots, activity, owner, chatPlatform, gamePlatform);
 
         try {
             tx.begin();
@@ -80,6 +84,7 @@ public class GroupManager {
         try {
             tx.begin();
             Group group = manager.find(Group.class, groupID);
+            group.destroy();
             manager.remove(group);
             tx.commit();
         } catch (NullPointerException | IllegalArgumentException exc){

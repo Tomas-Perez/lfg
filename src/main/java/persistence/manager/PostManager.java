@@ -1,6 +1,7 @@
 package persistence.manager;
 
 import org.jetbrains.annotations.NotNull;
+import persistence.manager.generator.KeyGenerator;
 import persistence.model.Activity;
 import persistence.model.Group;
 import persistence.model.Post;
@@ -21,10 +22,12 @@ import java.util.NoSuchElementException;
 @ApplicationScoped
 public class PostManager {
     private EntityManager manager;
+    private KeyGenerator generator;
 
     @Inject
-    public PostManager(EntityManager manager) {
+    public PostManager(EntityManager manager, KeyGenerator generator) {
         this.manager = manager;
+        this.generator = generator;
     }
 
     public PostManager(){ }
@@ -35,7 +38,8 @@ public class PostManager {
                         @NotNull User owner)
     {
         EntityTransaction tx = manager.getTransaction();
-        Post post = new Post(description, date, activity, owner);
+        int id = generator.generate("post");
+        Post post = new Post(id, description, date, activity, owner);
 
         try {
             tx.begin();
@@ -54,7 +58,8 @@ public class PostManager {
                              @NotNull Group group)
     {
         EntityTransaction tx = manager.getTransaction();
-        Post post = new Post(description, date, group);
+        int id = generator.generate("post");
+        Post post = new Post(id, description, date, group);
 
         try {
             tx.begin();

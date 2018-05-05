@@ -16,7 +16,6 @@ import java.util.Set;
 public class Group {
 
     @Id
-    @GeneratedValue
     @Column(name = "id")
     private int id;
 
@@ -45,7 +44,8 @@ public class Group {
             inverseJoinColumns = @JoinColumn(name = "member_id"))
     private Set<User> members;
 
-    public Group(int slots, Activity activity, User owner, ChatPlatform chatPlatform, GamePlatform gamePlatform) {
+    public Group(int id, int slots, Activity activity, User owner, ChatPlatform chatPlatform, GamePlatform gamePlatform) {
+        this.id = id;
         this.slots = slots;
         setActivity(activity);
         this.members = new HashSet<>(this.slots);
@@ -167,6 +167,12 @@ public class Group {
 
     public boolean full(){
         return members.size() == slots;
+    }
+
+    public void destroy(){
+        activity.removeGroup(this);
+        owner.removeFromGroup(this);
+        members.forEach(member -> member.removeFromGroup(this));
     }
 
     @Override

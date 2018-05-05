@@ -70,18 +70,11 @@ public class ActivityResourceTest extends ApiTest {
     }
 
     @Test
-    public void update() throws Exception{
+    public void updateName() throws Exception{
         final String gameName = "Overwatch";
         int gameID = addGame(gameName);
 
-        final String gameName2 = "God of War";
-        int gameID2 = addGame(gameName2);
-
-        final String gameName3 = "FIFA";
-        addGame(gameName3);
-
         final String activityName = "Ranked";
-
         final String activityName2 = "Casual";
 
         final Response postResponse = RequestUtil.post(
@@ -95,7 +88,7 @@ public class ActivityResourceTest extends ApiTest {
         final String location = postResponse.getHeaderString("Location");
         final WebTarget activityTarget = RequestUtil.newTarget(location);
 
-        final Response updateResponse = RequestUtil.post(activityTarget, token, new UpdateActivityJSON(activityName2, gameID2));
+        final Response updateResponse = RequestUtil.post(activityTarget, token, new UpdateActivityJSON(activityName2, gameID));
 
         assertThat(updateResponse.getStatus(), is(Response.Status.NO_CONTENT.getStatusCode()));
 
@@ -103,10 +96,56 @@ public class ActivityResourceTest extends ApiTest {
         assertThat(getResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
 
         ActivityJSON actual = RequestUtil.parseResponse(getResponse, ActivityJSON.class);
-        GameJSON gameJSON = new GameJSON(gameID2, gameName2);
+        GameJSON gameJSON = new GameJSON(gameID, gameName);
 
         final String id = RequestUtil.getRelativePathDiff(activitiesTarget, activityTarget);
         ActivityJSON expected = new ActivityJSON(Integer.parseInt(id), activityName2, gameJSON);
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    public void updateGame() throws Exception{
+        final String gameName = "Overwatch";
+        int gameID = addGame(gameName);
+
+        final String gameName2 = "God of War";
+        int gameID2 = addGame(gameName2);
+
+        final String activityName = "Ranked";
+
+        final Response postResponse = RequestUtil.post(
+                activitiesTarget,
+                token,
+                new CreateActivityJSON(activityName, gameID)
+        );
+
+        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+
+        Response listResponse = RequestUtil.get(activitiesTarget, token);
+        List<ActivityJSON> activities = RequestUtil.parseListResponse(listResponse, ActivityJSON.class);
+        System.out.println(activities);
+
+        final String location = postResponse.getHeaderString("Location");
+        final WebTarget activityTarget = RequestUtil.newTarget(location);
+
+        final Response updateResponse = RequestUtil.post(activityTarget, token, new UpdateActivityJSON(activityName, gameID2));
+
+        assertThat(updateResponse.getStatus(), is(Response.Status.NO_CONTENT.getStatusCode()));
+
+        Response listResponse2 = RequestUtil.get(activitiesTarget, token);
+        List<ActivityJSON> activities2 = RequestUtil.parseListResponse(listResponse2, ActivityJSON.class);
+        System.out.println(activities2);
+
+        final Response getResponse = RequestUtil.get(activityTarget, token);
+        System.out.println(activityTarget.getUri());
+        assertThat(getResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
+
+        ActivityJSON actual = RequestUtil.parseResponse(getResponse, ActivityJSON.class);
+        GameJSON gameJSON = new GameJSON(gameID2, gameName2);
+
+        final String id = RequestUtil.getRelativePathDiff(activitiesTarget, activityTarget);
+        ActivityJSON expected = new ActivityJSON(Integer.parseInt(id), activityName, gameJSON);
 
         assertThat(actual, is(expected));
     }

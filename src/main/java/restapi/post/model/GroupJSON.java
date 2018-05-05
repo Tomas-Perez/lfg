@@ -3,7 +3,9 @@ package restapi.post.model;
 import persistence.model.Group;
 import restapi.group.model.MemberJSON;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -40,5 +42,20 @@ public class GroupJSON {
 
     public void setMembers(List<MemberJSON> members) {
         this.members = members;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GroupJSON)) return false;
+        GroupJSON groupJSON = (GroupJSON) o;
+        return id == groupJSON.id &&
+                new HashSet<>(members).equals(new HashSet<>(groupJSON.members));
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, members);
     }
 }

@@ -12,7 +12,6 @@ import java.util.Set;
 @Table(name="user")
 public class User {
     @Id
-    @GeneratedValue
     @Column(name = "id")
     private int id;
 
@@ -40,7 +39,8 @@ public class User {
     public User() {
     }
 
-    public User(String username, String password, String email, boolean admin) {
+    public User(int id, String username, String password, String email, boolean admin) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;

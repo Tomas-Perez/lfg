@@ -23,6 +23,7 @@
     </persistence-unit>
     <persistence-unit name="test" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <class>persistence.model.Key</class>
         <class>persistence.model.User</class>
         <class>persistence.model.Game</class>
         <class>persistence.model.Activity</class>
@@ -38,6 +39,7 @@
             <property name="javax.persistence.jdbc.user" value="SA"/>
             <property name="javax.persistence.jdbc.password" value=""/>
             <property name="hibernate.hbm2ddl.auto" value="create"/>
+            <property name="hibernate.show_sql" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>

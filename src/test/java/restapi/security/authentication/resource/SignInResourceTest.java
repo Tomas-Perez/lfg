@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import persistence.manager.EntityManagerProducer;
 import persistence.manager.UserManager;
+import persistence.manager.generator.KeyGenerator;
 import restapi.security.authentication.model.SignInJSON;
 
 import javax.inject.Inject;
@@ -42,7 +43,8 @@ public class SignInResourceTest {
     public void setup(){
         emp = new EntityManagerProducer();
         emp.init();
-        manager = new UserManager(emp.createEntityManager());
+
+        manager = new UserManager(emp.createEntityManager(), new KeyGenerator(emp.createEntityManager()));
     }
 
     @After

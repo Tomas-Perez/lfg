@@ -116,6 +116,8 @@ public class ActivityManagerTest {
 
         assertFalse(activityManager.activityExists(ranked, godOfWar));
         assertTrue(activityManager.activityExists(tournament, fifa));
+
+        System.out.println(activityManager.listActivities());
     }
 
     @Test
@@ -242,6 +244,10 @@ public class ActivityManagerTest {
                 new ActivityGamePair(ptr, ow)
         );
 
+        activities.stream()
+                .map(Activity::getId)
+                .forEach(id -> assertNotNull(activityManager.getActivity(id)));
+
         gameManager.deleteGame(ow.getId());
 
         activities.stream()
@@ -253,21 +259,6 @@ public class ActivityManagerTest {
     public void deletes(){
         Game game = addGame("Overwatch");
         Activity activity = addActivity(new ActivityGamePair("Ranked", game));
-        Activity gameActivity = game.getActivities().iterator().next();
-        System.out.println("Equals? = " + activity.equals(gameActivity));
-        int expected = activity.hashCode();
-        int actual = gameActivity.hashCode();
-        System.out.println("actual = " + actual);
-        System.out.println("expected = " + expected);
-        assertThat(actual, is(expected));
-        System.out.println("activity = " + activity);
-        System.out.println("gameActivity = " + gameActivity);
-        assertThat(gameActivity, is(activity));
-        System.out.println("Contains activity? = " + game.getActivities().contains(activity));
-        System.out.println("Contains gameActivity? = " + game.getActivities().contains(gameActivity));
-
-
-
         activityManager.deleteActivity(activity.getId());
         assertNull(activityManager.getActivity(activity.getId()));
     }

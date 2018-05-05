@@ -22,9 +22,6 @@ public class ObjectMapperContextResolver implements ContextResolver<ObjectMapper
 
     @Override
     public ObjectMapper getContext(Class<?> type) {
-        System.out.println(System.lineSeparator());
-        System.out.println("CALL TO CONTEXT");
-        System.out.println(System.lineSeparator());
         return MAPPER;
     }
 }

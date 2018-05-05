@@ -59,6 +59,7 @@ public class ActivityResource {
     @GET
     @Path("{id}")
     public Response get(@PathParam("id") int id){
+        System.out.println(id);
         Activity activity = service.getActivity(id);
         return Response.ok(new ActivityJSON(activity)).build();
     }

@@ -2,6 +2,7 @@ package persistence.manager;
 
 import org.jetbrains.annotations.NotNull;
 import persistence.manager.exception.ConstraintException;
+import persistence.manager.generator.KeyGenerator;
 import persistence.manager.patcher.GamePatcher;
 import persistence.model.Game;
 
@@ -20,17 +21,21 @@ import java.util.Optional;
 @ApplicationScoped
 public class GameManager {
     private EntityManager manager;
+    private KeyGenerator generator;
 
     @Inject
-    public GameManager(EntityManager manager) {
+    public GameManager(EntityManager manager, KeyGenerator generator) {
         this.manager = manager;
+        this.generator = generator;
     }
 
     public GameManager(){ }
 
     public int addGame(@NotNull String name, String image) throws ConstraintException {
         checkValidCreation(name);
-        Game game = new Game(name, image);
+        int id = generator.generate("game");
+        Game game = new Game(id, name, image);
+        System.out.println(game.getId());
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();

@@ -16,7 +16,6 @@ import java.util.Set;
 public class Activity {
 
     @Id
-    @GeneratedValue
     @Column(name = "id")
     private int id;
 
@@ -27,7 +26,7 @@ public class Activity {
     @JoinColumn(name="game_id", referencedColumnName="id")
     private Game game;
 
-    @OneToMany(mappedBy = "activity", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "activity", cascade = {CascadeType.ALL})
     private Set<Group> groups;
 
     public int getId() {
@@ -88,11 +87,16 @@ public class Activity {
             game.addActivity(this);
     }
 
+    public void destroy(){
+        game.removeActivity(this);
+    }
+
     private boolean sameAsFormer(Game newGame){
         return game == null ? newGame == null : game.equals(newGame);
     }
 
-    public Activity(String name, Game game) {
+    public Activity(int id, String name, Game game) {
+        this.id = id;
         this.name = name;
         this.groups = new HashSet<>();
         setGame(game);

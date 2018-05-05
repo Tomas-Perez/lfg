@@ -2,9 +2,11 @@ package persistence.manager;
 
 import org.jetbrains.annotations.NotNull;
 import persistence.manager.exception.ConstraintException;
+import persistence.manager.generator.KeyGenerator;
 import persistence.manager.patcher.ActivityPatcher;
 import persistence.model.Activity;
 import persistence.model.Game;
+import persistence.model.Group;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -21,17 +23,20 @@ import java.util.Optional;
 @ApplicationScoped
 public class ActivityManager {
     private EntityManager manager;
+    private KeyGenerator generator;
 
     @Inject
-    public ActivityManager(EntityManager manager) {
+    public ActivityManager(EntityManager manager, KeyGenerator generator) {
         this.manager = manager;
+        this.generator = generator;
     }
 
     public ActivityManager(){ }
 
     public int addActivity(@NotNull String name, @NotNull Game game) throws ConstraintException {
         checkValidCreation(name, game);
-        Activity activity = new Activity(name, game);
+        int id = generator.generate("activity");
+        Activity activity = new Activity(id, name, game);
         EntityTransaction tx = manager.getTransaction();
 
         try {
@@ -65,10 +70,7 @@ public class ActivityManager {
         try {
             tx.begin();
             Activity activity = manager.find(Activity.class, activityID);
-            Game game = activity.getGame();
-            System.out.println(game.getActivities());
-            game.removeActivity(activity);
-            System.out.println(game.getActivities());
+            activity.destroy();
             manager.remove(activity);
             tx.commit();
         } catch (NullPointerException | IllegalArgumentException exc){

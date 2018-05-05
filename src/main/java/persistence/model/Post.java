@@ -15,7 +15,6 @@ import java.util.Set;
 public class Post {
 
     @Id
-    @GeneratedValue
     @Column(name = "id")
     private int id;
 
@@ -49,7 +48,8 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "chat_platform_id"))
     private Set<ChatPlatform> chatPlatforms;
 
-    public Post(String description, LocalDateTime date, Activity activity, User owner) {
+    public Post(int id, String description, LocalDateTime date, Activity activity, User owner) {
+        this.id = id;
         this.description = description;
         this.date = date;
         this.activity = activity;
@@ -58,7 +58,8 @@ public class Post {
         this.chatPlatforms = new HashSet<>();
     }
 
-    public Post(String description, LocalDateTime date, Group group) {
+    public Post(int id, String description, LocalDateTime date, Group group) {
+        this.id = id;
         this.description = description;
         this.date = date;
         this.group = group;

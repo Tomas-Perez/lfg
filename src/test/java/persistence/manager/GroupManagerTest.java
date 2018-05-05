@@ -188,6 +188,28 @@ public class GroupManagerTest {
         assertNull(groupManager.getGroup(group.getId()));
     }
 
+    @Test
+    public void deletes(){
+        final String gameName = "Overwatch";
+        Game game = addGame(gameName);
+
+        final String activityName = "Ranked";
+        Activity activity = addActivity(activityName, game);
+
+        final String username = "wewey";
+        final String password = "123123";
+        final String email = "xyz@lfg.com";
+        final boolean admin = false;
+        User user = addUser(username, password, email, admin);
+
+        final int slots = 5;
+
+        Group group = addGroup(slots, activity, user);
+
+        groupManager.deleteGroup(group.getId());
+        assertNull(groupManager.getGroup(group.getId()));
+    }
+
 
 
     private Game addGame(String name){

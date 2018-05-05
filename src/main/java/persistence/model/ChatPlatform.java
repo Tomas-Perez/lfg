@@ -12,7 +12,6 @@ import java.util.Set;
 public class ChatPlatform {
 
     @Id
-    @GeneratedValue
     @Column(name = "id")
     private int id;
 
@@ -25,7 +24,8 @@ public class ChatPlatform {
     @ManyToMany(mappedBy = "chatPlatforms", cascade = CascadeType.PERSIST)
     private Set<Post> posts;
 
-    public ChatPlatform(String name, String image) {
+    public ChatPlatform(int id, String name, String image) {
+        this.id = id;
         this.name = name;
         this.image = image;
     }

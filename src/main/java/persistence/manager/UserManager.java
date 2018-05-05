@@ -2,6 +2,7 @@ package persistence.manager;
 
 import org.jetbrains.annotations.NotNull;
 import persistence.manager.exception.ConstraintException;
+import persistence.manager.generator.KeyGenerator;
 import persistence.manager.patcher.UserPatcher;
 import persistence.model.User;
 
@@ -17,11 +18,12 @@ import java.util.Optional;
 public class UserManager {
 
     private EntityManager manager;
+    private KeyGenerator generator;
 
     @Inject
-    public UserManager(EntityManager manager) {
+    public UserManager(EntityManager manager, KeyGenerator generator) {
         this.manager = manager;
-        System.out.println("Initiating User manager");
+        this.generator = generator;
     }
 
     public UserManager(){ }
@@ -33,7 +35,8 @@ public class UserManager {
     {
         checkValidCreation(username, email);
         EntityTransaction tx = manager.getTransaction();
-        User user = new User(username, password, email, isAdmin);
+        int id = generator.generate("user");
+        User user = new User(id, username, password, email, isAdmin);
 
         try {
             tx.begin();

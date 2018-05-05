@@ -12,7 +12,6 @@ import java.util.Set;
 public class GamePlatform {
 
     @Id
-    @GeneratedValue
     @Column(name = "id")
     private int id;
 
