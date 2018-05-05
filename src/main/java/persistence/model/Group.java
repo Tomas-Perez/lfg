@@ -23,7 +23,7 @@ public class Group {
     @Column(name = "slots")
     private int slots;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name="activity_id", referencedColumnName="id")
     private Activity activity;
 
@@ -47,10 +47,10 @@ public class Group {
 
     public Group(int slots, Activity activity, User owner, ChatPlatform chatPlatform, GamePlatform gamePlatform) {
         this.slots = slots;
-        this.activity = activity;
+        setActivity(activity);
         this.members = new HashSet<>(this.slots);
-        this.chatPlatform = chatPlatform;
-        this.gamePlatform = gamePlatform;
+        setChatPlatform(chatPlatform);
+        setGamePlatform(gamePlatform);
         setOwner(owner);
     }
 
@@ -78,7 +78,21 @@ public class Group {
     }
 
     public void setActivity(Activity activity) {
+        if(sameAsFormer(activity))
+            return;
+
+        Activity oldActivity = this.activity;
         this.activity = activity;
+
+        if(oldActivity != null)
+            oldActivity.removeGroup(this);
+
+        if(activity != null)
+            activity.addGroup(this);
+    }
+
+    private boolean sameAsFormer(Activity newActivity){
+        return activity == null ? newActivity == null : activity.equals(newActivity);
     }
 
     public User getOwner() {

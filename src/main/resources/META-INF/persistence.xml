@@ -24,8 +24,8 @@
     <persistence-unit name="test" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>persistence.model.User</class>
-        <class>persistence.model.Activity</class>
         <class>persistence.model.Game</class>
+        <class>persistence.model.Activity</class>
         <class>persistence.model.GamePlatform</class>
         <class>persistence.model.ChatPlatform</class>
         <class>persistence.model.Group</class>
@@ -37,7 +37,7 @@
             <property name ="javax.persistence.jdbc.url" value="jdbc:hsqldb:hsql://localhost/test"/>
             <property name="javax.persistence.jdbc.user" value="SA"/>
             <property name="javax.persistence.jdbc.password" value=""/>
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.hbm2ddl.auto" value="create"/>
         </properties>
     </persistence-unit>
 </persistence>

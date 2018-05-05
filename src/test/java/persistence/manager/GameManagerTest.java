@@ -5,6 +5,8 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.gradle.archive.importer.embedded.EmbeddedGradleImporter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import persistence.manager.exception.ConstraintException;
@@ -13,9 +15,7 @@ import persistence.model.Game;
 
 import javax.inject.Inject;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.*;
@@ -43,52 +43,42 @@ public class GameManagerTest {
         assertNotNull(manager);
     }
 
+    @Before
+    @After
+    public void setup(){
+        manager.wipeAllRecords();
+    }
+
     @Test
     public void addGame() {
-        manager.wipeAllRecords();
-
         String name = "Overwatch";
-        manager.addGame(name, null);
-        Optional<Game> optional = manager.getByName(name);
-        assertTrue(optional.isPresent());
-
-        Game game = optional.get();
-
+        int id = manager.addGame(name, null);
+        Game game = manager.getGame(id);
+        assertNotNull(game);
         assertThat(game.getName(), is(name));
         assertNull(game.getImage());
-
-        manager.wipeAllRecords();
     }
 
     @Test
     public void gameExists() {
-        manager.wipeAllRecords();
-
         String name = "Overwatch";
         assertFalse(manager.gameExists(name));
         manager.addGame(name, null);
         assertTrue(manager.gameExists(name));
-
-        manager.wipeAllRecords();
     }
 
     @Test
     public void listGames(){
-        manager.wipeAllRecords();
+        List<Game> expected = addAllGames("Overwatch", "FIFA", "God of War");
+        List<Game> actual = manager.listGames();
+        Set<Game> expectedSet = new HashSet<>(expected);
+        Set<Game> actualSet = new HashSet<>(actual);
 
-        String[] expected = addAll("Overwatch", "FIFA", "God of War");
-
-        List<String> actual = manager.listGames().stream().map(Game::getName).collect(Collectors.toList());
-
-        assertThat(actual, hasItems(expected));
-
-        manager.wipeAllRecords();
+        assertThat(expectedSet, is(actualSet));
     }
 
     @Test
     public void duplicateGameExc(){
-        manager.wipeAllRecords();
-
         String name = "Overwatch";
 
         manager.addGame(name, null);
@@ -100,18 +90,14 @@ public class GameManagerTest {
         } catch (ConstraintException exc){
             assertThat(exc.getConstraintName(), is(name));
         }
-
-        manager.wipeAllRecords();
     }
 
     @Test
     public void duplicateGameExcUpdate() {
-        manager.wipeAllRecords();
-
         String oldName = "Overwatch";
         String newName = "FIFA";
 
-        addAll(oldName, newName, "God of War");
+        addAllGames(oldName, newName, "God of War");
 
         Game ow = manager.getByName(oldName).get();
 
@@ -125,12 +111,21 @@ public class GameManagerTest {
         } catch (ConstraintException exc){
             assertThat(exc.getConstraintName(), is(newName));
         }
-
-        manager.wipeAllRecords();
     }
 
-    private String[] addAll(String... strings){
-        Arrays.stream(strings).forEach(name -> manager.addGame(name, null));
-        return strings;
+    @Test
+    public void deletes(){
+        Game game = addGame("Overwatch");
+        manager.deleteGame(game.getId());
+        assertNull(manager.getGame(game.getId()));
+    }
+
+    private Game addGame(String name){
+        int id = manager.addGame(name, null);
+        return manager.getGame(id);
+    }
+
+    private List<Game> addAllGames(String... names){
+        return Arrays.stream(names).map(this::addGame).collect(Collectors.toList());
     }
 }

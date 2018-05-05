@@ -65,6 +65,10 @@ public class ActivityManager {
         try {
             tx.begin();
             Activity activity = manager.find(Activity.class, activityID);
+            Game game = activity.getGame();
+            System.out.println(game.getActivities());
+            game.removeActivity(activity);
+            System.out.println(game.getActivities());
             manager.remove(activity);
             tx.commit();
         } catch (NullPointerException | IllegalArgumentException exc){

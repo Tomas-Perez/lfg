@@ -23,7 +23,7 @@ public class Game {
     @Column(name = "image")
     private String image;
 
-    @OneToMany(mappedBy = "game", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "game", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private Set<Activity> activities;
 
     @ManyToMany(mappedBy = "games", cascade = CascadeType.PERSIST)
@@ -100,10 +100,12 @@ public class Game {
     }
 
     public void removeActivity(Activity activity){
-        if(!activities.contains(activity))
+        if(!activities.contains(activity)) {
+            System.out.println("Not in activities");
             return;
+        }
 
-        activities.remove(activity);
+        System.out.println("Removed activity: " + activities.remove(activity));
         activity.setGame(null);
     }
 
