@@ -42,8 +42,8 @@ export class PostFilterComponent implements OnInit, OnDestroy {
   }
 
   addFilter() {
-    const game = this.games[this.selectedGameIndex];
-    if (this.selectedGameIndex) {
+    if (this.selectedGameIndex >= 0) {
+      const game = this.games[this.selectedGameIndex];
       if (this.selectedActivityIndex > -1) {
         const activity = game.activities[this.selectedActivityIndex];
         this.postFilterService.addFilter(new FilterByActivity(game.name, activity.name, activity.id));
@@ -51,8 +51,10 @@ export class PostFilterComponent implements OnInit, OnDestroy {
         this.postFilterService.addFilter(new FilterByGame(game.name, game.id));
       }
     }
-    console.log(this.activeFilters);
-    console.log(this.postFilterService.filters);
+  }
+
+  removeFilter(filter: PostFilter) {
+    this.postFilterService.removeFilter(filter);
   }
 
   resetFilters() {

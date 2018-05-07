@@ -17,4 +17,16 @@ export class FilterByActivity implements PostFilter {
     return post.activity.id === this.activityId;
   }
 
+  compareTo(post: PostFilter): boolean {
+    return post.isFilterByActivity() && (<FilterByActivity>post).activityId === this.activityId;
+  }
+
+  isFilterByGame(): boolean {
+    return false;
+  }
+
+  isFilterByActivity(): boolean {
+    return true;
+  }
+
 }

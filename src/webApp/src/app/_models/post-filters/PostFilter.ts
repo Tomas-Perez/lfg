@@ -6,4 +6,7 @@ export interface PostFilter {
   activityName: string;
 
   filter(post: Post): boolean;
+  isFilterByGame(): boolean;
+  isFilterByActivity(): boolean;
+  compareTo(post: PostFilter): boolean;
 }

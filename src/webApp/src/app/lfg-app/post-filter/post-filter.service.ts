@@ -15,11 +15,13 @@ export class PostFilterService {
   }
 
   addFilter(filter: PostFilter) {
-    this.filters.push(filter);
-    this.filtersSubject.next(this.filters);
+    if (!this.filters.find(elem => filter.compareTo(elem))) {
+      this.filters.push(filter);
+      this.filtersSubject.next(this.filters);
+    }
   }
 
-  removeFilter(filter: PostFilter){
+  removeFilter(filter: PostFilter) {
     this.filtersSubject.next(this.filters.filter(el => el !== filter));
   }
 

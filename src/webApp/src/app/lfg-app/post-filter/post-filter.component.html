@@ -26,7 +26,7 @@
       </div>
     </form>
 
-    <div data-simplebar class="filterList">
+    <div *ngIf="activeFilters.length" data-simplebar class="filterList">
       <h2>Active filters</h2>
       <table>
         <tr>
@@ -37,7 +37,7 @@
         <tr *ngFor="let filter of activeFilters">
           <td>{{filter.gameName}}</td>
           <td>{{filter.activityName || 'Any'}}</td>
-          <td>X</td>
+          <td (click)="removeFilter(filter)">X</td>
         </tr>
       </table>
     </div>
