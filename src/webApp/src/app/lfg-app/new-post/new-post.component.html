@@ -6,24 +6,24 @@
         <label for="SelectGame">
           <span class="bold">Game</span>
         </label>
-        <select class="form-control" id="SelectGame" [(ngModel)]="selectedGameIndex" name="game" required>
-          <option *ngFor="let game of games; index as i" [value]="i">{{game.name}}</option>
+        <select class="form-control form-select" id="SelectGame" [(ngModel)]="newPostModel.selectedGameIndex" name="game" required>
+          <option class="form-option" *ngFor="let game of games; index as i" [value]="i">{{game.name}}</option>
         </select>
       </div>
-      <div *ngIf="selectedGameIndex" class="form-group">
+      <div *ngIf="newPostModel.selectedGameIndex > -1" class="form-group">
         <label for="SelectActivity">
           <span class="bold">Activity</span>
         </label>
-        <select class="form-control" id="SelectActivity" [(ngModel)]="selectedActivityIndex" name="activity" required>
-          <option *ngFor="let activity of games[selectedGameIndex].activities; index as j" [value]="j">{{activity.name}}</option>
+        <select class="form-control" id="SelectActivity" [(ngModel)]="newPostModel.dbPost.activityID" name="activity" required>
+          <option *ngFor="let activity of games[newPostModel.selectedGameIndex].activities" [value]="activity.id">{{activity.name}}</option>
         </select>
       </div>
       <div class="form-group">
-        <label for="InputDescription">
+        <label for="TextAreaDescription">
           <span class="bold">Description</span>
         </label>
-        <input name="InputDescription" [(ngModel)]="description" id="InputDescription" class="form-control form-input"
-               aria-describedby="descriptionHelp">
+        <textarea name="TextAreaDescription" placeholder="Description" [(ngModel)]="newPostModel.dbPost.description"
+                  id="TextAreaDescription" class="form-control form-text description-post" aria-describedby="descriptionHelp"></textarea>
       </div>
       <div class="form-group text-center">
         <button type="submit" class="btn btn-primary-lfg submit-button">Post</button>

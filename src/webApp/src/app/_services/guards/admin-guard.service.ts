@@ -18,7 +18,7 @@ export class AdminGuardService implements CanActivate {
             if (isAdmin) {
               return true;
             } else {
-              this.router.navigate(['/home']); // TODO reroute to not found
+              this.router.navigate(['/home/not-found']); // TODO reroute to not found
               return false;
             }
           }

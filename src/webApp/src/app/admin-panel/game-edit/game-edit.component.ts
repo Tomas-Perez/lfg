@@ -6,7 +6,7 @@ import 'rxjs/add/operator/switchMap';
 import {Activity} from '../../_models/Activity';
 import {Status} from '../../_models/Status';
 import {DbGame} from '../../_models/DbGame';
-import {Location} from "@angular/common";
+import {Location} from '@angular/common';
 
 @Component({
   selector: 'app-game-edit',
@@ -54,7 +54,7 @@ export class GameEditComponent implements OnInit {
           this.setUpActivityState();
         }
       })
-      .catch(err => this.location.back());
+      .catch(err => this.router.navigate(['/admin-panel/games']));
   }
 
   setUpActivityState() {

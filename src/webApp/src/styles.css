@@ -64,6 +64,39 @@ input:-webkit-autofill {
   border-bottom-color: hsla(0,0%,100%,1);;
 }
 
+.form-text, .form-text:focus{
+  font: 400 13.3333px Arial;
+  background: transparent !important;
+  border-radius: 0;
+  border: 1px solid hsla(0, 0%, 100%, .1);
+  color: #ffffff;
+  box-shadow: none;
+  outline: none;
+}
+
+.form-text:focus{
+  border-color: hsla(0,0%,100%,.5);
+}
+
+.form-select, .form-select:focus{
+  font: 400 13.3333px Arial;
+  background: transparent !important;
+  border-radius: 0;
+  border: 1px solid hsla(0, 0%, 100%, .1);
+  color: #ffffff;
+  box-shadow: none;
+  outline: none;
+}
+
+.form-select:focus{
+  border-color: hsla(0,0%,100%,.5);
+}
+
+.form-option{
+  background-color: #282a2d !important;
+  color: #ffffff;
+}
+
 app-root{
   height: 100%;
   min-height: 100%;

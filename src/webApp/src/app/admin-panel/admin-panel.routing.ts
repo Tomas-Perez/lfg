@@ -10,7 +10,8 @@ const routes: Routes = [
   { path: 'admin-panel', canActivate: [AdminGuardService], component: AdminPanelComponent , children: [
     { path: 'games', component: GameListComponent},
     { path: 'new-game', component: GameNewComponent},
-    { path: 'edit-game/:id', component: GameEditComponent}
+    { path: 'edit-game/:id', component: GameEditComponent},
+    { path: '**', redirectTo: ''}
   ]}
 ];
 
@@ -21,4 +22,4 @@ const routes: Routes = [
   exports: [ RouterModule ]
 
 })
-export class AdminPanelRoutingModule { }
+export class AdminPanelRouting { }

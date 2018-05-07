@@ -12,7 +12,7 @@ export class UnauthUserGuardService implements CanActivate {
     if (!this.authService.isLoggedIn()) {
       return true;
     } else {
-      this.router.navigate(['/home/sign-in']);
+      this.router.navigate(['/home']);
       return false;
     }
   }

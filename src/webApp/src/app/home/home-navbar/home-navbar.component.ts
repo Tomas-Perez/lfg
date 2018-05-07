@@ -1,24 +1,34 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { RouterLinkActive } from '@angular/router';
 import {AuthService} from '../../_services/auth.service';
-import {Observable} from 'rxjs/Observable';
+import {Subject} from 'rxjs/Subject';
+import 'rxjs/add/operator/takeUntil';
 
 @Component({
   selector: 'app-home-navbar',
   templateUrl: './home-navbar.component.html',
   styleUrls: ['./home-navbar.component.css']
 })
-export class HomeNavbarComponent implements OnInit {
+export class HomeNavbarComponent implements OnInit, OnDestroy {
 
   navbarCollapsed = true;
   isLoggedIn: boolean;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(public authService: AuthService) {
-    this.authService.isLoggedInBS().subscribe(isLoggedIn => this.isLoggedIn = isLoggedIn);
+    this.authService.isLoggedInBS().takeUntil(this.ngUnsubscribe).subscribe(isLoggedIn => this.isLoggedIn = isLoggedIn);
   }
 
   ngOnInit() {
 
   }
 
+  logOut() {
+    this.authService.logout();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
 }

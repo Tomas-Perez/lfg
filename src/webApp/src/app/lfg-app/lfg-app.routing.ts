@@ -21,4 +21,4 @@ const routes: Routes = [
   exports: [ RouterModule ]
 
 })
-export class LfgAppRoutingModule { }
+export class LfgAppRouting { }

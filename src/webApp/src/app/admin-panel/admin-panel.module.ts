@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import {AdminPanelRoutingModule} from './admin-panel-routing.module';
+import {AdminPanelRouting} from './admin-panel.routing';
 import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
@@ -22,7 +22,7 @@ import { GameNewComponent } from './game-new/game-new.component';
     FormsModule,
     AngularFontAwesomeModule,
     NgbModule.forRoot(),
-    AdminPanelRoutingModule
+    AdminPanelRouting
   ],
   providers: [],
 })

@@ -1,17 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Game} from '../../_models/Game';
 import {GameService} from '../../_services/game.service';
-import {Observable} from 'rxjs/Observable';
 import {ActivatedRoute, ParamMap} from '@angular/router';
+import {Subject} from 'rxjs/Subject';
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/operator/takeUntil';
 
 @Component({
   selector: 'app-game-list',
   templateUrl: './game-list.component.html',
   styleUrls: ['./game-list.component.css']
 })
-export class GameListComponent implements OnInit {
+export class GameListComponent implements OnInit, OnDestroy {
 
   private games: Game[];
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(
     private gameService: GameService,
@@ -25,7 +28,7 @@ export class GameListComponent implements OnInit {
         //this.selectedId = +params.get('id');
       });
       */
-    this.gameService.getGameList().subscribe(games => this.games = games);
+    this.gameService.getGameList().takeUntil(this.ngUnsubscribe).subscribe(games => this.games = games);
   }
 
   deleteGame(id: number) {
@@ -38,6 +41,11 @@ export class GameListComponent implements OnInit {
         }
       }
     );
+  }
+
+  ngOnDestroy(): void {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
 }

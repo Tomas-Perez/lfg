@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from './_services/auth.service';
-import { AppRoutingModule } from './app-routing.module';
+import { AppRouting } from './appRouting.routing';
 import {HomeModule} from './home/home.module';
 import { UserService } from './_services/user.service';
 import {httpInterceptorProviders} from './_http-interceptors/index';
@@ -13,11 +13,11 @@ import {UnauthUserGuardService} from './_services/guards/unauth-user-guard.servi
 import {AdminPanelModule} from './admin-panel/admin-panel.module';
 import {GameService} from './_services/game.service';
 import { GroupService } from './_services/group.service';
-import {AdminGuardService} from "./_services/guards/admin-guard.service";
+import {AdminGuardService} from './_services/guards/admin-guard.service';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     HttpClientModule,
@@ -25,7 +25,7 @@ import {AdminGuardService} from "./_services/guards/admin-guard.service";
     HomeModule,
     LfgAppModule,
     AdminPanelModule,
-    AppRoutingModule,
+    AppRouting,
   ],
   providers: [
     AuthService,

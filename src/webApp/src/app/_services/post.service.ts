@@ -75,15 +75,11 @@ export class PostService {
         tap(response => console.log(response)),
         map(response => this.jsonConvert.deserialize(response.body, Post)),
         map(posts => posts.filter(post => filterer.filter(post, this.filters))),
-        map(posts => {
-            this.posts.next(posts);
-          }),
         catchError(err => Observable.of([]))
       );
   }
 
   getPosts(): BehaviorSubject<Post[]> {
-    this.requestPosts().subscribe();
     return this.posts;
     /*
     const filterer = new Filter;
@@ -94,6 +90,10 @@ export class PostService {
         catchError(err => Observable.of([]))
       );
     */
+  }
+
+  updatePosts(): void {
+    this.requestPosts().subscribe(posts => this.posts.next(posts));
   }
 
   newPost(post: DbPost): Observable<boolean> {

@@ -10,23 +10,36 @@
   </button>
 
   <div class="navbar-collapse" [ngbCollapse]="navbarCollapsed" id="navbarContent">
-    <ul class="navbar-nav ml-auto">
-      <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{ exact: true }">
-        <span *ngIf="(isLoggedIn | async)">LOGGED IN</span>
+
+    <ul *ngIf="isLoggedIn" class="navbar-nav ml-auto">
+      <li class="nav-item" [routerLinkActive]="['active']">
+        <a class="nav-link" [routerLink]="['/app']" (click)="navbarCollapsed = true">
+          Open
+        </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="[]" (click)="navbarCollapsed = true; logOut()">
+          Log out
+        </a>
+      </li>
+    </ul>
+
+    <ul *ngIf="!isLoggedIn" class="navbar-nav ml-auto">
       <li class="nav-item" [routerLinkActive]="['active']">
         <a class="nav-link" [routerLink]="['sign-in']" (click)="navbarCollapsed = true">
-          Sign In <fa name="user" name="user" alt="user-plus">
-        </fa></a>
+          Sign In <fa name="user" name="user" alt="user-plus"></fa>
+        </a>
       </li>
       <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{ exact: true }">
         <a class="nav-link" [routerLink]="['sign-up']"(click)="navbarCollapsed = true">
-          Sign Up <fa name="user" name="user-plus" alt="user-plus">
-        </fa></a>
+          Sign Up <fa name="user" name="user-plus" alt="user-plus"></fa>
+        </a>
       </li>
-      <li class="nav-item d-lg-none" *ngFor="let component of components" [routerLinkActive]="['active']">
+      <!--<li class="nav-item d-lg-none" *ngFor="let component of components" [routerLinkActive]="['active']">
         <a class="nav-link" [routerLink]="['/', component.toLowerCase()]" (click)="navbarCollapsed = true">{{ component }}</a>
       </li>
+      -->
+
     </ul>
   </div>
 </nav>
