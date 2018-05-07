@@ -3,9 +3,13 @@ import {Post} from '../Post';
 
 export class FilterByGame implements PostFilter {
 
+  gameName: string;
+  activityName: string;
   gameId: number;
 
-  constructor(gameId: number) {
+  constructor(gameName: string, gameId: number) {
+    this.gameName = gameName;
+    this.activityName = '';
     this.gameId = gameId;
   }
 

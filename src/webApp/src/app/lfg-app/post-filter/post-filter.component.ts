@@ -1,51 +1,67 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Game} from '../../_models/Game';
 import {GameService} from '../../_services/game.service';
-import {PostService} from '../../_services/post.service';
 import {FilterByGame} from '../../_models/post-filters/FilterByGame';
 import {FilterByActivity} from '../../_models/post-filters/FilterByActivity';
+import {PostFilterService} from './post-filter.service';
+import {Subject} from 'rxjs/Subject';
+import 'rxjs/add/operator/takeUntil';
+import {PostFilter} from '../../_models/post-filters/PostFilter';
 
 @Component({
   selector: 'app-post-filter',
   templateUrl: './post-filter.component.html',
   styleUrls: ['./post-filter.component.css']
 })
-export class PostFilterComponent implements OnInit {
+export class PostFilterComponent implements OnInit, OnDestroy {
 
+  private ngUnsubscribe: Subject<any> = new Subject();
   private games: Game[];
   private selectedGameIndex: number;
-  private selectedActivityIndex: number;
-  private filterLenght: number;
+  private selectedActivityIndex  = -1;
+  private activeFilters: PostFilter[];
 
   constructor(
     private gameService: GameService,
-    private postService: PostService
+    private postFilterService: PostFilterService
   ) { }
 
   ngOnInit() {
-    this.gameService.getGameList().subscribe(
-      games => {
+    this.gameService.getGameList().takeUntil(this.ngUnsubscribe)
+      .subscribe(games => {
         this.games = games;
+
+        if (this.games.length > 0) {
+          this.selectedGameIndex = 0;
+        }
+
       });
-    this.filterLenght = this.postService.getFiltersLength();
+
+    this.postFilterService.filtersSubject.takeUntil(this.ngUnsubscribe)
+      .subscribe( activeFilters => this.activeFilters = activeFilters);
   }
 
   addFilter() {
+    const game = this.games[this.selectedGameIndex];
     if (this.selectedGameIndex) {
       if (this.selectedActivityIndex > -1) {
-        const activityId = this.games[this.selectedGameIndex].activities[this.selectedActivityIndex].id;
-        this.postService.addFilter(new FilterByActivity(activityId));
+        const activity = game.activities[this.selectedActivityIndex];
+        this.postFilterService.addFilter(new FilterByActivity(game.name, activity.name, activity.id));
       } else {
-        const gameId = this.games[this.selectedGameIndex].id;
-        this.postService.addFilter(new FilterByGame(gameId));
+        this.postFilterService.addFilter(new FilterByGame(game.name, game.id));
       }
     }
-    this.filterLenght = this.postService.getFiltersLength();
+    console.log(this.activeFilters);
+    console.log(this.postFilterService.filters);
   }
 
   resetFilters() {
-    this.postService.resetFilters();
-    this.filterLenght = this.postService.getFiltersLength();
+    this.postFilterService.resetFilters();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
 }

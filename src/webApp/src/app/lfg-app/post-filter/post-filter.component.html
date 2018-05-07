@@ -5,17 +5,17 @@
         <label for="SelectGame">
           <span class="bold">Game</span>
         </label>
-        <select class="form-control" id="SelectGame" [(ngModel)]="selectedGameIndex" name="game" required>
-          <option *ngFor="let game of games; index as i" [value]="i">{{game.name}}</option>
+        <select class="form-control form-select" id="SelectGame" [(ngModel)]="selectedGameIndex" name="game" required>
+          <option class="form-option" *ngFor="let game of games; index as i" [value]="i">{{game.name}}</option>
         </select>
       </div>
-      <div *ngIf="selectedGameIndex" class="form-group">
+      <div *ngIf="selectedGameIndex >= 0" class="form-group">
         <label for="SelectActivity">
           <span class="bold">Activity</span>
         </label>
-        <select class="form-control" id="SelectActivity" [(ngModel)]="selectedActivityIndex" name="activity" required>
-          <option selected [value]="-1">Any</option>
-          <option *ngFor="let activity of games[selectedGameIndex].activities; index as j" [value]="j">{{activity.name}}</option>
+        <select class="form-control form-select" id="SelectActivity" [(ngModel)]="selectedActivityIndex" name="activity" required>
+          <option class="form-option" [value]="-1">Any</option>
+          <option class="form-option" *ngFor="let activity of games[selectedGameIndex].activities; index as j" [value]="j">{{activity.name}}</option>
         </select>
       </div>
       <div class="form-group text-center">
@@ -24,8 +24,21 @@
       <div class="form-group text-center">
         <button type="button" class="btn btn-primary-lfg" (click)="resetFilters()">Reset all filters</button>
       </div>
-      <div class="form-group text-center">
-        <span class="bold">Active filters: {{filterLenght}}</span>
-      </div>
     </form>
+
+    <div data-simplebar class="filterList">
+      <h2>Active filters</h2>
+      <table>
+        <tr>
+          <th>Game</th>
+          <th>Activity</th>
+          <th></th>
+        </tr>
+        <tr *ngFor="let filter of activeFilters">
+          <td>{{filter.gameName}}</td>
+          <td>{{filter.activityName || 'Any'}}</td>
+          <td>X</td>
+        </tr>
+      </table>
+    </div>
 </div>

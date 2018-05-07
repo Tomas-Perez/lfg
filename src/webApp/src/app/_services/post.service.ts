@@ -12,8 +12,9 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 @Injectable()
 export class PostService {
 
-  private posts: BehaviorSubject<Post[]>;
+  postsSubject: BehaviorSubject<Post[]>;
   private filters: PostFilter[];
+  filtersSubject: BehaviorSubject<PostFilter[]>;
   private jsonConvert: JsonConvert = new JsonConvert();
 
   private postUrl = 'http://localhost:8080/lfg/posts';
@@ -61,9 +62,12 @@ export class PostService {
          Post);
     this.posts = Observable.of(lul);
     */
-    this.posts = new BehaviorSubject([]);
-    this.filters = [];
-
+    this.postsSubject = new BehaviorSubject([]);
+    this.filtersSubject = new BehaviorSubject([]);
+    this.filtersSubject.subscribe(filters => {
+      this.filters = filters;
+      this.updatePosts();
+    });
   }
 
   requestPosts() {
@@ -80,7 +84,7 @@ export class PostService {
   }
 
   getPosts(): BehaviorSubject<Post[]> {
-    return this.posts;
+    return this.postsSubject;
     /*
     const filterer = new Filter;
     return <Observable<Post[]>>(this.posts)
@@ -93,7 +97,7 @@ export class PostService {
   }
 
   updatePosts(): void {
-    this.requestPosts().subscribe(posts => this.posts.next(posts));
+    this.requestPosts().subscribe(posts => this.postsSubject.next(posts));
   }
 
   newPost(post: DbPost): Observable<boolean> {
@@ -113,20 +117,6 @@ export class PostService {
     console.log('Error creating new post');
     console.log(err);
     return Observable.of(false);
-  }
-
-  addFilter(filt: PostFilter) {
-    this.filters.push(filt);
-    this.requestPosts().subscribe();
-  }
-
-  resetFilters() {
-    this.filters = [];
-    this.requestPosts().subscribe();
-  }
-
-  getFiltersLength(): number {
-    return this.filters.length;
   }
 
 }

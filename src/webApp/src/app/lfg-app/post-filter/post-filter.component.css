@@ -1,0 +1,16 @@
+.filterList{
+  width: 100%;
+}
+
+table{
+  width: 100%;
+}
+
+th{
+  font-size: 16px;
+  font-weight: 600;
+}
+
+tr{
+  border-bottom: solid 1px #343a40;
+}

@@ -14,8 +14,8 @@
         <label for="SelectActivity">
           <span class="bold">Activity</span>
         </label>
-        <select class="form-control" id="SelectActivity" [(ngModel)]="newPostModel.dbPost.activityID" name="activity" required>
-          <option *ngFor="let activity of games[newPostModel.selectedGameIndex].activities" [value]="activity.id">{{activity.name}}</option>
+        <select class="form-control form-select" id="SelectActivity" [(ngModel)]="newPostModel.dbPost.activityID" name="activity" required>
+          <option class="form-option" *ngFor="let activity of games[newPostModel.selectedGameIndex].activities" [value]="activity.id">{{activity.name}}</option>
         </select>
       </div>
       <div class="form-group">

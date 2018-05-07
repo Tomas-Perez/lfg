@@ -4,7 +4,6 @@ import {GameService} from '../../_services/game.service';
 import {PostService} from '../../_services/post.service';
 import {UserService} from '../../_services/user.service';
 import 'rxjs/add/operator/takeUntil';
-import 'rxjs/add/operator/take';
 import {Subject} from 'rxjs/Subject';
 import {NewPostService} from './new-post.service';
 import {NewPostModel} from './new-post.model';
@@ -15,7 +14,6 @@ import {NewPostModel} from './new-post.model';
   styleUrls: ['./new-post.component.css']
 })
 export class NewPostComponent implements OnInit, OnDestroy {
-
 
   private games: Game[];
   private newPostModel: NewPostModel = new NewPostModel;
