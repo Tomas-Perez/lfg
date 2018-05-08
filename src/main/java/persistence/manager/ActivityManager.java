@@ -131,15 +131,16 @@ public class ActivityManager {
     }
 
     public void wipeAllRecords(){
-        EntityTransaction tx = manager.getTransaction();
-        try {
-            tx.begin();
-            manager.createQuery("DELETE FROM Activity").executeUpdate();
-            tx.commit();
-        } catch (Exception e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-        }
+        listActivities().stream().map(Activity::getId).forEach(this::deleteActivity);
+//        EntityTransaction tx = manager.getTransaction();
+//        try {
+//            tx.begin();
+//            manager.createQuery("DELETE FROM Activity").executeUpdate();
+//            tx.commit();
+//        } catch (Exception e) {
+//            if (tx!=null) tx.rollback();
+//            e.printStackTrace();
+//        }
     }
 
     public Activity getActivity(int activityID){

@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import persistence.manager.exception.ConstraintException;
 import persistence.manager.generator.KeyGenerator;
 import persistence.manager.patcher.UserPatcher;
+import persistence.model.Activity;
 import persistence.model.User;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -122,15 +123,16 @@ public class UserManager {
     }
 
     public void wipeAllRecords(){
-        EntityTransaction tx = manager.getTransaction();
-        try {
-            tx.begin();
-            manager.createQuery("DELETE FROM User").executeUpdate();
-            tx.commit();
-        } catch (Exception e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-        }
+        listUsers().stream().map(User::getId).forEach(this::deleteUser);
+//        EntityTransaction tx = manager.getTransaction();
+//        try {
+//            tx.begin();
+//            manager.createQuery("DELETE FROM User").executeUpdate();
+//            tx.commit();
+//        } catch (Exception e) {
+//            if (tx!=null) tx.rollback();
+//            e.printStackTrace();
+//        }
     }
 
     public User getUser(int userID){
