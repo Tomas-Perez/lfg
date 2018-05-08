@@ -12,7 +12,6 @@ import org.junit.runner.RunWith;
 import persistence.model.*;
 import javax.inject.Inject;
 
-import java.util.Optional;
 import java.util.Set;
 
 import static junit.framework.TestCase.*;
@@ -158,11 +157,8 @@ public class GroupManagerTest {
 
         activityManager.deleteActivity(activity.getId());
 
-        Group groupActual = groupManager.getGroup(group.getId());
-        System.out.println(groupActual.getActivity());
-
         assertNull(activityManager.getActivity(activity.getId()));
-        assertNull(groupActual);
+        assertNull(groupManager.getGroup(group.getId()));
     }
 
     @Test
@@ -185,6 +181,8 @@ public class GroupManagerTest {
 
         gameManager.deleteGame(game.getId());
 
+        assertNull(gameManager.getGame(game.getId()));
+        assertNull(activityManager.getActivity(activity.getId()));
         assertNull(groupManager.getGroup(group.getId()));
     }
 

@@ -89,6 +89,7 @@ public class Activity {
 
     public void destroy(){
         game.removeActivity(this);
+        new HashSet<>(groups).forEach(Group::destroy);
     }
 
     private boolean sameAsFormer(Game newGame){

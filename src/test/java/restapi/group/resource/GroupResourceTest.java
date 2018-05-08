@@ -88,12 +88,12 @@ public class GroupResourceTest extends ApiTest {
         final String username = "wewey";
         final String password = "123123";
         final String email = "wewey@lfg.com";
-        final String username1 = "member2";
+        final String username1 = "member1";
         final String password1 = "123123";
-        final String email1 = "member2@lfg.com";
-        final String username2 = "member3";
+        final String email1 = "member1@lfg.com";
+        final String username2 = "member2";
         final String password2 = "123123";
-        final String email2 = "member3@lfg.com";
+        final String email2 = "member2@lfg.com";
         int ownerID = addUser(username, password, email);
         int member1ID = addUser(username1, password1, email1);
         int member2ID = addUser(username2, password2, email2);

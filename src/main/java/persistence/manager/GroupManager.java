@@ -84,8 +84,8 @@ public class GroupManager {
         try {
             tx.begin();
             Group group = manager.find(Group.class, groupID);
-            group.destroy();
             manager.remove(group);
+            group.destroy();
             tx.commit();
         } catch (NullPointerException | IllegalArgumentException exc){
             if (tx!=null) tx.rollback();

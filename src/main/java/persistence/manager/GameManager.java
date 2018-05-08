@@ -73,6 +73,7 @@ public class GameManager {
             tx.begin();
             Game game = manager.find(Game.class, gameID);
             manager.remove(game);
+            game.destroy();
             tx.commit();
         } catch (NullPointerException | IllegalArgumentException exc){
             if (tx!=null) tx.rollback();

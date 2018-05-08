@@ -170,9 +170,8 @@ public class Group {
     }
 
     public void destroy(){
+        removeMember(owner);
         activity.removeGroup(this);
-        owner.removeFromGroup(this);
-        members.forEach(member -> member.removeFromGroup(this));
     }
 
     @Override

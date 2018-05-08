@@ -70,8 +70,8 @@ public class ActivityManager {
         try {
             tx.begin();
             Activity activity = manager.find(Activity.class, activityID);
-            activity.destroy();
             manager.remove(activity);
+            activity.destroy();
             tx.commit();
         } catch (NullPointerException | IllegalArgumentException exc){
             if (tx!=null) tx.rollback();
