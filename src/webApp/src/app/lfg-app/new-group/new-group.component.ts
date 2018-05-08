@@ -1,32 +1,35 @@
-import { Component, OnInit } from '@angular/core';
-import {Group} from '../../_models/Group';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {DbGroup} from '../../_models/DbModels/DbGroup';
 import {Game} from '../../_models/Game';
 import {GroupService} from '../../_services/group.service';
 import {UserService} from '../../_services/user.service';
 import {GameService} from '../../_services/game.service';
+import 'rxjs/add/operator/takeUntil';
+import {Subject} from 'rxjs/Subject';
 
 @Component({
   selector: 'app-new-group',
   templateUrl: './new-group.component.html',
   styleUrls: ['./new-group.component.css']
 })
-export class NewGroupComponent implements OnInit {
+export class NewGroupComponent implements OnInit, OnDestroy {
 
+  private ngUnsubscribe: Subject<any> = new Subject();
   private games: Game[];
+  private group: DbGroup;
   private selectedGameIndex: number;
   private selectedActivityIndex: number;
-  private group: Group;
 
   constructor(private groupService: GroupService,
               private userService: UserService,
               private gameService: GameService) { }
 
   ngOnInit() {
-    this.group = new Group;
-    this.gameService.getGameList().subscribe(
-      games => {
-        this.games = games;
-      });
+    this.group = new DbGroup();
+
+    this.gameService.gamesSubject.takeUntil(this.ngUnsubscribe)
+      .subscribe(games => this.games = games);
+
   }
 
   newGroup() {
@@ -43,6 +46,11 @@ export class NewGroupComponent implements OnInit {
         );
       }
     );
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
 }

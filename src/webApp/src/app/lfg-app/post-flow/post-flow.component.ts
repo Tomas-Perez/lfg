@@ -17,7 +17,7 @@ export class PostFlowComponent implements OnInit, OnDestroy {
   constructor(private postService: PostService) { }
 
   ngOnInit() {
-    this.postService.getPosts().takeUntil(this.ngUnsubscribe).subscribe(
+    this.postService.postsSubject.takeUntil(this.ngUnsubscribe).subscribe(
       posts => {
         this.posts = posts;
       }

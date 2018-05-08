@@ -1,5 +1,5 @@
 import {JsonObject, JsonProperty} from 'json2typescript';
-import {DbActivity} from './DbActivity';
+import {DbActivity} from './DbModels/DbActivity';
 
 @JsonObject
 class Owner {

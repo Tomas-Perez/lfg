@@ -6,24 +6,24 @@
       <label for="SelectGame">
         <span class="bold">Game</span>
       </label>
-      <select class="form-control" id="SelectGame" [(ngModel)]="selectedGameIndex" name="game" required>
-        <option *ngFor="let game of games; index as i" [value]="i">{{game.name}}</option>
+      <select class="form-control form-select" id="SelectGame" [(ngModel)]="selectedGameIndex" name="game" required>
+        <option class="form-option" *ngFor="let game of games; index as i" [value]="i">{{game.name}}</option>
       </select>
     </div>
     <div *ngIf="selectedGameIndex" class="form-group">
       <label for="SelectActivity">
         <span class="bold">Activity</span>
       </label>
-      <select class="form-control" id="SelectActivity" [(ngModel)]="selectedActivityIndex" name="activity" required>
-        <option *ngFor="let activity of games[selectedGameIndex].activities; index as j" [value]="j">{{activity.name}}</option>
+      <select class="form-control form-select" id="SelectActivity" [(ngModel)]="selectedActivityIndex" name="activity" required>
+        <option class="form-option" *ngFor="let activity of games[selectedGameIndex].activities; index as j" [value]="j">{{activity.name}}</option>
       </select>
     </div>
     <div class="form-group">
       <label for="InputSlots">
-        <span class="bold">Players</span>
+        <span class="bold">Members</span>
       </label>
       <input type="number" name="InputSlots" [(ngModel)]="group.slots" id="InputSlots" class="form-control form-input"
-             aria-describedby="slotsHelp">
+             aria-describedby="slotsHelp" required>
     </div>
     <div class="form-group text-center">
       <button type="submit" class="btn btn-primary-lfg submit-button">Create group</button>

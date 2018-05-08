@@ -28,7 +28,7 @@ export class GameListComponent implements OnInit, OnDestroy {
         //this.selectedId = +params.get('id');
       });
       */
-    this.gameService.getGameList().takeUntil(this.ngUnsubscribe).subscribe(games => this.games = games);
+    this.gameService.gamesSubject.takeUntil(this.ngUnsubscribe).subscribe(games => this.games = games);
   }
 
   deleteGame(id: number) {

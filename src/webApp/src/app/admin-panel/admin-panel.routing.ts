@@ -8,7 +8,7 @@ import {AdminGuardService} from '../_services/guards/admin-guard.service';
 
 const routes: Routes = [
   { path: 'admin-panel', canActivate: [AdminGuardService], component: AdminPanelComponent , children: [
-    { path: 'games', component: GameListComponent},
+    { path: 'gamesSubject', component: GameListComponent},
     { path: 'new-game', component: GameNewComponent},
     { path: 'edit-game/:id', component: GameEditComponent},
     { path: '**', redirectTo: ''}

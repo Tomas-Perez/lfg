@@ -1,0 +1,9 @@
+<div class="w-100">
+  <h1>Group name</h1>
+  <h2>Members</h2>
+  <div *ngIf="group.members.lenght" class="members-wrapper">
+    <div *ngFor="let member of group.members" class="member">
+      <span class="member-username">{{member.username}}</span>
+    </div>
+  </div>
+</div>

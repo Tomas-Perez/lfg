@@ -18,7 +18,6 @@ export class LfgAppComponent implements OnInit {
   posts: Post[];
 
   constructor(private userService: UserService,
-              private postService: PostService,
               private authService: AuthService,
               private router: Router,
               private route: ActivatedRoute
@@ -29,11 +28,6 @@ export class LfgAppComponent implements OnInit {
       user => {
         this.user = user;
       });
-    this.postService.getPosts().subscribe(
-      posts => {
-        this.posts = posts;
-      }
-    );
   }
 
   logOut() {

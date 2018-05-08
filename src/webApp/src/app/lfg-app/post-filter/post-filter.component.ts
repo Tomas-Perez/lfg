@@ -27,7 +27,7 @@ export class PostFilterComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.gameService.getGameList().takeUntil(this.ngUnsubscribe)
+    this.gameService.gamesSubject.takeUntil(this.ngUnsubscribe)
       .subscribe(games => {
         this.games = games;
 

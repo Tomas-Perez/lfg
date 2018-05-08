@@ -12,6 +12,7 @@ import { PostFilterComponent } from './post-filter/post-filter.component';
 import { PostFlowComponent } from './post-flow/post-flow.component';
 import { NewPostService } from './new-post/new-post.service';
 import { PostFilterService } from './post-filter/post-filter.service';
+import { GroupComponent } from './group/group.component';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { PostFilterService } from './post-filter/post-filter.service';
     LfgAppComponent,
     NewPostComponent,
     NewGroupComponent,
+    GroupComponent,
     PostFilterComponent,
     PostFlowComponent
   ],

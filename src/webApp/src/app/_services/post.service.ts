@@ -6,7 +6,7 @@ import {Post} from '../_models/Post';
 import {PostFilter} from '../_models/post-filters/PostFilter';
 import {JsonConvert} from 'json2typescript';
 import {Filter} from '../_models/post-filters/Filter';
-import {DbPost} from '../_models/DbPost';
+import {DbPost} from '../_models/DbModels/DbPost';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 @Injectable()
@@ -83,19 +83,6 @@ export class PostService {
       );
   }
 
-  getPosts(): BehaviorSubject<Post[]> {
-    return this.postsSubject;
-    /*
-    const filterer = new Filter;
-    return <Observable<Post[]>>(this.posts)
-      .pipe(
-        map(posts => this.jsonConvert.deserialize(posts, Post)),
-        map(posts => posts.filter(post => filterer.filter(post, this.filters))),
-        catchError(err => Observable.of([]))
-      );
-    */
-  }
-
   updatePosts(): void {
     this.requestPosts().subscribe(posts => this.postsSubject.next(posts));
   }
@@ -107,6 +94,7 @@ export class PostService {
       .pipe(
         map(response => {
           console.log(response);
+          this.updatePosts(); // TODO delet dis
           return true;
         }),
         catchError((err: any) => this.newPostErrorHandle(err))

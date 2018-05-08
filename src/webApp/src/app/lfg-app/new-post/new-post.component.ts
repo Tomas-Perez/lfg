@@ -28,7 +28,7 @@ export class NewPostComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    this.gameService.getGameList().takeUntil(this.ngUnsubscribe)
+    this.gameService.gamesSubject.takeUntil(this.ngUnsubscribe)
       .subscribe(games => {
         this.games = games;
 
@@ -42,6 +42,7 @@ export class NewPostComponent implements OnInit, OnDestroy {
   }
 
   newPost() {
+    console.log(this.newPostModel.dbPost.activityID);
     this.userService.getCurrentUser().subscribe(
       user => {
         this.newPostModel.dbPost.ownerID = user.id;

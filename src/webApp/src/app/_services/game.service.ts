@@ -4,8 +4,8 @@ import {HttpClient} from '@angular/common/http';
 import {catchError, map, switchMap} from 'rxjs/operators';
 import {Game} from '../_models/Game';
 import {JsonConvert} from 'json2typescript';
-import {DbGame} from '../_models/DbGame';
-import {DbActivity} from '../_models/DbActivity';
+import {DbGame} from '../_models/DbModels/DbGame';
+import {DbActivity} from '../_models/DbModels/DbActivity';
 import {Activity} from '../_models/Activity';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
@@ -15,22 +15,18 @@ export class GameService {
   private jsonConvert: JsonConvert = new JsonConvert();
   private gamesUrl = 'http://localhost:8080/lfg/games';
   private activitiesUrl = 'http://localhost:8080/lfg/activities';
-  private games: BehaviorSubject<Game[]>;
+  gamesSubject: BehaviorSubject<Game[]>;
 
   constructor(private http: HttpClient) {
-    this.games = new BehaviorSubject([]);
+    this.gamesSubject = new BehaviorSubject([]);
     this.updateGameList();
   }
 
-  getGameList(): BehaviorSubject<Game[]> {
-    return this.games;
-  }
-
   /**
-   * Requests a new game list and updates this.games
+   * Requests a new game list and updates this.gamesSubject
    */
   updateGameList() {
-    this.requestGames().subscribe(games => this.games.next(games));
+    this.requestGames().subscribe(games => this.gamesSubject.next(games));
   }
 
   gameToDbGame(game: Game): DbGame {
@@ -75,9 +71,9 @@ export class GameService {
                   const newGame = this.jsonConvert.deserialize(getGameResponse.body, Game);
 
                   /*
-                  const games = this.games.getValue();
-                  games.push(newGame);
-                  this.games.next(games);
+                  const gamesSubject = this.gamesSubject.getValue();
+                  gamesSubject.push(newGame);
+                  this.gamesSubject.next(gamesSubject);
                   */
 
                   return Observable.of(newGame.id);
@@ -222,11 +218,11 @@ export class GameService {
         map(response => {
           console.log(response);
           let i = 0;
-          for (const game of this.games.getValue()) {
+          for (const game of this.gamesSubject.getValue()) {
             if (game.id === id ) {
-              const newGames = this.games.getValue();
+              const newGames = this.gamesSubject.getValue();
               newGames.splice(i, 1);
-              this.games.next(newGames);
+              this.gamesSubject.next(newGames);
               return true;
             }
             i++;

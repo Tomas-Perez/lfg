@@ -86,7 +86,7 @@ export class GameNewComponent implements OnInit {
     }
     console.log('done');
     this.gameService.updateGameList();
-    this.router.navigate(['/admin-panel/games']);
+    this.router.navigate(['/admin-panel/gamesSubject']);
   }
 
   getStatus(status: Status): string {

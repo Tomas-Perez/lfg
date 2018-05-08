@@ -1,4 +1,4 @@
-import {DbPost} from '../../_models/DbPost';
+import {DbPost} from '../../_models/DbModels/DbPost';
 
 export class NewPostModel {
   dbPost: DbPost;
