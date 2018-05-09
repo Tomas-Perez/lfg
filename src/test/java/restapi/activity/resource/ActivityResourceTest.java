@@ -122,20 +122,12 @@ public class ActivityResourceTest extends ApiTest {
 
         assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
 
-        Response listResponse = RequestUtil.get(activitiesTarget, token);
-        List<ActivityJSON> activities = RequestUtil.parseListResponse(listResponse, ActivityJSON.class);
-        System.out.println(activities);
-
         final String location = postResponse.getHeaderString("Location");
         final WebTarget activityTarget = RequestUtil.newTarget(location);
 
         final Response updateResponse = RequestUtil.post(activityTarget, token, new UpdateActivityJSON(activityName, gameID2));
 
         assertThat(updateResponse.getStatus(), is(Response.Status.NO_CONTENT.getStatusCode()));
-
-        Response listResponse2 = RequestUtil.get(activitiesTarget, token);
-        List<ActivityJSON> activities2 = RequestUtil.parseListResponse(listResponse2, ActivityJSON.class);
-        System.out.println(activities2);
 
         final Response getResponse = RequestUtil.get(activityTarget, token);
         System.out.println(activityTarget.getUri());

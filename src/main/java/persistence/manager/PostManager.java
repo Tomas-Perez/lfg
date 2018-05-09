@@ -95,15 +95,16 @@ public class PostManager {
     }
 
     public void wipeAllRecords(){
-        EntityTransaction tx = manager.getTransaction();
-        try {
-            tx.begin();
-            manager.createQuery("DELETE FROM Post").executeUpdate();
-            tx.commit();
-        } catch (Exception e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-        }
+        listPosts().stream().map(Post::getId).forEach(this::deletePost);
+//        EntityTransaction tx = manager.getTransaction();
+//        try {
+//            tx.begin();
+//            manager.createQuery("DELETE FROM Post").executeUpdate();
+//            tx.commit();
+//        } catch (Exception e) {
+//            if (tx!=null) tx.rollback();
+//            e.printStackTrace();
+//        }
     }
 
     public Post getPost(int postID){

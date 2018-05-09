@@ -84,8 +84,8 @@ public class GroupManager {
         try {
             tx.begin();
             Group group = manager.find(Group.class, groupID);
-            group.destroy();
             manager.remove(group);
+            group.destroy();
             tx.commit();
         } catch (NullPointerException | IllegalArgumentException exc){
             if (tx!=null) tx.rollback();
@@ -102,14 +102,15 @@ public class GroupManager {
     }
 
     public void wipeAllRecords(){
-        EntityTransaction tx = manager.getTransaction();
-        try {
-            tx.begin();
-            manager.createQuery("DELETE FROM Group").executeUpdate();
-            tx.commit();
-        } catch (Exception e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-        }
+        listGroups().stream().map(Group::getId).forEach(this::deleteGroup);
+//        EntityTransaction tx = manager.getTransaction();
+//        try {
+//            tx.begin();
+//            manager.createQuery("DELETE FROM Group").executeUpdate();
+//            tx.commit();
+//        } catch (Exception e) {
+//            if (tx!=null) tx.rollback();
+//            e.printStackTrace();
+//        }
     }
 }

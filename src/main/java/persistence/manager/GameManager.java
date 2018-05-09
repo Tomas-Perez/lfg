@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import persistence.manager.exception.ConstraintException;
 import persistence.manager.generator.KeyGenerator;
 import persistence.manager.patcher.GamePatcher;
+import persistence.model.Activity;
 import persistence.model.Game;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -73,6 +74,7 @@ public class GameManager {
             tx.begin();
             Game game = manager.find(Game.class, gameID);
             manager.remove(game);
+            game.destroy();
             tx.commit();
         } catch (NullPointerException | IllegalArgumentException exc){
             if (tx!=null) tx.rollback();
@@ -113,15 +115,16 @@ public class GameManager {
     }
 
     public void wipeAllRecords(){
-        EntityTransaction tx = manager.getTransaction();
-        try {
-            tx.begin();
-            manager.createQuery("DELETE FROM Game").executeUpdate();
-            tx.commit();
-        } catch (Exception e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-        }
+        listGames().stream().map(Game::getId).forEach(this::deleteGame);
+//        EntityTransaction tx = manager.getTransaction();
+//        try {
+//            tx.begin();
+//            manager.createQuery("DELETE FROM Game").executeUpdate();
+//            tx.commit();
+//        } catch (Exception e) {
+//            if (tx!=null) tx.rollback();
+//            e.printStackTrace();
+//        }
     }
 
     public Game getGame(int gameID){

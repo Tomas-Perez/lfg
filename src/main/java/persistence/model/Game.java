@@ -103,12 +103,15 @@ public class Game {
 
     public void removeActivity(Activity activity){
         if(!activities.contains(activity)) {
-            System.out.println("Not in activities");
             return;
         }
 
-        System.out.println("Removed activity: " + activities.remove(activity));
+        activities.remove(activity);
         activity.setGame(null);
+    }
+
+    public void destroy(){
+        new HashSet<>(activities).forEach(Activity::destroy);
     }
 
     @Override
