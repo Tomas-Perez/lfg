@@ -6,8 +6,6 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/empty';
 import 'rxjs/add/operator/share';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {User} from '../_models/User';
-import {JsonConvert} from 'json2typescript';
 
 
 @Injectable()
@@ -16,7 +14,6 @@ export class AuthService {
   static authUrl = 'http://localhost:8080/lfg/sign-in';
   private userMeUrl = 'http://localhost:8080/lfg/users/me';
 
-  private jsonConvert: JsonConvert = new JsonConvert();
 
   private loggedIn = false;
   private loggedIn$ = new BehaviorSubject<boolean>(this.loggedIn);
@@ -105,6 +102,7 @@ export class AuthService {
         map(response => {
           const token = response.body.token;
           localStorage.setItem('token', token);
+          this.setLoggedIn(true);
           return true;
         }),
         catchError(err => Observable.of(false))
@@ -114,31 +112,6 @@ export class AuthService {
   // TODO
   refreshToken(): Observable<any> {
     return Observable.empty();
-  }
-
-  /**
-   * Retrieves the user with the current local storage token and saves it to local storage.
-    */
-  getCurrentUserInfo(): Observable<User> {
-    return this.http.get<any>(this.userMeUrl,
-      {
-        observe: 'response'
-      })
-      .pipe(
-        map(response => {
-          const userS = JSON.stringify(response.body);
-          localStorage.setItem('user', userS);
-          this.setLoggedIn(true);
-          return this.jsonConvert.deserialize(response.body, User);
-        }),
-        catchError(err => this.handleUserInfoError())
-      );
-  }
-
-  handleUserInfoError(): Observable<User> {
-    console.log('User info retrieval error');
-    this.logout();
-    return Observable.of(null);
   }
 
   /**
@@ -166,7 +139,6 @@ export class AuthService {
   logout() {
     console.log('logged out');
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
     this.setLoggedIn(false);
   }
 

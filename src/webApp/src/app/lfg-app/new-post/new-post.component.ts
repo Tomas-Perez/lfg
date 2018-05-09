@@ -7,6 +7,7 @@ import 'rxjs/add/operator/takeUntil';
 import {Subject} from 'rxjs/Subject';
 import {NewPostService} from './new-post.service';
 import {NewPostModel} from './new-post.model';
+import {User} from '../../_models/User';
 
 @Component({
   selector: 'app-new-post',
@@ -17,6 +18,7 @@ export class NewPostComponent implements OnInit, OnDestroy {
 
   private games: Game[];
   private newPostModel: NewPostModel = new NewPostModel;
+  private user: User;
   private ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(
@@ -28,6 +30,9 @@ export class NewPostComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
+    this.userService.userSubject.takeUntil(this.ngUnsubscribe)
+      .subscribe( user => this.user = user);
+
     this.gameService.gamesSubject.takeUntil(this.ngUnsubscribe)
       .subscribe(games => {
         this.games = games;
@@ -36,23 +41,18 @@ export class NewPostComponent implements OnInit, OnDestroy {
           .subscribe(newPostModel => {
             this.newPostModel = newPostModel;
         });
-
     });
 
   }
 
   newPost() {
     console.log(this.newPostModel.dbPost.activityID);
-    this.userService.getCurrentUser().subscribe(
-      user => {
-        this.newPostModel.dbPost.ownerID = user.id;
-        this.postService.newPost(this.newPostModel.dbPost).subscribe(
-          response => {
-            if (response) {
-              console.log('Post created');
-            }
-          }
-        );
+    this.newPostModel.dbPost.ownerID = this.user.id;
+    this.postService.newPost(this.newPostModel.dbPost).subscribe(
+      response => {
+        if (response) {
+          console.log('Post created');
+        }
       }
     );
   }

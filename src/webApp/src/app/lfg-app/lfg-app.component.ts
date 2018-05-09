@@ -1,21 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import 'simplebar';
 import {User} from '../_models/User';
 import {UserService} from '../_services/user.service';
-import {PostService} from '../_services/post.service';
 import {AuthService} from '../_services/auth.service';
-import {Router, NavigationExtras, ActivatedRoute} from '@angular/router';
-import {Post} from '../_models/Post';
+import {Router, ActivatedRoute} from '@angular/router';
+import 'rxjs/add/operator/takeUntil';
+import {Subject} from 'rxjs/Subject';
 
 @Component({
   selector: 'app-lfg-app',
   templateUrl: './lfg-app.component.html',
   styleUrls: ['./lfg-app.component.css']
 })
-export class LfgAppComponent implements OnInit {
+export class LfgAppComponent implements OnInit, OnDestroy {
 
+  private ngUnsubscribe: Subject<any> = new Subject();
   user: User;
-  posts: Post[];
 
   constructor(private userService: UserService,
               private authService: AuthService,
@@ -24,8 +24,8 @@ export class LfgAppComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.userService.getCurrentUser().subscribe(
-      user => {
+    this.userService.userSubject.takeUntil(this.ngUnsubscribe)
+      .subscribe(user => {
         this.user = user;
       });
   }
@@ -41,9 +41,12 @@ export class LfgAppComponent implements OnInit {
         relativeTo: this.route,
         skipLocationChange: true
     });
+    // [routerLink]="[{ outlets: {'spekbar':['new-post'] }}]"
   }
 
-  // [routerLink]="[{ outlets: {'spekbar':['new-post'] }}]"
-
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
 
 }

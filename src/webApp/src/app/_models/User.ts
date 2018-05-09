@@ -1,4 +1,5 @@
 import {JsonObject, JsonProperty} from 'json2typescript';
+import {Group} from './Group';
 
 @JsonObject
 export class User {
@@ -17,4 +18,7 @@ export class User {
 
   @JsonProperty('admin', Boolean, true)
   admin?: boolean = undefined;
+  
+  @JsonProperty('groups', [Group], true)
+  groups?: Group[] = undefined;
 }

@@ -3,9 +3,10 @@ import {JsonConvert} from 'json2typescript';
 import {DbGroup} from '../_models/DbModels/DbGroup';
 import {Observable} from 'rxjs/Observable';
 import {HttpClient} from '@angular/common/http';
-import {catchError, map, switchMap} from 'rxjs/operators';
+import {catchError, switchMap} from 'rxjs/operators';
 import {Group} from '../_models/Group';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {UserService} from './user.service';
 
 @Injectable()
 export class GroupService {
@@ -15,8 +16,12 @@ export class GroupService {
   private currentGroup: Group;
   currentGroupSubject: BehaviorSubject<Group>;
 
-  constructor(private http: HttpClient) {
-    this.currentGroupSubject = new BehaviorSubject(undefined); // TODO is the user in a group?
+  constructor(private http: HttpClient, private userService: UserService) {
+    this.currentGroupSubject = new BehaviorSubject<Group>(null);
+    this.userService.userSubject.subscribe( user => {
+      this.currentGroup = user.groups.length ? user.groups[0] : null;
+      this.currentGroupSubject = new BehaviorSubject(this.currentGroup);
+    });
   }
 
   /*

@@ -5,12 +5,14 @@ import {AuthUserGuardService} from '../_services/guards/auth-user-guard.service'
 import {NewPostComponent} from './new-post/new-post.component';
 import {NewGroupComponent} from './new-group/new-group.component';
 import {PostFilterComponent} from './post-filter/post-filter.component';
+import {GroupComponent} from './group/group.component';
 
 const routes: Routes = [
   { path: 'app', component: LfgAppComponent, canActivate: [AuthUserGuardService], children: [
     {path: 'filter-posts', component: PostFilterComponent, outlet: 'spekbar'},
     {path: 'new-post', component: NewPostComponent, outlet: 'spekbar'},
-    {path: 'new-group', component: NewGroupComponent, outlet: 'spekbar'}
+    {path: 'new-group', component: NewGroupComponent, outlet: 'spekbar'},
+    {path: 'group', component: GroupComponent, outlet: 'spekbar'}
   ]}
 ];
 

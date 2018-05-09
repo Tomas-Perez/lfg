@@ -7,7 +7,7 @@
     <a class="nav-link" (click)="navigate('new-group')">New group</a>
   </div>
   <div class="spekbar-user-wrapper">
-    <div class="user-info-wrapper">
+    <div *ngIf="user !== null" class="user-info-wrapper">
       {{user.username}}
     </div>
     <div class="spekbar">

@@ -48,15 +48,8 @@ export class SignInComponent implements OnInit {
    * Calls authService getCurrentUserInfo to get user info.
    */
   private getUserInfo(): void {
-      this.authService.getCurrentUserInfo()
-        .subscribe(user => {
-            if (user != null) {
-              this.router.navigate(['/app']);
-            } else {
-              this.notifyError(); // TODO notify SERVER error, not users fault.
-            }
-        });
-    }
+    this.router.navigate(['/app']);
+  }
 
   signIn(user: User): void {
     console.log(

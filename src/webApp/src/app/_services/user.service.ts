@@ -1,33 +1,63 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import {catchError, map} from 'rxjs/operators';
 import {SignUpStatus} from '../_models/SignUpStatus';
 import {User} from '../_models/User';
 import {AuthService} from './auth.service';
 import {JsonConvert} from 'json2typescript';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class UserService {
 
   private signUpUrl = 'http://localhost:8080/lfg/sign-up';
+  private userMeUrl = 'http://localhost:8080/lfg/users/me';
 
   private jsonConvert: JsonConvert = new JsonConvert();
 
+
+  private user: User;
+  userSubject: BehaviorSubject<User>;
+
   constructor(private http: HttpClient, private authService: AuthService) {
+    this.userSubject = new BehaviorSubject<User>(null);
+
+    this.userSubject.subscribe(user => this.user = user);
+
+    this.authService.isLoggedInBS().subscribe(loggedIn => {
+      if (loggedIn) {
+        this.updateUserInfo();
+      }
+    });
+
   }
 
-  getCurrentUser(): Observable<User> {
-    const userS = localStorage.getItem('user');
-    if (userS != null) {
-      try {
-        return Observable.of(this.jsonConvert.deserialize(JSON.parse(userS), User));
-      } catch (e) {
-        return this.authService.getCurrentUserInfo();
-      }
-    } else {
-      return this.authService.getCurrentUserInfo();
-    }
+  updateUserInfo(): void {
+    this.requestUserInfo().subscribe( user => this.userSubject.next(user));
+  }
+
+  /**
+   * Retrieves the user with the current local storage token and saves it to local storage.
+    */
+  requestUserInfo(): Observable<User> {
+    return this.http.get<any>(this.userMeUrl,
+      {
+        observe: 'response'
+      })
+      .pipe(
+        map(response => {
+          console.log(response);
+          return this.jsonConvert.deserialize(response.body, User);
+        }),
+        catchError(err => this.handleUserInfoError())
+      );
+  }
+
+  handleUserInfoError(): Observable<User> {
+    console.log('User info retrieval error');
+    this.authService.logout();
+    return Observable.of(null);
   }
 
   signUp(signUpInfo: User): Observable<SignUpStatus> {
@@ -37,7 +67,7 @@ export class UserService {
       .pipe(
         map(response => {
           console.log(response);
-          return SignUpStatus.success;
+          return <any> SignUpStatus.success;
         }),
         catchError((err: any) => this.signUpErrorHandle(err))
       );
