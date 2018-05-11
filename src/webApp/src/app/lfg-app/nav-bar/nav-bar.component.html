@@ -1,0 +1,9 @@
+<div class="nav-bar-wrapper">
+  <a class="nav-link hand" (click)="logOut()">Log Out</a>
+  <a class="nav-link hand" [routerLink]="['/admin-panel']">Admin panel</a>
+  <a class="nav-link hand" (click)="navigate('filter-posts')">Filter posts</a>
+  <a class="nav-link hand" (click)="navigate('new-post')">New post</a>
+  <a *ngIf="!inGroup" class="nav-link hand" (click)="navigate('new-group')">New group</a>
+  <a *ngIf="inGroup" class="nav-link hand" (click)="navigate('group')">Group</a>
+</div>
+

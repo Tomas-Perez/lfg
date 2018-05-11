@@ -30,20 +30,6 @@ export class LfgAppComponent implements OnInit, OnDestroy {
       });
   }
 
-  logOut() {
-    this.authService.logout();
-    this.router.navigate(['/home']);
-  }
-
-  navigate(url: string) {
-    this.router.navigate([{ outlets: {spekbar: [url] }}],
-      {
-        relativeTo: this.route,
-        skipLocationChange: true
-    });
-    // [routerLink]="[{ outlets: {'spekbar':['new-post'] }}]"
-  }
-
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();

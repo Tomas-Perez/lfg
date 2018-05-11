@@ -3,7 +3,7 @@ import {JsonConvert} from 'json2typescript';
 import {DbGroup} from '../_models/DbModels/DbGroup';
 import {Observable} from 'rxjs/Observable';
 import {HttpClient} from '@angular/common/http';
-import {catchError, switchMap} from 'rxjs/operators';
+import {catchError, map, switchMap} from 'rxjs/operators';
 import {Group} from '../_models/Group';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {UserService} from './user.service';
@@ -19,16 +19,13 @@ export class GroupService {
   constructor(private http: HttpClient, private userService: UserService) {
     this.currentGroupSubject = new BehaviorSubject<Group>(null);
     this.userService.userSubject.subscribe( user => {
-      this.currentGroup = user.groups.length ? user.groups[0] : null;
-      this.currentGroupSubject = new BehaviorSubject(this.currentGroup);
+      if (user !== null && user.groups.length){
+
+        this.updateGroup(user.groups[0].id).subscribe();
+
+      }
     });
   }
-
-  /*
-  new group page and group page
-  guard for both of them
-  manage current group in group service
-  */
 
   newGroup(group: DbGroup): Observable<boolean> {
     return this.http.post<any>(this.groupsUrl, this.jsonConvert.serialize(group), {
@@ -56,10 +53,31 @@ export class GroupService {
   }
 
   private newGroupErrorHandle(err: any) {
-    console.log('Error creating new post');
+    console.log('Error creating new group');
     console.log(err);
     return Observable.of(false);
   }
 
+  updateGroup(id: number): Observable<boolean> {
+    return this.http.get<any>(this.groupsUrl + '/' + id, {
+      observe: 'response'
+    })
+      .pipe(
+        map( getGroupResponse => {
+            const newGroup = this.jsonConvert.deserialize(getGroupResponse.body, Group);
+            this.currentGroup = newGroup;
+            this.currentGroupSubject.next(newGroup);
+            return true;
+          }
+        ),
+        catchError((err: any) => this.updateGroupErrorHandle(err))
+      );
+  }
+
+  private updateGroupErrorHandle(err: any) {
+    console.log('Error retrieving group'); //TODO remove user from group
+    console.log(err);
+    return Observable.of(false);
+  }
 
 }

@@ -35,20 +35,13 @@ export class SignInComponent implements OnInit {
         correct => {
         if (correct) {
           console.log('Credentials correct');
-          this.getUserInfo();
+          this.router.navigate(['/app']);
         } else {
           console.log('Credentials with errors');
           this.notifyError();
           return;
         }
       });
-  }
-
-  /**
-   * Calls authService getCurrentUserInfo to get user info.
-   */
-  private getUserInfo(): void {
-    this.router.navigate(['/app']);
   }
 
   signIn(user: User): void {

@@ -11,7 +11,7 @@
   width: 100vw;
 }
 
-.nav-bar {
+.nav-bar-wrapper {
   flex-direction: column;
   flex-shrink: 0;
   -webkit-box-direction: normal;

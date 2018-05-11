@@ -29,7 +29,7 @@ export class GameNewComponent implements OnInit {
 
   addActivity() {
     const array = JSON.parse(JSON.stringify(this.activityState));
-    array.push({activity: new Activity(''), status: Status.NOTHING})
+    array.push({activity: new Activity(''), status: Status.NOTHING});
     this.activityState = array;
   }
 

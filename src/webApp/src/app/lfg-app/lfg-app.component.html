@@ -1,10 +1,6 @@
 <div class="app-mount">
-  <div class="nav-bar">
-    <a class="nav-link" (click)="logOut()">Log Out</a>
-    <a class="nav-link" [routerLink]="['/admin-panel']">Admin panel</a>
-    <a class="nav-link" (click)="navigate('filter-posts')">Filter posts</a>
-    <a class="nav-link" (click)="navigate('new-post')">New post</a>
-    <a class="nav-link" (click)="navigate('new-group')">New group</a>
+  <div class="nav-bar-wrapper">
+    <app-nav-bar></app-nav-bar>
   </div>
   <div class="spekbar-user-wrapper">
     <div *ngIf="user !== null" class="user-info-wrapper">

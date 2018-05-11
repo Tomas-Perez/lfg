@@ -2,6 +2,12 @@ import {JsonObject, JsonProperty} from 'json2typescript';
 import {Group} from './Group';
 
 @JsonObject
+class GroupsId {
+  @JsonProperty('id', Number)
+  id: number = undefined;
+}
+
+@JsonObject
 export class User {
 
   @JsonProperty('id', Number, true)
@@ -18,7 +24,7 @@ export class User {
 
   @JsonProperty('admin', Boolean, true)
   admin?: boolean = undefined;
-  
-  @JsonProperty('groups', [Group], true)
-  groups?: Group[] = undefined;
+
+  @JsonProperty('groups', [GroupsId], true)
+  groups?: GroupsId[] = undefined;
 }

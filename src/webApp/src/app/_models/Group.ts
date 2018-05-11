@@ -22,3 +22,5 @@ export class Group {
   @JsonProperty('members', [Member])
   members: Member[] = undefined;
 }
+
+

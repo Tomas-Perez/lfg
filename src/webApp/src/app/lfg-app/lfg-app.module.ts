@@ -13,6 +13,10 @@ import { PostFlowComponent } from './post-flow/post-flow.component';
 import { NewPostService } from './new-post/new-post.service';
 import { PostFilterService } from './post-filter/post-filter.service';
 import { GroupComponent } from './group/group.component';
+import { NavBarComponent } from './nav-bar/nav-bar.component';
+import {GroupGuardService} from '../_services/guards/group-guard.service';
+import {NoGroupGuardService} from '../_services/guards/no-group-guard.service';
+import { GroupPostService } from './group/group-post.service';
 
 
 @NgModule({
@@ -22,7 +26,8 @@ import { GroupComponent } from './group/group.component';
     NewGroupComponent,
     GroupComponent,
     PostFilterComponent,
-    PostFlowComponent
+    PostFlowComponent,
+    NavBarComponent
   ],
   imports: [
     CommonModule,
@@ -34,7 +39,10 @@ import { GroupComponent } from './group/group.component';
   providers: [
     PostService,
     NewPostService,
-    PostFilterService
+    PostFilterService,
+    GroupGuardService,
+    NoGroupGuardService,
+    GroupPostService
   ],
 })
 export class LfgAppModule { }

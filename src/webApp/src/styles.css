@@ -150,3 +150,6 @@ app-userinterface, app-user-navigation{
   background-color: rgba(93,107,185,.85);
 }
 
+.hand {
+  cursor: pointer;
+}
