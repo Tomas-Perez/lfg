@@ -10,6 +10,12 @@ class Owner {
 }
 
 @JsonObject
+class PostGroup {
+  @JsonProperty('id', Number)
+  id: number = undefined;
+}
+
+@JsonObject
 export class Post {
   @JsonProperty('id', Number)
   id: number = undefined;
@@ -21,4 +27,6 @@ export class Post {
   owner: Owner = undefined;
   @JsonProperty('description', String)
   description: string = undefined;
+  @JsonProperty('group', PostGroup, true)
+  group: PostGroup = undefined;
 }

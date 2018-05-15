@@ -11,16 +11,16 @@ class Member {
 
 @JsonObject
 export class Group {
-  @JsonProperty('id', Number)
-  id: number = undefined;
+  @JsonProperty('id', Number, true)
+  id?: number = undefined;
   @JsonProperty('activity', DbActivity, true)
   activity?: DbActivity = undefined;
-  @JsonProperty('slots', Number)
-  slots: number = undefined;
-  @JsonProperty('owner', Member)
-  owner: Member = undefined;
-  @JsonProperty('members', [Member])
-  members: Member[] = undefined;
+  @JsonProperty('slots', Number, true)
+  slots?: number = undefined;
+  @JsonProperty('owner', Member, true)
+  owner?: Member = undefined;
+  @JsonProperty('members', [Member], true)
+  members?: Member[] = undefined;
 }
 
 

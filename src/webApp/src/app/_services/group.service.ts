@@ -7,6 +7,7 @@ import {catchError, map, switchMap} from 'rxjs/operators';
 import {Group} from '../_models/Group';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {UserService} from './user.service';
+import {User} from '../_models/User';
 
 @Injectable()
 export class GroupService {
@@ -14,13 +15,14 @@ export class GroupService {
   private jsonConvert: JsonConvert = new JsonConvert();
   private groupsUrl = 'http://localhost:8080/lfg/groups';
   private currentGroup: Group;
+  private user: User;
   currentGroupSubject: BehaviorSubject<Group>;
 
   constructor(private http: HttpClient, private userService: UserService) {
     this.currentGroupSubject = new BehaviorSubject<Group>(null);
     this.userService.userSubject.subscribe( user => {
       if (user !== null && user.groups.length){
-
+        this.user = user;
         this.updateGroup(user.groups[0].id).subscribe();
 
       }
@@ -80,4 +82,21 @@ export class GroupService {
     return Observable.of(false);
   }
 
+  joinGroup(id: number): Observable<boolean> {
+    return this.http.post<any>(this.groupsUrl + '/' + id + '/members' , {id: id}, {
+      observe: 'response'
+    })
+      .pipe(
+        switchMap(response => {
+          return this.updateGroup(id);
+        }),
+        catchError((err: any) => this.joinGroupErrorHandle(err))
+      );
+  }
+
+  private joinGroupErrorHandle(err: any) {
+    console.log('Error joining group');
+    console.log(err);
+    return Observable.of(false);
+  }
 }
