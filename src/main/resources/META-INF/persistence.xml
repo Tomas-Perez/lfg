@@ -38,7 +38,7 @@
             <property name ="javax.persistence.jdbc.url" value="jdbc:hsqldb:hsql://localhost/test"/>
             <property name="javax.persistence.jdbc.user" value="SA"/>
             <property name="javax.persistence.jdbc.password" value=""/>
-            <property name="hibernate.hbm2ddl.auto" value="create"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
             <!--<property name="hibernate.show_sql" value="true"/>-->
         </properties>
     </persistence-unit>

@@ -2,13 +2,18 @@
 
 <div *ngFor="let post of posts" class="post-wrapper">
   <div class="post-container">
-    <div class="post-user-group">
-      <div class="post-user">
-        Username: {{post.owner.username}}
+    <div class="post-info-wrapper">
+      <div class="post-info-left">
+        <div class="post-user">
+          {{post.owner.username}}
+        </div>
       </div>
-      <div *ngIf="post.group !== null">
-        Group: {{post.group.id}}
-        <button type="button" (click)="joinGroup(post.group.id)">join</button>
+
+      <div class="post-looking-info">
+        <div *ngIf="post.group !== null">
+          Group: {{post.group.id}}
+          <button type="button" (click)="joinGroup(post.group.id)">join</button>
+        </div>
       </div>
     </div>
     <div class="post-game-activity-description">
