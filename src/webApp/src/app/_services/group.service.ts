@@ -21,10 +21,12 @@ export class GroupService {
   constructor(private http: HttpClient, private userService: UserService) {
     this.currentGroupSubject = new BehaviorSubject<Group>(null);
     this.userService.userSubject.subscribe( user => {
+      this.user = user;
       if (user !== null && user.groups.length){
-        this.user = user;
         this.updateGroup(user.groups[0].id).subscribe();
-
+      }
+      else {
+        this.currentGroupSubject.next(null);
       }
     });
   }
@@ -83,7 +85,7 @@ export class GroupService {
   }
 
   joinGroup(id: number): Observable<boolean> {
-    return this.http.post<any>(this.groupsUrl + '/' + id + '/members' , {id: id}, {
+    return this.http.post<any>(this.groupsUrl + '/' + id + '/members' , {id: this.user.id}, {
       observe: 'response'
     })
       .pipe(

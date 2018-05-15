@@ -2,8 +2,6 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import 'simplebar';
 import {User} from '../_models/User';
 import {UserService} from '../_services/user.service';
-import {AuthService} from '../_services/auth.service';
-import {Router, ActivatedRoute} from '@angular/router';
 import 'rxjs/add/operator/takeUntil';
 import {Subject} from 'rxjs/Subject';
 
@@ -18,9 +16,6 @@ export class LfgAppComponent implements OnInit, OnDestroy {
   user: User;
 
   constructor(private userService: UserService,
-              private authService: AuthService,
-              private router: Router,
-              private route: ActivatedRoute
   ) { }
 
   ngOnInit() {

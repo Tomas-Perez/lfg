@@ -6,6 +6,7 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/empty';
 import 'rxjs/add/operator/share';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {ActivatedRoute, Router} from "@angular/router";
 
 
 @Injectable()
@@ -18,7 +19,10 @@ export class AuthService {
   private loggedIn = false;
   private loggedIn$ = new BehaviorSubject<boolean>(this.loggedIn);
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+              private router: Router,
+              private route: ActivatedRoute
+              ) {
 
     /*
        const lul = this.jsonConvert.deserialize({
@@ -140,6 +144,10 @@ export class AuthService {
     console.log('logged out');
     localStorage.removeItem('token');
     this.setLoggedIn(false);
+    this.router.navigate([''],
+      {
+        relativeTo: this.route,
+    });
   }
 
 }
