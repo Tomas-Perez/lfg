@@ -1,19 +1,13 @@
 package util;
 
-import model.GameEntity;
-import model.OwnsGameEntity;
-import model.OwnsGameEntityPK;
-import model.UserEntity;
-import persistence.manager.GameManager;
-import persistence.manager.UserManager;
+import persistence.entity.GameEntity;
+import persistence.entity.OwnsGameEntity;
+import persistence.entity.OwnsGameEntityPK;
+import persistence.entity.UserEntity;
 import persistence.manager.EntityManagerProducer;
-import persistence.manager.generator.KeyGenerator;
-import persistence.model.Game;
-import persistence.model.Key;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import java.util.Random;
 
 /**
  * @author Tomas Perez Molina

@@ -1,6 +1,6 @@
 package persistence.manager;
 
-import model.*;
+import persistence.entity.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -8,8 +8,6 @@ import org.jboss.shrinkwrap.api.gradle.archive.importer.embedded.EmbeddedGradleI
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import persistence.manager.*;
-import persistence.model.*;
 
 import javax.inject.Inject;
 

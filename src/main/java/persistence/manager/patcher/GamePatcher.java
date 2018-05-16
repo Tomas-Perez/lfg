@@ -1,6 +1,6 @@
 package persistence.manager.patcher;
 
-import model.GameEntity;
+import persistence.entity.GameEntity;
 
 /**
  * @author Tomas Perez Molina

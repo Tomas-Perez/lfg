@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import persistence.manager.exception.ConstraintException;
 import persistence.manager.generator.KeyGenerator;
 import persistence.manager.patcher.UserPatcher;
-import model.UserEntity;
+import persistence.entity.UserEntity;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

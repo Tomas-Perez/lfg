@@ -1,6 +1,6 @@
 package restapi.user.service;
 
-import model.UserEntity;
+import persistence.entity.UserEntity;
 import persistence.manager.UserManager;
 import persistence.manager.patcher.UserPatcher;
 import persistence.model.ModelBuilder;
@@ -34,7 +34,11 @@ public class UserService {
     }
 
     public User getUser(int id){
-        return modelBuilder.buildUser(id);
+        try {
+            return modelBuilder.buildUser(id);
+        } catch (NoSuchElementException exc){
+            throw new NotFoundException();
+        }
     }
 
     public void deleteUser(int id){

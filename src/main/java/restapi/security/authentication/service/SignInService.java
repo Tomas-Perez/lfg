@@ -1,8 +1,7 @@
 package restapi.security.authentication.service;
 
-import model.UserEntity;
+import persistence.entity.UserEntity;
 import persistence.manager.UserManager;
-import persistence.model.User;
 import restapi.security.authentication.exception.AuthenticationException;
 
 import javax.enterprise.context.ApplicationScoped;

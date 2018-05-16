@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import persistence.manager.exception.ConstraintException;
 import persistence.manager.patcher.GamePatcher;
-import model.GameEntity;
+import persistence.entity.GameEntity;
 
 import javax.inject.Inject;
 
@@ -80,22 +80,17 @@ public class GameManagerTest {
         assertThat(expectedSet, is(actualSet));
     }
 
-    @Test
+    @Test(expected = ConstraintException.class)
     public void duplicateGameExc(){
         String name = "Overwatch";
 
         manager.addGame(name, null);
 
         assertTrue(manager.gameExists(name));
-        try {
-            manager.addGame(name, null);
-            fail();
-        } catch (ConstraintException exc){
-            assertThat(exc.getConstraintName(), is(name));
-        }
+        manager.addGame(name, null);
     }
 
-    @Test
+    @Test(expected = ConstraintException.class)
     public void duplicateGameExcUpdate() {
         String oldName = "Overwatch";
         String newName = "FIFA";
@@ -108,12 +103,7 @@ public class GameManagerTest {
 
         GamePatcher patcher = new GamePatcher.Builder().withName(newName).build();
 
-        try {
-            manager.updateGame(ow.getId(), patcher);
-            fail();
-        } catch (ConstraintException exc){
-            assertThat(exc.getConstraintName(), is(newName));
-        }
+        manager.updateGame(ow.getId(), patcher);
     }
 
     @Test

@@ -13,7 +13,7 @@ import java.io.PrintWriter;
 public class DBInit {
 
     public static void main(String[] args) throws Exception{
-        init(Database.TEST);
+        init(Database.TEST2);
     }
 
     public static void init(Database db) throws Exception {
@@ -33,7 +33,7 @@ public class DBInit {
     }
 
     private enum Database {
-        PROD("db/schemas/prod", "prod"), TEST("db/schemas/test", "test");
+        PROD("db/schemas/prod", "prod"), TEST("db/schemas/test", "test"), TEST2("db/schemas/test2", "test2");
 
         private String path;
         private String name;

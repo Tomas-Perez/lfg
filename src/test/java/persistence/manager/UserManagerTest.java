@@ -7,10 +7,9 @@ import org.jboss.shrinkwrap.api.gradle.archive.importer.embedded.EmbeddedGradleI
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import persistence.manager.UserManager;
 import persistence.manager.exception.ConstraintException;
 import persistence.manager.patcher.UserPatcher;
-import model.UserEntity;
+import persistence.entity.UserEntity;
 
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;

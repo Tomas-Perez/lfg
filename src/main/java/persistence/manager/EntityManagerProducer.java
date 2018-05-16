@@ -24,7 +24,9 @@ public class EntityManagerProducer {
     @PostConstruct
     public void init() {
         System.out.println("Initiating EntityManagerProducer");
-        factory = Persistence.createEntityManagerFactory("test");
+        String test2 = "test2";
+        System.out.println(test2);
+        factory = Persistence.createEntityManagerFactory(test2);
     }
 
     @Produces

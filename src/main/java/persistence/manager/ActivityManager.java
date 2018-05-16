@@ -1,12 +1,10 @@
 package persistence.manager;
 
-import model.GameEntity;
 import org.jetbrains.annotations.NotNull;
 import persistence.manager.exception.ConstraintException;
 import persistence.manager.generator.KeyGenerator;
 import persistence.manager.patcher.ActivityPatcher;
-import model.ActivityEntity;
-import persistence.model.Activity;
+import persistence.entity.ActivityEntity;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

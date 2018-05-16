@@ -37,7 +37,11 @@ public class GameService {
     }
 
     public Game getGame(int id){
-        return modelBuilder.buildGame(id);
+        try {
+            return modelBuilder.buildGame(id);
+        } catch (NoSuchElementException exc){
+            throw new NotFoundException();
+        }
     }
 
     public void wipe(){

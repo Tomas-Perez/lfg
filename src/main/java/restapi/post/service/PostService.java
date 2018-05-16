@@ -1,10 +1,8 @@
 package restapi.post.service;
 
-import model.GroupEntity;
-import persistence.manager.ActivityManager;
+import persistence.entity.GroupEntity;
 import persistence.manager.GroupManager;
 import persistence.manager.PostManager;
-import persistence.manager.UserManager;
 import persistence.model.*;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -44,7 +42,11 @@ public class PostService {
     }
 
     public Post getPost(int id){
-        return modelBuilder.buildPost(id);
+        try {
+            return modelBuilder.buildPost(id);
+        } catch (NoSuchElementException exc){
+            throw new NotFoundException();
+        }
     }
 
     public void wipe(){

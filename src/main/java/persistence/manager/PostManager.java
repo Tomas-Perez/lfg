@@ -3,7 +3,7 @@ package persistence.manager;
 import org.jetbrains.annotations.NotNull;
 import persistence.manager.exception.ConstraintException;
 import persistence.manager.generator.KeyGenerator;
-import model.*;
+import persistence.entity.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
