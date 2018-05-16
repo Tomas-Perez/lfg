@@ -20,6 +20,7 @@ export class GroupService {
 
   constructor(private http: HttpClient, private userService: UserService) {
     this.currentGroupSubject = new BehaviorSubject<Group>(null);
+    this.currentGroup = null;
     this.userService.userSubject.subscribe( user => {
       this.user = user;
       if (user !== null && user.groups.length){
@@ -27,6 +28,7 @@ export class GroupService {
       }
       else {
         this.currentGroupSubject.next(null);
+        this.currentGroup = null;
       }
     });
   }
@@ -79,25 +81,64 @@ export class GroupService {
   }
 
   private updateGroupErrorHandle(err: any) {
-    console.log('Error retrieving group'); //TODO remove user from group
+    console.log('Error retrieving group'); //TODO remove user from group?
     console.log(err);
     return Observable.of(false);
   }
 
-  joinGroup(id: number): Observable<boolean> {
-    return this.http.post<any>(this.groupsUrl + '/' + id + '/members' , {id: this.user.id}, {
+  joinGroup(idGroup: number): Observable<boolean> {
+    if(this.currentGroup !== null) {
+      return this.leaveGroup().pipe(
+        switchMap(result => {
+          if (result){
+            return this.joinGroup(idGroup);
+          }
+          else {
+            return this.joinGroupErrorHandle();
+          }
+        }),
+        catchError((err: any) => this.leaveGroupErrorHandle(err))
+      )
+    } else {
+      return this.joinGroup(idGroup);
+    }
+  }
+
+  joinGroupRequest(idGroup: number): Observable<boolean> {
+    return this.http.post<any>(this.groupsUrl + '/' + idGroup + '/members' , {id: this.user.id}, {
       observe: 'response'
     })
       .pipe(
         switchMap(response => {
-          return this.updateGroup(id);
+          return this.updateGroup(idGroup);
         }),
         catchError((err: any) => this.joinGroupErrorHandle(err))
       );
   }
 
-  private joinGroupErrorHandle(err: any) {
+  private joinGroupErrorHandle(err?: any) {
     console.log('Error joining group');
+    console.log(err);
+    return Observable.of(false);
+  }
+
+  leaveGroup(idMember?: number): Observable<boolean> {
+    const idUser = idMember || this.user.id;
+    return this.http.delete<any>(this.groupsUrl + '/' + this.currentGroup.id + '/members' + idUser, {
+      observe: 'response'
+    })
+      .pipe(
+        map(response => {
+          this.currentGroup = null;
+          this.currentGroupSubject.next(null);
+          return true;
+        }),
+        catchError((err: any) => this.leaveGroupErrorHandle(err))
+      );
+  }
+
+  private leaveGroupErrorHandle(err: any) {
+    console.log('Error leaving group');
     console.log(err);
     return Observable.of(false);
   }

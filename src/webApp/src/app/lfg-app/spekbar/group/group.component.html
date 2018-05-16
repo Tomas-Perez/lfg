@@ -1,7 +1,6 @@
   <div class="title">
     <h1>Group</h1>
   </div>
-  <div>
   <div class="game-activity">{{group.activity.game.name + ': ' + group.activity.name}}</div>
 
   <h2 class="group-subtitle">Members</h2>
@@ -14,7 +13,6 @@
       </span>
     </div>
   </div>
-    </div>
 
   <form *ngIf="isOwner" #postForm="ngForm" class="post-group-form" (ngSubmit)="postForm.valid && postGroup()" novalidate>
     <h2 class="group-subtitle">Post group</h2>
@@ -28,4 +26,8 @@
       <button type="submit" class="btn btn-primary-lfg submit-button">Post</button>
     </div>
   </form>
+
+  <button type="button" class="btn btn-primary btn-primary-lfg" (click)="leaveGroup()">Leave group</button>
+
+
 

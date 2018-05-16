@@ -53,6 +53,16 @@ export class GroupComponent implements OnInit, OnDestroy {
     );
   }
 
+  leaveGroup() {
+    this.groupService.leaveGroup().subscribe(
+      response => {
+        if(response) {
+          //TODO reroute;
+        }
+      }
+    )
+  }
+
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
