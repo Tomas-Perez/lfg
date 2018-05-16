@@ -1,11 +1,8 @@
 package restapi.activity.service;
 
-import model.GameEntity;
 import persistence.manager.ActivityManager;
-import persistence.manager.GameManager;
 import persistence.manager.patcher.ActivityPatcher;
 import persistence.model.Activity;
-import persistence.model.Game;
 import persistence.model.ModelBuilder;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -39,7 +36,11 @@ public class ActivityService {
     }
 
     public Activity getActivity(int id){
-        return modelBuilder.buildActivity(id);
+        try {
+            return modelBuilder.buildActivity(id);
+        } catch (NoSuchElementException exc){
+            throw new NotFoundException();
+        }
     }
 
     public void wipe(){

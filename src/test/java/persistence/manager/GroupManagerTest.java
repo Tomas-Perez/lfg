@@ -1,9 +1,9 @@
 package persistence.manager;
 
-import model.ActivityEntity;
-import model.GameEntity;
-import model.GroupEntity;
-import model.UserEntity;
+import persistence.entity.ActivityEntity;
+import persistence.entity.GameEntity;
+import persistence.entity.GroupEntity;
+import persistence.entity.UserEntity;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -13,12 +13,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import persistence.manager.ActivityManager;
-import persistence.manager.GameManager;
-import persistence.manager.GroupManager;
-import persistence.manager.UserManager;
-import persistence.model.*;
+import persistence.manager.generator.KeyGenerator;
+import persistence.model.Group;
+
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import java.util.List;
 import java.util.Set;
@@ -44,6 +43,9 @@ public class GroupManagerTest {
 
     @Inject
     private GroupManager groupManager;
+
+    @Inject
+    private EntityManagerProducer entityManagerProducer;
 
     @Deployment
     public static WebArchive createDeployment() {
@@ -130,6 +132,17 @@ public class GroupManagerTest {
 
     @Test
     public void removeMember(){
+        final EntityManager gameEM = entityManagerProducer.createEntityManager();
+        final EntityManager activityEM = entityManagerProducer.createEntityManager();
+        final EntityManager keyGenEM = entityManagerProducer.createEntityManager();
+        final EntityManager userEM = entityManagerProducer.createEntityManager();
+        final EntityManager groupEM = entityManagerProducer.createEntityManager();
+        KeyGenerator keyGen = new KeyGenerator(keyGenEM);
+        GameManager gameManager = new GameManager(gameEM, keyGen);
+        ActivityManager activityManager = new ActivityManager(activityEM, keyGen, gameManager);
+        UserManager userManager = new UserManager(userEM, keyGen);
+        GroupManager groupManager = new GroupManager(groupEM, keyGen, userManager, activityManager);
+
         final String gameName = "Overwatch";
         GameEntity game = addGame(gameName);
 
@@ -153,12 +166,37 @@ public class GroupManagerTest {
 
         groupManager.removeMemberFromGroup(id, member2.getId());
 
-        assertFalse(users.contains(member2));
-        assertThat(users.size(), is(1));
+        entityManagerProducer.closeEntityManager(groupEM);
+        final EntityManager groupEM2 = entityManagerProducer.createEntityManager();
+        GroupManager groupManager2 = new GroupManager(groupEM2, keyGen, userManager, activityManager);
+
+        Set<UserEntity> users2 = groupManager2.getGroupMembers(id)
+                .stream()
+                .map(userManager::getUser)
+                .collect(Collectors.toSet());
+
+        assertFalse(users2.contains(member2));
+        assertThat(users2.size(), is(1));
+
+        entityManagerProducer.closeEntityManager(gameEM);
+        entityManagerProducer.closeEntityManager(keyGenEM);
+        entityManagerProducer.closeEntityManager(groupEM2);
+        entityManagerProducer.closeEntityManager(activityEM);
+        entityManagerProducer.closeEntityManager(userEM);
     }
 
     @Test
     public void canDeleteActivity(){
+        final EntityManager gameEM = entityManagerProducer.createEntityManager();
+        final EntityManager activityEM = entityManagerProducer.createEntityManager();
+        final EntityManager keyGenEM = entityManagerProducer.createEntityManager();
+        final EntityManager userEM = entityManagerProducer.createEntityManager();
+        final EntityManager groupEM = entityManagerProducer.createEntityManager();
+        KeyGenerator keyGen = new KeyGenerator(keyGenEM);
+        GameManager gameManager = new GameManager(gameEM, keyGen);
+        ActivityManager activityManager = new ActivityManager(activityEM, keyGen, gameManager);
+        UserManager userManager = new UserManager(userEM, keyGen);
+
         final String gameName = "Overwatch";
         GameEntity game = addGame(gameName);
 
@@ -176,13 +214,33 @@ public class GroupManagerTest {
         GroupEntity group = addGroup(slots, activity, user);
 
         activityManager.deleteActivity(activity.getId());
+        entityManagerProducer.closeEntityManager(activityEM);
 
-        assertNull(activityManager.getActivity(activity.getId()));
+        final EntityManager activityEM2 = entityManagerProducer.createEntityManager();
+        ActivityManager activityManager2 = new ActivityManager(activityEM2, keyGen, gameManager);
+        GroupManager groupManager = new GroupManager(groupEM, keyGen, userManager, activityManager2);
+
+        assertNull(activityManager2.getActivity(activity.getId()));
         assertNull(groupManager.getGroup(group.getId()));
+
+        entityManagerProducer.closeEntityManager(gameEM);
+        entityManagerProducer.closeEntityManager(keyGenEM);
+        entityManagerProducer.closeEntityManager(groupEM);
+        entityManagerProducer.closeEntityManager(activityEM2);
+        entityManagerProducer.closeEntityManager(userEM);
     }
 
     @Test
     public void canDeleteGame(){
+        final EntityManager gameEM = entityManagerProducer.createEntityManager();
+        final EntityManager activityEM = entityManagerProducer.createEntityManager();
+        final EntityManager keyGenEM = entityManagerProducer.createEntityManager();
+        final EntityManager userEM = entityManagerProducer.createEntityManager();
+        final EntityManager groupEM = entityManagerProducer.createEntityManager();
+        KeyGenerator keyGen = new KeyGenerator(keyGenEM);
+        GameManager gameManager = new GameManager(gameEM, keyGen);
+        UserManager userManager = new UserManager(userEM, keyGen);
+
         final String gameName = "Overwatch";
         GameEntity game = addGame(gameName);
 
@@ -200,10 +258,23 @@ public class GroupManagerTest {
         GroupEntity group = addGroup(slots, activity, user);
 
         gameManager.deleteGame(game.getId());
+        entityManagerProducer.closeEntityManager(gameEM);
 
-        assertNull(gameManager.getGame(game.getId()));
+        final EntityManager gameEM2 = entityManagerProducer.createEntityManager();
+        GameManager gameManager2 = new GameManager(gameEM2, keyGen);
+        ActivityManager activityManager = new ActivityManager(activityEM, keyGen, gameManager2);
+        GroupManager groupManager = new GroupManager(groupEM, keyGen, userManager, activityManager);
+
+
+        assertNull(gameManager2.getGame(game.getId()));
         assertNull(activityManager.getActivity(activity.getId()));
         assertNull(groupManager.getGroup(group.getId()));
+
+        entityManagerProducer.closeEntityManager(gameEM2);
+        entityManagerProducer.closeEntityManager(keyGenEM);
+        entityManagerProducer.closeEntityManager(groupEM);
+        entityManagerProducer.closeEntityManager(activityEM);
+        entityManagerProducer.closeEntityManager(userEM);
     }
 
     @Test

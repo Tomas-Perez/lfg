@@ -1,8 +1,7 @@
 package restapi.security.authentication.filter;
 
-import model.UserEntity;
+import persistence.entity.UserEntity;
 import persistence.manager.UserManager;
-import persistence.model.User;
 import restapi.security.authentication.exception.AuthenticationException;
 import restapi.security.authentication.service.AuthenticationTokenDetails;
 import restapi.security.authentication.service.AuthenticationTokenService;

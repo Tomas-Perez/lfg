@@ -1,6 +1,6 @@
 package persistence.manager.patcher;
 
-import model.UserEntity;
+import persistence.entity.UserEntity;
 
 /**
  * @author Tomas Perez Molina

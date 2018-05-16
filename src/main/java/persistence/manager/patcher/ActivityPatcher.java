@@ -1,6 +1,6 @@
 package persistence.manager.patcher;
 
-import model.ActivityEntity;
+import persistence.entity.ActivityEntity;
 
 
 /**

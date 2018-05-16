@@ -1,6 +1,6 @@
 package persistence.manager.generator;
 
-import model.KeyEntity;
+import persistence.entity.KeyEntity;
 import org.jetbrains.annotations.NotNull;
 
 import javax.enterprise.context.ApplicationScoped;

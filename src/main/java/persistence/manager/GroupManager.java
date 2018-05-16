@@ -2,8 +2,7 @@ package persistence.manager;
 
 import persistence.manager.exception.ConstraintException;
 import persistence.manager.generator.KeyGenerator;
-import model.*;
-import persistence.model.User;
+import persistence.entity.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

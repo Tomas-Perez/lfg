@@ -1,7 +1,6 @@
 package persistence.model;
 
-import model.*;
-import org.jetbrains.annotations.NotNull;
+import persistence.entity.*;
 import persistence.manager.*;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -105,7 +104,7 @@ public class ModelBuilder {
         return new Group(
                 groupEntity.getId(),
                 groupEntity.getSlots(),
-                huskActivity(groupEntity.getActivityId()),
+                buildActivity(groupEntity.getActivityId()),
                 owner,
                 null,
                 null,
@@ -128,7 +127,7 @@ public class ModelBuilder {
         return new Group(
                 groupEntity.getId(),
                 groupEntity.getSlots(),
-                huskActivity(groupEntity.getActivityId()),
+                buildActivity(groupEntity.getActivityId()),
                 owner,
                 null,
                 null,
@@ -155,9 +154,15 @@ public class ModelBuilder {
         PostEntity postEntity = postManager.getPost(postID);
         if(postEntity == null) throw new NoSuchElementException();
 
-        Activity activity = huskActivity(postEntity.getActivityId());
+        Activity activity = buildActivity(postEntity.getActivityId());
         User owner = huskUser(postEntity.getOwnerId());
-        Group group = huskGroup(postEntity.getGroupId());
+
+        final Integer groupId = postEntity.getGroupId();
+        Group group = null;
+        if(groupId != null){
+            group = buildGroup(groupId);
+        }
+
 
         return new Post(
                 postEntity.getId(),

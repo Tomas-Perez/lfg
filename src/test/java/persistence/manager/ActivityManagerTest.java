@@ -10,11 +10,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import persistence.manager.exception.ConstraintException;
+import persistence.manager.generator.KeyGenerator;
 import persistence.manager.patcher.ActivityPatcher;
-import model.ActivityEntity;
-import model.GameEntity;
+import persistence.entity.ActivityEntity;
+import persistence.entity.GameEntity;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,6 +31,9 @@ import static org.hamcrest.MatcherAssert.*;
 
 @RunWith(Arquillian.class)
 public class ActivityManagerTest {
+    @Inject
+    private EntityManagerProducer entityManagerProducer;
+
     @Inject
     private ActivityManager activityManager;
 
@@ -164,9 +169,7 @@ public class ActivityManagerTest {
         try {
             activityManager.addActivity(ranked, ow.getId()); //Same activity and game
             fail();
-        } catch (ConstraintException exc){
-            assertThat(exc.getConstraintName(), is(String.format("%s for %s", ranked, ow.getName())));
-        }
+        } catch (ConstraintException exc){}
     }
 
     @Test
@@ -197,18 +200,14 @@ public class ActivityManagerTest {
         try {
             activityManager.updateActivity(activities.get(1).getId(), namePatcher);
             fail();
-        } catch (ConstraintException exc){
-            assertThat(exc.getConstraintName(), is(String.format("%s for %s", ranked, ow.getName())));
-        }
+        } catch (ConstraintException exc){}
 
         ActivityPatcher gamePatcher = new ActivityPatcher.Builder().withGame(ow.getId()).build();
 
         try {
             activityManager.updateActivity(activities.get(2).getId(), gamePatcher);
             fail();
-        } catch (ConstraintException exc){
-            assertThat(exc.getConstraintName(), is(String.format("%s for %s", ranked, ow.getName())));
-        }
+        } catch (ConstraintException exc){}
     }
 
     @Test
@@ -237,6 +236,13 @@ public class ActivityManagerTest {
 
     @Test
     public void canDeleteGame(){
+        EntityManager gameEM = entityManagerProducer.createEntityManager();
+        EntityManager activityEM = entityManagerProducer.createEntityManager();
+        final EntityManager keyGenEM = entityManagerProducer.createEntityManager();
+        KeyGenerator keyGen = new KeyGenerator(keyGenEM);
+        GameManager gameManager = new GameManager(gameEM, keyGen);
+        ActivityManager activityManager = new ActivityManager(activityEM, keyGen, gameManager);
+
         String owName = "Overwatch";
         GameEntity ow = addGame(owName);
 
@@ -256,9 +262,20 @@ public class ActivityManagerTest {
 
         gameManager.deleteGame(ow.getId());
 
+        entityManagerProducer.closeEntityManager(activityEM);
+        entityManagerProducer.closeEntityManager(gameEM);
+        EntityManager gameEM2 = entityManagerProducer.createEntityManager();
+        EntityManager activityEM2 = entityManagerProducer.createEntityManager();
+        GameManager gameManager2 = new GameManager(gameEM2, keyGen);
+        ActivityManager activityManager2 = new ActivityManager(activityEM2, keyGen, gameManager2);
+
         activities.stream()
                 .map(ActivityEntity::getId)
-                .forEach(id -> assertNull(activityManager.getActivity(id)));
+                .forEach(id -> assertNull(activityManager2.getActivity(id)));
+
+        entityManagerProducer.closeEntityManager(gameEM2);
+        entityManagerProducer.closeEntityManager(activityEM2);
+        entityManagerProducer.closeEntityManager(keyGenEM);
     }
 
     @Test

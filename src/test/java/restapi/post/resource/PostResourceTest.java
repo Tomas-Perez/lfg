@@ -50,7 +50,6 @@ public class PostResourceTest extends ApiTest {
 
         final Response getResponse = RequestUtil.get(postTarget, token);
 
-        System.out.println(getResponse.getEntity());
         assertThat(getResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
 
         PostJSON actual = RequestUtil.parseResponse(getResponse, PostJSON.class);
@@ -89,7 +88,6 @@ public class PostResourceTest extends ApiTest {
 
         final Response getResponse = RequestUtil.get(postTarget, token);
 
-        System.out.println(getResponse.getEntity());
         assertThat(getResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
 
         PostJSON actual = RequestUtil.parseResponse(getResponse, PostJSON.class);
@@ -97,7 +95,7 @@ public class PostResourceTest extends ApiTest {
         MemberJSON ownerJSON = new MemberJSON(ownerID, ownerName);
         GameJSON gameJSON = new GameJSON(gameID, gameName);
         ActivityJSON activityJSON = new ActivityJSON(activityID, activityName, gameJSON);
-        GroupJSON groupJSON = new GroupJSON(groupID, Collections.singletonList(ownerJSON));
+        GroupJSON groupJSON = new GroupJSON(groupID, slots, Collections.singletonList(ownerJSON));
 
         PostJSON expected = new PostJSON(Integer.parseInt(id), description, null, activityJSON, ownerJSON, groupJSON);
 

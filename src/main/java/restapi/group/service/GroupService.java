@@ -39,7 +39,14 @@ public class GroupService {
     }
 
     public Group getGroup(int id){
-        return modelBuilder.buildGroup(id);
+        try {
+            return modelBuilder.buildGroup(id);
+        } catch (NoSuchElementException exc){
+            throw new NotFoundException();
+        } catch (Exception exc){
+            exc.printStackTrace();
+            throw new NotFoundException();
+        }
     }
 
     public void wipe(){
