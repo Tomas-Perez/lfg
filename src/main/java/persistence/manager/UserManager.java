@@ -4,8 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import persistence.manager.exception.ConstraintException;
 import persistence.manager.generator.KeyGenerator;
 import persistence.manager.patcher.UserPatcher;
-import persistence.model.Activity;
-import persistence.model.User;
+import model.UserEntity;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -37,7 +36,7 @@ public class UserManager {
         checkValidCreation(username, email);
         EntityTransaction tx = manager.getTransaction();
         int id = generator.generate("user");
-        User user = new User(id, username, password, email, isAdmin);
+        UserEntity user = new UserEntity(id, isAdmin, email, password, username);
 
         try {
             tx.begin();
@@ -52,8 +51,8 @@ public class UserManager {
     }
 
     @SuppressWarnings("unchecked")
-    public List<User> listUsers(){
-        return manager.createQuery("FROM User").getResultList();
+    public List<Integer> listUsers(){
+        return manager.createQuery("SELECT U.id FROM UserEntity U").getResultList();
     }
 
     public void updateUser(int userID, @NotNull UserPatcher patcher) throws ConstraintException{
@@ -61,7 +60,7 @@ public class UserManager {
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
-            User user = manager.find(User.class, userID);
+            UserEntity user = manager.find(UserEntity.class, userID);
             patcher.patch(user);
             tx.commit();
         } catch (Exception e) {
@@ -75,7 +74,7 @@ public class UserManager {
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
-            User user = manager.find(User.class, userID);
+            UserEntity user = manager.find(UserEntity.class, userID);
             manager.remove(user);
             tx.commit();
         } catch (NullPointerException | IllegalArgumentException exc){
@@ -87,9 +86,9 @@ public class UserManager {
         }
     }
 
-    public Optional<User> getByEmail(@NotNull String email){
-        List<User> users = manager
-                .createQuery("FROM User U WHERE U.email = :email", User.class)
+    public Optional<UserEntity> getByEmail(@NotNull String email){
+        List<UserEntity> users = manager
+                .createQuery("FROM UserEntity U WHERE U.email = :email", UserEntity.class)
                 .setParameter("email", email)
                 .getResultList();
         return users.stream().findFirst();
@@ -110,24 +109,24 @@ public class UserManager {
 
     public boolean userExistsByUserName(@NotNull String username){
         return manager
-                .createQuery("SELECT 1 FROM User U WHERE U.username = :username")
+                .createQuery("SELECT 1 FROM UserEntity U WHERE U.username = :username")
                 .setParameter("username", username)
                 .getResultList().size() > 0;
     }
 
     public boolean userExistsByEmail(@NotNull String email){
         return manager
-                .createQuery("SELECT 1 FROM User U WHERE U.email = :email")
+                .createQuery("SELECT 1 FROM UserEntity U WHERE U.email = :email")
                 .setParameter("email", email)
                 .getResultList().size() > 0;
     }
 
     public void wipeAllRecords(){
-        listUsers().stream().map(User::getId).forEach(this::deleteUser);
+        listUsers().forEach(this::deleteUser);
 //        EntityTransaction tx = manager.getTransaction();
 //        try {
 //            tx.begin();
-//            manager.createQuery("DELETE FROM User").executeUpdate();
+//            manager.createQuery("DELETE FROM UserEntity").executeUpdate();
 //            tx.commit();
 //        } catch (Exception e) {
 //            if (tx!=null) tx.rollback();
@@ -135,7 +134,29 @@ public class UserManager {
 //        }
     }
 
-    public User getUser(int userID){
-        return manager.find(User.class, userID);
+    public UserEntity getUser(int userID){
+        return manager.find(UserEntity.class, userID);
+    }
+
+    public boolean userExists(int userID){
+        return getUser(userID) != null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Integer> getUserGroups(int userID){
+        return manager.createQuery("SELECT M.groupId " +
+                "FROM GroupMemberEntity M JOIN GroupEntity G ON G.id = M.groupId " +
+                "WHERE M.memberId = :userID")
+                .setParameter("userID", userID)
+                .getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Integer> getUserGames(int userID){
+        return manager.createQuery("SELECT O.gameId " +
+                "FROM OwnsGameEntity O JOIN GameEntity G ON G.id = O.gameId " +
+                "WHERE O.ownerId = :userID")
+                .setParameter("userID", userID)
+                .getResultList();
     }
 }

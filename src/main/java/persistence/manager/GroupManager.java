@@ -1,8 +1,9 @@
 package persistence.manager;
 
-import org.jetbrains.annotations.NotNull;
+import persistence.manager.exception.ConstraintException;
 import persistence.manager.generator.KeyGenerator;
-import persistence.model.*;
+import model.*;
+import persistence.model.User;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -18,28 +19,39 @@ import java.util.NoSuchElementException;
 public class GroupManager {
     private EntityManager manager;
     private KeyGenerator generator;
+    private UserManager userManager;
+    private ActivityManager activityManager;
 
     @Inject
-    public GroupManager(EntityManager manager, KeyGenerator generator) {
+    public GroupManager(
+            EntityManager manager,
+            KeyGenerator generator,
+            UserManager userManager,
+            ActivityManager activityManager)
+    {
         this.manager = manager;
         this.generator = generator;
+        this.userManager = userManager;
+        this.activityManager = activityManager;
     }
 
-    public GroupManager(){ }
+    public GroupManager(){}
 
     public int addGroup(int slots,
-                         @NotNull Activity activity,
-                         @NotNull User owner,
-                         ChatPlatform chatPlatform,
-                         GamePlatform gamePlatform)
+                        int activityID,
+                        int ownerID,
+                        Integer chatPlatformID,
+                        Integer gamePlatformID)
     {
+        checkValidCreation(ownerID, activityID);
         EntityTransaction tx = manager.getTransaction();
         int id = generator.generate("group");
-        Group group = new Group(id, slots, activity, owner, chatPlatform, gamePlatform);
-
+        GroupEntity group = new GroupEntity(id, slots, activityID, chatPlatformID, gamePlatformID);
+        GroupMemberEntity groupMemberEntity = new GroupMemberEntity(id, ownerID, true);
         try {
             tx.begin();
             manager.persist(group);
+            manager.persist(groupMemberEntity);
             tx.commit();
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
@@ -49,16 +61,17 @@ public class GroupManager {
         return group.getId();
     }
 
-    public Group getGroup(int groupID){
-        return manager.find(Group.class, groupID);
+    public GroupEntity getGroup(int groupID){
+        return manager.find(GroupEntity.class, groupID);
     }
 
-    public void addMemberToGroup(int groupID, User member){
+    public void addMemberToGroup(int groupID, int memberID){
+        checkUser(memberID);
         EntityTransaction tx = manager.getTransaction();
+        GroupMemberEntity groupMemberEntity = new GroupMemberEntity(groupID, memberID, false);
         try {
             tx.begin();
-            Group group = manager.find(Group.class, groupID);
-            group.addMember(member);
+            manager.persist(groupMemberEntity);
             tx.commit();
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
@@ -66,13 +79,17 @@ public class GroupManager {
         }
     }
 
-    public void removeMemberFromGroup(int groupID, User member){
+    public void removeMemberFromGroup(int groupID, int memberID){
         EntityTransaction tx = manager.getTransaction();
+        GroupMemberEntityPK key = new GroupMemberEntityPK(groupID, memberID);
         try {
             tx.begin();
-            Group group = manager.find(Group.class, groupID);
-            group.removeMember(member);
+            GroupMemberEntity groupMemberEntity = manager.find(GroupMemberEntity.class, key);
+            manager.remove(groupMemberEntity);
             tx.commit();
+        } catch (IllegalArgumentException exc){
+            if (tx!=null) tx.rollback();
+            throw new NoSuchElementException();
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
@@ -83,11 +100,10 @@ public class GroupManager {
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
-            Group group = manager.find(Group.class, groupID);
+            GroupEntity group = manager.find(GroupEntity.class, groupID);
             manager.remove(group);
-            group.destroy();
             tx.commit();
-        } catch (NullPointerException | IllegalArgumentException exc){
+        } catch (IllegalArgumentException exc){
             if (tx!=null) tx.rollback();
             throw new NoSuchElementException();
         } catch (Exception e) {
@@ -97,20 +113,56 @@ public class GroupManager {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Group> listGroups(){
-        return manager.createQuery("FROM Group").getResultList();
+    public List<Integer> listGroups(){
+        return manager.createQuery("SELECT G.id FROM GroupEntity G").getResultList();
     }
 
     public void wipeAllRecords(){
-        listGroups().stream().map(Group::getId).forEach(this::deleteGroup);
+        listGroups().forEach(this::deleteGroup);
 //        EntityTransaction tx = manager.getTransaction();
 //        try {
 //            tx.begin();
-//            manager.createQuery("DELETE FROM Group").executeUpdate();
+//            manager.createQuery("DELETE FROM GroupEntity").executeUpdate();
 //            tx.commit();
 //        } catch (Exception e) {
 //            if (tx!=null) tx.rollback();
 //            e.printStackTrace();
 //        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Integer> getGroupMembers(int groupID){
+        return manager.createQuery("SELECT M.memberId " +
+                "FROM GroupMemberEntity M JOIN UserEntity U ON U.id = M.memberId " +
+                "WHERE M.groupId = :groupID")
+                .setParameter("groupID", groupID)
+                .getResultList();
+    }
+
+    public Integer getGroupOwner(int groupID){
+        return (Integer) manager.createQuery("SELECT M.memberId " +
+                "FROM GroupMemberEntity M JOIN UserEntity U ON U.id = M.memberId " +
+                "WHERE M.groupId = :groupID AND M.owner = true")
+                .setParameter("groupID", groupID)
+                .getSingleResult();
+    }
+
+    public boolean groupExists(int groupID){
+        return manager.find(GroupEntity.class, groupID) != null;
+    }
+
+    private void checkValidCreation(int ownerID, int activityID){
+        checkUser(ownerID);
+        checkActivity(activityID);
+    }
+
+    private void checkUser(int ownerID){
+        if(!userManager.userExists(ownerID))
+            throw new ConstraintException(String.format("User with id: %d does not exist", ownerID));
+    }
+
+    private void checkActivity(int activityID){
+        if(!activityManager.activityExists(activityID))
+            throw new ConstraintException(String.format("Activity with id: %d does not exist", activityID));
     }
 }

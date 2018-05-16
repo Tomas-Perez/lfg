@@ -1,13 +1,11 @@
 package restapi.post.service;
 
+import model.GroupEntity;
 import persistence.manager.ActivityManager;
 import persistence.manager.GroupManager;
 import persistence.manager.PostManager;
 import persistence.manager.UserManager;
-import persistence.model.Activity;
-import persistence.model.Group;
-import persistence.model.Post;
-import persistence.model.User;
+import persistence.model.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -15,6 +13,7 @@ import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 /**
  * @author Tomas Perez Molina
@@ -26,33 +25,26 @@ public class PostService {
     private GroupManager groupManager;
 
     @Inject
-    private ActivityManager activityManager;
-
-    @Inject
-    private UserManager userManager;
-
-    @Inject
     private PostManager postManager;
 
+    @Inject
+    private ModelBuilder modelBuilder;
+
     public List<Post> getAll(){
-        return postManager.listPosts();
+        return postManager.listPosts().stream().map(modelBuilder::buildPost).collect(Collectors.toList());
     }
 
     public int newPost(String description, int activityID, int ownerID){
-        final Activity activity = getActivity(activityID);
-        final User owner = getUser(ownerID);
-        return postManager.addPost(description, LocalDateTime.now(), activity, owner);
+        return postManager.addPost(description, LocalDateTime.now(), activityID, ownerID);
     }
 
     public int newGroupPost(String description, int groupID){
-        Group group = getGroup(groupID);
+        GroupEntity group = getGroup(groupID);
         return postManager.addGroupPost(description, LocalDateTime.now(), group);
     }
 
     public Post getPost(int id){
-        final Post post = postManager.getPost(id);
-        if(post == null) throw new NotFoundException();
-        return post;
+        return modelBuilder.buildPost(id);
     }
 
     public void wipe(){
@@ -68,20 +60,8 @@ public class PostService {
     }
 
 
-    private User getUser(int userID){
-        User user = userManager.getUser(userID);
-        if(user == null) throw new NotFoundException("User not found");
-        return user;
-    }
-
-    private Activity getActivity(int activityID){
-        Activity activity = activityManager.getActivity(activityID);
-        if(activity == null) throw new NotFoundException("Activity not found");
-        return activity;
-    }
-
-    private Group getGroup(int groupID){
-        Group group = groupManager.getGroup(groupID);
+    private GroupEntity getGroup(int groupID){
+        GroupEntity group = groupManager.getGroup(groupID);
         if(group == null) throw new NotFoundException("Group not found");
         return group;
     }

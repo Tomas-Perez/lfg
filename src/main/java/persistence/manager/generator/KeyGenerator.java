@@ -1,13 +1,12 @@
 package persistence.manager.generator;
 
+import model.KeyEntity;
 import org.jetbrains.annotations.NotNull;
-import persistence.model.Key;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import java.util.NoSuchElementException;
 
 /**
  * @author Tomas Perez Molina
@@ -26,7 +25,7 @@ public class KeyGenerator {
     public KeyGenerator(){ }
 
     private void addKey(@NotNull String targetTable){
-        Key key = new Key(targetTable);
+        KeyEntity key = new KeyEntity(targetTable);
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
@@ -44,7 +43,7 @@ public class KeyGenerator {
         boolean keyExists = false;
         try {
             tx.begin();
-            Key key = manager.find(Key.class, targetTable);
+            KeyEntity key = manager.find(KeyEntity.class, targetTable);
             if(key != null){
                 id = key.getAndIncrement();
                 keyExists = true;

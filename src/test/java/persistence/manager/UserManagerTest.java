@@ -7,9 +7,10 @@ import org.jboss.shrinkwrap.api.gradle.archive.importer.embedded.EmbeddedGradleI
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import persistence.manager.UserManager;
 import persistence.manager.exception.ConstraintException;
 import persistence.manager.patcher.UserPatcher;
-import persistence.model.User;
+import model.UserEntity;
 
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -59,10 +60,10 @@ public class UserManagerTest {
                 email,
                 true
         );
-        Optional<User> optional = manager.getByEmail(email);
+        Optional<UserEntity> optional = manager.getByEmail(email);
         assertTrue(optional.isPresent());
 
-        User user = optional.get();
+        UserEntity user = optional.get();
         assertThat(user.getEmail(), is(email));
         assertThat(user.getUsername(), is(username));
         assertThat(user.getPassword(), is(password));
@@ -85,8 +86,8 @@ public class UserManagerTest {
 
         String newPass = "123456";
 
-        Optional<User> optional = manager.getByEmail(email);
-        User user = optional.orElseThrow(() -> new RuntimeException("No user"));
+        Optional<UserEntity> optional = manager.getByEmail(email);
+        UserEntity user = optional.orElseThrow(() -> new RuntimeException("No user"));
         assertThat(user.getPassword(), is(pass));
         assertThat(user.getPassword(), is(not(newPass)));
 
@@ -115,7 +116,10 @@ public class UserManagerTest {
         UserDetails three = new UserDetails("HeyImAdmin", "pass", "test@admin.com", true);
         UserDetails[] expected = addAll(one, two, three);
 
-        List<UserDetails> actual = manager.listUsers().stream().map(UserDetails::new).collect(Collectors.toList());
+        List<UserDetails> actual = manager.listUsers().stream()
+                .map(manager::getUser)
+                .map(UserDetails::new)
+                .collect(Collectors.toList());
 
         assertThat(actual, hasItems(expected));
 
@@ -159,7 +163,7 @@ public class UserManagerTest {
         UserDetails three = new UserDetails("HeyImAdmin", "pass", "test@admin.com", true);
         UserDetails[] expected = addAll(one, two, three);
 
-        User user = manager.getByEmail(one.email).get();
+        UserEntity user = manager.getByEmail(one.email).get();
 
         UserPatcher emailPatcher = new UserPatcher.Builder().withEmail(two.email).build();
         UserPatcher usernamePatcher = new UserPatcher.Builder().withUsername(two.username).build();
@@ -200,7 +204,7 @@ public class UserManagerTest {
             this.admin = admin;
         }
 
-        public UserDetails(User user){
+        public UserDetails(UserEntity user){
             this.username = user.getUsername();
             this.password = user.getPassword();
             this.email = user.getEmail();

@@ -1,5 +1,6 @@
 package restapi.security.authentication.service;
 
+import model.UserEntity;
 import persistence.manager.UserManager;
 import persistence.model.User;
 import restapi.security.authentication.exception.AuthenticationException;
@@ -20,14 +21,12 @@ public class SignInService {
         System.out.println("Initiating sign in service");
     }
 
-    public User signIn(String email, String password){
-        User user;
+    public void signIn(String email, String password){
+        UserEntity user;
 
         user = userManager.getByEmail(email).orElseThrow(AuthenticationException::noUser);
 
         if(!password.equals(user.getPassword()))
             throw new AuthenticationException("Wrong password");
-
-        return user;
     }
 }

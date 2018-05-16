@@ -1,5 +1,6 @@
 package restapi.post.model;
 
+import model.PostEntity;
 import persistence.model.Group;
 import persistence.model.Post;
 import restapi.activity.model.ActivityJSON;

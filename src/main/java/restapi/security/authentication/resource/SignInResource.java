@@ -42,8 +42,8 @@ public class SignInResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @PermitAll
     public Response singIn(SignInJSON signIn){
-        User user = service.signIn(signIn.getEmail(), signIn.getPassword());
-        String token = authenticationTokenService.issueToken(user.getEmail());
+        service.signIn(signIn.getEmail(), signIn.getPassword());
+        String token = authenticationTokenService.issueToken(signIn.getEmail());
 
         return Response.ok(new AuthenticationToken(token)).build();
     }

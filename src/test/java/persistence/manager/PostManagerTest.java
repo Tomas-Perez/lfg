@@ -1,5 +1,6 @@
 package persistence.manager;
 
+import model.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -7,6 +8,7 @@ import org.jboss.shrinkwrap.api.gradle.archive.importer.embedded.EmbeddedGradleI
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import persistence.manager.*;
 import persistence.model.*;
 
 import javax.inject.Inject;
@@ -14,6 +16,7 @@ import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.*;
 import static org.hamcrest.CoreMatchers.*;
@@ -58,36 +61,41 @@ public class PostManagerTest {
     public void addPost(){
         cleanUp();
 
-        List<Post> posts = postManager.listPosts();
+        List<PostEntity> posts = postManager.listPosts()
+                .stream()
+                .map(postManager::getPost)
+                .collect(Collectors.toList());
 
         assertThat(posts.size(), is(0));
 
         final String gameName = "Overwatch";
-        Game ow = addGame(gameName);
+        GameEntity ow = addGame(gameName);
 
         final String activityName = "Ranked";
-        Activity ranked = addActivity(activityName, ow);
+        ActivityEntity ranked = addActivity(activityName, ow);
 
         final String username = "wewey";
         final String password = "123123";
         final String email = "xyz@lfg.com";
         final boolean admin = false;
-        User user = addUser(username, password, email, admin);
+        UserEntity user = addUser(username, password, email, admin);
 
         final LocalDateTime dateTime = LocalDateTime.now();
 
         final String description = "whatever";
-        postManager.addPost(description, dateTime, ranked, user);
+        postManager.addPost(description, dateTime, ranked.getId(), user.getId());
 
-        posts = postManager.listPosts();
+        posts = postManager.listPosts().stream()
+                .map(postManager::getPost)
+                .collect(Collectors.toList());
 
         assertThat(posts.size(), is(1));
-        Post post = posts.get(0);
+        PostEntity post = posts.get(0);
 
         assertThat(post.getDescription(), is(description));
-        assertThat(post.getActivity(), is(ranked));
+        assertThat(post.getActivityId(), is(ranked.getId()));
         assertThat(post.getDate(), is(dateTime));
-        assertThat(post.getOwner(), is(user));
+        assertThat(post.getOwnerId(), is(user.getId()));
 
         cleanUp();
     }
@@ -96,39 +104,45 @@ public class PostManagerTest {
     public void addGroupPost(){
         cleanUp();
 
-        List<Post> posts = postManager.listPosts();
+        List<PostEntity> posts = postManager.listPosts()
+                .stream()
+                .map(postManager::getPost)
+                .collect(Collectors.toList());
 
         assertThat(posts.size(), is(0));
 
         final String gameName = "Overwatch";
-        Game ow = addGame(gameName);
+        GameEntity ow = addGame(gameName);
 
         final String activityName = "Ranked";
-        Activity ranked = addActivity(activityName, ow);
+        ActivityEntity ranked = addActivity(activityName, ow);
 
         final String username = "wewey";
         final String password = "123123";
         final String email = "xyz@lfg.com";
         final boolean admin = false;
-        User user = addUser(username, password, email, admin);
+        UserEntity user = addUser(username, password, email, admin);
 
 
-        Group group = addGroup(5, ranked, user);
+        GroupEntity group = addGroup(5, ranked, user);
         final LocalDateTime dateTime = LocalDateTime.now();
 
         final String description = "whatever";
         postManager.addGroupPost(description, dateTime, group);
 
-        posts = postManager.listPosts();
+        posts = postManager.listPosts()
+                .stream()
+                .map(postManager::getPost)
+                .collect(Collectors.toList());
 
         assertThat(posts.size(), is(1));
-        Post post = posts.get(0);
+        PostEntity post = posts.get(0);
 
         assertThat(post.getDescription(), is(description));
-        assertThat(post.getActivity(), is(ranked));
+        assertThat(post.getActivityId(), is(ranked.getId()));
         assertThat(post.getDate(), is(dateTime));
-        assertThat(post.getOwner(), is(user));
-        assertThat(post.getGroup(), is(group));
+        assertThat(post.getOwnerId(), is(user.getId()));
+        assertThat(post.getGroupId(), is(group.getId()));
 
         cleanUp();
     }
@@ -141,26 +155,26 @@ public class PostManagerTest {
         userManager.wipeAllRecords();
     }
 
-    private Game addGame(String name){
+    private GameEntity addGame(String name){
         gameManager.addGame(name, null);
-        Optional<Game> optional = gameManager.getByName(name);
-        return optional.orElseThrow(() -> new RuntimeException("Game not saved"));
+        Optional<GameEntity> optional = gameManager.getByName(name);
+        return optional.orElseThrow(() -> new RuntimeException("GameEntity not saved"));
     }
 
-    private Activity addActivity(String name, Game game){
-        activityManager.addActivity(name, game);
-        Optional<Activity> optional = activityManager.getActivity(name, game);
-        return optional.orElseThrow(() -> new RuntimeException("Activity not saved"));
+    private ActivityEntity addActivity(String name, GameEntity game){
+        activityManager.addActivity(name, game.getId());
+        Optional<ActivityEntity> optional = activityManager.getActivity(name, game.getId());
+        return optional.orElseThrow(() -> new RuntimeException("ActivityEntity not saved"));
     }
 
-    private User addUser(String username, String password, String email, boolean admin){
+    private UserEntity addUser(String username, String password, String email, boolean admin){
         userManager.addUser(username, password, email, admin);
-        Optional<User> optional = userManager.getByEmail(email);
-        return optional.orElseThrow(() -> new RuntimeException("User not saved"));
+        Optional<UserEntity> optional = userManager.getByEmail(email);
+        return optional.orElseThrow(() -> new RuntimeException("UserEntity not saved"));
     }
 
-    private Group addGroup(int slots, Activity activity, User owner){
-        int id = groupManager.addGroup(slots, activity, owner, null, null);
+    private GroupEntity addGroup(int slots, ActivityEntity activity, UserEntity owner){
+        int id = groupManager.addGroup(slots, activity.getId(), owner.getId(), null, null);
         return groupManager.getGroup(id);
     }
 }

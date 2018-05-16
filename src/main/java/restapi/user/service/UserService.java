@@ -1,7 +1,9 @@
 package restapi.user.service;
 
+import model.UserEntity;
 import persistence.manager.UserManager;
 import persistence.manager.patcher.UserPatcher;
+import persistence.model.ModelBuilder;
 import persistence.model.User;
 import restapi.security.authentication.exception.AuthenticationException;
 
@@ -10,6 +12,7 @@ import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 /**
  * @author Tomas Perez Molina
@@ -21,14 +24,17 @@ public class UserService {
     @Inject
     private UserManager manager;
 
+    @Inject
+    private ModelBuilder modelBuilder;
+
     public User getUserByEmail(String email){
-        return manager.getByEmail(email).orElseThrow(AuthenticationException::noUser);
+        UserEntity userEntity = manager.getByEmail(email)
+                .orElseThrow(AuthenticationException::noUser);
+        return getUser(userEntity.getId());
     }
 
     public User getUser(int id){
-        User user = manager.getUser(id);
-        if(user == null) throw new NotFoundException();
-        return user;
+        return modelBuilder.buildUser(id);
     }
 
     public void deleteUser(int id){
@@ -49,6 +55,9 @@ public class UserService {
     }
 
     public List<User> getAll(){
-        return manager.listUsers();
+        return manager.listUsers()
+                .stream()
+                .map(modelBuilder::buildUser)
+                .collect(Collectors.toList());
     }
 }

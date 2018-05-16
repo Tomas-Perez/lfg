@@ -1,11 +1,9 @@
 package persistence.manager;
 
 import org.jetbrains.annotations.NotNull;
+import persistence.manager.exception.ConstraintException;
 import persistence.manager.generator.KeyGenerator;
-import persistence.model.Activity;
-import persistence.model.Group;
-import persistence.model.Post;
-import persistence.model.User;
+import model.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -23,23 +21,30 @@ import java.util.NoSuchElementException;
 public class PostManager {
     private EntityManager manager;
     private KeyGenerator generator;
+    private UserManager userManager;
+    private ActivityManager activityManager;
+    private GroupManager groupManager;
 
     @Inject
-    public PostManager(EntityManager manager, KeyGenerator generator) {
+    public PostManager(EntityManager manager, KeyGenerator generator, UserManager userManager, ActivityManager activityManager, GroupManager groupManager) {
         this.manager = manager;
         this.generator = generator;
+        this.userManager = userManager;
+        this.activityManager = activityManager;
+        this.groupManager = groupManager;
     }
 
     public PostManager(){ }
 
     public int addPost(String description,
                         @NotNull LocalDateTime date,
-                        Activity activity,
-                        @NotNull User owner)
+                        Integer activityID,
+                        int ownerID)
     {
+        checkValidCreation(ownerID, activityID);
         EntityTransaction tx = manager.getTransaction();
         int id = generator.generate("post");
-        Post post = new Post(id, description, date, activity, owner);
+        PostEntity post = new PostEntity(id, description, date, activityID, ownerID, null);
 
         try {
             tx.begin();
@@ -55,11 +60,19 @@ public class PostManager {
 
     public int addGroupPost(String description,
                              @NotNull LocalDateTime date,
-                             @NotNull Group group)
+                             @NotNull GroupEntity group)
     {
         EntityTransaction tx = manager.getTransaction();
         int id = generator.generate("post");
-        Post post = new Post(id, description, date, group);
+        Integer groupOwner = groupManager.getGroupOwner(group.getId());
+        PostEntity post = new PostEntity(
+                id,
+                description,
+                date,
+                group.getActivityId(),
+                groupOwner,
+                group.getId()
+        );
 
         try {
             tx.begin();
@@ -77,7 +90,7 @@ public class PostManager {
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
-            Post post = manager.find(Post.class, postID);
+            PostEntity post = manager.find(PostEntity.class, postID);
             manager.remove(post);
             tx.commit();
         } catch (NullPointerException | IllegalArgumentException exc){
@@ -90,16 +103,16 @@ public class PostManager {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Post> listPosts(){
-        return manager.createQuery("FROM Post").getResultList();
+    public List<Integer> listPosts(){
+        return manager.createQuery("SELECT P.id FROM PostEntity P").getResultList();
     }
 
     public void wipeAllRecords(){
-        listPosts().stream().map(Post::getId).forEach(this::deletePost);
+        listPosts().forEach(this::deletePost);
 //        EntityTransaction tx = manager.getTransaction();
 //        try {
 //            tx.begin();
-//            manager.createQuery("DELETE FROM Post").executeUpdate();
+//            manager.createQuery("DELETE FROM PostEntity").executeUpdate();
 //            tx.commit();
 //        } catch (Exception e) {
 //            if (tx!=null) tx.rollback();
@@ -107,7 +120,26 @@ public class PostManager {
 //        }
     }
 
-    public Post getPost(int postID){
-        return manager.find(Post.class, postID);
+    public PostEntity getPost(int postID){
+        return manager.find(PostEntity.class, postID);
+    }
+
+    public boolean postExists(int postID){
+        return manager.find(PostEntity.class, postID) != null;
+    }
+
+    private void checkValidCreation(int ownerID, int activityID){
+        checkUser(ownerID);
+        checkActivity(activityID);
+    }
+
+    private void checkUser(int ownerID){
+        if(!userManager.userExists(ownerID))
+            throw new ConstraintException(String.format("User with id: %d does not exist", ownerID));
+    }
+
+    private void checkActivity(int activityID){
+        if(!activityManager.activityExists(activityID))
+            throw new ConstraintException(String.format("Activity with id: %d does not exist", activityID));
     }
 }

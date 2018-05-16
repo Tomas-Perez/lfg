@@ -1,19 +1,18 @@
 package persistence.manager;
 
+import model.ActivityEntity;
 import org.jetbrains.annotations.NotNull;
 import persistence.manager.exception.ConstraintException;
 import persistence.manager.generator.KeyGenerator;
 import persistence.manager.patcher.GamePatcher;
-import persistence.model.Activity;
-import persistence.model.Game;
+import model.GameEntity;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Tomas Perez Molina
@@ -35,7 +34,7 @@ public class GameManager {
     public int addGame(@NotNull String name, String image) throws ConstraintException {
         checkValidCreation(name);
         int id = generator.generate("game");
-        Game game = new Game(id, name, image);
+        GameEntity game = new GameEntity(id, name, image);
         System.out.println(game.getId());
         EntityTransaction tx = manager.getTransaction();
         try {
@@ -56,7 +55,7 @@ public class GameManager {
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
-            Game game = manager.find(Game.class, gameID);
+            GameEntity game = manager.find(GameEntity.class, gameID);
             patcher.patch(game);
             tx.commit();
         } catch (NullPointerException exc){
@@ -72,9 +71,8 @@ public class GameManager {
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
-            Game game = manager.find(Game.class, gameID);
+            GameEntity game = manager.find(GameEntity.class, gameID);
             manager.remove(game);
-            game.destroy();
             tx.commit();
         } catch (NullPointerException | IllegalArgumentException exc){
             if (tx!=null) tx.rollback();
@@ -86,13 +84,13 @@ public class GameManager {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Game> listGames(){
-        return manager.createQuery("FROM Game").getResultList();
+    public List<Integer> listGames(){
+        return manager.createQuery("SELECT G.id FROM GameEntity G").getResultList();
     }
 
-    public Optional<Game> getByName(@NotNull String name){
-        List<Game> users = manager
-                .createQuery("FROM Game G WHERE G.name = :name", Game.class)
+    public Optional<GameEntity> getByName(@NotNull String name){
+        List<GameEntity> users = manager
+                .createQuery("FROM GameEntity G WHERE G.name = :name", GameEntity.class)
                 .setParameter("name", name)
                 .getResultList();
         return users.stream().findFirst();
@@ -109,17 +107,17 @@ public class GameManager {
 
     public boolean gameExists(@NotNull String name){
         return manager
-                .createQuery("SELECT 1 FROM Game G WHERE G.name = :name")
+                .createQuery("SELECT 1 FROM GameEntity G WHERE G.name = :name")
                 .setParameter("name", name)
                 .getResultList().size() > 0;
     }
 
     public void wipeAllRecords(){
-        listGames().stream().map(Game::getId).forEach(this::deleteGame);
+        listGames().forEach(this::deleteGame);
 //        EntityTransaction tx = manager.getTransaction();
 //        try {
 //            tx.begin();
-//            manager.createQuery("DELETE FROM Game").executeUpdate();
+//            manager.createQuery("DELETE FROM GameEntity").executeUpdate();
 //            tx.commit();
 //        } catch (Exception e) {
 //            if (tx!=null) tx.rollback();
@@ -127,7 +125,18 @@ public class GameManager {
 //        }
     }
 
-    public Game getGame(int gameID){
-        return manager.find(Game.class, gameID);
+    public GameEntity getGame(int gameID){
+        return manager.find(GameEntity.class, gameID);
+    }
+
+    public boolean gameExists(int gameID){
+        return manager.find(GameEntity.class, gameID) != null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Set<Integer> getGameActivities(int gameID){
+        return new HashSet<>((manager.createQuery("SELECT A.id FROM ActivityEntity A WHERE A.gameId = :game")
+                .setParameter("game", gameID)
+                .getResultList()));
     }
 }

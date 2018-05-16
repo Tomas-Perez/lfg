@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import persistence.manager.exception.ConstraintException;
 import persistence.manager.patcher.ActivityPatcher;
-import persistence.model.Activity;
-import persistence.model.Game;
+import model.ActivityEntity;
+import model.GameEntity;
 
 import javax.inject.Inject;
 
@@ -58,28 +58,28 @@ public class ActivityManagerTest {
     @Test
     public void addActivity() {
         String gameName = "Overwatch";
-        Game game = addGame(gameName);
+        GameEntity game = addGame(gameName);
 
 
         String activityName = "Ranked";
-        activityManager.addActivity(activityName, game);
-        Optional<Activity> optionalActivity = activityManager.getActivity(activityName, game);
+        activityManager.addActivity(activityName, game.getId());
+        Optional<ActivityEntity> optionalActivity = activityManager.getActivity(activityName, game.getId());
         assertTrue(optionalActivity.isPresent());
 
-        Activity activity = optionalActivity.get();
+        ActivityEntity activity = optionalActivity.get();
         assertThat(activity.getName(), is(activityName));
-        assertThat(activity.getGame(), is(game));
+        assertThat(activity.getGameId(), is(game.getId()));
     }
 
     @Test
     public void activityExists() {
         String gameName = "Overwatch";
-        Game game = addGame(gameName);
+        GameEntity game = addGame(gameName);
 
         String activityName = "Ranked";
-        assertFalse(activityManager.activityExists(activityName, game));
-        activityManager.addActivity(activityName, game);
-        assertTrue(activityManager.activityExists(activityName, game));
+        assertFalse(activityManager.activityExists(activityName, game.getId()));
+        activityManager.addActivity(activityName, game.getId());
+        assertTrue(activityManager.activityExists(activityName, game.getId()));
     }
 
     @Test
@@ -88,51 +88,52 @@ public class ActivityManagerTest {
         String godOfWarName = "God of War";
         String fifaName = "FIFA";
 
-        List<Game> games = addAllGames(owName, godOfWarName, fifaName);
+        List<GameEntity> games = addAllGames(owName, godOfWarName, fifaName);
 
-        Game ow = games.get(0);
-        Game godOfWar = games.get(1);
-        Game fifa = games.get(2);
+        GameEntity ow = games.get(0);
+        GameEntity godOfWar = games.get(1);
+        GameEntity fifa = games.get(2);
 
         String ranked = "Ranked";
         String casual = "Casual";
         String tournament = "Tournament";
 
         addAllActivities(
-                new ActivityGamePair(ranked, ow),
-                new ActivityGamePair(casual, ow),
-                new ActivityGamePair(ranked, godOfWar)
+                new ActivityGamePair(ranked, ow.getId()),
+                new ActivityGamePair(casual, ow.getId()),
+                new ActivityGamePair(ranked, godOfWar.getId())
         );
 
-        Activity activity = activityManager
-                .getActivity(ranked, godOfWar)
-                .orElseThrow(() -> new RuntimeException("Activity not saved"));
+        ActivityEntity activity = activityManager
+                .getActivity(ranked, godOfWar.getId())
+                .orElseThrow(() -> new RuntimeException("ActivityEntity not saved"));
 
-        assertTrue(activityManager.activityExists(ranked, godOfWar));
-        assertFalse(activityManager.activityExists(tournament, fifa));
+        assertTrue(activityManager.activityExists(ranked, godOfWar.getId()));
+        assertFalse(activityManager.activityExists(tournament, fifa.getId()));
 
-        ActivityPatcher fifaPatcher = new ActivityPatcher.Builder().withName(tournament).withGame(fifa).build();
+        ActivityPatcher fifaPatcher = new ActivityPatcher.Builder().withName(tournament).withGame(fifa.getId()).build();
         activityManager.updateActivity(activity.getId(), fifaPatcher);
 
-        assertFalse(activityManager.activityExists(ranked, godOfWar));
-        assertTrue(activityManager.activityExists(tournament, fifa));
+        assertFalse(activityManager.activityExists(ranked, godOfWar.getId()));
+        assertTrue(activityManager.activityExists(tournament, fifa.getId()));
 
         System.out.println(activityManager.listActivities());
     }
 
     @Test
     public void listActivities(){
-        List<Game> games = addAllGames("Overwatch", "FIFA", "God of War");
+        List<GameEntity> games = addAllGames("Overwatch", "FIFA", "God of War");
 
         ActivityGamePair[] expected = addAllActivitiesGetPair(
-                new ActivityGamePair("Ranked", games.get(0)),
-                new ActivityGamePair("Tournament", games.get(1)),
-                new ActivityGamePair("Campaign", games.get(2))
+                new ActivityGamePair("Ranked", games.get(0).getId()),
+                new ActivityGamePair("Tournament", games.get(1).getId()),
+                new ActivityGamePair("Campaign", games.get(2).getId())
         );
 
         List<ActivityGamePair> actual = activityManager.listActivities()
                 .stream()
-                .map(activity -> new ActivityGamePair(activity.getName(), activity.getGame()))
+                .map(activityManager::getActivity)
+                .map(activity -> new ActivityGamePair(activity.getName(), activity.getGameId()))
                 .collect(Collectors.toList());
 
         assertThat(actual, hasItems(expected));
@@ -143,25 +144,25 @@ public class ActivityManagerTest {
         String owName = "Overwatch";
         String godOfWarName = "God of War";
 
-        List<Game> games = addAllGames(owName, godOfWarName);
-        Game ow = games.get(0);
-        Game godOfWar = games.get(1);
+        List<GameEntity> games = addAllGames(owName, godOfWarName);
+        GameEntity ow = games.get(0);
+        GameEntity godOfWar = games.get(1);
 
         String ranked = "Ranked";
         String casual = "Casual";
 
         addAllActivities(
-                new ActivityGamePair(ranked, ow),
-                new ActivityGamePair(casual, ow), //Same game different activity
-                new ActivityGamePair(ranked, godOfWar) //Same activity different game
+                new ActivityGamePair(ranked, ow.getId()),
+                new ActivityGamePair(casual, ow.getId()), //Same game different activity
+                new ActivityGamePair(ranked, godOfWar.getId()) //Same activity different game
         );
 
-        assertTrue(activityManager.activityExists(ranked, ow));
-        assertTrue(activityManager.activityExists(casual, ow));
-        assertTrue(activityManager.activityExists(ranked, godOfWar));
+        assertTrue(activityManager.activityExists(ranked, ow.getId()));
+        assertTrue(activityManager.activityExists(casual, ow.getId()));
+        assertTrue(activityManager.activityExists(ranked, godOfWar.getId()));
 
         try {
-            activityManager.addActivity(ranked, ow); //Same activity and game
+            activityManager.addActivity(ranked, ow.getId()); //Same activity and game
             fail();
         } catch (ConstraintException exc){
             assertThat(exc.getConstraintName(), is(String.format("%s for %s", ranked, ow.getName())));
@@ -173,20 +174,23 @@ public class ActivityManagerTest {
         String owName = "Overwatch";
         String godOfWarName = "God of War";
 
-        List<Game> games = addAllGames(owName, godOfWarName);
-        Game ow = games.get(0);
-        Game godOfWar = games.get(1);
+        List<GameEntity> games = addAllGames(owName, godOfWarName);
+        GameEntity ow = games.get(0);
+        GameEntity godOfWar = games.get(1);
 
         String ranked = "Ranked";
         String casual = "Casual";
 
         addAllActivities(
-                new ActivityGamePair(ranked, ow),
-                new ActivityGamePair(casual, ow), //Same game different activity
-                new ActivityGamePair(ranked, godOfWar) //Same activity different game
+                new ActivityGamePair(ranked, ow.getId()),
+                new ActivityGamePair(casual, ow.getId()), //Same game different activity
+                new ActivityGamePair(ranked, godOfWar.getId()) //Same activity different game
         );
 
-        List<Activity> activities = activityManager.listActivities();
+        List<ActivityEntity> activities = activityManager.listActivities()
+                .stream()
+                .map(activityManager::getActivity)
+                .collect(Collectors.toList());
 
         ActivityPatcher namePatcher = new ActivityPatcher.Builder().withName(ranked).build();
 
@@ -197,7 +201,7 @@ public class ActivityManagerTest {
             assertThat(exc.getConstraintName(), is(String.format("%s for %s", ranked, ow.getName())));
         }
 
-        ActivityPatcher gamePatcher = new ActivityPatcher.Builder().withGame(ow).build();
+        ActivityPatcher gamePatcher = new ActivityPatcher.Builder().withGame(ow.getId()).build();
 
         try {
             activityManager.updateActivity(activities.get(2).getId(), gamePatcher);
@@ -210,21 +214,23 @@ public class ActivityManagerTest {
     @Test
     public void addsActivitiesToGame(){
         String owName = "Overwatch";
-        Game ow = addGame(owName);
+        GameEntity ow = addGame(owName);
 
         String ranked = "Ranked";
         String casual = "Casual";
         String ptr = "PTR";
 
-        List<Activity> expectedList = addAllActivities(
-                new ActivityGamePair(ranked, ow),
-                new ActivityGamePair(casual, ow),
-                new ActivityGamePair(ptr, ow)
+        List<ActivityEntity> expectedList = addAllActivities(
+                new ActivityGamePair(ranked, ow.getId()),
+                new ActivityGamePair(casual, ow.getId()),
+                new ActivityGamePair(ptr, ow.getId())
         );
 
-        Game actualOw = gameManager.getGame(ow.getId());
-        Set<Activity> actual = actualOw.getActivities();
-        Set<Activity> expected = new HashSet<>(expectedList);
+        Set<ActivityEntity> actual = gameManager.getGameActivities(ow.getId())
+                .stream()
+                .map(activityManager::getActivity)
+                .collect(Collectors.toSet());
+        Set<ActivityEntity> expected = new HashSet<>(expectedList);
 
         assertThat(expected, is(actual));
     }
@@ -232,52 +238,52 @@ public class ActivityManagerTest {
     @Test
     public void canDeleteGame(){
         String owName = "Overwatch";
-        Game ow = addGame(owName);
+        GameEntity ow = addGame(owName);
 
         String ranked = "Ranked";
         String casual = "Casual";
         String ptr = "PTR";
 
-        List<Activity> activities = addAllActivities(
-                new ActivityGamePair(ranked, ow),
-                new ActivityGamePair(casual, ow),
-                new ActivityGamePair(ptr, ow)
+        List<ActivityEntity> activities = addAllActivities(
+                new ActivityGamePair(ranked, ow.getId()),
+                new ActivityGamePair(casual, ow.getId()),
+                new ActivityGamePair(ptr, ow.getId())
         );
 
         activities.stream()
-                .map(Activity::getId)
+                .map(ActivityEntity::getId)
                 .forEach(id -> assertNotNull(activityManager.getActivity(id)));
 
         gameManager.deleteGame(ow.getId());
 
         activities.stream()
-                .map(Activity::getId)
+                .map(ActivityEntity::getId)
                 .forEach(id -> assertNull(activityManager.getActivity(id)));
     }
 
     @Test
     public void deletes(){
-        Game game = addGame("Overwatch");
-        Activity activity = addActivity(new ActivityGamePair("Ranked", game));
+        GameEntity game = addGame("Overwatch");
+        ActivityEntity activity = addActivity(new ActivityGamePair("Ranked", game.getId()));
         activityManager.deleteActivity(activity.getId());
         assertNull(activityManager.getActivity(activity.getId()));
     }
 
-    private Game addGame(String name){
+    private GameEntity addGame(String name){
         int id = gameManager.addGame(name, null);
         return gameManager.getGame(id);
     }
 
-    private List<Game> addAllGames(String... names){
+    private List<GameEntity> addAllGames(String... names){
         return Arrays.stream(names).map(this::addGame).collect(Collectors.toList());
     }
 
-    private Activity addActivity(ActivityGamePair pair){
+    private ActivityEntity addActivity(ActivityGamePair pair){
         int id = activityManager.addActivity(pair.name, pair.game);
         return activityManager.getActivity(id);
     }
 
-    private List<Activity> addAllActivities(ActivityGamePair... pairs){
+    private List<ActivityEntity> addAllActivities(ActivityGamePair... pairs){
         return Arrays.stream(pairs).map(this::addActivity).collect(Collectors.toList());
     }
 
@@ -288,9 +294,9 @@ public class ActivityManagerTest {
 
     private class ActivityGamePair{
         String name;
-        Game game;
+        Integer game;
 
-        ActivityGamePair(String name, Game game) {
+        ActivityGamePair(String name, Integer game) {
             this.name = name;
             this.game = game;
         }

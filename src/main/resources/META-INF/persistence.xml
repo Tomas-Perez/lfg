@@ -23,14 +23,27 @@
     </persistence-unit>
     <persistence-unit name="test" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>persistence.model.Key</class>
-        <class>persistence.model.User</class>
-        <class>persistence.model.Game</class>
-        <class>persistence.model.Activity</class>
-        <class>persistence.model.GamePlatform</class>
-        <class>persistence.model.ChatPlatform</class>
-        <class>persistence.model.Group</class>
-        <class>persistence.model.Post</class>
+        <class>model.GameEntity</class>
+        <class>model.OwnsGameEntity</class>
+        <class>model.UserEntity</class>
+        <class>model.ActivityEntity</class>
+        <class>model.ChatPlatformEntity</class>
+        <class>model.ChatPlatformForPostEntity</class>
+        <class>model.GroupEntity</class>
+        <class>model.GameInPlatformEntity</class>
+        <class>model.GamePlatformEntity</class>
+        <class>model.GamePlatformForPostEntity</class>
+        <class>model.GroupMemberEntity</class>
+        <class>model.PostEntity</class>
+        <class>model.KeyEntity</class>
+        <!--<class>persistence.model.Key</class>-->
+        <!--<class>persistence.model.User</class>-->
+        <!--<class>persistence.model.Game</class>-->
+        <!--<class>persistence.model.Activity</class>-->
+        <!--<class>persistence.model.GamePlatform</class>-->
+        <!--<class>persistence.model.ChatPlatform</class>-->
+        <!--<class>persistence.model.Group</class>-->
+        <!--<class>persistence.model.Post</class>-->
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
             <property name="tomee.jpa.factory.lazy" value="true"/>
@@ -38,7 +51,14 @@
             <property name ="javax.persistence.jdbc.url" value="jdbc:hsqldb:hsql://localhost/test"/>
             <property name="javax.persistence.jdbc.user" value="SA"/>
             <property name="javax.persistence.jdbc.password" value=""/>
-            <property name="hibernate.hbm2ddl.auto" value="create"/>
+            <property name="toplink.jdbc.url" value="jdbc:hsqldb:hsql://localhost/test"/>
+            <property name="toplink.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver"/>
+            <property name="hibernate.connection.url" value="jdbc:hsqldb:hsql://localhost/test"/>
+            <property name="hibernate.connection.driver_class" value="org.hsqldb.jdbc.JDBCDriver"/>
+            <property name="openjpa.ConnectionURL" value="jdbc:hsqldb:hsql://localhost/test"/>
+            <property name="openjpa.ConnectionDriverName" value="org.hsqldb.jdbc.JDBCDriver"/>
+            <property name="eclipselink.jdbc.url" value="jdbc:hsqldb:hsql://localhost/test"/>
+            <property name="eclipselink.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver"/>
             <!--<property name="hibernate.show_sql" value="true"/>-->
         </properties>
     </persistence-unit>
