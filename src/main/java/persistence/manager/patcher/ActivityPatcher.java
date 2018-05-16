@@ -1,16 +1,16 @@
 package persistence.manager.patcher;
 
-import persistence.model.Activity;
-import persistence.model.Game;
+import model.ActivityEntity;
+
 
 /**
  * @author Tomas Perez Molina
  */
 public class ActivityPatcher {
     private String name;
-    private Game game;
+    private Integer game;
 
-    private ActivityPatcher(String name, Game game) {
+    private ActivityPatcher(String name, Integer game) {
         this.name = name;
         this.game = game;
     }
@@ -23,11 +23,11 @@ public class ActivityPatcher {
         this.name = name;
     }
 
-    public Game getGame() {
+    public Integer getGame() {
         return game;
     }
 
-    public void setGame(Game game) {
+    public void setGame(Integer game) {
         this.game = game;
     }
 
@@ -39,23 +39,23 @@ public class ActivityPatcher {
         return game != null;
     }
 
-    public void patch(Activity activity){
+    public void patch(ActivityEntity activity){
         System.out.println("BEFORE PATCH: " + activity);
         if(name != null) activity.setName(name);
-        if(game != null) activity.setGame(game);
+        if(game != null) activity.setGameId(game);
         System.out.println("AFTER PATCH: " + activity);
     }
 
     public static class Builder{
         private String name;
-        private Game game;
+        private Integer game;
 
         public Builder withName(String name){
             this.name = name;
             return this;
         }
 
-        public Builder withGame(Game game){
+        public Builder withGame(Integer game){
             this.game = game;
             return this;
         }

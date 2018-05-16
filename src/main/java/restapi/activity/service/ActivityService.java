@@ -1,16 +1,19 @@
 package restapi.activity.service;
 
+import model.GameEntity;
 import persistence.manager.ActivityManager;
 import persistence.manager.GameManager;
 import persistence.manager.patcher.ActivityPatcher;
 import persistence.model.Activity;
 import persistence.model.Game;
+import persistence.model.ModelBuilder;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 /**
  * @author Tomas Perez Molina
@@ -22,22 +25,21 @@ public class ActivityService {
     private ActivityManager activityManager;
 
     @Inject
-    private GameManager gameManager;
+    private ModelBuilder modelBuilder;
 
     public List<Activity> getAll(){
-        return activityManager.listActivities();
+        return activityManager.listActivities()
+                .stream()
+                .map(modelBuilder::buildActivity)
+                .collect(Collectors.toList());
     }
 
     public int newActivity(String name, int gameID){
-        final Game game = getGame(gameID);
-        return activityManager.addActivity(name, game);
+        return activityManager.addActivity(name, gameID);
     }
 
     public Activity getActivity(int id){
-        final Activity activity = activityManager.getActivity(id);
-        System.out.println(activity);
-        if(activity == null) throw new NotFoundException();
-        return activity;
+        return modelBuilder.buildActivity(id);
     }
 
     public void wipe(){
@@ -53,19 +55,11 @@ public class ActivityService {
     }
 
     public void updateActivity(int id, String name, int gameID){
-        final Game game = getGame(gameID);
-        System.out.println(game);
         ActivityPatcher patcher = new ActivityPatcher.Builder()
                 .withName(name)
-                .withGame(game)
+                .withGame(gameID)
                 .build();
         activityManager.updateActivity(id, patcher);
-    }
-
-    private Game getGame(int gameID){
-        Game game = gameManager.getGame(gameID);
-        if(game == null) throw new NotFoundException("Game not found");
-        return game;
     }
 }
 

@@ -5,12 +5,12 @@ package persistence.manager.exception;
  */
 public class ConstraintException extends RuntimeException{
 
-    private final static String MSG = " already exists";
+    private final static String MSG = "ContraintException: ";
 
     private String constraintName;
 
     public ConstraintException(String constraintName) {
-        super(constraintName + MSG);
+        super(MSG + constraintName);
         this.constraintName = constraintName;
     }
 

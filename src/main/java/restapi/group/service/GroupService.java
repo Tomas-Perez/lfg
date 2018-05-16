@@ -5,6 +5,7 @@ import persistence.manager.GroupManager;
 import persistence.manager.UserManager;
 import persistence.model.Activity;
 import persistence.model.Group;
+import persistence.model.ModelBuilder;
 import persistence.model.User;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -12,6 +13,7 @@ import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 /**
  * @author Tomas Perez Molina
@@ -23,25 +25,21 @@ public class GroupService {
     private GroupManager groupManager;
 
     @Inject
-    private ActivityManager activityManager;
-
-    @Inject
-    private UserManager userManager;
+    private ModelBuilder modelBuilder;
 
     public List<Group> getAll(){
-        return groupManager.listGroups();
+        return groupManager.listGroups()
+                .stream()
+                .map(modelBuilder::buildGroup)
+                .collect(Collectors.toList());
     }
 
     public int newGroup(int slots, int activityID, int ownerID){
-        final Activity activity = getActivity(activityID);
-        final User owner = getUser(ownerID);
-        return groupManager.addGroup(slots, activity, owner, null, null);
+        return groupManager.addGroup(slots, activityID, ownerID, null, null);
     }
 
     public Group getGroup(int id){
-        final Group group = groupManager.getGroup(id);
-        if(group == null) throw new NotFoundException();
-        return group;
+        return modelBuilder.buildGroup(id);
     }
 
     public void wipe(){
@@ -57,24 +55,10 @@ public class GroupService {
     }
 
     public void addMember(int id, int userID){
-        final User user = getUser(userID);
-        groupManager.addMemberToGroup(id, user);
+        groupManager.addMemberToGroup(id, userID);
     }
 
     public void removeMember(int id, int userID){
-        final User user = getUser(userID);
-        groupManager.removeMemberFromGroup(id, user);
-    }
-
-    private User getUser(int userID){
-        User user = userManager.getUser(userID);
-        if(user == null) throw new NotFoundException("User not found");
-        return user;
-    }
-
-    private Activity getActivity(int activityID){
-        Activity activity = activityManager.getActivity(activityID);
-        if(activity == null) throw new NotFoundException("Activity not found");
-        return activity;
+        groupManager.removeMemberFromGroup(id, userID);
     }
 }

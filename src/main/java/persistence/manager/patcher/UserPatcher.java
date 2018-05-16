@@ -1,6 +1,6 @@
 package persistence.manager.patcher;
 
-import persistence.model.User;
+import model.UserEntity;
 
 /**
  * @author Tomas Perez Molina
@@ -58,7 +58,7 @@ public class UserPatcher {
         this.admin = admin;
     }
 
-    public void patch(User user){
+    public void patch(UserEntity user){
         if(this.username != null) user.setUsername(username);
         if(this.password != null) user.setPassword(password);
         if(this.email != null) user.setEmail(email);

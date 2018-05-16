@@ -1,6 +1,6 @@
 package persistence.manager.patcher;
 
-import persistence.model.Game;
+import model.GameEntity;
 
 /**
  * @author Tomas Perez Molina
@@ -38,7 +38,7 @@ public class GamePatcher {
         return image != null;
     }
 
-    public void patch(Game game){
+    public void patch(GameEntity game){
         if(name != null) game.setName(name);
         if(image != null) game.setImage(image);
     }

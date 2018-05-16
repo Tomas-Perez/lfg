@@ -1,28 +1,15 @@
 package persistence.model;
 
-import javax.persistence.*;
-import java.util.Set;
+import java.util.Objects;
 
 /**
  * @author Tomas Perez Molina
  */
 
-@Entity
-@Table(name = "chat_platform")
 public class ChatPlatform {
-
-    @Id
-    @Column(name = "id")
     private int id;
-
-    @Column(name = "name", unique = true, nullable = false)
     private String name;
-
-    @Column(name = "image")
     private String image;
-
-    @ManyToMany(mappedBy = "chatPlatforms", cascade = CascadeType.PERSIST)
-    private Set<Post> posts;
 
     public ChatPlatform(int id, String name, String image) {
         this.id = id;
@@ -30,6 +17,40 @@ public class ChatPlatform {
         this.image = image;
     }
 
-    public ChatPlatform() {
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    @Override
+    public String toString() {
+        return "ChatPlatform{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", image='" + image + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChatPlatform that = (ChatPlatform) o;
+        return id == that.id &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(image, that.image);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, name, image);
     }
 }

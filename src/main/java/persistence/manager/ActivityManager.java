@@ -1,12 +1,12 @@
 package persistence.manager;
 
+import model.GameEntity;
 import org.jetbrains.annotations.NotNull;
 import persistence.manager.exception.ConstraintException;
 import persistence.manager.generator.KeyGenerator;
 import persistence.manager.patcher.ActivityPatcher;
+import model.ActivityEntity;
 import persistence.model.Activity;
-import persistence.model.Game;
-import persistence.model.Group;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -24,19 +24,21 @@ import java.util.Optional;
 public class ActivityManager {
     private EntityManager manager;
     private KeyGenerator generator;
+    private GameManager gameManager;
 
     @Inject
-    public ActivityManager(EntityManager manager, KeyGenerator generator) {
+    public ActivityManager(EntityManager manager, KeyGenerator generator, GameManager gameManager) {
         this.manager = manager;
         this.generator = generator;
+        this.gameManager = gameManager;
     }
 
     public ActivityManager(){ }
 
-    public int addActivity(@NotNull String name, @NotNull Game game) throws ConstraintException {
+    public int addActivity(@NotNull String name, int game) throws ConstraintException {
         checkValidCreation(name, game);
         int id = generator.generate("activity");
-        Activity activity = new Activity(id, name, game);
+        ActivityEntity activity = new ActivityEntity(id, name, game);
         EntityTransaction tx = manager.getTransaction();
 
         try {
@@ -52,7 +54,7 @@ public class ActivityManager {
     }
 
     public void updateActivity(int activityID, @NotNull ActivityPatcher patcher) throws ConstraintException{
-        Activity activity = manager.find(Activity.class, activityID);
+        ActivityEntity activity = manager.find(ActivityEntity.class, activityID);
         checkValidUpdate(activity, patcher);
         EntityTransaction tx = manager.getTransaction();
         try {
@@ -69,9 +71,8 @@ public class ActivityManager {
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
-            Activity activity = manager.find(Activity.class, activityID);
+            ActivityEntity activity = manager.find(ActivityEntity.class, activityID);
             manager.remove(activity);
-            activity.destroy();
             tx.commit();
         } catch (NullPointerException | IllegalArgumentException exc){
             if (tx!=null) tx.rollback();
@@ -83,9 +84,9 @@ public class ActivityManager {
     }
 
     @SuppressWarnings("unchecked")
-    public Optional<Activity> getActivity(String name, Game game){
+    public Optional<ActivityEntity> getActivity(String name, int game){
         return manager
-                .createQuery("FROM Activity A WHERE A.name = :name AND A.game = :game")
+                .createQuery("FROM ActivityEntity A WHERE A.name = :name AND A.gameId = :game")
                 .setParameter("name", name)
                 .setParameter("game", game)
                 .getResultList()
@@ -94,25 +95,32 @@ public class ActivityManager {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Activity> listActivities(){
-        return manager.createQuery("FROM Activity").getResultList();
+    public List<Integer> listActivities(){
+        return manager.createQuery("SELECT A.id FROM ActivityEntity A").getResultList();
     }
 
-    public boolean activityExists(@NotNull String name, @NotNull Game game){
+    public boolean activityExists(@NotNull String name, int game){
         return manager
-                .createQuery("SELECT 1 FROM Activity A WHERE A.name = :name AND A.game = :game")
+                .createQuery("SELECT 1 FROM ActivityEntity A WHERE A.name = :name AND A.gameId = :game")
                 .setParameter("name", name)
                 .setParameter("game", game)
                 .getResultList().size() > 0;
     }
 
-    private void checkValidCreation(@NotNull String name, @NotNull Game game) throws ConstraintException{
-        if(activityExists(name, game)) throw new ConstraintException(String.format("%s for %s", name, game.getName()));
+    public boolean activityExists(int activityID){
+        return manager.find(ActivityEntity.class, activityID) != null;
     }
 
-    private void checkValidUpdate(@NotNull Activity activity, @NotNull ActivityPatcher patcher) throws ConstraintException {
+    private void checkValidCreation(@NotNull String name, int gameID) throws ConstraintException{
+        if(!gameManager.gameExists(gameID))
+            throw new ConstraintException(String.format("Game with id: %d does not exist", gameID));
+        if(activityExists(name, gameID))
+            throw new ConstraintException(String.format("%s for %d", name, gameID));
+    }
+
+    private void checkValidUpdate(@NotNull ActivityEntity activity, @NotNull ActivityPatcher patcher) throws ConstraintException {
         String nameToCheck = null;
-        Game gameToCheck = null;
+        Integer gameToCheck = null;
         boolean check = false;
         if (patcher.patchesGame()) {
             gameToCheck = patcher.getGame();
@@ -125,13 +133,13 @@ public class ActivityManager {
 
         if(check){
             if(nameToCheck == null) nameToCheck = activity.getName();
-            if(gameToCheck == null) gameToCheck = activity.getGame();
+            if(gameToCheck == null) gameToCheck = activity.getGameId();
             checkValidCreation(nameToCheck, gameToCheck);
         }
     }
 
     public void wipeAllRecords(){
-        listActivities().stream().map(Activity::getId).forEach(this::deleteActivity);
+        listActivities().forEach(this::deleteActivity);
 //        EntityTransaction tx = manager.getTransaction();
 //        try {
 //            tx.begin();
@@ -143,7 +151,8 @@ public class ActivityManager {
 //        }
     }
 
-    public Activity getActivity(int activityID){
-        return manager.find(Activity.class, activityID);
+    public ActivityEntity getActivity(int activityID){
+        return manager.find(ActivityEntity.class, activityID);
     }
+
 }

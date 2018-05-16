@@ -16,7 +16,6 @@ import restapi.security.authentication.model.AuthenticationToken;
 import restapi.security.authentication.model.SignInJSON;
 import restapi.signup.model.SignUpJSON;
 import restapi.user.model.UserData;
-import util.ManagerUtil;
 import util.RequestUtil;
 
 import javax.ws.rs.client.WebTarget;
@@ -66,21 +65,20 @@ public abstract class ApiTest {
         emp = new EntityManagerProducer();
         emp.init();
         KeyGenerator kg = new KeyGenerator(emp.createEntityManager());
-        postManager = new PostManager(emp.createEntityManager(), kg);
-        postManager.wipeAllRecords();
-        groupManager = new GroupManager(emp.createEntityManager(), kg);
-        groupManager.wipeAllRecords();
-        userManager = new UserManager(emp.createEntityManager(), kg);
-        userManager.wipeAllRecords();
-        activityManager = new ActivityManager(emp.createEntityManager(), kg);
-        activityManager.wipeAllRecords();
         gameManager = new GameManager(emp.createEntityManager(), kg);
         gameManager.wipeAllRecords();
+        userManager = new UserManager(emp.createEntityManager(), kg);
+        userManager.wipeAllRecords();
+        activityManager = new ActivityManager(emp.createEntityManager(), kg, gameManager);
+        activityManager.wipeAllRecords();
+        groupManager = new GroupManager(emp.createEntityManager(), kg, userManager, activityManager);
+        groupManager.wipeAllRecords();
+        postManager = new PostManager(emp.createEntityManager(), kg, userManager, activityManager, groupManager);
+        postManager.wipeAllRecords();
 
         String email = "test@mail.com";
         String password = "123123";
-        ManagerUtil.addUser(
-                userManager,
+        userManager.addUser(
                 "testUser",
                 password,
                 email,
@@ -107,16 +105,16 @@ public abstract class ApiTest {
     @After
     public void cleanUp(){
         KeyGenerator kg = new KeyGenerator(emp.createEntityManager());
-        postManager = new PostManager(emp.createEntityManager(), kg);
-        postManager.wipeAllRecords();
-        groupManager = new GroupManager(emp.createEntityManager(), kg);
-        groupManager.wipeAllRecords();
-        activityManager = new ActivityManager(emp.createEntityManager(), kg);
-        activityManager.wipeAllRecords();
         gameManager = new GameManager(emp.createEntityManager(), kg);
         gameManager.wipeAllRecords();
         userManager = new UserManager(emp.createEntityManager(), kg);
         userManager.wipeAllRecords();
+        activityManager = new ActivityManager(emp.createEntityManager(), kg, gameManager);
+        activityManager.wipeAllRecords();
+        groupManager = new GroupManager(emp.createEntityManager(), kg, userManager, activityManager);
+        groupManager.wipeAllRecords();
+        postManager = new PostManager(emp.createEntityManager(), kg, userManager, activityManager, groupManager);
+        postManager.wipeAllRecords();
         emp.destroy();
     }
 

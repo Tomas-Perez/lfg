@@ -1,5 +1,6 @@
 package restapi.security.authentication.filter;
 
+import model.UserEntity;
 import persistence.manager.UserManager;
 import persistence.model.User;
 import restapi.security.authentication.exception.AuthenticationException;
@@ -76,7 +77,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     private void validateToken(String token, ContainerRequestContext requestContext){
         AuthenticationTokenDetails tokenDetails = authenticationTokenService.parseToken(token);
 
-        User user = userManager.getByEmail(tokenDetails.getEmail())
+        UserEntity user = userManager.getByEmail(tokenDetails.getEmail())
                 .orElseThrow(() -> new AuthenticationException("Invalid token"));
 
         AuthenticatedUserDetails userDetails = new AuthenticatedUserDetails(

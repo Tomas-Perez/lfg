@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import persistence.manager.exception.ConstraintException;
 import persistence.manager.patcher.GamePatcher;
-import persistence.model.Game;
+import model.GameEntity;
 
 import javax.inject.Inject;
 
@@ -53,7 +53,7 @@ public class GameManagerTest {
     public void addGame() {
         String name = "Overwatch";
         int id = manager.addGame(name, null);
-        Game game = manager.getGame(id);
+        GameEntity game = manager.getGame(id);
         assertNotNull(game);
         assertThat(game.getName(), is(name));
         assertNull(game.getImage());
@@ -69,10 +69,13 @@ public class GameManagerTest {
 
     @Test
     public void listGames(){
-        List<Game> expected = addAllGames("Overwatch", "FIFA", "God of War");
-        List<Game> actual = manager.listGames();
-        Set<Game> expectedSet = new HashSet<>(expected);
-        Set<Game> actualSet = new HashSet<>(actual);
+        List<GameEntity> expected = addAllGames("Overwatch", "FIFA", "God of War");
+        List<GameEntity> actual = manager.listGames()
+                .stream()
+                .map(manager::getGame)
+                .collect(Collectors.toList());
+        Set<GameEntity> expectedSet = new HashSet<>(expected);
+        Set<GameEntity> actualSet = new HashSet<>(actual);
 
         assertThat(expectedSet, is(actualSet));
     }
@@ -99,7 +102,7 @@ public class GameManagerTest {
 
         addAllGames(oldName, newName, "God of War");
 
-        Game ow = manager.getByName(oldName).get();
+        GameEntity ow = manager.getByName(oldName).get();
 
         assertTrue(manager.gameExists(newName));
 
@@ -115,17 +118,17 @@ public class GameManagerTest {
 
     @Test
     public void deletes(){
-        Game game = addGame("Overwatch");
+        GameEntity game = addGame("Overwatch");
         manager.deleteGame(game.getId());
         assertNull(manager.getGame(game.getId()));
     }
 
-    private Game addGame(String name){
+    private GameEntity addGame(String name){
         int id = manager.addGame(name, null);
         return manager.getGame(id);
     }
 
-    private List<Game> addAllGames(String... names){
+    private List<GameEntity> addAllGames(String... names){
         return Arrays.stream(names).map(this::addGame).collect(Collectors.toList());
     }
 }

@@ -1,34 +1,56 @@
 package persistence.model;
 
-import javax.persistence.*;
-import java.util.Set;
+import java.util.Objects;
 
 /**
  * @author Tomas Perez Molina
  */
 
-@Entity
-@Table(name = "game_platform")
 public class GamePlatform {
-
-    @Id
-    @Column(name = "id")
     private int id;
-
-    @Column(name = "name", unique = true, nullable = false)
     private String name;
-
-    @Column(name = "image")
     private String image;
 
-    @ManyToMany(mappedBy = "gamePlatforms", cascade = CascadeType.PERSIST)
-    private Set<Post> posts;
+    public GamePlatform(int id, String name, String image) {
+        this.id = id;
+        this.name = name;
+        this.image = image;
+    }
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "game_in_platform",
-            joinColumns = @JoinColumn(name = "game_platform_id"),
-            inverseJoinColumns = @JoinColumn(name = "game_id"))
-    private Set<Game> games;
+    public int getId() {
+        return id;
+    }
 
+    public String getName() {
+        return name;
+    }
 
+    public String getImage() {
+        return image;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GamePlatform that = (GamePlatform) o;
+        return id == that.id &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(image, that.image);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, name, image);
+    }
+
+    @Override
+    public String toString() {
+        return "GamePlatform{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", image='" + image + '\'' +
+                '}';
+    }
 }
