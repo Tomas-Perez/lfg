@@ -1,18 +1,18 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Game} from '../../_models/Game';
-import {GameService} from '../../_services/game.service';
-import {PostService} from '../../_services/post.service';
-import {UserService} from '../../_services/user.service';
+import {Game} from '../../../_models/Game';
+import {GameService} from '../../../_services/game.service';
+import {PostService} from '../../../_services/post.service';
+import {UserService} from '../../../_services/user.service';
 import 'rxjs/add/operator/takeUntil';
 import {Subject} from 'rxjs/Subject';
 import {NewPostService} from './new-post.service';
 import {NewPostModel} from './new-post.model';
-import {User} from '../../_models/User';
+import {User} from '../../../_models/User';
 
 @Component({
   selector: 'app-new-post',
   templateUrl: './new-post.component.html',
-  styleUrls: ['./new-post.component.css']
+  styleUrls: ['./new-post.component.css', '../spekbar.css']
 })
 export class NewPostComponent implements OnInit, OnDestroy {
 

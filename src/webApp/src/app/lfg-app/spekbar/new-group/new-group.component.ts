@@ -1,18 +1,18 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {DbGroup} from '../../_models/DbModels/DbGroup';
-import {Game} from '../../_models/Game';
-import {GroupService} from '../../_services/group.service';
-import {UserService} from '../../_services/user.service';
-import {GameService} from '../../_services/game.service';
+import {DbGroup} from '../../../_models/DbModels/DbGroup';
+import {Game} from '../../../_models/Game';
+import {GroupService} from '../../../_services/group.service';
+import {UserService} from '../../../_services/user.service';
+import {GameService} from '../../../_services/game.service';
 import 'rxjs/add/operator/takeUntil';
 import {Subject} from 'rxjs/Subject';
 import {ActivatedRoute, Router} from '@angular/router';
-import {User} from '../../_models/User';
+import {User} from '../../../_models/User';
 
 @Component({
   selector: 'app-new-group',
   templateUrl: './new-group.component.html',
-  styleUrls: ['./new-group.component.css']
+  styleUrls: ['./new-group.component.css', '../spekbar.css']
 })
 export class NewGroupComponent implements OnInit, OnDestroy {
 

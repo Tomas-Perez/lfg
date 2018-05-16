@@ -6,17 +6,17 @@ import {AngularFontAwesomeModule} from 'angular-font-awesome';
 import {LfgAppComponent} from './lfg-app.component';
 import {LfgAppRouting} from './lfg-app.routing';
 import {PostService} from '../_services/post.service';
-import { NewPostComponent } from './new-post/new-post.component';
-import { NewGroupComponent } from './new-group/new-group.component';
-import { PostFilterComponent } from './post-filter/post-filter.component';
+import { NewPostComponent } from './spekbar/new-post/new-post.component';
+import { NewGroupComponent } from './spekbar/new-group/new-group.component';
+import { PostFilterComponent } from './spekbar/post-filter/post-filter.component';
 import { PostFlowComponent } from './post-flow/post-flow.component';
-import { NewPostService } from './new-post/new-post.service';
-import { PostFilterService } from './post-filter/post-filter.service';
-import { GroupComponent } from './group/group.component';
+import { NewPostService } from './spekbar/new-post/new-post.service';
+import { PostFilterService } from './spekbar/post-filter/post-filter.service';
+import { GroupComponent } from './spekbar/group/group.component';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import {GroupGuardService} from '../_services/guards/group-guard.service';
 import {NoGroupGuardService} from '../_services/guards/no-group-guard.service';
-import { GroupPostService } from './group/group-post.service';
+import { GroupPostService } from './spekbar/group/group-post.service';
 
 
 @NgModule({

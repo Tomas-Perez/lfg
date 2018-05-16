@@ -9,17 +9,27 @@
         </div>
       </div>
 
-      <div class="post-looking-info">
+      <div class="post-info-right">
+        <span class="group-type">{{post.group !== null ? 'LFM' : 'LFG'}}</span>
         <div *ngIf="post.group !== null">
-          Group: {{post.group.id}}
-          <button type="button" (click)="joinGroup(post.group.id)">join</button>
+          <div class="group-slots">
+            <span>1/5</span>
+          </div>
+          <!--<span>{{post.group.id}}</span>-->
+
+          <button type="button" class="btn btn-primary-lfg" (click)="joinGroup(post.group.id)">join</button>
         </div>
       </div>
     </div>
     <div class="post-game-activity-description">
-      Game: {{post.activity.game.name}} <br>
-      Activity: {{post.activity.name}} <br>
-      Description: {{post.description}}
+      <div class="game-activity-title">
+        <div class="game-name"><span>{{post.activity.game.name}}</span></div>
+        <div class="activity-name"><span>{{post.activity.name}}</span></div>
+      </div>
+      <div class="post-description-options">
+        <div class="post-description"><p>{{post.description}}</p></div>
+        <div class="post-options"></div>
+      </div>
     </div>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import {DbPost} from '../../_models/DbModels/DbPost';
+import {DbPost} from '../../../_models/DbModels/DbPost';
 
 export class PostFilterModel {
   dbPost: DbPost;

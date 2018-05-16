@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {PostFilter} from '../../_models/post-filters/PostFilter';
-import {PostService} from '../../_services/post.service';
+import {PostFilter} from '../../../_models/post-filters/PostFilter';
+import {PostService} from '../../../_services/post.service';
 
 @Injectable()
 export class PostFilterService {

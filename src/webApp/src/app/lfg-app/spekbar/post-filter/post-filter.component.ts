@@ -1,17 +1,17 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Game} from '../../_models/Game';
-import {GameService} from '../../_services/game.service';
-import {FilterByGame} from '../../_models/post-filters/FilterByGame';
-import {FilterByActivity} from '../../_models/post-filters/FilterByActivity';
+import {Game} from '../../../_models/Game';
+import {GameService} from '../../../_services/game.service';
+import {FilterByGame} from '../../../_models/post-filters/FilterByGame';
+import {FilterByActivity} from '../../../_models/post-filters/FilterByActivity';
 import {PostFilterService} from './post-filter.service';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
-import {PostFilter} from '../../_models/post-filters/PostFilter';
+import {PostFilter} from '../../../_models/post-filters/PostFilter';
 
 @Component({
   selector: 'app-post-filter',
   templateUrl: './post-filter.component.html',
-  styleUrls: ['./post-filter.component.css']
+  styleUrls: ['./post-filter.component.css', '../spekbar.css']
 })
 export class PostFilterComponent implements OnInit, OnDestroy {
 

@@ -109,6 +109,10 @@ app-root{
   display: block;
 }
 
+app-group{
+  all: inherit;
+}
+
 app-userinterface, app-user-navigation{
   height: 100%;
   min-height: 100%;

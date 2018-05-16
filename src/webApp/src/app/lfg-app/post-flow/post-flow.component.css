@@ -3,7 +3,8 @@
   flex-direction: column;
   flex: 0 0 auto;
   width: 100%;
-  padding: 8px 0;
+  padding: 2px 0;
+  overflow: hidden;
 }
 
 .post-container{
@@ -13,7 +14,7 @@
   background: #565d69;
   border-top: solid 1px #40474c;
   border-bottom: solid 1px #40474c;
-  height: 120px;
+  height: 100px;
   width: 100%;
 }
 
@@ -24,19 +25,58 @@
   border-right: solid 1px #343a40;
   box-shadow: 1px 0 rgba(0,0,0,.1);
   -webkit-box-shadow: 1px 0 rgba(0,0,0,.1);
+  padding: 0.3rem;
 }
 
 .post-game-activity-description{
   display: flex;
   flex-direction: column;
-  flex: 5 0;
+  flex: 6 0;
+}
+
+.game-activity-title{
+  display: flex;
+  flex-direction: row;
+  background: #7289dad9;
+}
+
+.game-name {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  flex: 0 0 auto;
+  padding-left: 0.3rem;
+}
+
+.activity-name {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  flex: 1 0;
+}
+
+.post-description-options{
+  display: flex;
+  flex: 1 0;
+  flex-direction: row;
+}
+
+.post-description{
+  display: flex;
+  flex: 15 0;
+  padding: 0.3rem;
+}
+
+.post-options{
+  display: flex;
+  flex: 1 0;
+  padding: 0.3rem;
 }
 
 .post-info-left{
   display: flex;
   flex: 3 0;
   flex-direction: column;
-  padding: 0.3rem 0 0 0.2rem;
 }
 
 .post-user{
@@ -45,9 +85,16 @@
   flex: 0 0 auto;
 }
 
-.post-looking-info{
+.post-info-right{
   display: flex;
-  flex: 2 0;
+  flex: 1 0;
   flex-direction: column;
+  margin-left: 0.2rem;
+  text-align: center;
 }
 
+.group-type{
+  text-align: center;
+  font-weight: 700;
+  text-transform: uppercase;
+}

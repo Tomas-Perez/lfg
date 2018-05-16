@@ -1,0 +1,42 @@
+h1{
+  text-align: center;
+}
+
+h2{
+  margin: 0;
+}
+
+.game-activity {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.group-subtitle {
+  display: inline-block;
+  margin-bottom: 0.2rem;
+}
+
+.member-count {
+  margin: 0 0 0 0.5rem;
+}
+
+.members-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.member{
+  margin: 0.3em 0;
+  padding-left: 0.2rem;
+  border-bottom: solid 1px #ffffff1a;
+}
+
+.post-group-form{
+  margin-top: 3rem;
+}
+
+.description-post {
+  resize: none;
+  height: 50px;
+}
+

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {DbPost} from '../../_models/DbModels/DbPost';
+import {DbPost} from '../../../_models/DbModels/DbPost';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 @Injectable()
