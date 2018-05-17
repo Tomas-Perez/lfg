@@ -94,8 +94,8 @@ task startTestDB {
             main ="-jar"
             args =  [
                     "./db/db-init.jar",
-                    "db/schemas/test",
-                    "test"
+                    "db/schemas/test2",
+                    "test2"
             ]
         }
     }
