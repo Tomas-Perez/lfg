@@ -1,7 +1,7 @@
 -- we don't know how to generate schema PUBLIC (class Schema) :(
 create table CHAT_PLATFORM
 (
-	ID INTEGER not null
+	ID INTEGER
 		primary key,
 	IMAGE VARCHAR(255),
 	NAME VARCHAR(255) not null
@@ -14,7 +14,7 @@ create unique index SYS_IDX_UK_2NVODAOC5CFVDJTDEMRBYUJLJ_10450
 
 create table GAME
 (
-	ID INTEGER not null
+	ID INTEGER
 		primary key,
 	IMAGE VARCHAR(255),
 	NAME VARCHAR(255) not null
@@ -23,7 +23,7 @@ create table GAME
 
 create table ACTIVITY
 (
-	ID INTEGER not null
+	ID INTEGER
 		primary key,
 	NAME VARCHAR(255) not null,
 	GAME_ID INTEGER not null
@@ -39,7 +39,7 @@ create unique index SYS_IDX_UK_JARE70VQQTI665DS3B2EH7RK8_10453
 
 create table GAME_PLATFORM
 (
-	ID INTEGER not null
+	ID INTEGER
 		primary key,
 	IMAGE VARCHAR(255),
 	NAME VARCHAR(255) not null
@@ -48,7 +48,7 @@ create table GAME_PLATFORM
 
 create table CREW
 (
-	ID INTEGER not null
+	ID INTEGER
 		primary key,
 	SLOTS INTEGER,
 	ACTIVITY_ID INTEGER
@@ -84,18 +84,9 @@ create unique index SYS_IDX_UK_QL54U3T516JMD03HS4TCWDOKV_10456
 	on GAME_PLATFORM (NAME)
 ;
 
-create table KEY
-(
-	TARGET_TABLE VARCHAR(255) not null
-		constraint KEY_TARGET_TABLE_PK
-			primary key,
-	NEXT_ID INTEGER not null
-)
-;
-
 create table USER
 (
-	ID INTEGER not null
+	ID INTEGER
 		primary key,
 	"ADMIN" BOOLEAN not null,
 	EMAIL VARCHAR(255) not null,
@@ -149,7 +140,7 @@ create table OWNS_GAME
 
 create table POST
 (
-	ID INTEGER not null
+	ID INTEGER
 		primary key,
 	DATE TIMESTAMP not null,
 	DESCRIPTION VARCHAR(500),
@@ -203,3 +194,4 @@ create unique index SYS_IDX_UK_OB8KQYQQGMEFL0ACO34AKDTPE_10459
 create unique index SYS_IDX_UK_SB8BBOUER5WAK8VYIIY4PF2BX_10461
 	on USER (USERNAME)
 ;
+
