@@ -1,0 +1,192 @@
+-- we don't know how to generate schema PUBLIC (class Schema) :(
+create table CHAT_PLATFORM
+(
+	ID INTEGER not null
+		primary key,
+	IMAGE VARCHAR(255),
+	NAME VARCHAR(255) not null
+)
+;
+
+create unique index SYS_IDX_UK_2NVODAOC5CFVDJTDEMRBYUJLJ_10450
+	on CHAT_PLATFORM (NAME)
+;
+
+create table GAME
+(
+	ID INTEGER not null
+		primary key,
+	IMAGE VARCHAR(255),
+	NAME VARCHAR(255) not null
+)
+;
+
+create table ACTIVITY
+(
+	ID INTEGER not null
+		primary key,
+	NAME VARCHAR(255) not null,
+	GAME_ID INTEGER not null
+		constraint ACTIVITY_GAME_ID_FK
+			references GAME
+				on delete cascade
+)
+;
+
+create unique index SYS_IDX_UK_JARE70VQQTI665DS3B2EH7RK8_10453
+	on GAME (NAME)
+;
+
+create table GAME_PLATFORM
+(
+	ID INTEGER not null
+		primary key,
+	IMAGE VARCHAR(255),
+	NAME VARCHAR(255) not null
+)
+;
+
+create table CREW
+(
+	ID INTEGER not null
+		primary key,
+	SLOTS INTEGER,
+	ACTIVITY_ID INTEGER
+		constraint CREW_ACTIVITY_ID_FK
+			references ACTIVITY
+				on delete cascade,
+	CHAT_PLATFORM_ID INTEGER
+		constraint CREW_CHAT_PLATFORM_ID_FK
+			references CHAT_PLATFORM
+				on delete cascade,
+	GAME_PLATFORM_ID INTEGER
+		constraint CREW_GAME_PLATFORM_ID_FK
+			references GAME_PLATFORM
+				on delete cascade
+)
+;
+
+create table GAME_IN_PLATFORM
+(
+	GAME_PLATFORM_ID INTEGER not null
+		constraint GAME_PLATFORM_ID_FK
+			references GAME_PLATFORM
+				on delete cascade,
+	GAME_ID INTEGER not null
+		constraint GAME_IN_PLATFORM_GAME_ID_FK
+			references GAME
+				on delete cascade,
+	primary key (GAME_PLATFORM_ID, GAME_ID)
+)
+;
+
+create unique index SYS_IDX_UK_QL54U3T516JMD03HS4TCWDOKV_10456
+	on GAME_PLATFORM (NAME)
+;
+
+create table KEY
+(
+	TARGET_TABLE VARCHAR(255) not null
+		constraint KEY_TARGET_TABLE_PK
+			primary key,
+	NEXT_ID INTEGER not null
+)
+;
+
+create table USER
+(
+	ID INTEGER not null
+		primary key,
+	"ADMIN" BOOLEAN not null,
+	EMAIL VARCHAR(255) not null,
+	PASSWORD VARCHAR(255) not null,
+	USERNAME VARCHAR(255) not null
+)
+;
+
+create table GROUP_MEMBER
+(
+	GROUP_ID INTEGER not null
+		constraint GROUP_MEMBER_CREW_ID_FK
+			references CREW
+				on delete cascade,
+	MEMBER_ID INTEGER not null
+		constraint GROUP_MEMBER_USER_ID_FK
+			references USER
+				on delete cascade,
+	OWNER BOOLEAN not null,
+	primary key (GROUP_ID, MEMBER_ID)
+)
+;
+
+create table OWNS_GAME
+(
+	OWNER_ID INTEGER not null
+		constraint OWNS_GAME_USER_ID_FK
+			references USER
+				on delete cascade,
+	GAME_ID INTEGER not null
+		constraint OWNS_GAME_GAME_ID_FK
+			references GAME
+				on delete cascade,
+	primary key (OWNER_ID, GAME_ID)
+)
+;
+
+create table POST
+(
+	ID INTEGER not null
+		primary key,
+	DATE TIMESTAMP not null,
+	DESCRIPTION VARCHAR(500),
+	ACTIVITY_ID INTEGER
+		constraint POST_ACTIVITY_ID_FK
+			references ACTIVITY
+				on delete cascade,
+	GROUP_ID INTEGER
+		constraint POST_CREW_ID_FK
+			references CREW
+				on delete cascade,
+	OWNER_ID INTEGER not null
+		constraint POST_USER_ID_FK
+			references USER
+				on delete cascade
+)
+;
+
+create table CHAT_PLATFORM_FOR_POST
+(
+	POST_ID INTEGER not null
+		constraint CHAT_PLATFORM_FOR_POST_POST_ID_FK
+			references POST
+				on delete cascade,
+	CHAT_PLATFORM_ID INTEGER not null
+		constraint CHAT_PLATFORM_FOR_POST_CHAT_PLATFORM_ID_FK
+			references CHAT_PLATFORM
+				on delete cascade,
+	primary key (POST_ID, CHAT_PLATFORM_ID)
+)
+;
+
+create table GAME_PLATFORM_FOR_POST
+(
+	POST_ID INTEGER not null
+		constraint GAME_PLATFORM_FOR_POST_POST_ID_FK
+			references POST
+				on delete cascade,
+	GAME_PLATFORM_ID INTEGER not null
+		constraint GAME_PLATFORM_FOR_POST_GAME_PLATFORM_ID_FK
+			references GAME_PLATFORM
+				on delete cascade,
+	primary key (POST_ID, GAME_PLATFORM_ID)
+)
+;
+
+create unique index SYS_IDX_UK_OB8KQYQQGMEFL0ACO34AKDTPE_10459
+	on USER (EMAIL)
+;
+
+create unique index SYS_IDX_UK_SB8BBOUER5WAK8VYIIY4PF2BX_10461
+	on USER (USERNAME)
+;
+
