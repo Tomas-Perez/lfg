@@ -14,13 +14,11 @@ import java.util.stream.Collectors;
 public class GroupJSON {
     private int id;
     private int slots;
-    private int filledSlots;
     private List<MemberJSON> members;
 
     public GroupJSON(int id, int slots, List<MemberJSON> members) {
         this.id = id;
         this.slots = slots;
-        this.filledSlots = members.size();
         this.members = members;
     }
 
@@ -34,7 +32,6 @@ public class GroupJSON {
                 .stream()
                 .map(MemberJSON::new)
                 .collect(Collectors.toList());
-        this.filledSlots = members.size();
     }
 
     public int getId() {
@@ -61,14 +58,6 @@ public class GroupJSON {
         this.slots = slots;
     }
 
-    public int getFilledSlots() {
-        return filledSlots;
-    }
-
-    public void setFilledSlots(int filledSlots) {
-        this.filledSlots = filledSlots;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -76,7 +65,6 @@ public class GroupJSON {
         GroupJSON groupJSON = (GroupJSON) o;
         return id == groupJSON.id &&
                 slots == groupJSON.slots &&
-                filledSlots == groupJSON.filledSlots &&
                 new HashSet<>(members).equals(new HashSet<>(groupJSON.members));
     }
 
