@@ -231,6 +231,55 @@ public class GroupManagerTest {
     }
 
     @Test
+    public void deleteGroupWhenLeaderLeaves(){
+        final EntityManager gameEM = entityManagerProducer.createEntityManager();
+        final EntityManager activityEM = entityManagerProducer.createEntityManager();
+        final EntityManager keyGenEM = entityManagerProducer.createEntityManager();
+        final EntityManager userEM = entityManagerProducer.createEntityManager();
+        final EntityManager groupEM = entityManagerProducer.createEntityManager();
+        KeyGenerator keyGen = new KeyGenerator(keyGenEM);
+        GameManager gameManager = new GameManager(gameEM, keyGen);
+        ActivityManager activityManager = new ActivityManager(activityEM, keyGen, gameManager);
+        UserManager userManager = new UserManager(userEM, keyGen);
+        GroupManager groupManager = new GroupManager(groupEM, keyGen, userManager, activityManager);
+
+        final String gameName = "Overwatch";
+        GameEntity game = addGame(gameName);
+
+        final String activityName = "Ranked";
+        ActivityEntity activity = addActivity(activityName, game);
+
+        UserEntity owner = addUser("wewey", "123123", "xyz@lfg.com", false);
+        UserEntity member2 = addUser("member", "member123", "member@lfg.com", false);
+
+        int id = addGroup(5, activity, owner).getId();
+
+        groupManager.addMemberToGroup(id, member2.getId());
+
+        Set<UserEntity> users = groupManager.getGroupMembers(id)
+                .stream()
+                .map(userManager::getUser)
+                .collect(Collectors.toSet());
+
+        assertTrue(users.contains(member2));
+        assertThat(users.size(), is(2));
+
+        groupManager.removeMemberFromGroup(id, owner.getId());
+
+        entityManagerProducer.closeEntityManager(groupEM);
+        final EntityManager groupEM2 = entityManagerProducer.createEntityManager();
+        GroupManager groupManager2 = new GroupManager(groupEM2, keyGen, userManager, activityManager);
+
+        assertNull(groupManager2.getGroup(id));
+
+        entityManagerProducer.closeEntityManager(gameEM);
+        entityManagerProducer.closeEntityManager(keyGenEM);
+        entityManagerProducer.closeEntityManager(groupEM2);
+        entityManagerProducer.closeEntityManager(activityEM);
+        entityManagerProducer.closeEntityManager(userEM);
+    }
+
+    @Test
     public void canDeleteGame(){
         final EntityManager gameEM = entityManagerProducer.createEntityManager();
         final EntityManager activityEM = entityManagerProducer.createEntityManager();

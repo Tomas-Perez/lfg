@@ -81,9 +81,12 @@ public class GroupManager {
     public void removeMemberFromGroup(int groupID, int memberID){
         EntityTransaction tx = manager.getTransaction();
         GroupMemberEntityPK key = new GroupMemberEntityPK(groupID, memberID);
+        boolean deleteGroup = false;
         try {
             tx.begin();
             GroupMemberEntity groupMemberEntity = manager.find(GroupMemberEntity.class, key);
+            if(groupMemberEntity.isOwner())
+                deleteGroup = true;
             manager.remove(groupMemberEntity);
             tx.commit();
         } catch (IllegalArgumentException exc){
@@ -93,6 +96,9 @@ public class GroupManager {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
         }
+
+        if(deleteGroup)
+            deleteGroup(groupID);
     }
 
     public void deleteGroup(int groupID){
