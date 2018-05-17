@@ -104,6 +104,20 @@ create table USER
 )
 ;
 
+create table FRIEND
+(
+	USER_1_ID INTEGER not null
+		constraint USER_1_ID_FK
+			references USER
+				on delete cascade,
+	USER_2_ID INTEGER not null
+		constraint USER_2_ID_FK
+			references GAME
+				on delete cascade,
+	primary key (USER_1_ID, USER_2_ID)
+)
+;
+
 create table GROUP_MEMBER
 (
 	GROUP_ID INTEGER not null
@@ -189,4 +203,3 @@ create unique index SYS_IDX_UK_OB8KQYQQGMEFL0ACO34AKDTPE_10459
 create unique index SYS_IDX_UK_SB8BBOUER5WAK8VYIIY4PF2BX_10461
 	on USER (USERNAME)
 ;
-

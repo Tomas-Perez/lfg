@@ -1,7 +1,6 @@
 package persistence.manager;
 
 import persistence.manager.exception.ConstraintException;
-import persistence.manager.generator.KeyGenerator;
 import persistence.entity.*;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -17,19 +16,16 @@ import java.util.NoSuchElementException;
 @ApplicationScoped
 public class GroupManager {
     private EntityManager manager;
-    private KeyGenerator generator;
     private UserManager userManager;
     private ActivityManager activityManager;
 
     @Inject
     public GroupManager(
             EntityManager manager,
-            KeyGenerator generator,
             UserManager userManager,
             ActivityManager activityManager)
     {
         this.manager = manager;
-        this.generator = generator;
         this.userManager = userManager;
         this.activityManager = activityManager;
     }
@@ -44,18 +40,28 @@ public class GroupManager {
     {
         checkValidCreation(ownerID, activityID);
         EntityTransaction tx = manager.getTransaction();
-        int id = generator.generate("group");
-        GroupEntity group = new GroupEntity(id, slots, activityID, chatPlatformID, gamePlatformID);
-        GroupMemberEntity groupMemberEntity = new GroupMemberEntity(id, ownerID, true);
+        GroupEntity group = new GroupEntity(slots, activityID, chatPlatformID, gamePlatformID);
+
         try {
             tx.begin();
             manager.persist(group);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+        }
+
+        tx = manager.getTransaction();
+        GroupMemberEntity groupMemberEntity = new GroupMemberEntity(group.getId(), ownerID, true);
+        try {
+            tx.begin();
             manager.persist(groupMemberEntity);
             tx.commit();
         } catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
         }
+
 
         return group.getId();
     }

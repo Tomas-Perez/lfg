@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import persistence.manager.exception.ConstraintException;
-import persistence.manager.generator.KeyGenerator;
 import persistence.manager.patcher.ActivityPatcher;
 import persistence.entity.ActivityEntity;
 import persistence.entity.GameEntity;
@@ -238,10 +237,8 @@ public class ActivityManagerTest {
     public void canDeleteGame(){
         EntityManager gameEM = entityManagerProducer.createEntityManager();
         EntityManager activityEM = entityManagerProducer.createEntityManager();
-        final EntityManager keyGenEM = entityManagerProducer.createEntityManager();
-        KeyGenerator keyGen = new KeyGenerator(keyGenEM);
-        GameManager gameManager = new GameManager(gameEM, keyGen);
-        ActivityManager activityManager = new ActivityManager(activityEM, keyGen, gameManager);
+        GameManager gameManager = new GameManager(gameEM);
+        ActivityManager activityManager = new ActivityManager(activityEM, gameManager);
 
         String owName = "Overwatch";
         GameEntity ow = addGame(owName);
@@ -266,8 +263,8 @@ public class ActivityManagerTest {
         entityManagerProducer.closeEntityManager(gameEM);
         EntityManager gameEM2 = entityManagerProducer.createEntityManager();
         EntityManager activityEM2 = entityManagerProducer.createEntityManager();
-        GameManager gameManager2 = new GameManager(gameEM2, keyGen);
-        ActivityManager activityManager2 = new ActivityManager(activityEM2, keyGen, gameManager2);
+        GameManager gameManager2 = new GameManager(gameEM2);
+        ActivityManager activityManager2 = new ActivityManager(activityEM2, gameManager2);
 
         activities.stream()
                 .map(ActivityEntity::getId)
@@ -275,7 +272,6 @@ public class ActivityManagerTest {
 
         entityManagerProducer.closeEntityManager(gameEM2);
         entityManagerProducer.closeEntityManager(activityEM2);
-        entityManagerProducer.closeEntityManager(keyGenEM);
     }
 
     @Test

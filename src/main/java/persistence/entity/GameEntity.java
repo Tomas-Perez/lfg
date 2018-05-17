@@ -14,6 +14,7 @@ public class GameEntity {
     private String name;
 
     @Id
+    @GeneratedValue
     @Column(name = "ID", nullable = false)
     public int getId() {
         return id;
@@ -59,10 +60,9 @@ public class GameEntity {
         return Objects.hash(id, image, name);
     }
 
-    public GameEntity(int id, String image, String name) {
-        setId(id);
-        setImage(image);
-        setName(name);
+    public GameEntity(String image, String name) {
+        this.image = image;
+        this.name = name;
     }
 
     public GameEntity() {

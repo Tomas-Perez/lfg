@@ -2,7 +2,6 @@ package persistence.manager;
 
 import org.jetbrains.annotations.NotNull;
 import persistence.manager.exception.ConstraintException;
-import persistence.manager.generator.KeyGenerator;
 import persistence.entity.*;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -20,15 +19,13 @@ import java.util.NoSuchElementException;
 @ApplicationScoped
 public class PostManager {
     private EntityManager manager;
-    private KeyGenerator generator;
     private UserManager userManager;
     private ActivityManager activityManager;
     private GroupManager groupManager;
 
     @Inject
-    public PostManager(EntityManager manager, KeyGenerator generator, UserManager userManager, ActivityManager activityManager, GroupManager groupManager) {
+    public PostManager(EntityManager manager, UserManager userManager, ActivityManager activityManager, GroupManager groupManager) {
         this.manager = manager;
-        this.generator = generator;
         this.userManager = userManager;
         this.activityManager = activityManager;
         this.groupManager = groupManager;
@@ -43,8 +40,7 @@ public class PostManager {
     {
         checkValidCreation(ownerID, activityID);
         EntityTransaction tx = manager.getTransaction();
-        int id = generator.generate("post");
-        PostEntity post = new PostEntity(id, description, date, activityID, ownerID, null);
+        PostEntity post = new PostEntity(description, date, activityID, ownerID, null);
 
         try {
             tx.begin();
@@ -63,10 +59,8 @@ public class PostManager {
                              @NotNull GroupEntity group)
     {
         EntityTransaction tx = manager.getTransaction();
-        int id = generator.generate("post");
         Integer groupOwner = groupManager.getGroupOwner(group.getId());
         PostEntity post = new PostEntity(
-                id,
                 description,
                 date,
                 group.getActivityId(),

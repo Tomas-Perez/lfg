@@ -17,8 +17,7 @@ public class PostEntity {
     private Integer groupId;
     private int ownerId;
 
-    public PostEntity(int id, String description, LocalDateTime date, Integer activityID, int ownerID, Integer groupID) {
-        this.id = id;
+    public PostEntity(String description, LocalDateTime date, Integer activityID, int ownerID, Integer groupID) {
         this.description = description;
         this.date = date;
         this.activityId = activityID;
@@ -30,6 +29,7 @@ public class PostEntity {
     }
 
     @Id
+    @GeneratedValue
     @Column(name = "ID", nullable = false)
     public int getId() {
         return id;

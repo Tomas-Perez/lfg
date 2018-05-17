@@ -15,8 +15,7 @@ public class GroupEntity {
     private Integer chatPlatformId;
     private Integer gamePlatformId;
 
-    public GroupEntity(int id, Integer slots, Integer activityId, Integer chatPlatformId, Integer gamePlatformId) {
-        this.id = id;
+    public GroupEntity(Integer slots, Integer activityId, Integer chatPlatformId, Integer gamePlatformId) {
         this.slots = slots;
         this.activityId = activityId;
         this.chatPlatformId = chatPlatformId;
@@ -27,6 +26,7 @@ public class GroupEntity {
     }
 
     @Id
+    @GeneratedValue
     @Column(name = "ID", nullable = false)
     public int getId() {
         return id;

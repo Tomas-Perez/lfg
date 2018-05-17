@@ -14,6 +14,7 @@ public class ActivityEntity {
     private int gameId;
 
     @Id
+    @GeneratedValue
     @Column(name = "ID", nullable = false)
     public int getId() {
         return id;
@@ -59,8 +60,7 @@ public class ActivityEntity {
         return Objects.hash(id, name, gameId);
     }
 
-    public ActivityEntity(int id, String name, int gameId) {
-        this.id = id;
+    public ActivityEntity(String name, int gameId) {
         this.name = name;
         this.gameId = gameId;
     }

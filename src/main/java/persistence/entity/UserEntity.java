@@ -15,8 +15,7 @@ public class UserEntity {
     private String password;
     private String username;
 
-    public UserEntity(int id, boolean admin, String email, String password, String username) {
-        this.id = id;
+    public UserEntity(boolean admin, String email, String password, String username) {
         this.admin = admin;
         this.email = email;
         this.password = password;
@@ -27,6 +26,7 @@ public class UserEntity {
     }
 
     @Id
+    @GeneratedValue
     @Column(name = "ID", nullable = false)
     public int getId() {
         return id;
