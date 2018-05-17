@@ -15,6 +15,7 @@ export class PostFlowComponent implements OnInit, OnDestroy {
 
   posts: Post[];
   private ngUnsubscribe: Subject<any> = new Subject();
+  inGroup: boolean;
 
   constructor(private postService: PostService,
               private groupService: GroupService,
@@ -22,6 +23,9 @@ export class PostFlowComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.groupService.currentGroupSubject.takeUntil(this.ngUnsubscribe).subscribe(
+      group => this.inGroup = group != null
+    );
     this.postService.postsSubject.takeUntil(this.ngUnsubscribe).subscribe(
       posts => {
         this.posts = posts;

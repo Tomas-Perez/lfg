@@ -1,5 +1,6 @@
-import {JsonObject, JsonProperty} from 'json2typescript';
+import  {JsonObject, JsonProperty} from 'json2typescript';
 import {DbActivity} from './DbModels/DbActivity';
+import {Group} from './Group';
 
 @JsonObject
 class Owner {
@@ -7,12 +8,6 @@ class Owner {
   id: number = undefined;
   @JsonProperty('username', String)
   username: string = undefined;
-}
-
-@JsonObject
-class PostGroup {
-  @JsonProperty('id', Number)
-  id: number = undefined;
 }
 
 @JsonObject
@@ -27,6 +22,6 @@ export class Post {
   owner: Owner = undefined;
   @JsonProperty('description', String)
   description: string = undefined;
-  @JsonProperty('group', PostGroup, true)
-  group: PostGroup = undefined;
+  @JsonProperty('group', Group, true)
+  group?: Group = undefined;
 }

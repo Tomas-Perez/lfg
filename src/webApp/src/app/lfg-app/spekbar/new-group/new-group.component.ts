@@ -47,9 +47,8 @@ export class NewGroupComponent implements OnInit, OnDestroy {
         if (response) {
           console.log('Group created');
 
-          this.router.navigate(['../', { outlets: {spekbar: ['group'] }}],
+          this.router.navigate(['app/', { outlets: {spekbar: ['group'] }}],
             {
-              relativeTo: this.route,
               skipLocationChange: true
             });
 

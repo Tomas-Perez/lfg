@@ -13,11 +13,11 @@
         <span class="group-type">{{post.group !== null ? 'LFM' : 'LFG'}}</span>
         <div *ngIf="post.group !== null">
           <div class="group-slots">
-            <span>1/5</span>
+            <span>{{post.group.members.length}}/{{post.group.slots}}</span>
           </div>
           <!--<span>{{post.group.id}}</span>-->
 
-          <button type="button" class="btn btn-primary-lfg" (click)="joinGroup(post.group.id)">join</button>
+          <button *ngIf="!inGroup" type="button" class="btn btn-primary-lfg" (click)="joinGroup(post.group.id)">join</button>
         </div>
       </div>
     </div>
