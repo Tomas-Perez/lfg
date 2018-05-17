@@ -23,10 +23,9 @@ export class GroupService {
     this.currentGroup = null;
     this.userService.userSubject.subscribe( user => {
       this.user = user;
-      if (user !== null && user.groups.length){
+      if (user !== null && user.groups.length) {
         this.updateGroup(user.groups[0].id).subscribe();
-      }
-      else {
+      } else {
         this.currentGroupSubject.next(null);
         this.currentGroup = null;
       }
@@ -81,24 +80,23 @@ export class GroupService {
   }
 
   private updateGroupErrorHandle(err: any) {
-    console.log('Error retrieving group'); //TODO remove user from group?
+    console.log('Error retrieving group'); // TODO remove user from group?
     console.log(err);
     return Observable.of(false);
   }
 
   joinGroup(idGroup: number): Observable<boolean> {
-    if(this.currentGroup !== null) {
+    if (this.currentGroup !== null) {
       return this.leaveGroup().pipe(
         switchMap(result => {
-          if (result){
+          if (result) {
             return this.joinGroup(idGroup);
-          }
-          else {
+          } else {
             return this.joinGroupErrorHandle();
           }
         }),
         catchError((err: any) => this.leaveGroupErrorHandle(err))
-      )
+      );
     } else {
       return this.joinGroup(idGroup);
     }
@@ -124,7 +122,7 @@ export class GroupService {
 
   leaveGroup(idMember?: number): Observable<boolean> {
     const idUser = idMember || this.user.id;
-    return this.http.delete<any>(this.groupsUrl + '/' + this.currentGroup.id + '/members' + idUser, {
+    return this.http.delete<any>(this.groupsUrl + '/' + this.currentGroup.id + '/members/' + idUser, {
       observe: 'response'
     })
       .pipe(

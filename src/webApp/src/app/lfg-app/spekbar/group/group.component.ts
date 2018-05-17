@@ -7,6 +7,7 @@ import {UserService} from '../../../_services/user.service';
 import {DbPost} from '../../../_models/DbModels/DbPost';
 import {GroupPostService} from './group-post.service';
 import {PostService} from '../../../_services/post.service';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-group',
@@ -21,21 +22,29 @@ export class GroupComponent implements OnInit, OnDestroy {
   isOwner: boolean;
   post: DbPost = new DbPost();
 
+  leftGroup: boolean; // True if user just left the group so the BehaviourSubject doesnt update.
+
   constructor(private groupService: GroupService,
               private userService: UserService,
               private postService: PostService,
-              private groupPostService: GroupPostService) { }
+              private groupPostService: GroupPostService,
+              private router: Router,
+              private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.leftGroup = false;
     this.groupService.currentGroupSubject.takeUntil(this.ngUnsubscribe)
       .subscribe((group: Group) => {
-        this.group = group;
-        this.userService.userSubject.takeUntil(this.ngUnsubscribe)
-          .subscribe( (user: User) => {
-            this.user = user;
-            this.isOwner = user.id === group.owner.id;
-          })
+        if (group !== null) {
+          this.group = group;
+          this.userService.userSubject.takeUntil(this.ngUnsubscribe)
+            .subscribe( (user: User) => {
+              this.user = user;
+              this.isOwner = user.id === group.owner.id;
+          });
+        }
       });
+
     this.groupPostService.postSubject.takeUntil(this.ngUnsubscribe)
       .subscribe((post: DbPost) => {
         this.post = post;
@@ -56,11 +65,16 @@ export class GroupComponent implements OnInit, OnDestroy {
   leaveGroup() {
     this.groupService.leaveGroup().subscribe(
       response => {
-        if(response) {
-          //TODO reroute;
+        if (response) {
+          this.router.navigate(['app/', { outlets: {spekbar: ['new-group'] }}],
+            {
+              skipLocationChange: true
+            });
+        } else {
+          // TODO notify error leaving group
         }
       }
-    )
+    );
   }
 
   ngOnDestroy() {

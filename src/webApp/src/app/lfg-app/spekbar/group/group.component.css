@@ -6,6 +6,13 @@ h2{
   margin: 0;
 }
 
+.group-wrapper{
+  display: flex;
+  flex-direction: column;
+  flex: 1 0;
+  padding-bottom: 5px;
+}
+
 .game-activity {
   display: block;
   margin-bottom: 1rem;
@@ -40,3 +47,6 @@ h2{
   height: 50px;
 }
 
+.btn-group-leave{
+  margin-top: auto;
+}

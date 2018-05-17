@@ -1,3 +1,4 @@
+<div class="group-wrapper" *ngIf="group !== null">
   <div class="title">
     <h1>Group</h1>
   </div>
@@ -27,7 +28,5 @@
     </div>
   </form>
 
-  <button type="button" class="btn btn-primary btn-primary-lfg" (click)="leaveGroup()">Leave group</button>
-
-
-
+  <button type="button" class="btn btn-primary btn-primary-lfg btn-group-leave" (click)="leaveGroup()">Leave group</button>
+</div>

@@ -31,7 +31,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
     this.groupService.currentGroupSubject.takeUntil(this.ngUnsubscribe)
       .subscribe(group => {
-        if(group !== null){
+        if (group !== null){
           this.inGroup = true;
         } else {
           this.inGroup = false;
