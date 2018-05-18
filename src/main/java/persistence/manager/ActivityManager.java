@@ -18,31 +18,20 @@ import java.util.Optional;
  */
 
 @ApplicationScoped
-public class ActivityManager implements Manager<ActivityEntity>{
-    private EntityManager manager;
+public class ActivityManager extends Manager<ActivityEntity>{
     private GameManager gameManager;
 
     @Inject
     public ActivityManager(EntityManager manager, GameManager gameManager) {
-        this.manager = manager;
+        super(manager);
         this.gameManager = gameManager;
     }
 
-    public ActivityManager(){ }
+    public ActivityManager() {}
 
     public int add(ActivityEntity activity) throws ConstraintException {
         checkValidCreation(activity.getName(), activity.getGameId());
-        EntityTransaction tx = manager.getTransaction();
-
-        try {
-            tx.begin();
-            manager.persist(activity);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-        }
-
+        persist(activity);
         return activity.getId();
     }
 

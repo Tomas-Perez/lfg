@@ -14,8 +14,7 @@ import java.util.NoSuchElementException;
  * @author Tomas Perez Molina
  */
 @ApplicationScoped
-public class GroupManager implements Manager<GroupEntity>{
-    private EntityManager manager;
+public class GroupManager extends Manager<GroupEntity>{
     private UserManager userManager;
     private ActivityManager activityManager;
 
@@ -25,40 +24,19 @@ public class GroupManager implements Manager<GroupEntity>{
             UserManager userManager,
             ActivityManager activityManager)
     {
-        this.manager = manager;
+        super(manager);
         this.userManager = userManager;
         this.activityManager = activityManager;
     }
 
     public GroupManager(){}
 
-    public int add(GroupEntity group)
-    {
+
+    public int add(GroupEntity group) {
         checkValidCreation(group.getOwnerId(), group.getActivityId());
-        EntityTransaction tx = manager.getTransaction();
-
-        try {
-            tx.begin();
-            manager.persist(group);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-        }
-
-        tx = manager.getTransaction();
+        persist(group);
         GroupMemberEntity groupMemberEntity = new GroupMemberEntity(group.getId(), group.getOwnerId(), true);
-
-        try {
-            tx.begin();
-            manager.persist(groupMemberEntity);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-        }
-
-
+        persist(groupMemberEntity);
         return group.getId();
     }
 
@@ -71,16 +49,8 @@ public class GroupManager implements Manager<GroupEntity>{
     public void addMemberToGroup(int groupID, int memberID){
         checkUser(memberID);
         checkGroup(groupID);
-        EntityTransaction tx = manager.getTransaction();
         GroupMemberEntity groupMemberEntity = new GroupMemberEntity(groupID, memberID, false);
-        try {
-            tx.begin();
-            manager.persist(groupMemberEntity);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-        }
+        persist(groupMemberEntity);
     }
 
     public void removeMemberFromGroup(int groupID, int memberID){

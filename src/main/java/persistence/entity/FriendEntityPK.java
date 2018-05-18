@@ -20,7 +20,7 @@ public class FriendEntityPK implements Serializable {
     public FriendEntityPK() {
     }
 
-    @Column(name = "USER_1_ID")
+    @Column(name = "USER_1_ID", nullable = false)
     @Id
     public int getUser1Id() {
         return user1Id;
@@ -30,7 +30,7 @@ public class FriendEntityPK implements Serializable {
         this.user1Id = user1Id;
     }
 
-    @Column(name = "USER_2_ID")
+    @Column(name = "USER_2_ID", nullable = false)
     @Id
     public int getUser2Id() {
         return user2Id;

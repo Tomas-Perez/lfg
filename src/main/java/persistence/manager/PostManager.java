@@ -17,36 +17,24 @@ import java.util.NoSuchElementException;
  */
 
 @ApplicationScoped
-public class PostManager implements Manager<PostEntity>{
-    private EntityManager manager;
+public class PostManager extends Manager<PostEntity>{
     private UserManager userManager;
     private ActivityManager activityManager;
     private GroupManager groupManager;
 
     @Inject
     public PostManager(EntityManager manager, UserManager userManager, ActivityManager activityManager, GroupManager groupManager) {
-        this.manager = manager;
+        super(manager);
         this.userManager = userManager;
         this.activityManager = activityManager;
         this.groupManager = groupManager;
     }
 
-    public PostManager(){ }
+    public PostManager(){}
 
-    public int add(PostEntity post)
-    {
+    public int add(PostEntity post) {
         checkValidCreation(post.getOwnerId(), post.getActivityId());
-        EntityTransaction tx = manager.getTransaction();
-
-        try {
-            tx.begin();
-            manager.persist(post);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-        }
-
+        persist(post);
         return post.getId();
     }
 
@@ -54,7 +42,6 @@ public class PostManager implements Manager<PostEntity>{
                              @NotNull LocalDateTime date,
                              @NotNull GroupEntity group)
     {
-        EntityTransaction tx = manager.getTransaction();
         Integer groupOwner = groupManager.getGroupOwner(group.getId());
         PostEntity post = new PostEntity(
                 description,
@@ -64,14 +51,7 @@ public class PostManager implements Manager<PostEntity>{
                 group.getId()
         );
 
-        try {
-            tx.begin();
-            manager.persist(post);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-        }
+        persist(post);
 
         return post.getId();
     }

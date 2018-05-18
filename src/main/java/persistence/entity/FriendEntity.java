@@ -14,16 +14,17 @@ public class FriendEntity {
     private int user2Id;
     private boolean confirmed;
 
-    public FriendEntity(int user1Id, int user2Id) {
+    public FriendEntity(int user1Id, int user2Id, boolean confirmed) {
         this.user1Id = user1Id;
         this.user2Id = user2Id;
+        this.confirmed = confirmed;
     }
 
     public FriendEntity() {
     }
 
     @Id
-    @Column(name = "USER_1_ID")
+    @Column(name = "USER_1_ID", nullable = false)
     public int getUser1Id() {
         return user1Id;
     }
@@ -33,7 +34,7 @@ public class FriendEntity {
     }
 
     @Id
-    @Column(name = "USER_2_ID")
+    @Column(name = "USER_2_ID", nullable = false)
     public int getUser2Id() {
         return user2Id;
     }
@@ -58,7 +59,7 @@ public class FriendEntity {
     }
 
     @Basic
-    @Column(name = "CONFIRMED")
+    @Column(name = "CONFIRMED", nullable = false)
     public boolean isConfirmed() {
         return confirmed;
     }

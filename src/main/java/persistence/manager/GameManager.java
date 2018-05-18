@@ -16,32 +16,23 @@ import java.util.*;
  */
 
 @ApplicationScoped
-public class GameManager implements Manager<GameEntity>{
-    private EntityManager manager;
+public class GameManager extends Manager<GameEntity>{
 
     @Inject
     public GameManager(EntityManager manager) {
-        this.manager = manager;
+        super(manager);
     }
 
-    public GameManager(){ }
+    public GameManager(){}
+
 
     public int add(GameEntity game) throws ConstraintException {
         checkValidCreation(game.getName());
-        EntityTransaction tx = manager.getTransaction();
-        try {
-            tx.begin();
-            manager.persist(game);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-        }
+        persist(game);
         return game.getId();
     }
 
-    public void updateGame(int gameID, GamePatcher patcher)  throws ConstraintException
-    {
+    public void updateGame(int gameID, GamePatcher patcher)  throws ConstraintException {
         checkValidUpdate(patcher);
 
         EntityTransaction tx = manager.getTransaction();
