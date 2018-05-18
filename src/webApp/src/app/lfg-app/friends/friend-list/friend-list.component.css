@@ -1,0 +1,34 @@
+.friend-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0;
+}
+
+.title{
+  text-align: center;
+  margin: 0.3rem 0;
+}
+
+.title h1{
+  margin: unset;
+}
+
+.friend-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0;
+}
+
+.friend{
+  display: flex;
+  flex-direction: row;
+  margin: 0.3em 0;
+  padding-left: 0.2rem;
+  border-bottom: solid 1px #ffffff1a;
+}
+
+.friend-username{
+  display: flex;
+  flex: 1 0;
+  margin-left: 0.3rem;
+}

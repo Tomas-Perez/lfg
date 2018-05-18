@@ -8,6 +8,7 @@ import {Subject} from 'rxjs/Subject';
 import {NewPostService} from './new-post.service';
 import {NewPostModel} from './new-post.model';
 import {User} from '../../../_models/User';
+import {Post} from '../../../_models/Post';
 
 @Component({
   selector: 'app-new-post',
@@ -20,6 +21,7 @@ export class NewPostComponent implements OnInit, OnDestroy {
   private newPostModel: NewPostModel = new NewPostModel;
   private user: User;
   private ngUnsubscribe: Subject<any> = new Subject();
+  private post: Post;
 
   constructor(
     private userService: UserService,
@@ -43,10 +45,11 @@ export class NewPostComponent implements OnInit, OnDestroy {
         });
     });
 
+    this.postService.currentPostSubject.subscribe(post => this.post = post);
+
   }
 
   newPost() {
-    console.log(this.newPostModel.dbPost.activityID);
     this.newPostModel.dbPost.ownerID = this.user.id;
     this.postService.newPost(this.newPostModel.dbPost).subscribe(
       response => {
@@ -55,6 +58,16 @@ export class NewPostComponent implements OnInit, OnDestroy {
         }
       }
     );
+  }
+
+  deletePost(){
+    this.postService.deletePost().subscribe(
+      response => {
+        if(response){
+          console.log('Post deleted');
+        }
+      }
+    )
   }
 
   ngOnDestroy() {

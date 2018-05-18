@@ -20,14 +20,13 @@ export class GroupService {
 
   constructor(private http: HttpClient, private userService: UserService) {
     this.currentGroupSubject = new BehaviorSubject<Group>(null);
-    this.currentGroup = null;
+    this.currentGroupSubject.subscribe(group => this.currentGroup = group);
     this.userService.userSubject.subscribe( user => {
       this.user = user;
       if (user !== null && user.groups.length) {
         this.updateGroup(user.groups[0].id).subscribe();
       } else {
         this.currentGroupSubject.next(null);
-        this.currentGroup = null;
       }
     });
   }
@@ -46,7 +45,6 @@ export class GroupService {
               switchMap( getGroupResponse => {
                   const newGroup = this.jsonConvert.deserialize(getGroupResponse.body, Group);
                   this.currentGroupSubject.next(newGroup);
-                  this.currentGroup = newGroup;
                   return Observable.of(true);
                 }
               ),
@@ -70,7 +68,6 @@ export class GroupService {
       .pipe(
         map( getGroupResponse => {
             const newGroup = this.jsonConvert.deserialize(getGroupResponse.body, Group);
-            this.currentGroup = newGroup;
             this.currentGroupSubject.next(newGroup);
             return true;
           }
@@ -126,7 +123,6 @@ export class GroupService {
     })
       .pipe(
         map(response => {
-          this.currentGroup = null;
           this.currentGroupSubject.next(null);
           return true;
         }),

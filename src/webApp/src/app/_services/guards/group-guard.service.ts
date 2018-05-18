@@ -17,7 +17,7 @@ export class GroupGuardService implements CanActivate {
         if (group !== null) {
           return true;
         } else {
-          this.router.navigate(['/app', { outlets: {spekbar: ['new-group'] }}], {
+          this.router.navigate(['/app', { outlets: {spekbar: [''] }}], {
             skipLocationChange: true
           });
           return false;

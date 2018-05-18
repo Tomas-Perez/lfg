@@ -163,3 +163,20 @@ app-friend-bar{
   margin-bottom: 1px;
   padding: 0 10px;
 }
+
+.friends{
+  padding: 0 7px;
+  display: flex;
+  flex: 1 1 auto;
+  -ms-flex-direction: column;
+  -webkit-box-direction: normal;
+  -webkit-box-orient: vertical;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  contain: layout;
+  min-height: 0;
+  position: relative;
+  -ms-flex-pack: start;
+  -webkit-box-pack: start;
+  justify-content: flex-start;
+}

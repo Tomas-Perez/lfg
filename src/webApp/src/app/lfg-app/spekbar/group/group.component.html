@@ -25,9 +25,14 @@
       </textarea>
     </div>
     <div class="form-group text-center">
-      <button type="submit" class="btn btn-primary-lfg submit-button">Post</button>
+      <button *ngIf="post == null" type="submit" class="btn btn-primary-lfg btn-submit">Post</button>
+    </div>
+    <div class="form-group text-center">
+      <button *ngIf="post != null" type="button" (click)="deletePost()" class="btn btn-primary-lfg btn-submit">Delete post</button>
+      <button *ngIf="post != null" type="submit" class="btn btn-primary-lfg btn-submit">Repost</button>
     </div>
   </form>
 
   <button type="button" class="btn btn-primary btn-primary-lfg btn-group-leave" (click)="leaveGroup()">Leave group</button>
+
 </div>

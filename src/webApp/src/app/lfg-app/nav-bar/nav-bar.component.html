@@ -9,7 +9,7 @@
       <a class="hand" [routerLink]="['/admin-panel']">Admin panel</a>
     </li>
     <li class="app-nav-bar-item">
-      <a class="hand app-nav-bar-item" (click)="navigate('filter-posts')">Filter posts</a>
+      <a class="hand" (click)="navigate('filter-posts')">Filter posts</a>
     </li>
     <li *ngIf="!inGroup"  class="app-nav-bar-item">
       <a class="hand" (click)="navigate('new-post')">New post</a>

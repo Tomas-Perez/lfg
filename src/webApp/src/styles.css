@@ -109,7 +109,7 @@ app-root{
   display: block;
 }
 
-app-group{
+app-group, app-game-list, app-friend-list{
   all: inherit;
 }
 

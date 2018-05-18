@@ -8,6 +8,7 @@ import {DbPost} from '../../../_models/DbModels/DbPost';
 import {GroupPostService} from './group-post.service';
 import {PostService} from '../../../_services/post.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {Post} from '../../../_models/Post';
 
 @Component({
   selector: 'app-group',
@@ -20,19 +21,18 @@ export class GroupComponent implements OnInit, OnDestroy {
   group: Group;
   user: User;
   isOwner: boolean;
-  post: DbPost = new DbPost();
-
-  leftGroup: boolean; // True if user just left the group so the BehaviourSubject doesnt update.
+  newPost: DbPost;
+  post: Post;
 
   constructor(private groupService: GroupService,
               private userService: UserService,
               private postService: PostService,
               private groupPostService: GroupPostService,
               private router: Router,
-              private route: ActivatedRoute) { }
+              ) { }
 
   ngOnInit() {
-    this.leftGroup = false;
+    this.newPost = new DbPost();
     this.groupService.currentGroupSubject.takeUntil(this.ngUnsubscribe)
       .subscribe((group: Group) => {
         if (group !== null) {
@@ -45,15 +45,17 @@ export class GroupComponent implements OnInit, OnDestroy {
         }
       });
 
+    this.postService.currentPostSubject.subscribe(post => this.post = post);
+
     this.groupPostService.postSubject.takeUntil(this.ngUnsubscribe)
       .subscribe((post: DbPost) => {
-        this.post = post;
-        this.post.groupID = this.group.id;
+        this.newPost = post;
+        this.newPost.groupID = this.group.id;
       });
   }
 
   postGroup() {
-    this.postService.newPost(this.post).subscribe(
+    this.postService.newPost(this.newPost).subscribe(
       response => {
         if (response) {
           console.log('Post created');
@@ -90,7 +92,7 @@ export class GroupComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
-    this.groupPostService.updatePost(this.post);
+    this.groupPostService.updatePost(this.newPost);
   }
 
 }

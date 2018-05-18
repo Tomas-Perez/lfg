@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
-import {catchError, map, tap} from 'rxjs/operators';
+import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {Post} from '../_models/Post';
 import {PostFilter} from '../_models/post-filters/PostFilter';
 import {JsonConvert} from 'json2typescript';
@@ -16,53 +16,16 @@ export class PostService {
   private filters: PostFilter[];
   filtersSubject: BehaviorSubject<PostFilter[]>;
   private jsonConvert: JsonConvert = new JsonConvert();
-
   private postUrl = 'http://localhost:8080/lfg/posts';
+  private currentPost: Post;
+  currentPostSubject: BehaviorSubject<Post>;
 
   constructor(private http: HttpClient) {
-
-    /*
-    const lul = this.jsonConvert.deserialize({
-           'posts': [
-             {
-               'id': 123,
-               'activity': {
-                 'id': 111,
-                 'name': 'activityyy',
-                 'game': {
-                   'id': 222,
-                   'name': 'gameee'
-                 }
-               },
-               'owner': {
-                 'id': 11234123,
-                 'name': 'ownerName',
-               },
-               'date': '1995-12-17T03:24:00',
-               'description': 'descriptionnnn'
-             },
-             {
-               'id': 123,
-               'activity': {
-                 'id': 111,
-                 'name': 'activityyy',
-                 'game': {
-                   'id': 222,
-                   'name': 'gameee'
-                 }
-               },
-               "owner": {
-                 "id": 11234123,
-                 "name": "ownerName",
-               },
-               'date': '1995-12-17T03:24:00',
-               'description': 'descriptionnnn'
-             }
-           ]}.posts,
-         Post);
-    this.posts = Observable.of(lul);
-    */
     this.postsSubject = new BehaviorSubject([]);
+
+    this.currentPostSubject = new BehaviorSubject<Post>(null);
+    this.currentPostSubject.subscribe(post => this.currentPost = post);
+
     this.filtersSubject = new BehaviorSubject([]);
     this.filtersSubject.subscribe(filters => {
       this.filters = filters;
@@ -70,7 +33,7 @@ export class PostService {
     });
   }
 
-  requestPosts() {
+  requestPosts(): Observable<Post[]> {
     const filterer = new Filter;
     return this.http.get<any>(this.postUrl, {
       observe: 'response'
@@ -79,8 +42,14 @@ export class PostService {
         tap(response => console.log(response)),
         map(response => this.jsonConvert.deserialize(response.body, Post)),
         map(posts => posts.filter(post => filterer.filter(post, this.filters))),
-        catchError(err => Observable.of([]))
+        catchError(err => this.requestPostsErrorHandle(err))
       );
+  }
+
+  private requestPostsErrorHandle(err: any){
+    console.log('Error getting posts');
+    console.log(err);
+    return Observable.of([]);
   }
 
   updatePosts(): void {
@@ -92,10 +61,21 @@ export class PostService {
       observe: 'response'
     })
       .pipe(
-        map(response => {
-          console.log(response);
-          this.updatePosts(); // TODO delet dis
-          return true;
+        switchMap(response => {
+          const newPostUrl = response.headers.get('location');
+          return this.http.get<any>(newPostUrl, {
+            observe: 'response'
+          })
+            .pipe(
+              switchMap( getGroupResponse => {
+                  const newPost = this.jsonConvert.deserialize(getGroupResponse.body, Post);
+                  this.currentPostSubject.next(newPost);
+                  this.updatePosts(); // TODO delet this
+                  return Observable.of(true);
+                }
+              ),
+              catchError((err: any) => this.newPostErrorHandle(err))
+            );
         }),
         catchError((err: any) => this.newPostErrorHandle(err))
       );
@@ -107,4 +87,23 @@ export class PostService {
     return Observable.of(false);
   }
 
+  deletePost(): Observable<boolean> {
+    return this.http.delete<any>(this.postUrl + '/' + this.currentPost.id, {
+      observe: 'response'
+    })
+      .pipe(
+        map(response => {
+          this.updatePosts();
+          this.currentPostSubject.next(null);
+          return true;
+        }),
+        catchError((err: any) => this.deletePostErrorHandle(err))
+      );
+  }
+
+  private deletePostErrorHandle(err: any) {
+    console.log('Error deleting post');
+    console.log(err);
+    return Observable.of(false);
+  }
 }

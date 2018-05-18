@@ -28,7 +28,11 @@
                   id="TextAreaDescription" class="form-control form-text description-post" aria-describedby="descriptionHelp"></textarea>
       </div>
       <div class="form-group text-center">
-        <button type="submit" class="btn btn-primary-lfg submit-button">Post</button>
+        <button *ngIf="post == null" type="submit" class="btn btn-primary-lfg btn-submit">Post</button>
+      </div>
+      <div class="form-group text-center">
+        <button *ngIf="post != null" type="button" (click)="deletePost()" class="btn btn-primary-lfg btn-submit btn-post">Delete post</button>
+        <button *ngIf="post != null" type="submit" class="btn btn-primary-lfg btn-submit btn-post">Repost</button>
       </div>
     </form>
 </div>

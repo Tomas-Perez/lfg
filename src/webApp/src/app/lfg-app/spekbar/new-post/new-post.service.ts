@@ -18,4 +18,6 @@ export class NewPostService {
     this.postSubject.next(newPostModel);
   }
 
+
+
 }
