@@ -46,33 +46,35 @@ public class GameManagerTest {
     @Before
     @After
     public void setup(){
-        manager.wipeAllRecords();
+        manager.wipe();
     }
 
     @Test
     public void addGame() {
         String name = "Overwatch";
-        int id = manager.addGame(name, null);
-        GameEntity game = manager.getGame(id);
-        assertNotNull(game);
-        assertThat(game.getName(), is(name));
-        assertNull(game.getImage());
+        GameEntity game = new GameEntity(null, name);
+        int id = manager.add(game);
+        GameEntity actualGame = manager.get(id);
+        assertNotNull(actualGame);
+        assertThat(actualGame.getName(), is(game.getName()));
+        assertThat(actualGame.getImage(), is(game.getImage()));
     }
 
     @Test
     public void gameExists() {
         String name = "Overwatch";
-        assertFalse(manager.gameExists(name));
-        manager.addGame(name, null);
-        assertTrue(manager.gameExists(name));
+        GameEntity game = new GameEntity(null, name);
+        assertFalse(manager.exists(name));
+        manager.add(game);
+        assertTrue(manager.exists(name));
     }
 
     @Test
     public void listGames(){
         List<GameEntity> expected = addAllGames("Overwatch", "FIFA", "God of War");
-        List<GameEntity> actual = manager.listGames()
+        List<GameEntity> actual = manager.list()
                 .stream()
-                .map(manager::getGame)
+                .map(manager::get)
                 .collect(Collectors.toList());
         Set<GameEntity> expectedSet = new HashSet<>(expected);
         Set<GameEntity> actualSet = new HashSet<>(actual);
@@ -84,10 +86,11 @@ public class GameManagerTest {
     public void duplicateGameExc(){
         String name = "Overwatch";
 
-        manager.addGame(name, null);
+        GameEntity game = new GameEntity(null, name);
+        manager.add(game);
 
-        assertTrue(manager.gameExists(name));
-        manager.addGame(name, null);
+        assertTrue(manager.exists(name));
+        manager.add(game);
     }
 
     @Test(expected = ConstraintException.class)
@@ -99,7 +102,7 @@ public class GameManagerTest {
 
         GameEntity ow = manager.getByName(oldName).get();
 
-        assertTrue(manager.gameExists(newName));
+        assertTrue(manager.exists(newName));
 
         GamePatcher patcher = new GamePatcher.Builder().withName(newName).build();
 
@@ -109,13 +112,14 @@ public class GameManagerTest {
     @Test
     public void deletes(){
         GameEntity game = addGame("Overwatch");
-        manager.deleteGame(game.getId());
-        assertNull(manager.getGame(game.getId()));
+        manager.delete(game.getId());
+        assertNull(manager.get(game.getId()));
     }
 
     private GameEntity addGame(String name){
-        int id = manager.addGame(name, null);
-        return manager.getGame(id);
+        GameEntity game = new GameEntity(null, name);
+        int id = manager.add(game);
+        return manager.get(id);
     }
 
     private List<GameEntity> addAllGames(String... names){

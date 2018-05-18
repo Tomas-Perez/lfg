@@ -7,6 +7,7 @@ import org.jboss.shrinkwrap.api.gradle.archive.importer.embedded.EmbeddedGradleI
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Before;
+import persistence.entity.UserEntity;
 import persistence.manager.*;
 import restapi.activity.model.CreateActivityJSON;
 import restapi.game.model.CreateGameJSON;
@@ -64,24 +65,20 @@ public abstract class ApiTest {
         emp = new EntityManagerProducer();
         emp.init();
         gameManager = new GameManager(emp.createEntityManager());
-        gameManager.wipeAllRecords();
+        gameManager.wipe();
         userManager = new UserManager(emp.createEntityManager());
-        userManager.wipeAllRecords();
+        userManager.wipe();
         activityManager = new ActivityManager(emp.createEntityManager(), gameManager);
-        activityManager.wipeAllRecords();
+        activityManager.wipe();
         groupManager = new GroupManager(emp.createEntityManager(), userManager, activityManager);
-        groupManager.wipeAllRecords();
+        groupManager.wipe();
         postManager = new PostManager(emp.createEntityManager(), userManager, activityManager, groupManager);
-        postManager.wipeAllRecords();
+        postManager.wipe();
 
         String email = "test@mail.com";
         String password = "123123";
-        userManager.addUser(
-                "testUser",
-                password,
-                email,
-                true
-        );
+        UserEntity userEntity = new UserEntity(true, email, password, "testUser");
+        userManager.add(userEntity);
 
         token = RequestUtil.getToken(base, email, password);
 
@@ -103,15 +100,15 @@ public abstract class ApiTest {
     @After
     public void cleanUp(){
         gameManager = new GameManager(emp.createEntityManager());
-        gameManager.wipeAllRecords();
+        gameManager.wipe();
         userManager = new UserManager(emp.createEntityManager());
-        userManager.wipeAllRecords();
+        userManager.wipe();
         activityManager = new ActivityManager(emp.createEntityManager(), gameManager);
-        activityManager.wipeAllRecords();
+        activityManager.wipe();
         groupManager = new GroupManager(emp.createEntityManager(), userManager, activityManager);
-        groupManager.wipeAllRecords();
+        groupManager.wipe();
         postManager = new PostManager(emp.createEntityManager(), userManager, activityManager, groupManager);
-        postManager.wipeAllRecords();
+        postManager.wipe();
         emp.destroy();
     }
 

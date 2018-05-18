@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @ApplicationScoped
-public class UserManager {
+public class UserManager implements Manager<UserEntity>{
 
     private EntityManager manager;
 
@@ -27,14 +27,10 @@ public class UserManager {
 
     public UserManager(){ }
 
-    public int addUser(@NotNull String username,
-                        @NotNull String password,
-                        @NotNull String email,
-                        boolean isAdmin) throws ConstraintException
+    public int add(UserEntity user) throws ConstraintException
     {
-        checkValidCreation(username, email);
+        checkValidCreation(user.getUsername(), user.getEmail());
         EntityTransaction tx = manager.getTransaction();
-        UserEntity user = new UserEntity(isAdmin, email, password, username);
 
         try {
             tx.begin();
@@ -49,7 +45,7 @@ public class UserManager {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> listUsers(){
+    public List<Integer> list(){
         return manager.createQuery("SELECT U.id FROM UserEntity U").getResultList();
     }
 
@@ -68,7 +64,7 @@ public class UserManager {
     }
 
 
-    public void deleteUser(int userID){
+    public void delete(int userID){
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
@@ -156,25 +152,8 @@ public class UserManager {
                 .getResultList().size() > 0;
     }
 
-    public void wipeAllRecords(){
-        listUsers().forEach(this::deleteUser);
-//        EntityTransaction tx = manager.getTransaction();
-//        try {
-//            tx.begin();
-//            manager.createQuery("DELETE FROM UserEntity").executeUpdate();
-//            tx.commit();
-//        } catch (Exception e) {
-//            if (tx!=null) tx.rollback();
-//            e.printStackTrace();
-//        }
-    }
-
-    public UserEntity getUser(int userID){
+    public UserEntity get(int userID){
         return manager.find(UserEntity.class, userID);
-    }
-
-    public boolean userExists(int userID){
-        return getUser(userID) != null;
     }
 
     @SuppressWarnings("unchecked")
@@ -196,7 +175,7 @@ public class UserManager {
     }
 
     private void checkUser(int userID){
-        if(!userExists(userID))
+        if(!exists(userID))
             throw new ConstraintException(String.format("User with id: %d does not exist", userID));
     }
 

@@ -13,11 +13,11 @@ public class PostEntity {
     private int id;
     private LocalDateTime date;
     private String description;
-    private Integer activityId;
+    private int activityId;
     private Integer groupId;
     private int ownerId;
 
-    public PostEntity(String description, LocalDateTime date, Integer activityID, int ownerID, Integer groupID) {
+    public PostEntity(String description, LocalDateTime date, int activityID, int ownerID, Integer groupID) {
         this.description = description;
         this.date = date;
         this.activityId = activityID;
@@ -61,11 +61,11 @@ public class PostEntity {
 
     @Basic
     @Column(name = "ACTIVITY_ID")
-    public Integer getActivityId() {
+    public int getActivityId() {
         return activityId;
     }
 
-    public void setActivityId(Integer activityId) {
+    public void setActivityId(int activityId) {
         this.activityId = activityId;
     }
 

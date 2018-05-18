@@ -43,7 +43,7 @@ public class UserService {
 
     public void deleteUser(int id){
         try {
-            manager.deleteUser(id);
+            manager.delete(id);
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
@@ -59,7 +59,7 @@ public class UserService {
     }
 
     public List<User> getAll(){
-        return manager.listUsers()
+        return manager.list()
                 .stream()
                 .map(modelBuilder::buildUser)
                 .collect(Collectors.toList());

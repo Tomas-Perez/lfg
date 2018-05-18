@@ -1,12 +1,9 @@
 package restapi.group.service;
 
-import persistence.manager.ActivityManager;
+import persistence.entity.GroupEntity;
 import persistence.manager.GroupManager;
-import persistence.manager.UserManager;
-import persistence.model.Activity;
 import persistence.model.Group;
 import persistence.model.ModelBuilder;
-import persistence.model.User;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -28,14 +25,15 @@ public class GroupService {
     private ModelBuilder modelBuilder;
 
     public List<Group> getAll(){
-        return groupManager.listGroups()
+        return groupManager.list()
                 .stream()
                 .map(modelBuilder::buildGroup)
                 .collect(Collectors.toList());
     }
 
     public int newGroup(int slots, int activityID, int ownerID){
-        return groupManager.addGroup(slots, activityID, ownerID, null, null);
+        GroupEntity group = new GroupEntity(slots, activityID, null, null, ownerID);
+        return groupManager.add(group);
     }
 
     public Group getGroup(int id){
@@ -50,12 +48,12 @@ public class GroupService {
     }
 
     public void wipe(){
-        groupManager.wipeAllRecords();
+        groupManager.wipe();
     }
 
     public void deleteGroup(int id){
         try {
-            groupManager.deleteGroup(id);
+            groupManager.delete(id);
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }

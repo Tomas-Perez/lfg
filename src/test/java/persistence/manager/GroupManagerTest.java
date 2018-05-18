@@ -63,15 +63,15 @@ public class GroupManagerTest {
     @Before
     @After
     public void setup(){
-        groupManager.wipeAllRecords();
-        activityManager.wipeAllRecords();
-        gameManager.wipeAllRecords();
-        userManager.wipeAllRecords();
+        groupManager.wipe();
+        activityManager.wipe();
+        gameManager.wipe();
+        userManager.wipe();
     }
 
     @Test
     public void addGroup(){
-        assertThat(groupManager.listGroups().size(), is(0));
+        assertThat(groupManager.list().size(), is(0));
 
         final String gameName = "Overwatch";
         GameEntity game = addGame(gameName);
@@ -120,7 +120,7 @@ public class GroupManagerTest {
 
         Set<UserEntity> users = groupManager.getGroupMembers(id)
                 .stream()
-                .map(userManager::getUser)
+                .map(userManager::get)
                 .collect(Collectors.toSet());
 
         assertTrue(users.contains(owner));
@@ -154,7 +154,7 @@ public class GroupManagerTest {
 
         Set<UserEntity> users = groupManager.getGroupMembers(id)
                 .stream()
-                .map(userManager::getUser)
+                .map(userManager::get)
                 .collect(Collectors.toSet());
 
         assertTrue(users.contains(member2));
@@ -168,7 +168,7 @@ public class GroupManagerTest {
 
         Set<UserEntity> users2 = groupManager2.getGroupMembers(id)
                 .stream()
-                .map(userManager::getUser)
+                .map(userManager::get)
                 .collect(Collectors.toSet());
 
         assertFalse(users2.contains(member2));
@@ -206,15 +206,15 @@ public class GroupManagerTest {
 
         GroupEntity group = addGroup(slots, activity, user);
 
-        activityManager.deleteActivity(activity.getId());
+        activityManager.delete(activity.getId());
         entityManagerProducer.closeEntityManager(activityEM);
 
         final EntityManager activityEM2 = entityManagerProducer.createEntityManager();
         ActivityManager activityManager2 = new ActivityManager(activityEM2, gameManager);
         GroupManager groupManager = new GroupManager(groupEM, userManager, activityManager2);
 
-        assertNull(activityManager2.getActivity(activity.getId()));
-        assertNull(groupManager.getGroup(group.getId()));
+        assertNull(activityManager2.get(activity.getId()));
+        assertNull(groupManager.get(group.getId()));
 
         entityManagerProducer.closeEntityManager(gameEM);
         entityManagerProducer.closeEntityManager(groupEM);
@@ -248,7 +248,7 @@ public class GroupManagerTest {
 
         Set<UserEntity> users = groupManager.getGroupMembers(id)
                 .stream()
-                .map(userManager::getUser)
+                .map(userManager::get)
                 .collect(Collectors.toSet());
 
         assertTrue(users.contains(member2));
@@ -260,7 +260,7 @@ public class GroupManagerTest {
         final EntityManager groupEM2 = entityManagerProducer.createEntityManager();
         GroupManager groupManager2 = new GroupManager(groupEM2, userManager, activityManager);
 
-        assertNull(groupManager2.getGroup(id));
+        assertNull(groupManager2.get(id));
 
         entityManagerProducer.closeEntityManager(gameEM);
         entityManagerProducer.closeEntityManager(groupEM2);
@@ -293,7 +293,7 @@ public class GroupManagerTest {
 
         GroupEntity group = addGroup(slots, activity, user);
 
-        gameManager.deleteGame(game.getId());
+        gameManager.delete(game.getId());
         entityManagerProducer.closeEntityManager(gameEM);
 
         final EntityManager gameEM2 = entityManagerProducer.createEntityManager();
@@ -302,9 +302,9 @@ public class GroupManagerTest {
         GroupManager groupManager = new GroupManager(groupEM, userManager, activityManager);
 
 
-        assertNull(gameManager2.getGame(game.getId()));
-        assertNull(activityManager.getActivity(activity.getId()));
-        assertNull(groupManager.getGroup(group.getId()));
+        assertNull(gameManager2.get(game.getId()));
+        assertNull(activityManager.get(activity.getId()));
+        assertNull(groupManager.get(group.getId()));
 
         entityManagerProducer.closeEntityManager(gameEM2);
         entityManagerProducer.closeEntityManager(groupEM);
@@ -330,29 +330,33 @@ public class GroupManagerTest {
 
         GroupEntity group = addGroup(slots, activity, user);
 
-        groupManager.deleteGroup(group.getId());
-        assertNull(groupManager.getGroup(group.getId()));
+        groupManager.delete(group.getId());
+        assertNull(groupManager.get(group.getId()));
     }
 
 
 
     private GameEntity addGame(String name){
-        int id = gameManager.addGame(name, null);
-        return gameManager.getGame(id);
+        GameEntity game = new GameEntity(null, name);
+        int id = gameManager.add(game);
+        return gameManager.get(id);
     }
 
     private ActivityEntity addActivity(String name, GameEntity game){
-        int id = activityManager.addActivity(name, game.getId());
-        return activityManager.getActivity(id);
+        ActivityEntity activity = new ActivityEntity(name, game.getId());
+        int id = activityManager.add(activity);
+        return activityManager.get(id);
     }
 
     private UserEntity addUser(String username, String password, String email, boolean admin){
-        int id = userManager.addUser(username, password, email, admin);
-        return userManager.getUser(id);
+        UserEntity user = new UserEntity(admin, email, password, username);
+        int id = userManager.add(user);
+        return userManager.get(id);
     }
 
     private GroupEntity addGroup(int slots, ActivityEntity activity, UserEntity owner){
-        int id = groupManager.addGroup(slots, activity.getId(), owner.getId(), null, null);
-        return groupManager.getGroup(id);
+        GroupEntity group = new GroupEntity(slots, activity.getId(), null, null, owner.getId());
+        int id = groupManager.add(group);
+        return groupManager.get(id);
     }
 }

@@ -1,7 +1,7 @@
 package restapi.game.service;
 
+import persistence.entity.GameEntity;
 import persistence.manager.GameManager;
-import persistence.manager.exception.ConstraintException;
 import persistence.manager.patcher.GamePatcher;
 import persistence.model.Game;
 import persistence.model.ModelBuilder;
@@ -26,14 +26,15 @@ public class GameService {
     private ModelBuilder modelBuilder;
 
     public List<Game> getAll(){
-        return manager.listGames()
+        return manager.list()
                 .stream()
                 .map(modelBuilder::buildGame)
                 .collect(Collectors.toList());
     }
 
     public int newGame(String name, String image){
-        return manager.addGame(name, image);
+        GameEntity game = new GameEntity(image, name);
+        return manager.add(game);
     }
 
     public Game getGame(int id){
@@ -45,12 +46,12 @@ public class GameService {
     }
 
     public void wipe(){
-        manager.wipeAllRecords();
+        manager.wipe();
     }
 
     public void deleteGame(int id){
         try {
-            manager.deleteGame(id);
+            manager.delete(id);
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }

@@ -18,7 +18,7 @@ import java.util.Optional;
  */
 
 @ApplicationScoped
-public class ActivityManager {
+public class ActivityManager implements Manager<ActivityEntity>{
     private EntityManager manager;
     private GameManager gameManager;
 
@@ -30,9 +30,8 @@ public class ActivityManager {
 
     public ActivityManager(){ }
 
-    public int addActivity(@NotNull String name, int game) throws ConstraintException {
-        checkValidCreation(name, game);
-        ActivityEntity activity = new ActivityEntity(name, game);
+    public int add(ActivityEntity activity) throws ConstraintException {
+        checkValidCreation(activity.getName(), activity.getGameId());
         EntityTransaction tx = manager.getTransaction();
 
         try {
@@ -61,7 +60,7 @@ public class ActivityManager {
         }
     }
 
-    public void deleteActivity(int activityID){
+    public void delete(int activityID){
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
@@ -78,7 +77,7 @@ public class ActivityManager {
     }
 
     @SuppressWarnings("unchecked")
-    public Optional<ActivityEntity> getActivity(String name, int game){
+    public Optional<ActivityEntity> get(String name, int game){
         return manager
                 .createQuery("FROM ActivityEntity A WHERE A.name = :name AND A.gameId = :game")
                 .setParameter("name", name)
@@ -89,11 +88,11 @@ public class ActivityManager {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> listActivities(){
+    public List<Integer> list(){
         return manager.createQuery("SELECT A.id FROM ActivityEntity A").getResultList();
     }
 
-    public boolean activityExists(@NotNull String name, int game){
+    public boolean exists(@NotNull String name, int game){
         return manager
                 .createQuery("SELECT 1 FROM ActivityEntity A WHERE A.name = :name AND A.gameId = :game")
                 .setParameter("name", name)
@@ -101,14 +100,10 @@ public class ActivityManager {
                 .getResultList().size() > 0;
     }
 
-    public boolean activityExists(int activityID){
-        return manager.find(ActivityEntity.class, activityID) != null;
-    }
-
     private void checkValidCreation(@NotNull String name, int gameID) throws ConstraintException{
-        if(!gameManager.gameExists(gameID))
+        if(!gameManager.exists(gameID))
             throw new ConstraintException(String.format("Game with id: %d does not exist", gameID));
-        if(activityExists(name, gameID))
+        if(exists(name, gameID))
             throw new ConstraintException(String.format("%s for %d", name, gameID));
     }
 
@@ -132,20 +127,7 @@ public class ActivityManager {
         }
     }
 
-    public void wipeAllRecords(){
-        listActivities().forEach(this::deleteActivity);
-//        EntityTransaction tx = manager.getTransaction();
-//        try {
-//            tx.begin();
-//            manager.createQuery("DELETE FROM Activity").executeUpdate();
-//            tx.commit();
-//        } catch (Exception e) {
-//            if (tx!=null) tx.rollback();
-//            e.printStackTrace();
-//        }
-    }
-
-    public ActivityEntity getActivity(int activityID){
+    public ActivityEntity get(int activityID){
         return manager.find(ActivityEntity.class, activityID);
     }
 

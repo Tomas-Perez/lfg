@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
  * @author Tomas Perez Molina
  */
 @ApplicationScoped
-public class GroupManager {
+public class GroupManager implements Manager<GroupEntity>{
     private EntityManager manager;
     private UserManager userManager;
     private ActivityManager activityManager;
@@ -32,15 +32,10 @@ public class GroupManager {
 
     public GroupManager(){}
 
-    public int addGroup(int slots,
-                        int activityID,
-                        int ownerID,
-                        Integer chatPlatformID,
-                        Integer gamePlatformID)
+    public int add(GroupEntity group)
     {
-        checkValidCreation(ownerID, activityID);
+        checkValidCreation(group.getOwnerId(), group.getActivityId());
         EntityTransaction tx = manager.getTransaction();
-        GroupEntity group = new GroupEntity(slots, activityID, chatPlatformID, gamePlatformID);
 
         try {
             tx.begin();
@@ -52,7 +47,8 @@ public class GroupManager {
         }
 
         tx = manager.getTransaction();
-        GroupMemberEntity groupMemberEntity = new GroupMemberEntity(group.getId(), ownerID, true);
+        GroupMemberEntity groupMemberEntity = new GroupMemberEntity(group.getId(), group.getOwnerId(), true);
+
         try {
             tx.begin();
             manager.persist(groupMemberEntity);
@@ -66,8 +62,10 @@ public class GroupManager {
         return group.getId();
     }
 
-    public GroupEntity getGroup(int groupID){
-        return manager.find(GroupEntity.class, groupID);
+    public GroupEntity get(int groupID){
+        final GroupEntity groupEntity = manager.find(GroupEntity.class, groupID);
+        if(groupEntity != null) groupEntity.setOwnerId(getGroupOwner(groupID));
+        return groupEntity;
     }
 
     public void addMemberToGroup(int groupID, int memberID){
@@ -106,10 +104,10 @@ public class GroupManager {
         }
 
         if(deleteGroup)
-            deleteGroup(groupID);
+            delete(groupID);
     }
 
-    public void deleteGroup(int groupID){
+    public void delete(int groupID){
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
@@ -126,21 +124,8 @@ public class GroupManager {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> listGroups(){
+    public List<Integer> list(){
         return manager.createQuery("SELECT G.id FROM GroupEntity G").getResultList();
-    }
-
-    public void wipeAllRecords(){
-        listGroups().forEach(this::deleteGroup);
-//        EntityTransaction tx = manager.getTransaction();
-//        try {
-//            tx.begin();
-//            manager.createQuery("DELETE FROM GroupEntity").executeUpdate();
-//            tx.commit();
-//        } catch (Exception e) {
-//            if (tx!=null) tx.rollback();
-//            e.printStackTrace();
-//        }
     }
 
     @SuppressWarnings("unchecked")
@@ -160,27 +145,23 @@ public class GroupManager {
                 .getSingleResult();
     }
 
-    public boolean groupExists(int groupID){
-        return manager.find(GroupEntity.class, groupID) != null;
-    }
-
     private void checkValidCreation(int ownerID, int activityID){
         checkUser(ownerID);
         checkActivity(activityID);
     }
 
     private void checkUser(int userID){
-        if(!userManager.userExists(userID))
+        if(!userManager.exists(userID))
             throw new ConstraintException(String.format("User with id: %d does not exist", userID));
     }
 
     private void checkActivity(int activityID){
-        if(!activityManager.activityExists(activityID))
+        if(!activityManager.exists(activityID))
             throw new ConstraintException(String.format("Activity with id: %d does not exist", activityID));
     }
 
     private void checkGroup(int groupID){
-        if(!groupExists(groupID))
+        if(!exists(groupID))
             throw new ConstraintException(String.format("Group with id: %d does not exist", groupID));
     }
 }

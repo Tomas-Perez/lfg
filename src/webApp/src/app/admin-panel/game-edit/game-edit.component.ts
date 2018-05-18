@@ -41,7 +41,7 @@ export class GameEditComponent implements OnInit {
     /*
     this.game$ = this.route.paramMap
       .switchMap((params: ParamMap) =>
-        this.gameService.getGame(+params.get('id')));
+        this.gameService.get(+params.get('id')));
      */
     const id = +this.route.snapshot.paramMap.get('id');
     this.gameService.getGame(id).toPromise()

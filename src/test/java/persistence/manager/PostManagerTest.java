@@ -59,9 +59,9 @@ public class PostManagerTest {
     public void addPost(){
         cleanUp();
 
-        List<PostEntity> posts = postManager.listPosts()
+        List<PostEntity> posts = postManager.list()
                 .stream()
-                .map(postManager::getPost)
+                .map(postManager::get)
                 .collect(Collectors.toList());
 
         assertThat(posts.size(), is(0));
@@ -81,10 +81,11 @@ public class PostManagerTest {
         final LocalDateTime dateTime = LocalDateTime.now();
 
         final String description = "whatever";
-        postManager.addPost(description, dateTime, ranked.getId(), user.getId());
+        PostEntity postEntity = new PostEntity(description, dateTime, ranked.getId(), user.getId(), null);
+        postManager.add(postEntity);
 
-        posts = postManager.listPosts().stream()
-                .map(postManager::getPost)
+        posts = postManager.list().stream()
+                .map(postManager::get)
                 .collect(Collectors.toList());
 
         assertThat(posts.size(), is(1));
@@ -102,9 +103,9 @@ public class PostManagerTest {
     public void addGroupPost(){
         cleanUp();
 
-        List<PostEntity> posts = postManager.listPosts()
+        List<PostEntity> posts = postManager.list()
                 .stream()
-                .map(postManager::getPost)
+                .map(postManager::get)
                 .collect(Collectors.toList());
 
         assertThat(posts.size(), is(0));
@@ -128,9 +129,9 @@ public class PostManagerTest {
         final String description = "whatever";
         postManager.addGroupPost(description, dateTime, group);
 
-        posts = postManager.listPosts()
+        posts = postManager.list()
                 .stream()
-                .map(postManager::getPost)
+                .map(postManager::get)
                 .collect(Collectors.toList());
 
         assertThat(posts.size(), is(1));
@@ -146,33 +147,37 @@ public class PostManagerTest {
     }
 
     private void cleanUp(){
-        postManager.wipeAllRecords();
-        groupManager.wipeAllRecords();
-        activityManager.wipeAllRecords();
-        gameManager.wipeAllRecords();
-        userManager.wipeAllRecords();
+        postManager.wipe();
+        groupManager.wipe();
+        activityManager.wipe();
+        gameManager.wipe();
+        userManager.wipe();
     }
 
     private GameEntity addGame(String name){
-        gameManager.addGame(name, null);
+        GameEntity gameEntity = new GameEntity(null, name);
+        gameManager.add(gameEntity);
         Optional<GameEntity> optional = gameManager.getByName(name);
         return optional.orElseThrow(() -> new RuntimeException("GameEntity not saved"));
     }
 
     private ActivityEntity addActivity(String name, GameEntity game){
-        activityManager.addActivity(name, game.getId());
-        Optional<ActivityEntity> optional = activityManager.getActivity(name, game.getId());
+        ActivityEntity activityEntity = new ActivityEntity(name, game.getId());
+        activityManager.add(activityEntity);
+        Optional<ActivityEntity> optional = activityManager.get(name, game.getId());
         return optional.orElseThrow(() -> new RuntimeException("ActivityEntity not saved"));
     }
 
     private UserEntity addUser(String username, String password, String email, boolean admin){
-        userManager.addUser(username, password, email, admin);
+        UserEntity userEntity = new UserEntity(admin, email, password, username);
+        userManager.add(userEntity);
         Optional<UserEntity> optional = userManager.getByEmail(email);
         return optional.orElseThrow(() -> new RuntimeException("UserEntity not saved"));
     }
 
     private GroupEntity addGroup(int slots, ActivityEntity activity, UserEntity owner){
-        int id = groupManager.addGroup(slots, activity.getId(), owner.getId(), null, null);
-        return groupManager.getGroup(id);
+        GroupEntity groupEntity = new GroupEntity(slots, activity.getId(), null, null, owner.getId());
+        int id = groupManager.add(groupEntity);
+        return groupManager.get(id);
     }
 }

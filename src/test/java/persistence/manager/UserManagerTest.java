@@ -48,17 +48,13 @@ public class UserManagerTest {
 
     @Test
     public void insertUser(){
-        manager.wipeAllRecords();
+        manager.wipe();
 
         final String email = "aylmaotest@mail.com";
         final String username = "testUser";
         final String password = "123123";
-        manager.addUser(
-                username,
-                password,
-                email,
-                true
-        );
+        UserEntity userEntity = new UserEntity(true, email, password, username);
+        manager.add(userEntity);
         Optional<UserEntity> optional = manager.getByEmail(email);
         assertTrue(optional.isPresent());
 
@@ -67,21 +63,17 @@ public class UserManagerTest {
         assertThat(user.getUsername(), is(username));
         assertThat(user.getPassword(), is(password));
 
-        manager.wipeAllRecords();
+        manager.wipe();
     }
 
     @Test
     public void changePass(){
-        manager.wipeAllRecords();
+        manager.wipe();
 
         String email = "aylmaotest@mail.com";
         String pass = "123123";
-        manager.addUser(
-                "testUser",
-                pass,
-                email,
-                true
-        );
+        UserEntity userEntity = new UserEntity(true, email, pass, "testUser");
+        manager.add(userEntity);
 
         String newPass = "123456";
 
@@ -103,59 +95,62 @@ public class UserManagerTest {
         assertThat(user.getPassword(), is(not(pass)));
         assertThat(user.getPassword(), is(newPass));
 
-        manager.wipeAllRecords();
+        manager.wipe();
     }
 
     @Test
     public void listUsers(){
-        manager.wipeAllRecords();
+        manager.wipe();
 
         UserDetails one = new UserDetails("Username", "pass", "email@email.com", false);
         UserDetails two = new UserDetails("someone", "pass", "another@email.com", false);
         UserDetails three = new UserDetails("HeyImAdmin", "pass", "test@admin.com", true);
         UserDetails[] expected = addAll(one, two, three);
 
-        List<UserDetails> actual = manager.listUsers().stream()
-                .map(manager::getUser)
+        List<UserDetails> actual = manager.list().stream()
+                .map(manager::get)
                 .map(UserDetails::new)
                 .collect(Collectors.toList());
 
         assertThat(actual, hasItems(expected));
 
-        manager.wipeAllRecords();
+        manager.wipe();
     }
 
     @Test
     public void duplicateUserExc(){
-        manager.wipeAllRecords();
+        manager.wipe();
 
         UserDetails one = new UserDetails("Username", "pass", "email@email.com", false);
 
-        manager.addUser(one.username, one.password, one.email, one.admin);
+        UserEntity userEntity = new UserEntity(one.admin, one.email, one.password, one.username);
+        manager.add(userEntity);
 
         assertTrue(manager.userExistsByEmail(one.email));
         assertTrue(manager.userExistsByUserName(one.username));
 
         try {
-            manager.addUser(one.username, one.password, "Another email", one.admin);
+            UserEntity userEntity2 = new UserEntity(one.admin, "Another email", one.password, one.username);
+            manager.add(userEntity2);
             fail();
         } catch (ConstraintException exc){
             assertThat(exc.getConstraintName(), is(one.username));
         }
 
         try {
-            manager.addUser("Another username", one.password, one.email, one.admin);
+            UserEntity userEntity3 = new UserEntity(one.admin, one.email, one.password, "Another username");
+            manager.add(userEntity3);
             fail();
         } catch (ConstraintException exc){
             assertThat(exc.getConstraintName(), is(one.email));
         }
 
-        manager.wipeAllRecords();
+        manager.wipe();
     }
 
     @Test
     public void duplicateUserExcUpdate() {
-        manager.wipeAllRecords();
+        manager.wipe();
 
         UserDetails one = new UserDetails("Username", "pass", "email@email.com", false);
         UserDetails two = new UserDetails("someone", "pass", "another@email.com", false);
@@ -182,11 +177,12 @@ public class UserManagerTest {
         }
 
 
-        manager.wipeAllRecords();
+        manager.wipe();
     }
 
     private UserDetails[] addAll(UserDetails... details){
-        Arrays.stream(details).forEach(x -> manager.addUser(x.username, x.password, x.email, x.admin));
+        Arrays.stream(details).map(x -> new UserEntity(x.admin, x.email, x.password, x.username))
+                .forEach(y -> manager.add(y));
         return details;
     }
 

@@ -16,7 +16,7 @@ import java.util.*;
  */
 
 @ApplicationScoped
-public class GameManager {
+public class GameManager implements Manager<GameEntity>{
     private EntityManager manager;
 
     @Inject
@@ -26,10 +26,8 @@ public class GameManager {
 
     public GameManager(){ }
 
-    public int addGame(@NotNull String name, String image) throws ConstraintException {
-        checkValidCreation(name);
-        GameEntity game = new GameEntity(image, name);
-        System.out.println(game.getId());
+    public int add(GameEntity game) throws ConstraintException {
+        checkValidCreation(game.getName());
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
@@ -61,7 +59,7 @@ public class GameManager {
         }
     }
 
-    public void deleteGame(int gameID) throws NoSuchElementException{
+    public void delete(int gameID) throws NoSuchElementException{
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
@@ -78,7 +76,7 @@ public class GameManager {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> listGames(){
+    public List<Integer> list(){
         return manager.createQuery("SELECT G.id FROM GameEntity G").getResultList();
     }
 
@@ -91,7 +89,7 @@ public class GameManager {
     }
 
     private void checkValidCreation(@NotNull String name) throws ConstraintException{
-        if(gameExists(name)) throw new ConstraintException(name);
+        if(exists(name)) throw new ConstraintException(name);
     }
 
     private void checkValidUpdate(@NotNull GamePatcher patcher){
@@ -99,32 +97,15 @@ public class GameManager {
             checkValidCreation(patcher.getName());
     }
 
-    public boolean gameExists(@NotNull String name){
+    public boolean exists(@NotNull String name){
         return manager
                 .createQuery("SELECT 1 FROM GameEntity G WHERE G.name = :name")
                 .setParameter("name", name)
                 .getResultList().size() > 0;
     }
 
-    public void wipeAllRecords(){
-        listGames().forEach(this::deleteGame);
-//        EntityTransaction tx = manager.getTransaction();
-//        try {
-//            tx.begin();
-//            manager.createQuery("DELETE FROM GameEntity").executeUpdate();
-//            tx.commit();
-//        } catch (Exception e) {
-//            if (tx!=null) tx.rollback();
-//            e.printStackTrace();
-//        }
-    }
-
-    public GameEntity getGame(int gameID){
+    public GameEntity get(int gameID){
         return manager.find(GameEntity.class, gameID);
-    }
-
-    public boolean gameExists(int gameID){
-        return manager.find(GameEntity.class, gameID) != null;
     }
 
     @SuppressWarnings("unchecked")

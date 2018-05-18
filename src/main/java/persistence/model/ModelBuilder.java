@@ -22,7 +22,7 @@ public class ModelBuilder {
     @Inject private GroupManager groupManager;
 
     private Activity huskActivity(int activityID){
-        ActivityEntity activityEntity = activityManager.getActivity(activityID);
+        ActivityEntity activityEntity = activityManager.get(activityID);
         if(activityEntity == null) throw new NoSuchElementException();
 
         return new Activity(
@@ -33,7 +33,7 @@ public class ModelBuilder {
     }
 
     public Activity buildActivity(int activityID){
-        ActivityEntity activityEntity = activityManager.getActivity(activityID);
+        ActivityEntity activityEntity = activityManager.get(activityID);
         if(activityEntity == null) throw new NoSuchElementException();
 
         return new Activity(
@@ -44,14 +44,14 @@ public class ModelBuilder {
     }
 
     private Game huskGame(int gameID){
-        GameEntity gameEntity = gameManager.getGame(gameID);
+        GameEntity gameEntity = gameManager.get(gameID);
         if(gameEntity == null) throw new NoSuchElementException();
 
         return new Game(gameEntity.getId(), gameEntity.getName(), gameEntity.getImage(), null);
     }
 
     public Game buildGame(int gameID){
-        GameEntity gameEntity = gameManager.getGame(gameID);
+        GameEntity gameEntity = gameManager.get(gameID);
         if(gameEntity == null) throw new NoSuchElementException();
 
         Set<Activity> activities = gameManager
@@ -69,7 +69,7 @@ public class ModelBuilder {
     }
 
     public User buildUser(int userID){
-        UserEntity userEntity = userManager.getUser(userID);
+        UserEntity userEntity = userManager.get(userID);
         if(userEntity == null) throw new NoSuchElementException();
 
         Set<Group> groups = userManager
@@ -96,7 +96,7 @@ public class ModelBuilder {
     }
 
     private Group huskGroup(int groupID){
-        GroupEntity groupEntity = groupManager.getGroup(groupID);
+        GroupEntity groupEntity = groupManager.get(groupID);
         if(groupEntity == null) throw new NoSuchElementException();
 
         User owner = huskUser(groupManager.getGroupOwner(groupEntity.getId()));
@@ -113,7 +113,7 @@ public class ModelBuilder {
     }
 
     public Group buildGroup(int groupID){
-        GroupEntity groupEntity = groupManager.getGroup(groupID);
+        GroupEntity groupEntity = groupManager.get(groupID);
         if(groupEntity == null) throw new NoSuchElementException();
 
         Set<User> members = groupManager
@@ -136,7 +136,7 @@ public class ModelBuilder {
     }
 
     private User huskUser(int userID){
-        UserEntity userEntity = userManager.getUser(userID);
+        UserEntity userEntity = userManager.get(userID);
         if(userEntity == null) throw new NoSuchElementException();
 
         return new User(
@@ -151,7 +151,7 @@ public class ModelBuilder {
     }
 
     public Post buildPost(int postID){
-        PostEntity postEntity = postManager.getPost(postID);
+        PostEntity postEntity = postManager.get(postID);
         if(postEntity == null) throw new NoSuchElementException();
 
         Activity activity = buildActivity(postEntity.getActivityId());
