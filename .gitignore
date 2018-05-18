@@ -147,6 +147,7 @@ fabric.properties
 
 *.lck
 /db/demodb.properties
+/db/schemas/*.properties
 
 !db-init.jar
 !tomcat
