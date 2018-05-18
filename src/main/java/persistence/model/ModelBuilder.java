@@ -26,8 +26,7 @@ public class ModelBuilder {
         if(activityEntity == null) throw new NoSuchElementException();
 
         return new Activity(
-                activityEntity.getId(),
-                activityEntity.getName(),
+                activityEntity,
                 null
         );
     }
@@ -37,8 +36,7 @@ public class ModelBuilder {
         if(activityEntity == null) throw new NoSuchElementException();
 
         return new Activity(
-                activityEntity.getId(),
-                activityEntity.getName(),
+                activityEntity,
                 huskGame(activityEntity.getGameId())
         );
     }
@@ -84,14 +82,17 @@ public class ModelBuilder {
                 .map(this::huskGame)
                 .collect(Collectors.toSet());
 
+        Set<User> friends = userManager
+                .getUserFriends(userID)
+                .stream()
+                .map(this::huskUser)
+                .collect(Collectors.toSet());
+
         return new User(
-                userEntity.getId(),
-                userEntity.getUsername(),
-                userEntity.getPassword(),
-                userEntity.getEmail(),
-                userEntity.isAdmin(),
+                userEntity,
                 groups,
-                games
+                games,
+                friends
         );
     }
 
@@ -102,8 +103,7 @@ public class ModelBuilder {
         User owner = huskUser(groupManager.getGroupOwner(groupEntity.getId()));
 
         return new Group(
-                groupEntity.getId(),
-                groupEntity.getSlots(),
+                groupEntity,
                 buildActivity(groupEntity.getActivityId()),
                 owner,
                 null,
@@ -125,8 +125,7 @@ public class ModelBuilder {
         User owner = huskUser(groupManager.getGroupOwner(groupEntity.getId()));
 
         return new Group(
-                groupEntity.getId(),
-                groupEntity.getSlots(),
+                groupEntity,
                 buildActivity(groupEntity.getActivityId()),
                 owner,
                 null,
@@ -140,11 +139,8 @@ public class ModelBuilder {
         if(userEntity == null) throw new NoSuchElementException();
 
         return new User(
-                userEntity.getId(),
-                userEntity.getUsername(),
-                userEntity.getPassword(),
-                userEntity.getEmail(),
-                userEntity.isAdmin(),
+                userEntity,
+                null,
                 null,
                 null
         );
@@ -165,9 +161,7 @@ public class ModelBuilder {
 
 
         return new Post(
-                postEntity.getId(),
-                postEntity.getDescription(),
-                postEntity.getDate(),
+                postEntity,
                 activity,
                 owner,
                 group,

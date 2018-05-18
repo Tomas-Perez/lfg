@@ -1,5 +1,7 @@
 package persistence.model;
 
+import persistence.entity.UserEntity;
+
 import java.util.Objects;
 import java.util.Set;
 
@@ -16,15 +18,17 @@ public class User {
     private boolean admin;
     private Set<Group> groups;
     private Set<Game> games;
+    private Set<User> friends;
 
-    public User(int id, String username, String password, String email, boolean admin, Set<Group> groups, Set<Game> games) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.admin = admin;
+    public User(UserEntity entity, Set<Group> groups, Set<Game> games, Set<User> friends) {
+        this.id = entity.getId();
+        this.username = entity.getUsername();
+        this.password = entity.getPassword();
+        this.email = entity.getEmail();
+        this.admin = entity.isAdmin();
         this.groups = groups;
         this.games = games;
+        this.friends = friends;
     }
 
     public int getId() {
@@ -66,13 +70,14 @@ public class User {
                 Objects.equals(password, user.password) &&
                 Objects.equals(email, user.email) &&
                 Objects.equals(groups, user.groups) &&
-                Objects.equals(games, user.games);
+                Objects.equals(games, user.games) &&
+                Objects.equals(friends, user.friends);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, username, password, email, admin, groups, games);
+        return Objects.hash(id, username, password, email, admin, groups, games, friends);
     }
 
     @Override
@@ -85,6 +90,7 @@ public class User {
                 ", admin=" + admin +
                 ", groups=" + groups +
                 ", games=" + games +
+                ", friends=" + friends +
                 '}';
     }
 }
