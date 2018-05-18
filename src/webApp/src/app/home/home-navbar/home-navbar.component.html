@@ -27,7 +27,7 @@
     <ul *ngIf="!isLoggedIn" class="navbar-nav ml-auto">
       <li class="nav-item" [routerLinkActive]="['active']">
         <a class="nav-link" [routerLink]="['sign-in']" (click)="navbarCollapsed = true">
-          Sign In <fa name="user" name="user" alt="user-plus"></fa>
+          Sign In <fa name="user" alt="user-plus"></fa>
         </a>
       </li>
       <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{ exact: true }">

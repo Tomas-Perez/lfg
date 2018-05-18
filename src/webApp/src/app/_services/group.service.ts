@@ -46,7 +46,7 @@ export class GroupService {
               switchMap( getGroupResponse => {
                   const newGroup = this.jsonConvert.deserialize(getGroupResponse.body, Group);
                   this.currentGroupSubject.next(newGroup);
-                  console.log(this.currentGroupSubject.getValue());
+                  this.currentGroup = newGroup;
                   return Observable.of(true);
                 }
               ),
@@ -120,9 +120,8 @@ export class GroupService {
     return Observable.of(false);
   }
 
-  leaveGroup(idMember?: number): Observable<boolean> {
-    const idUser = idMember || this.user.id;
-    return this.http.delete<any>(this.groupsUrl + '/' + this.currentGroup.id + '/members/' + idUser, {
+  leaveGroup(): Observable<boolean> {
+    return this.http.delete<any>(this.groupsUrl + '/' + this.currentGroup.id + '/members/' + this.user.id, {
       observe: 'response'
     })
       .pipe(
@@ -137,6 +136,24 @@ export class GroupService {
 
   private leaveGroupErrorHandle(err: any) {
     console.log('Error leaving group');
+    console.log(err);
+    return Observable.of(false);
+  }
+
+  kickMember(idMember: number): Observable<boolean> {
+    return this.http.delete<any>(this.groupsUrl + '/' + this.currentGroup.id + '/members/' + idMember, {
+      observe: 'response'
+    })
+      .pipe(
+        map(response => {
+          return true;
+        }),
+        catchError((err: any) => this.kickMemberErrorHandle(err))
+      );
+  }
+
+  private kickMemberErrorHandle(err: any) {
+    console.log('Error kicking member');
     console.log(err);
     return Observable.of(false);
   }

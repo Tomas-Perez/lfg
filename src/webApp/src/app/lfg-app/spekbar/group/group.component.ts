@@ -77,6 +77,16 @@ export class GroupComponent implements OnInit, OnDestroy {
     );
   }
 
+  kickPlayer(id: number) {
+    this.groupService.kickMember(id).subscribe(
+      response => {
+        if (response) {
+          this.groupService.updateGroup(this.group.id).subscribe();
+        }
+      }
+    );
+  }
+
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();

@@ -8,10 +8,11 @@
   <label class="member-count">{{group.members.length}}/{{group.slots}}</label>
   <div class="members-wrapper">
     <div *ngFor="let member of group.members" class="member">
+      <fa name="circle" alt="far"></fa>
       <span class="member-username">
-        <fa name="circle" alt="far"></fa>
         {{member.username}}
       </span>
+      <span *ngIf="isOwner && member.id != user.id" class="hand kick-player" title="Kick player" (click)="kickPlayer(member.id)">x</span>
     </div>
   </div>
 

@@ -9,7 +9,6 @@
     <div class="spekbar">
       <router-outlet name="spekbar"></router-outlet>
     </div>
-
   </div>
   <div class="posts-chat-wrapper">
     <div data-simplebar class="h-100">
@@ -24,6 +23,11 @@
     </div>
   </div>
   <div class="friends-wrapper">
-
+    <div class="friends-bar-wrapper">
+      <app-friend-bar></app-friend-bar>
+    </div>
+    <div class="friends">
+      <router-outlet name="friends"></router-outlet>
+    </div>
   </div>
 </div>

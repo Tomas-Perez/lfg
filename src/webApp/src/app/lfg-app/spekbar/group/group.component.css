@@ -33,9 +33,24 @@ h2{
 }
 
 .member{
+  display: flex;
+  flex-direction: row;
   margin: 0.3em 0;
   padding-left: 0.2rem;
   border-bottom: solid 1px #ffffff1a;
+}
+
+.member-username{
+  display: flex;
+  flex: 1 0;
+  margin-left: 0.3rem;
+}
+
+.kick-player{
+  display: flex;
+  flex: 0 0 auto;
+  font-weight: 600;
+  color: #da2121;
 }
 
 .post-group-form{
@@ -50,3 +65,4 @@ h2{
 .btn-group-leave{
   margin-top: auto;
 }
+

@@ -1,11 +1,25 @@
 <div class="nav-bar-wrapper">
-  <a class="hand" (click)="logOut()">Log Out
-    <fa name="sign-out" rotate="horizontal"></fa>
-  </a>
-  <a class="hand" [routerLink]="['/admin-panel']">Admin panel</a>
-  <a class="hand" (click)="navigate('filter-posts')">Filter posts</a>
-  <a *ngIf="!inGroup" class="hand" (click)="navigate('new-post')">New post</a>
-  <a *ngIf="!inGroup" class="hand" (click)="navigate('new-group')">New group</a>
-  <a *ngIf="inGroup" class="hand" (click)="navigate('group')">Group</a>
+  <ul class="navbar-nav ml-auto">
+    <li class="app-nav-bar-item" [routerLinkActive]="['active']">
+      <a class="hand" (click)="logOut()">Log Out
+        <fa name="sign-out" rotate="horizontal"></fa>
+      </a>
+    </li>
+    <li *ngIf="user != null && user.admin" class="app-nav-bar-item">
+      <a class="hand" [routerLink]="['/admin-panel']">Admin panel</a>
+    </li>
+    <li class="app-nav-bar-item">
+      <a class="hand app-nav-bar-item" (click)="navigate('filter-posts')">Filter posts</a>
+    </li>
+    <li *ngIf="!inGroup"  class="app-nav-bar-item">
+      <a class="hand" (click)="navigate('new-post')">New post</a>
+    </li>
+    <li *ngIf="!inGroup" class="app-nav-bar-item">
+      <a class="hand" (click)="navigate('new-group')">New group</a>
+    </li>
+    <li *ngIf="inGroup" class="app-nav-bar-item">
+      <a class="hand" (click)="navigate('group')">Group</a>
+    </li>
+  </ul>
 </div>
 

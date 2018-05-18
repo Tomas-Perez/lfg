@@ -17,6 +17,9 @@ import { NavBarComponent } from './nav-bar/nav-bar.component';
 import {GroupGuardService} from '../_services/guards/group-guard.service';
 import {NoGroupGuardService} from '../_services/guards/no-group-guard.service';
 import { GroupPostService } from './spekbar/group/group-post.service';
+import { FriendListComponent } from './friends/friend-list/friend-list.component';
+import { FriendRequestsComponent } from './friends/friend-requests/friend-requests.component';
+import { FriendBarComponent } from './friends/friend-bar/friend-bar.component';
 
 
 @NgModule({
@@ -27,7 +30,10 @@ import { GroupPostService } from './spekbar/group/group-post.service';
     GroupComponent,
     PostFilterComponent,
     PostFlowComponent,
-    NavBarComponent
+    NavBarComponent,
+    FriendListComponent,
+    FriendRequestsComponent,
+    FriendBarComponent
   ],
   imports: [
     CommonModule,

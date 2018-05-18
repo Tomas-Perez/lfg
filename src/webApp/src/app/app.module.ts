@@ -6,7 +6,7 @@ import { AuthService } from './_services/auth.service';
 import { AppRouting } from './appRouting.routing';
 import {HomeModule} from './home/home.module';
 import { UserService } from './_services/user.service';
-import {httpInterceptorProviders} from './_http-interceptors/index';
+import {httpInterceptorProviders} from './_http-interceptors';
 import {LfgAppModule} from './lfg-app/lfg-app.module';
 import {AuthUserGuardService} from './_services/guards/auth-user-guard.service';
 import {UnauthUserGuardService} from './_services/guards/unauth-user-guard.service';

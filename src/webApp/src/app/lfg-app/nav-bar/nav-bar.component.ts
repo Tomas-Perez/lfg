@@ -53,7 +53,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
     this.router.navigate([{ outlets: {spekbar: [url] }}],
       {
         relativeTo: this.route,
-        skipLocationChange: true
+        //skipLocationChange: true
     });
     // [routerLink]="[{ outlets: {'spekbar':['new-post'] }}]"
   }
