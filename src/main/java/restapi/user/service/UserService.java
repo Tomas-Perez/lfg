@@ -64,4 +64,18 @@ public class UserService {
                 .map(modelBuilder::buildUser)
                 .collect(Collectors.toList());
     }
+
+    public List<User> getFriends(int id){
+        return manager.getUserFriends(id)
+                .stream()
+                .map(modelBuilder::buildUser)
+                .collect(Collectors.toList());
+    }
+
+    public List<User> getFriendRequests(int id){
+        return manager.getUserFriendRequests(id)
+                .stream()
+                .map(modelBuilder::buildUser)
+                .collect(Collectors.toList());
+    }
 }

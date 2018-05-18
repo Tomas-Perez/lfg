@@ -1,6 +1,7 @@
 package restapi.user.resource;
 
 import persistence.model.User;
+import restapi.group.model.MemberJSON;
 import restapi.user.model.UpdateUserJSON;
 import restapi.user.model.UserData;
 import restapi.user.service.UserService;
@@ -23,6 +24,8 @@ import java.util.stream.Collectors;
 
 @Path("users")
 @RequestScoped
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class UserResource {
     @Context
     private SecurityContext securityContext;
@@ -32,7 +35,6 @@ public class UserResource {
 
     @GET
     @Path("me")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getMe() {
         Principal principal = securityContext.getUserPrincipal();
         System.out.println(principal.getName());
@@ -42,8 +44,6 @@ public class UserResource {
 
     @POST
     @Path("me")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response updateMe(UpdateUserJSON updateJSON){
         Principal principal = securityContext.getUserPrincipal();
         User user = service.getUserByEmail(principal.getName());
@@ -68,7 +68,6 @@ public class UserResource {
     @GET
     @Path("{id}")
     @RolesAllowed({"ADMIN"})
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(@PathParam("id") int id){
         User user = service.getUser(id);
         return Response.ok(new UserData(user)).build();
@@ -84,10 +83,26 @@ public class UserResource {
 
     @GET
     @RolesAllowed({"ADMIN"})
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(){
         List<User> users = service.getAll();
         List<UserData> userJSONS = users.stream().map(UserData::new).collect(Collectors.toList());
         return Response.ok(userJSONS).build();
     }
+
+    @GET
+    @Path("{id}/friends")
+    public Response getFriends(@PathParam("id") int id){
+        List<User> friends = service.getFriends(id);
+        List<MemberJSON> memberJSONS = friends.stream().map(MemberJSON::new).collect(Collectors.toList());
+        return Response.ok(memberJSONS).build();
+    }
+
+    @GET
+    @Path("{id}/requests")
+    public Response getFriendRequests(@PathParam("id") int id){
+        List<User> requests = service.getFriendRequests(id);
+        List<MemberJSON> memberJSONS = requests.stream().map(MemberJSON::new).collect(Collectors.toList());
+        return Response.ok(memberJSONS).build();
+    }
+
 }
