@@ -34,12 +34,21 @@
         <class>persistence.entity.GamePlatformForPostEntity</class>
         <class>persistence.entity.GroupMemberEntity</class>
         <class>persistence.entity.PostEntity</class>
+        <class>persistence.entity.FriendEntity</class>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
             <property name ="hibernate.dialect" value ="org.hibernate.dialect.HSQLDialect"/>
             <property name ="javax.persistence.jdbc.url" value="jdbc:hsqldb:hsql://localhost/test2"/>
             <property name="javax.persistence.jdbc.user" value="SA"/>
             <property name="javax.persistence.jdbc.password" value=""/>
+            <property name="toplink.jdbc.url" value="jdbc:hsqldb:hsql://localhost/test2"/>
+            <property name="toplink.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver"/>
+            <property name="hibernate.connection.url" value="jdbc:hsqldb:hsql://localhost/test2"/>
+            <property name="hibernate.connection.driver_class" value="org.hsqldb.jdbc.JDBCDriver"/>
+            <property name="openjpa.ConnectionURL" value="jdbc:hsqldb:hsql://localhost/test2"/>
+            <property name="openjpa.ConnectionDriverName" value="org.hsqldb.jdbc.JDBCDriver"/>
+            <property name="eclipselink.jdbc.url" value="jdbc:hsqldb:hsql://localhost/test2"/>
+            <property name="eclipselink.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver"/>
         </properties>
     </persistence-unit>
 </persistence>

@@ -72,6 +72,7 @@ public class GroupManager {
 
     public void addMemberToGroup(int groupID, int memberID){
         checkUser(memberID);
+        checkGroup(groupID);
         EntityTransaction tx = manager.getTransaction();
         GroupMemberEntity groupMemberEntity = new GroupMemberEntity(groupID, memberID, false);
         try {
@@ -91,6 +92,7 @@ public class GroupManager {
         try {
             tx.begin();
             GroupMemberEntity groupMemberEntity = manager.find(GroupMemberEntity.class, key);
+            if(groupMemberEntity == null) throw new IllegalArgumentException();
             if(groupMemberEntity.isOwner())
                 deleteGroup = true;
             manager.remove(groupMemberEntity);
@@ -167,13 +169,18 @@ public class GroupManager {
         checkActivity(activityID);
     }
 
-    private void checkUser(int ownerID){
-        if(!userManager.userExists(ownerID))
-            throw new ConstraintException(String.format("User with id: %d does not exist", ownerID));
+    private void checkUser(int userID){
+        if(!userManager.userExists(userID))
+            throw new ConstraintException(String.format("User with id: %d does not exist", userID));
     }
 
     private void checkActivity(int activityID){
         if(!activityManager.activityExists(activityID))
             throw new ConstraintException(String.format("Activity with id: %d does not exist", activityID));
+    }
+
+    private void checkGroup(int groupID){
+        if(!groupExists(groupID))
+            throw new ConstraintException(String.format("Group with id: %d does not exist", groupID));
     }
 }

@@ -1,6 +1,8 @@
 package persistence.manager;
 
 import org.jetbrains.annotations.NotNull;
+import persistence.entity.FriendEntity;
+import persistence.entity.FriendEntityPK;
 import persistence.manager.exception.ConstraintException;
 import persistence.manager.patcher.UserPatcher;
 import persistence.entity.UserEntity;
@@ -73,7 +75,44 @@ public class UserManager {
             UserEntity user = manager.find(UserEntity.class, userID);
             manager.remove(user);
             tx.commit();
-        } catch (NullPointerException | IllegalArgumentException exc){
+        } catch (IllegalArgumentException exc){
+            if (tx!=null) tx.rollback();
+            throw new NoSuchElementException();
+        } catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+        }
+    }
+
+    public void addFriend(int user1ID, int user2ID){
+        checkUser(user1ID);
+        checkUser(user2ID);
+        EntityTransaction tx = manager.getTransaction();
+        FriendEntity friendEntity = new FriendEntity(user1ID, user2ID);
+        try {
+            tx.begin();
+            manager.persist(friendEntity);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+        }
+    }
+
+    public void removeFriend(int user1ID, int user2ID){
+        checkUser(user1ID);
+        checkUser(user2ID);
+        EntityTransaction tx = manager.getTransaction();
+        FriendEntityPK friendEntityPK1 = new FriendEntityPK(user1ID, user2ID);
+        FriendEntityPK friendEntityPK2 = new FriendEntityPK(user1ID, user2ID);
+        try {
+            tx.begin();
+            FriendEntity friendEntity1 = manager.find(FriendEntity.class, friendEntityPK1);
+            FriendEntity friendEntity2 = manager.find(FriendEntity.class, friendEntityPK2);
+            if(friendEntity1 != null) manager.remove(friendEntity1);
+            if(friendEntity2 != null) manager.remove(friendEntity2);
+            tx.commit();
+        } catch (IllegalArgumentException exc){
             if (tx!=null) tx.rollback();
             throw new NoSuchElementException();
         } catch (Exception e) {
@@ -155,4 +194,22 @@ public class UserManager {
                 .setParameter("userID", userID)
                 .getResultList();
     }
+
+    private void checkUser(int userID){
+        if(!userExists(userID))
+            throw new ConstraintException(String.format("User with id: %d does not exist", userID));
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Integer> getUserFriends(int userID){
+        return manager.createQuery(
+                "SELECT " +
+                "CASE WHEN F.user2Id != U.id THEN F.user2Id ELSE F.user1Id END " +
+                "FROM FriendEntity F " +
+                "JOIN UserEntity U on F.user1Id = U.id OR F.user2Id = U.id " +
+                "WHERE U.id = :userID")
+                .setParameter("userID", userID)
+                .getResultList();
+    }
+
 }
