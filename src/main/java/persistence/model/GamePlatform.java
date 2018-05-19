@@ -1,5 +1,7 @@
 package persistence.model;
 
+import persistence.entity.GamePlatformEntity;
+
 import java.util.Objects;
 
 /**
@@ -11,10 +13,10 @@ public class GamePlatform {
     private String name;
     private String image;
 
-    public GamePlatform(int id, String name, String image) {
-        this.id = id;
-        this.name = name;
-        this.image = image;
+    public GamePlatform(GamePlatformEntity entity) {
+        this.id = entity.getId();
+        this.name = entity.getName();
+        this.image = entity.getImage();
     }
 
     public int getId() {

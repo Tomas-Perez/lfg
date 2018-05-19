@@ -1,6 +1,7 @@
 package restapi.post.service;
 
 import persistence.entity.GroupEntity;
+import persistence.entity.PostEntity;
 import persistence.manager.GroupManager;
 import persistence.manager.PostManager;
 import persistence.model.*;
@@ -29,11 +30,12 @@ public class PostService {
     private ModelBuilder modelBuilder;
 
     public List<Post> getAll(){
-        return postManager.listPosts().stream().map(modelBuilder::buildPost).collect(Collectors.toList());
+        return postManager.list().stream().map(modelBuilder::buildPost).collect(Collectors.toList());
     }
 
     public int newPost(String description, int activityID, int ownerID){
-        return postManager.addPost(description, LocalDateTime.now(), activityID, ownerID);
+        PostEntity post = new PostEntity(description, LocalDateTime.now(), activityID, ownerID, null);
+        return postManager.add(post);
     }
 
     public int newGroupPost(String description, int groupID){
@@ -50,12 +52,12 @@ public class PostService {
     }
 
     public void wipe(){
-        postManager.wipeAllRecords();
+        postManager.wipe();
     }
 
     public void deletePost(int id){
         try {
-            postManager.deletePost(id);
+            postManager.delete(id);
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
@@ -63,7 +65,7 @@ public class PostService {
 
 
     private GroupEntity getGroup(int groupID){
-        GroupEntity group = groupManager.getGroup(groupID);
+        GroupEntity group = groupManager.get(groupID);
         if(group == null) throw new NotFoundException("Group not found");
         return group;
     }

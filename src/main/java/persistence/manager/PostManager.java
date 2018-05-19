@@ -17,40 +17,24 @@ import java.util.NoSuchElementException;
  */
 
 @ApplicationScoped
-public class PostManager {
-    private EntityManager manager;
+public class PostManager extends Manager<PostEntity>{
     private UserManager userManager;
     private ActivityManager activityManager;
     private GroupManager groupManager;
 
     @Inject
     public PostManager(EntityManager manager, UserManager userManager, ActivityManager activityManager, GroupManager groupManager) {
-        this.manager = manager;
+        super(manager);
         this.userManager = userManager;
         this.activityManager = activityManager;
         this.groupManager = groupManager;
     }
 
-    public PostManager(){ }
+    public PostManager(){}
 
-    public int addPost(String description,
-                        @NotNull LocalDateTime date,
-                        Integer activityID,
-                        int ownerID)
-    {
-        checkValidCreation(ownerID, activityID);
-        EntityTransaction tx = manager.getTransaction();
-        PostEntity post = new PostEntity(description, date, activityID, ownerID, null);
-
-        try {
-            tx.begin();
-            manager.persist(post);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-        }
-
+    public int add(PostEntity post) {
+        checkValidCreation(post.getOwnerId(), post.getActivityId());
+        persist(post);
         return post.getId();
     }
 
@@ -58,7 +42,6 @@ public class PostManager {
                              @NotNull LocalDateTime date,
                              @NotNull GroupEntity group)
     {
-        EntityTransaction tx = manager.getTransaction();
         Integer groupOwner = groupManager.getGroupOwner(group.getId());
         PostEntity post = new PostEntity(
                 description,
@@ -68,19 +51,12 @@ public class PostManager {
                 group.getId()
         );
 
-        try {
-            tx.begin();
-            manager.persist(post);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-        }
+        persist(post);
 
         return post.getId();
     }
 
-    public void deletePost(int postID){
+    public void delete(int postID){
         EntityTransaction tx = manager.getTransaction();
         try {
             tx.begin();
@@ -97,29 +73,12 @@ public class PostManager {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> listPosts(){
+    public List<Integer> list(){
         return manager.createQuery("SELECT P.id FROM PostEntity P").getResultList();
     }
 
-    public void wipeAllRecords(){
-        listPosts().forEach(this::deletePost);
-//        EntityTransaction tx = manager.getTransaction();
-//        try {
-//            tx.begin();
-//            manager.createQuery("DELETE FROM PostEntity").executeUpdate();
-//            tx.commit();
-//        } catch (Exception e) {
-//            if (tx!=null) tx.rollback();
-//            e.printStackTrace();
-//        }
-    }
-
-    public PostEntity getPost(int postID){
+    public PostEntity get(int postID){
         return manager.find(PostEntity.class, postID);
-    }
-
-    public boolean postExists(int postID){
-        return manager.find(PostEntity.class, postID) != null;
     }
 
     private void checkValidCreation(int ownerID, int activityID){
@@ -128,12 +87,12 @@ public class PostManager {
     }
 
     private void checkUser(int ownerID){
-        if(!userManager.userExists(ownerID))
+        if(!userManager.exists(ownerID))
             throw new ConstraintException(String.format("User with id: %d does not exist", ownerID));
     }
 
     private void checkActivity(int activityID){
-        if(!activityManager.activityExists(activityID))
+        if(!activityManager.exists(activityID))
             throw new ConstraintException(String.format("Activity with id: %d does not exist", activityID));
     }
 }

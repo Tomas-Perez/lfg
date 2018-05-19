@@ -10,16 +10,18 @@ import java.util.Objects;
 @Table(name = "CREW", schema = "PUBLIC", catalog = "PUBLIC")
 public class GroupEntity {
     private int id;
-    private Integer slots;
-    private Integer activityId;
+    private int slots;
+    private int activityId;
     private Integer chatPlatformId;
     private Integer gamePlatformId;
+    private int ownerId;
 
-    public GroupEntity(Integer slots, Integer activityId, Integer chatPlatformId, Integer gamePlatformId) {
+    public GroupEntity(int slots, int activityId, Integer chatPlatformId, Integer gamePlatformId, int ownerId) {
         this.slots = slots;
         this.activityId = activityId;
         this.chatPlatformId = chatPlatformId;
         this.gamePlatformId = gamePlatformId;
+        this.ownerId = ownerId;
     }
 
     public GroupEntity() {
@@ -38,21 +40,21 @@ public class GroupEntity {
 
     @Basic
     @Column(name = "SLOTS")
-    public Integer getSlots() {
+    public int getSlots() {
         return slots;
     }
 
-    public void setSlots(Integer slots) {
+    public void setSlots(int slots) {
         this.slots = slots;
     }
 
     @Basic
     @Column(name = "ACTIVITY_ID")
-    public Integer getActivityId() {
+    public int getActivityId() {
         return activityId;
     }
 
-    public void setActivityId(Integer activityId) {
+    public void setActivityId(int activityId) {
         this.activityId = activityId;
     }
 
@@ -74,6 +76,15 @@ public class GroupEntity {
 
     public void setGamePlatformId(Integer gamePlatformId) {
         this.gamePlatformId = gamePlatformId;
+    }
+
+    @Transient
+    public int getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
     }
 
     @Override

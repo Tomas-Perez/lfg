@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
  */
 
 @Path("posts")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class PostResource {
     @Inject
@@ -30,7 +32,6 @@ public class PostResource {
     private UriInfo uriInfo;
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(){
         List<Post> posts = service.getAll();
         List<PostJSON> postJSONS = posts.stream().map(PostJSON::new).collect(Collectors.toList());
@@ -38,8 +39,6 @@ public class PostResource {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response post(CreatePostJSON postJSON){
         int id;
         if(postJSON.getGroupID() == null)
@@ -59,7 +58,6 @@ public class PostResource {
 
     @GET
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("id") int id){
         System.out.println(id);
         Post post = service.getPost(id);

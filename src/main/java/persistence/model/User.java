@@ -1,5 +1,7 @@
 package persistence.model;
 
+import persistence.entity.UserEntity;
+
 import java.util.Objects;
 import java.util.Set;
 
@@ -16,15 +18,23 @@ public class User {
     private boolean admin;
     private Set<Group> groups;
     private Set<Game> games;
+    private Set<User> friends;
+    private Set<User> sentRequests;
+    private Set<User> receivedRequests;
 
-    public User(int id, String username, String password, String email, boolean admin, Set<Group> groups, Set<Game> games) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.admin = admin;
+    public User(UserEntity entity, Set<Group> groups,
+                Set<Game> games, Set<User> friends,
+                Set<User> sentRequests, Set<User> receivedRequests) {
+        this.id = entity.getId();
+        this.username = entity.getUsername();
+        this.password = entity.getPassword();
+        this.email = entity.getEmail();
+        this.admin = entity.isAdmin();
         this.groups = groups;
         this.games = games;
+        this.friends = friends;
+        this.sentRequests = sentRequests;
+        this.receivedRequests = receivedRequests;
     }
 
     public int getId() {
@@ -55,10 +65,21 @@ public class User {
         return games;
     }
 
+    public Set<User> getFriends() { return friends; }
+
+    public Set<User> getSentRequests() {
+        return sentRequests;
+    }
+
+    public Set<User> getReceivedRequests() {
+        return receivedRequests;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof User)) return false;
         User user = (User) o;
         return id == user.id &&
                 admin == user.admin &&
@@ -66,13 +87,16 @@ public class User {
                 Objects.equals(password, user.password) &&
                 Objects.equals(email, user.email) &&
                 Objects.equals(groups, user.groups) &&
-                Objects.equals(games, user.games);
+                Objects.equals(games, user.games) &&
+                Objects.equals(friends, user.friends) &&
+                Objects.equals(sentRequests, user.sentRequests) &&
+                Objects.equals(receivedRequests, user.receivedRequests);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, username, password, email, admin, groups, games);
+        return Objects.hash(id, username, password, email, admin, groups, games, friends, sentRequests, receivedRequests);
     }
 
     @Override
@@ -85,6 +109,9 @@ public class User {
                 ", admin=" + admin +
                 ", groups=" + groups +
                 ", games=" + games +
+                ", friends=" + friends +
+                ", sentRequests=" + sentRequests +
+                ", receivedRequests=" + receivedRequests +
                 '}';
     }
 }

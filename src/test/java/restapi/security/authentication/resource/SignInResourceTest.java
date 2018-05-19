@@ -10,6 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import persistence.entity.UserEntity;
 import persistence.manager.EntityManagerProducer;
 import persistence.manager.UserManager;
 import restapi.security.authentication.model.SignInJSON;
@@ -54,16 +55,12 @@ public class SignInResourceTest {
     public void authenticateUser(
             @ArquillianResteasyResource("sign-in") final WebTarget webTarget)
     {
-        manager.wipeAllRecords();
+        manager.wipe();
 
         String email = "aylmaotest@mail.com";
         String password = "123123";
-        manager.addUser(
-                "testUser",
-                password,
-                email,
-                true
-        );
+        UserEntity userEntity = new UserEntity(true, email, password, "testUser");
+        manager.add(userEntity);
 
         final Response response = webTarget
                 .request(MediaType.APPLICATION_JSON)
@@ -72,6 +69,6 @@ public class SignInResourceTest {
                         password)));
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-        manager.wipeAllRecords();
+        manager.wipe();
     }
 }

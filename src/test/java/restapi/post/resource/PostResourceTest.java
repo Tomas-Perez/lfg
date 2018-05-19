@@ -44,7 +44,6 @@ public class PostResourceTest extends ApiTest {
         assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
 
         final String location = postResponse.getHeaderString("Location");
-        System.out.println(location);
         final WebTarget postTarget = RequestUtil.newTarget(location);
         final String id = RequestUtil.getRelativePathDiff(postsTarget, postTarget);
 

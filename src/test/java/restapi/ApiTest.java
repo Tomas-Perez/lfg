@@ -7,6 +7,7 @@ import org.jboss.shrinkwrap.api.gradle.archive.importer.embedded.EmbeddedGradleI
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Before;
+import persistence.entity.UserEntity;
 import persistence.manager.*;
 import restapi.activity.model.CreateActivityJSON;
 import restapi.game.model.CreateGameJSON;
@@ -58,32 +59,30 @@ public abstract class ApiTest {
     protected WebTarget usersTarget;
     protected WebTarget meTarget;
 
+    private static final String USERNAME = "testUser";
+    private static final String EMAIL = "test@mail.com";
+    private static final String PASSWORD = "123123";
+
 
     @Before
     public void setup() throws Exception{
         emp = new EntityManagerProducer();
         emp.init();
         gameManager = new GameManager(emp.createEntityManager());
-        gameManager.wipeAllRecords();
+        gameManager.wipe();
         userManager = new UserManager(emp.createEntityManager());
-        userManager.wipeAllRecords();
+        userManager.wipe();
         activityManager = new ActivityManager(emp.createEntityManager(), gameManager);
-        activityManager.wipeAllRecords();
+        activityManager.wipe();
         groupManager = new GroupManager(emp.createEntityManager(), userManager, activityManager);
-        groupManager.wipeAllRecords();
+        groupManager.wipe();
         postManager = new PostManager(emp.createEntityManager(), userManager, activityManager, groupManager);
-        postManager.wipeAllRecords();
+        postManager.wipe();
 
-        String email = "test@mail.com";
-        String password = "123123";
-        userManager.addUser(
-                "testUser",
-                password,
-                email,
-                true
-        );
+        UserEntity userEntity = new UserEntity(true, EMAIL, PASSWORD, USERNAME);
+        userManager.add(userEntity);
 
-        token = RequestUtil.getToken(base, email, password);
+        token = RequestUtil.getToken(base, EMAIL, PASSWORD);
 
         assertNotNull(groupManager);
         assertNotNull(userManager);
@@ -103,15 +102,15 @@ public abstract class ApiTest {
     @After
     public void cleanUp(){
         gameManager = new GameManager(emp.createEntityManager());
-        gameManager.wipeAllRecords();
+        gameManager.wipe();
         userManager = new UserManager(emp.createEntityManager());
-        userManager.wipeAllRecords();
+        userManager.wipe();
         activityManager = new ActivityManager(emp.createEntityManager(), gameManager);
-        activityManager.wipeAllRecords();
+        activityManager.wipe();
         groupManager = new GroupManager(emp.createEntityManager(), userManager, activityManager);
-        groupManager.wipeAllRecords();
+        groupManager.wipe();
         postManager = new PostManager(emp.createEntityManager(), userManager, activityManager, groupManager);
-        postManager.wipeAllRecords();
+        postManager.wipe();
         emp.destroy();
     }
 
@@ -140,16 +139,24 @@ public abstract class ApiTest {
     }
 
     protected int addUser(String username, String password, String email){
+        if(USERNAME.equals(username)){
+            throw new RuntimeException("Username cannot be " + USERNAME);
+        }
+        if(EMAIL.equals(email)){
+            throw new RuntimeException("Email cannot be " + EMAIL);
+        }
+
         final Response signUpResponse = RequestUtil.post(signUpTarget, token, new SignUpJSON(email, password, username));
         assertThat(signUpResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
 
         final Response signInResponse = RequestUtil.post(signInTarget, token, new SignInJSON(email, password));
-        assertThat(signUpResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        assertThat(signInResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
 
         AuthenticationToken userToken;
         try {
             userToken = RequestUtil.parseResponse(signInResponse, AuthenticationToken.class);
         } catch (Exception e) {
+            System.out.println(signInResponse.readEntity(String.class));
             throw new RuntimeException(e);
         }
         final Response getUserResponse = RequestUtil.get(meTarget, userToken);
@@ -159,6 +166,7 @@ public abstract class ApiTest {
         try {
             userData = RequestUtil.parseResponse(getUserResponse, UserData.class);
         } catch (Exception e) {
+            System.out.println(getUserResponse.readEntity(String.class));
             throw new RuntimeException(e);
         }
 

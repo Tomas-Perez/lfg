@@ -55,8 +55,8 @@ public class ActivityManagerTest {
     @Before
     @After
     public void setup(){
-        activityManager.wipeAllRecords();
-        gameManager.wipeAllRecords();
+        activityManager.wipe();
+        gameManager.wipe();
     }
 
     @Test
@@ -66,13 +66,15 @@ public class ActivityManagerTest {
 
 
         String activityName = "Ranked";
-        activityManager.addActivity(activityName, game.getId());
-        Optional<ActivityEntity> optionalActivity = activityManager.getActivity(activityName, game.getId());
+
+        ActivityEntity activity = new ActivityEntity(activityName, game.getId());
+        activityManager.add(activity);
+        Optional<ActivityEntity> optionalActivity = activityManager.get(activityName, game.getId());
         assertTrue(optionalActivity.isPresent());
 
-        ActivityEntity activity = optionalActivity.get();
-        assertThat(activity.getName(), is(activityName));
-        assertThat(activity.getGameId(), is(game.getId()));
+        ActivityEntity actualActivity = optionalActivity.get();
+        assertThat(actualActivity.getName(), is(activity.getName()));
+        assertThat(actualActivity.getGameId(), is(activity.getGameId()));
     }
 
     @Test
@@ -81,9 +83,10 @@ public class ActivityManagerTest {
         GameEntity game = addGame(gameName);
 
         String activityName = "Ranked";
-        assertFalse(activityManager.activityExists(activityName, game.getId()));
-        activityManager.addActivity(activityName, game.getId());
-        assertTrue(activityManager.activityExists(activityName, game.getId()));
+        assertFalse(activityManager.exists(activityName, game.getId()));
+        ActivityEntity activity = new ActivityEntity(activityName, game.getId());
+        activityManager.add(activity);
+        assertTrue(activityManager.exists(activity.getName(), activity.getGameId()));
     }
 
     @Test
@@ -109,19 +112,19 @@ public class ActivityManagerTest {
         );
 
         ActivityEntity activity = activityManager
-                .getActivity(ranked, godOfWar.getId())
+                .get(ranked, godOfWar.getId())
                 .orElseThrow(() -> new RuntimeException("ActivityEntity not saved"));
 
-        assertTrue(activityManager.activityExists(ranked, godOfWar.getId()));
-        assertFalse(activityManager.activityExists(tournament, fifa.getId()));
+        assertTrue(activityManager.exists(ranked, godOfWar.getId()));
+        assertFalse(activityManager.exists(tournament, fifa.getId()));
 
         ActivityPatcher fifaPatcher = new ActivityPatcher.Builder().withName(tournament).withGame(fifa.getId()).build();
         activityManager.updateActivity(activity.getId(), fifaPatcher);
 
-        assertFalse(activityManager.activityExists(ranked, godOfWar.getId()));
-        assertTrue(activityManager.activityExists(tournament, fifa.getId()));
+        assertFalse(activityManager.exists(ranked, godOfWar.getId()));
+        assertTrue(activityManager.exists(tournament, fifa.getId()));
 
-        System.out.println(activityManager.listActivities());
+        System.out.println(activityManager.list());
     }
 
     @Test
@@ -134,9 +137,9 @@ public class ActivityManagerTest {
                 new ActivityGamePair("Campaign", games.get(2).getId())
         );
 
-        List<ActivityGamePair> actual = activityManager.listActivities()
+        List<ActivityGamePair> actual = activityManager.list()
                 .stream()
-                .map(activityManager::getActivity)
+                .map(activityManager::get)
                 .map(activity -> new ActivityGamePair(activity.getName(), activity.getGameId()))
                 .collect(Collectors.toList());
 
@@ -161,12 +164,13 @@ public class ActivityManagerTest {
                 new ActivityGamePair(ranked, godOfWar.getId()) //Same activity different game
         );
 
-        assertTrue(activityManager.activityExists(ranked, ow.getId()));
-        assertTrue(activityManager.activityExists(casual, ow.getId()));
-        assertTrue(activityManager.activityExists(ranked, godOfWar.getId()));
+        assertTrue(activityManager.exists(ranked, ow.getId()));
+        assertTrue(activityManager.exists(casual, ow.getId()));
+        assertTrue(activityManager.exists(ranked, godOfWar.getId()));
 
         try {
-            activityManager.addActivity(ranked, ow.getId()); //Same activity and game
+            ActivityEntity activity = new ActivityEntity(ranked, ow.getId());
+            activityManager.add(activity); //Same activity and game
             fail();
         } catch (ConstraintException exc){}
     }
@@ -189,9 +193,9 @@ public class ActivityManagerTest {
                 new ActivityGamePair(ranked, godOfWar.getId()) //Same activity different game
         );
 
-        List<ActivityEntity> activities = activityManager.listActivities()
+        List<ActivityEntity> activities = activityManager.list()
                 .stream()
-                .map(activityManager::getActivity)
+                .map(activityManager::get)
                 .collect(Collectors.toList());
 
         ActivityPatcher namePatcher = new ActivityPatcher.Builder().withName(ranked).build();
@@ -226,7 +230,7 @@ public class ActivityManagerTest {
 
         Set<ActivityEntity> actual = gameManager.getGameActivities(ow.getId())
                 .stream()
-                .map(activityManager::getActivity)
+                .map(activityManager::get)
                 .collect(Collectors.toSet());
         Set<ActivityEntity> expected = new HashSet<>(expectedList);
 
@@ -255,9 +259,9 @@ public class ActivityManagerTest {
 
         activities.stream()
                 .map(ActivityEntity::getId)
-                .forEach(id -> assertNotNull(activityManager.getActivity(id)));
+                .forEach(id -> assertNotNull(activityManager.get(id)));
 
-        gameManager.deleteGame(ow.getId());
+        gameManager.delete(ow.getId());
 
         entityManagerProducer.closeEntityManager(activityEM);
         entityManagerProducer.closeEntityManager(gameEM);
@@ -268,7 +272,7 @@ public class ActivityManagerTest {
 
         activities.stream()
                 .map(ActivityEntity::getId)
-                .forEach(id -> assertNull(activityManager2.getActivity(id)));
+                .forEach(id -> assertNull(activityManager2.get(id)));
 
         entityManagerProducer.closeEntityManager(gameEM2);
         entityManagerProducer.closeEntityManager(activityEM2);
@@ -278,13 +282,14 @@ public class ActivityManagerTest {
     public void deletes(){
         GameEntity game = addGame("Overwatch");
         ActivityEntity activity = addActivity(new ActivityGamePair("Ranked", game.getId()));
-        activityManager.deleteActivity(activity.getId());
-        assertNull(activityManager.getActivity(activity.getId()));
+        activityManager.delete(activity.getId());
+        assertNull(activityManager.get(activity.getId()));
     }
 
     private GameEntity addGame(String name){
-        int id = gameManager.addGame(name, null);
-        return gameManager.getGame(id);
+        GameEntity game = new GameEntity(null, name);
+        int id = gameManager.add(game);
+        return gameManager.get(id);
     }
 
     private List<GameEntity> addAllGames(String... names){
@@ -292,8 +297,9 @@ public class ActivityManagerTest {
     }
 
     private ActivityEntity addActivity(ActivityGamePair pair){
-        int id = activityManager.addActivity(pair.name, pair.game);
-        return activityManager.getActivity(id);
+        ActivityEntity activity = new ActivityEntity(pair.name, pair.game);
+        int id = activityManager.add(activity);
+        return activityManager.get(id);
     }
 
     private List<ActivityEntity> addAllActivities(ActivityGamePair... pairs){
@@ -301,7 +307,9 @@ public class ActivityManagerTest {
     }
 
     private ActivityGamePair[] addAllActivitiesGetPair(ActivityGamePair... pairs){
-        Arrays.stream(pairs).forEach(pair -> activityManager.addActivity(pair.name, pair.game));
+        Arrays.stream(pairs)
+                .map(pair -> new ActivityEntity(pair.name, pair.game))
+                .forEach(activity -> activityManager.add(activity));
         return pairs;
     }
 

@@ -1,6 +1,7 @@
 package persistence.model;
 
 import org.jetbrains.annotations.NotNull;
+import persistence.entity.GroupEntity;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -21,9 +22,9 @@ public class Group {
     private GamePlatform gamePlatform;
     private Set<User> members;
 
-    public Group(int id, int slots, Activity activity, User owner, ChatPlatform chatPlatform, GamePlatform gamePlatform, Set<User> members) {
-        this.id = id;
-        this.slots = slots;
+    public Group(GroupEntity entity, Activity activity, User owner, ChatPlatform chatPlatform, GamePlatform gamePlatform, Set<User> members) {
+        this.id = entity.getId();
+        this.slots = entity.getSlots();
         this.activity = activity;
         this.owner = owner;
         this.chatPlatform = chatPlatform;

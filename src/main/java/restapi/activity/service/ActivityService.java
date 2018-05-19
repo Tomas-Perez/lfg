@@ -1,5 +1,6 @@
 package restapi.activity.service;
 
+import persistence.entity.ActivityEntity;
 import persistence.manager.ActivityManager;
 import persistence.manager.patcher.ActivityPatcher;
 import persistence.model.Activity;
@@ -25,14 +26,15 @@ public class ActivityService {
     private ModelBuilder modelBuilder;
 
     public List<Activity> getAll(){
-        return activityManager.listActivities()
+        return activityManager.list()
                 .stream()
                 .map(modelBuilder::buildActivity)
                 .collect(Collectors.toList());
     }
 
     public int newActivity(String name, int gameID){
-        return activityManager.addActivity(name, gameID);
+        ActivityEntity activity = new ActivityEntity(name, gameID);
+        return activityManager.add(activity);
     }
 
     public Activity getActivity(int id){
@@ -44,12 +46,12 @@ public class ActivityService {
     }
 
     public void wipe(){
-        activityManager.wipeAllRecords();
+        activityManager.wipe();
     }
 
     public void deleteActivity(int id){
         try {
-            activityManager.deleteActivity(id);
+            activityManager.delete(id);
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }

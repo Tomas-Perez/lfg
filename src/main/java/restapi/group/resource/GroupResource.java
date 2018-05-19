@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
  * @author Tomas Perez Molina
  */
 @Path("groups")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class GroupResource {
 
@@ -32,7 +34,6 @@ public class GroupResource {
     private UriInfo uriInfo;
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(){
         List<Group> groups = service.getAll();
         List<GroupJSON> groupJSONS = groups.stream().map(GroupJSON::new).collect(Collectors.toList());
@@ -40,8 +41,6 @@ public class GroupResource {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response post(CreateGroupJSON groupJSON){
         int id = service.newGroup(
                 groupJSON.getSlots(),
@@ -61,7 +60,6 @@ public class GroupResource {
 
     @GET
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("id") int id){
         Group group = service.getGroup(id);
         return Response.ok(new GroupJSON(group)).build();
@@ -76,8 +74,6 @@ public class GroupResource {
 
     @POST
     @Path("{id}/members")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response addMember(@PathParam("id") int id, AddMemberJSON addMemberJSON){
         service.addMember(id, addMemberJSON.getId());
         return Response.noContent().build();
@@ -85,8 +81,6 @@ public class GroupResource {
 
     @DELETE
     @Path("{id}/members/{memberID}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response removeMember(@PathParam("id") int id, @PathParam("memberID") int memberID){
         service.removeMember(id, memberID);
         return Response.noContent().build();

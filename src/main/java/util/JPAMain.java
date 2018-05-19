@@ -69,16 +69,16 @@ public class JPAMain {
 //        final KeyGenerator keyGenerator = new KeyGenerator(entityManager);
 //        final GameManager gm = new GameManager(entityManager, keyGenerator);
 //
-//        int id = gm.addGame("Overwatch", null);
-//        Game game = gm.getGame(id);
+//        int id = gm.add("Overwatch", null);
+//        Game game = gm.get(id);
 //        System.out.println(game);
 //
-//        int id2 = gm.addGame("Overwatch2", null);
-//        Game game2 = gm.getGame(id2);
+//        int id2 = gm.add("Overwatch2", null);
+//        Game game2 = gm.get(id2);
 //        System.out.println(game2);
 //
-//        int id3 = gm.addGame("Overwatch3", null);
-//        Game game3 = gm.getGame(id3);
+//        int id3 = gm.add("Overwatch3", null);
+//        Game game3 = gm.get(id3);
 //        System.out.println(game3);
         emp.closeEntityManager(manager);
         emp.destroy();

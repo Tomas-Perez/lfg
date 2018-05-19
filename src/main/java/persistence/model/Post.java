@@ -1,5 +1,7 @@
 package persistence.model;
 
+import persistence.entity.PostEntity;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
@@ -19,10 +21,10 @@ public class Post {
     private Set<GamePlatform> gamePlatforms;
     private Set<ChatPlatform> chatPlatforms;
 
-    public Post(int id, String description, LocalDateTime date, Activity activity, User owner, Group group, Set<GamePlatform> gamePlatforms, Set<ChatPlatform> chatPlatforms) {
-        this.id = id;
-        this.description = description;
-        this.date = date;
+    public Post(PostEntity entity, Activity activity, User owner, Group group, Set<GamePlatform> gamePlatforms, Set<ChatPlatform> chatPlatforms) {
+        this.id = entity.getId();
+        this.description = entity.getDescription();
+        this.date = entity.getDate();
         this.activity = activity;
         this.owner = owner;
         this.group = group;

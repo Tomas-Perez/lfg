@@ -1,6 +1,7 @@
 package persistence.model;
 
 import org.jetbrains.annotations.NotNull;
+import persistence.entity.ActivityEntity;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -17,9 +18,9 @@ public class Activity {
     private String name;
     private Game game;
 
-    public Activity(int id, String name, Game game) {
-        this.id = id;
-        this.name = name;
+    public Activity(ActivityEntity entity, Game game) {
+        this.id = entity.getId();
+        this.name = entity.getName();
         this.game = game;
     }
 

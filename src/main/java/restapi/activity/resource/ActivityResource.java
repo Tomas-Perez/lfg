@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
  * @author Tomas Perez Molina
  */
 @Path("activities")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class ActivityResource {
 
@@ -32,7 +34,6 @@ public class ActivityResource {
     private UriInfo uriInfo;
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(){
         List<Activity> activities = service.getAll();
         List<ActivityJSON> activityJSONS = activities.stream().map(ActivityJSON::new).collect(Collectors.toList());
@@ -41,8 +42,6 @@ public class ActivityResource {
 
     @POST
     @RolesAllowed({"ADMIN"})
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response post(CreateActivityJSON activityJSON){
         int id = service.newActivity(activityJSON.getName(), activityJSON.getGameID());
         URI path = uriInfo.getAbsolutePathBuilder().path(Integer.toString(id)).build();
@@ -75,8 +74,6 @@ public class ActivityResource {
     @POST
     @Path("{id}")
     @RolesAllowed({"ADMIN"})
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") int id, UpdateActivityJSON updateJSON){
         service.updateActivity(id, updateJSON.getName(), updateJSON.getGameID());
         return Response.noContent().build();
