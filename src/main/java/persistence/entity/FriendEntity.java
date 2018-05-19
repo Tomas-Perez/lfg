@@ -12,12 +12,12 @@ import java.util.Objects;
 public class FriendEntity {
     private int user1Id;
     private int user2Id;
-    private boolean confirmed;
+    private FriendStatus status;
 
-    public FriendEntity(int user1Id, int user2Id, boolean confirmed) {
+    public FriendEntity(int user1Id, int user2Id, FriendStatus status) {
         this.user1Id = user1Id;
         this.user2Id = user2Id;
-        this.confirmed = confirmed;
+        this.status = status;
     }
 
     public FriendEntity() {
@@ -54,17 +54,20 @@ public class FriendEntity {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(user1Id, user2Id);
     }
 
-    @Basic
-    @Column(name = "CONFIRMED", nullable = false)
-    public boolean isConfirmed() {
-        return confirmed;
+    @Enumerated
+    @Column(name = "STATUS", nullable = false, columnDefinition = "smallint")
+    public FriendStatus getStatus() {
+        return status;
     }
 
-    public void setConfirmed(boolean confirmed) {
-        this.confirmed = confirmed;
+    public void setStatus(FriendStatus confirmed) {
+        this.status = confirmed;
+    }
+
+    public enum FriendStatus {
+        FIRST_SENT, SECOND_SENT, CONFIRMED
     }
 }

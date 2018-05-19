@@ -2,6 +2,8 @@ package restapi.user.resource;
 
 import persistence.model.User;
 import restapi.group.model.MemberJSON;
+import restapi.user.model.ConfirmRequestJSON;
+import restapi.user.model.FriendRequestJSON;
 import restapi.user.model.UpdateUserJSON;
 import restapi.user.model.UserData;
 import restapi.user.service.UserService;
@@ -10,10 +12,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.*;
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,11 +32,13 @@ public class UserResource {
     @Inject
     private UserService service;
 
+    @Context
+    private UriInfo uriInfo;
+
     @GET
     @Path("me")
     public Response getMe() {
         Principal principal = securityContext.getUserPrincipal();
-        System.out.println(principal.getName());
         User user = service.getUserByEmail(principal.getName());
         return Response.ok(new UserData(user)).build();
     }
@@ -90,19 +91,60 @@ public class UserResource {
     }
 
     @GET
-    @Path("{id}/friends")
-    public Response getFriends(@PathParam("id") int id){
+    @Path("me/friends")
+    public Response getFriends(){
+        Principal principal = securityContext.getUserPrincipal();
+        int id = service.getIDByEmail(principal.getName());
         List<User> friends = service.getFriends(id);
         List<MemberJSON> memberJSONS = friends.stream().map(MemberJSON::new).collect(Collectors.toList());
         return Response.ok(memberJSONS).build();
     }
 
+    @POST
+    @Path("me/friends")
+    public Response confirmFriend(ConfirmRequestJSON confirmJSON){
+        Principal principal = securityContext.getUserPrincipal();
+        int id = service.getIDByEmail(principal.getName());
+        service.confirmFriendRequest(id, confirmJSON.getId());
+        return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("me/friends/{friendId}")
+    public Response removeFriend(@PathParam("friendId") int friendId){
+        Principal principal = securityContext.getUserPrincipal();
+        int id = service.getIDByEmail(principal.getName());
+        service.removeFriend(id, friendId);
+        return Response.noContent().build();
+    }
+
+    @POST
+    @Path("me/friend-requests")
+    public Response sendFriendRequest(FriendRequestJSON friendRequestJSON){
+        Principal principal = securityContext.getUserPrincipal();
+        int id = service.getIDByEmail(principal.getName());
+        final int otherID = friendRequestJSON.getId();
+        service.sendFriendRequest(id, otherID);
+        return Response.status(Response.Status.CREATED).build();
+    }
+
     @GET
-    @Path("{id}/requests")
-    public Response getFriendRequests(@PathParam("id") int id){
-        List<User> requests = service.getFriendRequests(id);
+    @Path("me/friend-requests/received")
+    public Response getReceivedRequests(){
+        Principal principal = securityContext.getUserPrincipal();
+        int id = service.getIDByEmail(principal.getName());
+        List<User> requests = service.getReceivedRequests(id);
         List<MemberJSON> memberJSONS = requests.stream().map(MemberJSON::new).collect(Collectors.toList());
         return Response.ok(memberJSONS).build();
     }
 
+    @GET
+    @Path("me/friend-requests/sent")
+    public Response getSentRequests(){
+        Principal principal = securityContext.getUserPrincipal();
+        int id = service.getIDByEmail(principal.getName());
+        List<User> requests = service.getSentRequests(id);
+        List<MemberJSON> memberJSONS = requests.stream().map(MemberJSON::new).collect(Collectors.toList());
+        return Response.ok(memberJSONS).build();
+    }
 }

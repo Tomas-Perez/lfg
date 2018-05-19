@@ -59,6 +59,10 @@ public abstract class ApiTest {
     protected WebTarget usersTarget;
     protected WebTarget meTarget;
 
+    private static final String USERNAME = "testUser";
+    private static final String EMAIL = "test@mail.com";
+    private static final String PASSWORD = "123123";
+
 
     @Before
     public void setup() throws Exception{
@@ -75,12 +79,10 @@ public abstract class ApiTest {
         postManager = new PostManager(emp.createEntityManager(), userManager, activityManager, groupManager);
         postManager.wipe();
 
-        String email = "test@mail.com";
-        String password = "123123";
-        UserEntity userEntity = new UserEntity(true, email, password, "testUser");
+        UserEntity userEntity = new UserEntity(true, EMAIL, PASSWORD, USERNAME);
         userManager.add(userEntity);
 
-        token = RequestUtil.getToken(base, email, password);
+        token = RequestUtil.getToken(base, EMAIL, PASSWORD);
 
         assertNotNull(groupManager);
         assertNotNull(userManager);
@@ -137,16 +139,24 @@ public abstract class ApiTest {
     }
 
     protected int addUser(String username, String password, String email){
+        if(USERNAME.equals(username)){
+            throw new RuntimeException("Username cannot be " + USERNAME);
+        }
+        if(EMAIL.equals(email)){
+            throw new RuntimeException("Email cannot be " + EMAIL);
+        }
+
         final Response signUpResponse = RequestUtil.post(signUpTarget, token, new SignUpJSON(email, password, username));
         assertThat(signUpResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
 
         final Response signInResponse = RequestUtil.post(signInTarget, token, new SignInJSON(email, password));
-        assertThat(signUpResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        assertThat(signInResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
 
         AuthenticationToken userToken;
         try {
             userToken = RequestUtil.parseResponse(signInResponse, AuthenticationToken.class);
         } catch (Exception e) {
+            System.out.println(signInResponse.readEntity(String.class));
             throw new RuntimeException(e);
         }
         final Response getUserResponse = RequestUtil.get(meTarget, userToken);
@@ -156,6 +166,7 @@ public abstract class ApiTest {
         try {
             userData = RequestUtil.parseResponse(getUserResponse, UserData.class);
         } catch (Exception e) {
+            System.out.println(getUserResponse.readEntity(String.class));
             throw new RuntimeException(e);
         }
 

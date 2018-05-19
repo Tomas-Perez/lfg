@@ -11,9 +11,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @ApplicationScoped
 public class UserManager extends Manager<UserEntity>{
@@ -66,31 +64,45 @@ public class UserManager extends Manager<UserEntity>{
         }
     }
 
-    public void addFriendRequest(int user1ID, int user2ID){
-        checkFriendCreation(user1ID, user2ID);
-        FriendPair pair = new FriendPair(user1ID, user2ID);
-        FriendEntity friendEntity = new FriendEntity(pair.first, pair.second, false);
+    public void addFriendRequest(int sender, int receiver){
+        checkFriendCreation(sender, receiver);
+        FriendPair pair = FriendPair.request(sender, receiver);
+        FriendEntity friendEntity = new FriendEntity(pair.first, pair.second, pair.status);
         persist(friendEntity);
     }
 
-    public void confirmFriend(int user1ID, int user2ID){
+    public void confirmFriend(int receiver, int sender){
         EntityTransaction tx = manager.getTransaction();
-        FriendPair pair = new FriendPair(user1ID, user2ID);
+        FriendPair pair = new FriendPair(receiver, sender);
         FriendEntityPK friendEntityPK = new FriendEntityPK(pair.first, pair.second);
+        FriendEntity friendEntity = manager.find(FriendEntity.class, friendEntityPK);
+        if(friendEntity == null) {
+            final String constraintName =
+                    String.format("Friend request between %d and %d does not exist", receiver, sender);
+            throw new ConstraintException(constraintName);
+        }
+        if(!receivedRequest(receiver, friendEntity))
+            throw new ConstraintException("Only the receiver of the request can confirm it");
         try {
             tx.begin();
-            FriendEntity friendEntity = manager.find(FriendEntity.class, friendEntityPK);
-            friendEntity.setConfirmed(true);
+            friendEntity.setStatus(FriendEntity.FriendStatus.CONFIRMED);
             tx.commit();
-        } catch (NullPointerException exc) {
-            if (tx != null) tx.rollback();
-            final String constraintName =
-                    String.format("Friend request between %d and %d does not exist", user1ID, user2ID);
-            throw new ConstraintException(constraintName);
-        } catch (Exception e) {
+        }  catch (Exception e) {
             if (tx!=null) tx.rollback();
             e.printStackTrace();
         }
+    }
+
+    private boolean receivedRequest(int id, FriendEntity entity){
+        boolean received = false;
+        if(entity.getUser1Id() == id){
+            if(entity.getStatus() == FriendEntity.FriendStatus.SECOND_SENT){
+                received = true;
+            }
+        } else if(entity.getStatus() == FriendEntity.FriendStatus.FIRST_SENT) {
+            received = true;
+        }
+        return received;
     }
 
     public void removeFriend(int user1ID, int user2ID){
@@ -161,21 +173,25 @@ public class UserManager extends Manager<UserEntity>{
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> getUserGroups(int userID){
-        return manager.createQuery("SELECT M.groupId " +
-                "FROM GroupMemberEntity M JOIN GroupEntity G ON G.id = M.groupId " +
-                "WHERE M.memberId = :userID")
+    public Set<Integer> getUserGroups(int userID){
+        final List resultList = manager.createQuery(
+                "SELECT DISTINCT M.groupId " +
+                        "FROM GroupMemberEntity M JOIN GroupEntity G ON G.id = M.groupId " +
+                        "WHERE M.memberId = :userID")
                 .setParameter("userID", userID)
                 .getResultList();
+        return new HashSet<>(resultList);
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> getUserGames(int userID){
-        return manager.createQuery("SELECT O.gameId " +
-                "FROM OwnsGameEntity O JOIN GameEntity G ON G.id = O.gameId " +
-                "WHERE O.ownerId = :userID")
+    public Set<Integer> getUserGames(int userID){
+        final List resultList = manager.createQuery(
+                "SELECT DISTINCT O.gameId " +
+                        "FROM OwnsGameEntity O JOIN GameEntity G ON G.id = O.gameId " +
+                        "WHERE O.ownerId = :userID")
                 .setParameter("userID", userID)
                 .getResultList();
+        return new HashSet<>(resultList);
     }
 
     private void checkUser(int userID){
@@ -184,27 +200,61 @@ public class UserManager extends Manager<UserEntity>{
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> getUserFriends(int userID){
-        return manager.createQuery(
-                "SELECT " +
-                        "CASE WHEN F.user2Id != U.id THEN F.user2Id ELSE F.user1Id END " +
-                        "FROM FriendEntity F " +
-                        "JOIN UserEntity U on F.user1Id = U.id OR F.user2Id = U.id " +
-                        "WHERE U.id = :userID AND F.confirmed")
+    public Set<Integer> getUserFriends(int userID){
+        final List resultList = manager.createNativeQuery("SELECT CASE\n" +
+                "WHEN F.USER_1_ID = :userID THEN F.USER_2_ID\n" +
+                "ELSE F.USER_1_ID\n" +
+                "END\n" +
+                "FROM\n" +
+                "(SELECT DISTINCT F.*\n" +
+                "FROM FRIEND F\n" +
+                "JOIN USER U on F.USER_1_ID = U.id OR F.USER_2_ID = U.id\n" +
+                "WHERE U.id = :userID) F\n" +
+                "WHERE F.STATUS = :confirmed")
                 .setParameter("userID", userID)
+                .setParameter("confirmed", FriendEntity.FriendStatus.CONFIRMED.ordinal())
                 .getResultList();
+        return new HashSet<>(resultList);
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> getUserFriendRequests(int userID){
-        return manager.createQuery(
-                "SELECT " +
-                        "CASE WHEN F.user2Id != U.id THEN F.user2Id ELSE F.user1Id END " +
-                        "FROM FriendEntity F " +
-                        "JOIN UserEntity U on F.user1Id = U.id OR F.user2Id = U.id " +
-                        "WHERE U.id = :userID AND NOT F.confirmed")
+    public Set<Integer> getSentRequests(int userID){
+        final List resultList = manager.createNativeQuery("SELECT CASE\n" +
+                "WHEN F.USER_1_ID = :userID THEN F.USER_2_ID\n" +
+                "ELSE F.USER_1_ID\n" +
+                "END\n" +
+                "FROM\n" +
+                "(SELECT DISTINCT F.*\n" +
+                "FROM FRIEND F\n" +
+                "JOIN USER U on F.USER_1_ID = U.id OR F.USER_2_ID = U.id\n" +
+                "WHERE U.id = :userID) F\n" +
+                "WHERE (F.USER_1_ID = :userID AND F.STATUS = :firstSent) OR\n" +
+                "(F.USER_2_ID = :userID AND F.STATUS = :secondSent)")
                 .setParameter("userID", userID)
+                .setParameter("firstSent", FriendEntity.FriendStatus.FIRST_SENT.ordinal())
+                .setParameter("secondSent", FriendEntity.FriendStatus.SECOND_SENT.ordinal())
                 .getResultList();
+        return new HashSet<>(resultList);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Set<Integer> getReceivedRequests(int userID){
+        final List resultList = manager.createNativeQuery("SELECT CASE\n" +
+                "WHEN F.USER_1_ID = :userID THEN F.USER_2_ID\n" +
+                "ELSE F.USER_1_ID\n" +
+                "END\n" +
+                "FROM\n" +
+                "(SELECT DISTINCT F.*\n" +
+                "FROM FRIEND F\n" +
+                "JOIN USER U on F.USER_1_ID = U.id OR F.USER_2_ID = U.id\n" +
+                "WHERE U.id = :userID) F\n" +
+                "WHERE (F.USER_1_ID = :userID AND F.STATUS = :secondSent) OR\n" +
+                "(F.USER_2_ID = :userID AND F.STATUS = :firstSent)")
+                .setParameter("userID", userID)
+                .setParameter("firstSent", FriendEntity.FriendStatus.FIRST_SENT.ordinal())
+                .setParameter("secondSent", FriendEntity.FriendStatus.SECOND_SENT.ordinal())
+                .getResultList();
+        return new HashSet<>(resultList);
     }
 
     public boolean friendshipExists(int user1ID, int user2ID){
@@ -213,9 +263,10 @@ public class UserManager extends Manager<UserEntity>{
         return manager.find(FriendEntity.class, pk) != null;
     }
 
-    private class FriendPair{
+    private static class FriendPair{
         int first;
         int second;
+        FriendEntity.FriendStatus status;
 
         private FriendPair(int user1, int user2) {
             if(user1 < user2){
@@ -225,6 +276,13 @@ public class UserManager extends Manager<UserEntity>{
                 this.first = user2;
                 this.second = user1;
             }
+        }
+
+        private static FriendPair request(int sender, int receiver){
+            FriendPair friendPair = new FriendPair(sender, receiver);
+            friendPair.status = sender < receiver?
+                    FriendEntity.FriendStatus.FIRST_SENT : FriendEntity.FriendStatus.SECOND_SENT;
+            return friendPair;
         }
     }
 }

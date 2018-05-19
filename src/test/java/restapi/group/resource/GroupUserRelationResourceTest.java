@@ -14,6 +14,7 @@ import util.RequestUtil;
 
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -58,21 +59,21 @@ public class GroupUserRelationResourceTest extends ApiTest {
         UserData actual = RequestUtil.parseResponse(getOwner, UserData.class);
 
         GroupJSON groupJSON = createExpectedJSON(gameID, gameName, activityID, activityName, ownerID, username, groupID, slots);
-        UserData expectedOwnerData = new UserData(ownerID, username, email, false, Collections.singletonList(groupJSON));
+        UserData expectedOwnerData = new UserData(ownerID, username, email, false, Collections.singletonList(groupJSON), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 
         assertThat(actual, is(expectedOwnerData));
 
         WebTarget member1Target = RequestUtil.newRelativeTarget(base, String.format("users/%d", member1ID));
         final Response getMember1 = RequestUtil.get(member1Target, token);
         UserData actualMember1 = RequestUtil.parseResponse(getMember1, UserData.class);
-        UserData expectedMember1Data = new UserData(member1ID, username1, email1, false, Collections.singletonList(groupJSON));
+        UserData expectedMember1Data = new UserData(member1ID, username1, email1, false, Collections.singletonList(groupJSON), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 
         assertThat(actualMember1, is(expectedMember1Data));
 
         WebTarget member2Target = RequestUtil.newRelativeTarget(base, String.format("users/%d", member2ID));
         final Response getMember2 = RequestUtil.get(member2Target, token);
         UserData actualMember2 = RequestUtil.parseResponse(getMember2, UserData.class);
-        UserData expectedMember2Data = new UserData(member2ID, username2, email2, false, Collections.singletonList(groupJSON));
+        UserData expectedMember2Data = new UserData(member2ID, username2, email2, false, Collections.singletonList(groupJSON), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 
         assertThat(actualMember2, is(expectedMember2Data));
     }

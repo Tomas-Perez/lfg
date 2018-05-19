@@ -46,6 +46,7 @@ public class RequestUtil {
 
     public static <T> T parseResponse(Response r, Class<T> cls) throws Exception{
         JsonNode node = r.readEntity(JsonNode.class);
+        System.out.println(node);
         ObjectMapper mapper = new ObjectMapper();
         JavaType type = mapper.getTypeFactory().constructType(cls);
         return mapper.readValue(mapper.treeAsTokens(node), type);

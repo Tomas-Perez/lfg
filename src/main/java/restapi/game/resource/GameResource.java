@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
  */
 
 @Path("games")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class GameResource {
 
@@ -33,7 +35,6 @@ public class GameResource {
     private UriInfo uriInfo;
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(){
         List<Game> games = service.getAll();
         List<GameJSON> gameJSONS = games.stream().map(GameJSON::new).collect(Collectors.toList());
@@ -42,8 +43,6 @@ public class GameResource {
 
     @POST
     @RolesAllowed({"ADMIN"})
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response post(CreateGameJSON gameJSON){
         int id = service.newGame(gameJSON.getName(), null);
         URI path = uriInfo.getAbsolutePathBuilder().path(Integer.toString(id)).build();
@@ -59,7 +58,6 @@ public class GameResource {
 
     @GET
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("id") int id){
         Game game = service.getGame(id);
         return Response.ok(new GameJSON(game)).build();
@@ -78,8 +76,6 @@ public class GameResource {
     @POST
     @Path("{id}")
     @RolesAllowed({"ADMIN"})
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") int id, UpdateGameJSON updateJSON){
         service.updateGame(id, updateJSON.getName(), updateJSON.getImage());
         return Response.noContent().build();

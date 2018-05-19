@@ -33,6 +33,12 @@ public class UserService {
         return getUser(userEntity.getId());
     }
 
+    public int getIDByEmail(String email){
+        UserEntity userEntity = manager.getByEmail(email)
+                .orElseThrow(AuthenticationException::noUser);
+        return userEntity.getId();
+    }
+
     public User getUser(int id){
         try {
             return modelBuilder.buildUser(id);
@@ -72,10 +78,29 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public List<User> getFriendRequests(int id){
-        return manager.getUserFriendRequests(id)
+    public List<User> getReceivedRequests(int id){
+        return manager.getReceivedRequests(id)
                 .stream()
                 .map(modelBuilder::buildUser)
                 .collect(Collectors.toList());
+    }
+
+    public List<User> getSentRequests(int id){
+        return manager.getSentRequests(id)
+                .stream()
+                .map(modelBuilder::buildUser)
+                .collect(Collectors.toList());
+    }
+
+    public void sendFriendRequest(int id1, int id2){
+        manager.addFriendRequest(id1, id2);
+    }
+
+    public void confirmFriendRequest(int id1, int id2){
+        manager.confirmFriend(id1, id2);
+    }
+
+    public void removeFriend(int id1, int id2){
+        manager.removeFriend(id1, id2);
     }
 }

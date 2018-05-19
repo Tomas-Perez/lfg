@@ -19,8 +19,12 @@ public class User {
     private Set<Group> groups;
     private Set<Game> games;
     private Set<User> friends;
+    private Set<User> sentRequests;
+    private Set<User> receivedRequests;
 
-    public User(UserEntity entity, Set<Group> groups, Set<Game> games, Set<User> friends) {
+    public User(UserEntity entity, Set<Group> groups,
+                Set<Game> games, Set<User> friends,
+                Set<User> sentRequests, Set<User> receivedRequests) {
         this.id = entity.getId();
         this.username = entity.getUsername();
         this.password = entity.getPassword();
@@ -29,6 +33,8 @@ public class User {
         this.groups = groups;
         this.games = games;
         this.friends = friends;
+        this.sentRequests = sentRequests;
+        this.receivedRequests = receivedRequests;
     }
 
     public int getId() {
@@ -59,10 +65,21 @@ public class User {
         return games;
     }
 
+    public Set<User> getFriends() { return friends; }
+
+    public Set<User> getSentRequests() {
+        return sentRequests;
+    }
+
+    public Set<User> getReceivedRequests() {
+        return receivedRequests;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof User)) return false;
         User user = (User) o;
         return id == user.id &&
                 admin == user.admin &&
@@ -71,13 +88,15 @@ public class User {
                 Objects.equals(email, user.email) &&
                 Objects.equals(groups, user.groups) &&
                 Objects.equals(games, user.games) &&
-                Objects.equals(friends, user.friends);
+                Objects.equals(friends, user.friends) &&
+                Objects.equals(sentRequests, user.sentRequests) &&
+                Objects.equals(receivedRequests, user.receivedRequests);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, username, password, email, admin, groups, games, friends);
+        return Objects.hash(id, username, password, email, admin, groups, games, friends, sentRequests, receivedRequests);
     }
 
     @Override
@@ -91,6 +110,8 @@ public class User {
                 ", groups=" + groups +
                 ", games=" + games +
                 ", friends=" + friends +
+                ", sentRequests=" + sentRequests +
+                ", receivedRequests=" + receivedRequests +
                 '}';
     }
 }

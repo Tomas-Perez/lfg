@@ -5,6 +5,8 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.gradle.archive.importer.embedded.EmbeddedGradleImporter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import persistence.manager.exception.ConstraintException;
@@ -16,11 +18,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.assertNotNull;
@@ -34,11 +34,20 @@ public class UserManagerTest {
     @Inject
     private UserManager manager;
 
+    @Inject
+    private EntityManagerProducer emp;
+
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(EmbeddedGradleImporter.class)
                 .forThisProjectDirectory()
                 .importBuildOutput().as(WebArchive.class);
+    }
+
+    @Before
+    @After
+    public void setup(){
+        manager.wipe();
     }
 
     @Test
@@ -48,8 +57,6 @@ public class UserManagerTest {
 
     @Test
     public void insertUser(){
-        manager.wipe();
-
         final String email = "aylmaotest@mail.com";
         final String username = "testUser";
         final String password = "123123";
@@ -62,14 +69,10 @@ public class UserManagerTest {
         assertThat(user.getEmail(), is(email));
         assertThat(user.getUsername(), is(username));
         assertThat(user.getPassword(), is(password));
-
-        manager.wipe();
     }
 
     @Test
     public void changePass(){
-        manager.wipe();
-
         String email = "aylmaotest@mail.com";
         String pass = "123123";
         UserEntity userEntity = new UserEntity(true, email, pass, "testUser");
@@ -94,18 +97,15 @@ public class UserManagerTest {
 
         assertThat(user.getPassword(), is(not(pass)));
         assertThat(user.getPassword(), is(newPass));
-
-        manager.wipe();
     }
 
     @Test
     public void listUsers(){
-        manager.wipe();
-
         UserDetails one = new UserDetails("Username", "pass", "email@email.com", false);
         UserDetails two = new UserDetails("someone", "pass", "another@email.com", false);
         UserDetails three = new UserDetails("HeyImAdmin", "pass", "test@admin.com", true);
-        UserDetails[] expected = addAll(one, two, three);
+        addAll(one, two, three);
+        UserDetails[] expected = {one, two, three};
 
         List<UserDetails> actual = manager.list().stream()
                 .map(manager::get)
@@ -113,14 +113,10 @@ public class UserManagerTest {
                 .collect(Collectors.toList());
 
         assertThat(actual, hasItems(expected));
-
-        manager.wipe();
     }
 
     @Test
     public void duplicateUserExc(){
-        manager.wipe();
-
         UserDetails one = new UserDetails("Username", "pass", "email@email.com", false);
 
         UserEntity userEntity = new UserEntity(one.admin, one.email, one.password, one.username);
@@ -144,18 +140,14 @@ public class UserManagerTest {
         } catch (ConstraintException exc){
             assertThat(exc.getConstraintName(), is(one.email));
         }
-
-        manager.wipe();
     }
 
     @Test
     public void duplicateUserExcUpdate() {
-        manager.wipe();
-
         UserDetails one = new UserDetails("Username", "pass", "email@email.com", false);
         UserDetails two = new UserDetails("someone", "pass", "another@email.com", false);
         UserDetails three = new UserDetails("HeyImAdmin", "pass", "test@admin.com", true);
-        UserDetails[] expected = addAll(one, two, three);
+        addAll(one, two, three);
 
         UserEntity user = manager.getByEmail(one.email).get();
 
@@ -175,15 +167,113 @@ public class UserManagerTest {
         } catch (ConstraintException exc){
             assertThat(exc.getConstraintName(), is(two.username));
         }
-
-
-        manager.wipe();
     }
 
-    private UserDetails[] addAll(UserDetails... details){
-        Arrays.stream(details).map(x -> new UserEntity(x.admin, x.email, x.password, x.username))
-                .forEach(y -> manager.add(y));
-        return details;
+    @Test
+    public void receiveRequests(){
+        UserDetails one = new UserDetails("Username", "pass", "email@email.com", false);
+        UserDetails two = new UserDetails("someone", "pass", "another@email.com", false);
+        UserDetails three = new UserDetails("HeyImAdmin", "pass", "test@admin.com", true);
+        List<Integer> users = addAll(one, two, three);
+        int userID = users.get(0);
+
+        final Set<Integer> requestIDs = users.stream()
+                .filter(id -> id != userID)
+                .collect(Collectors.toSet());
+
+        requestIDs.forEach(id -> manager.addFriendRequest(id, userID));
+
+        Set<Integer> actual = manager.getReceivedRequests(userID);
+
+        assertThat(actual, is(requestIDs));
+    }
+
+    @Test
+    public void sendRequests(){
+        UserDetails one = new UserDetails("Username", "pass", "email@email.com", false);
+        UserDetails two = new UserDetails("someone", "pass", "another@email.com", false);
+        UserDetails three = new UserDetails("HeyImAdmin", "pass", "test@admin.com", true);
+        List<Integer> users = addAll(one, two, three);
+        int userID = users.get(0);
+
+        final Set<Integer> requestIDs = users.stream()
+                .filter(id -> id != userID)
+                .collect(Collectors.toSet());
+
+        requestIDs.forEach(id -> manager.addFriendRequest(userID, id));
+
+        Set<Integer> actual = manager.getSentRequests(userID);
+
+        assertThat(actual, is(requestIDs));
+    }
+
+
+    @Test
+    public void addFriend(){
+        UserDetails one = new UserDetails("Username", "pass", "email@email.com", false);
+        UserDetails two = new UserDetails("someone", "pass", "another@email.com", false);
+        UserDetails three = new UserDetails("HeyImAdmin", "pass", "test@admin.com", true);
+        List<Integer> users = addAll(one, two, three);
+        int userID = users.get(0);
+
+        final Set<Integer> friendIDs = users.stream()
+                .filter(id -> id != userID)
+                .collect(Collectors.toSet());
+
+        friendIDs.forEach(id -> manager.addFriendRequest(id, userID));
+
+        Set<Integer> empty = manager.getUserFriends(userID);
+
+        assertThat(empty, is(new HashSet<>()));
+
+        friendIDs.forEach(id -> manager.confirmFriend(userID, id));
+
+        Set<Integer> actual = manager.getUserFriends(userID);
+
+        assertThat(actual, is(friendIDs));
+    }
+
+    @Test
+    public void removeFriend(){
+        EntityManager userEM = emp.createEntityManager();
+        UserManager manager = new UserManager(userEM);
+
+        UserDetails one = new UserDetails("Username", "pass", "email@email.com", false);
+        UserDetails two = new UserDetails("someone", "pass", "another@email.com", false);
+        UserDetails three = new UserDetails("HeyImAdmin", "pass", "test@admin.com", true);
+        List<Integer> users = addAll(one, two, three);
+        int userID = users.get(0);
+        int removeID = users.get(1);
+
+        final Set<Integer> requestIDs = users.stream()
+                .filter(id -> id != userID)
+                .collect(Collectors.toSet());
+
+        requestIDs.forEach(id -> manager.addFriendRequest(id, userID));
+        requestIDs.forEach(id -> manager.confirmFriend(userID, id));
+
+        Set<Integer> actual = manager.getUserFriends(userID);
+        assertThat(actual, is(requestIDs));
+
+        manager.removeFriend(userID, removeID);
+        emp.closeEntityManager(userEM);
+
+        EntityManager userEM2 = emp.createEntityManager();
+        UserManager userManager2 = new UserManager(userEM2);
+
+        final Set<Integer> afterRemoveFriends = requestIDs.stream()
+                .filter(id -> id != removeID)
+                .collect(Collectors.toSet());
+
+        Set<Integer> actual2 = userManager2.getUserFriends(userID);
+        assertThat(actual2, is(afterRemoveFriends));
+    }
+
+    private List<Integer> addAll(UserDetails... details){
+        return Arrays.stream(details)
+                .map(x -> new UserEntity(x.admin, x.email, x.password, x.username))
+                .map(y -> manager.add(y))
+                .collect(Collectors.toList());
     }
 
     private class UserDetails{

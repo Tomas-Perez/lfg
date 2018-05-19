@@ -88,11 +88,26 @@ public class ModelBuilder {
                 .map(this::huskUser)
                 .collect(Collectors.toSet());
 
+        Set<User> sentRequests = userManager
+                .getSentRequests(userID)
+                .stream()
+                .map(this::huskUser)
+                .collect(Collectors.toSet());
+
+        Set<User> receivedRequests = userManager
+                .getReceivedRequests(userID)
+                .stream()
+                .map(this::huskUser)
+                .collect(Collectors.toSet());
+
+
         return new User(
                 userEntity,
                 groups,
                 games,
-                friends
+                friends,
+                sentRequests,
+                receivedRequests
         );
     }
 
@@ -140,6 +155,8 @@ public class ModelBuilder {
 
         return new User(
                 userEntity,
+                null,
+                null,
                 null,
                 null,
                 null
