@@ -41,7 +41,7 @@ public class PostResourceTest extends ApiTest {
         final String description = "posty";
         final Response postResponse = RequestUtil.post(postsTarget, token, new CreatePostJSON(description, activityID, ownerID, null));
 
-        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        assertThat(postResponse.getStatus(), is(CREATED));
 
         final String location = postResponse.getHeaderString("Location");
         final WebTarget postTarget = RequestUtil.newTarget(location);
@@ -49,7 +49,7 @@ public class PostResourceTest extends ApiTest {
 
         final Response getResponse = RequestUtil.get(postTarget, token);
 
-        assertThat(getResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(getResponse.getStatus(), is(OK));
 
         PostJSON actual = RequestUtil.parseResponse(getResponse, PostJSON.class);
 
@@ -79,7 +79,7 @@ public class PostResourceTest extends ApiTest {
         final String description = "posty";
         final Response postResponse = RequestUtil.post(postsTarget, token, new CreatePostJSON(description, null, null, groupID));
 
-        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        assertThat(postResponse.getStatus(), is(CREATED));
 
         final String location = postResponse.getHeaderString("Location");
         final WebTarget postTarget = RequestUtil.newTarget(location);
@@ -87,7 +87,7 @@ public class PostResourceTest extends ApiTest {
 
         final Response getResponse = RequestUtil.get(postTarget, token);
 
-        assertThat(getResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(getResponse.getStatus(), is(OK));
 
         PostJSON actual = RequestUtil.parseResponse(getResponse, PostJSON.class);
 

@@ -21,7 +21,10 @@ import util.RequestUtil;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.List;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -63,6 +66,12 @@ public abstract class ApiTest {
     private static final String EMAIL = "test@mail.com";
     private static final String PASSWORD = "123123";
 
+    protected static final int OK = Response.Status.OK.getStatusCode();
+    protected static final int NO_CONTENT = Response.Status.NO_CONTENT.getStatusCode();
+    protected static final int CONFLICT = Response.Status.CONFLICT.getStatusCode();
+    protected static final int NOT_FOUND = Response.Status.NOT_FOUND.getStatusCode();
+    protected static final int BAD_REQUEST = Response.Status.BAD_REQUEST.getStatusCode();
+    protected static final int CREATED = Response.Status.CREATED.getStatusCode();
 
     @Before
     public void setup() throws Exception{
@@ -70,7 +79,7 @@ public abstract class ApiTest {
         emp.init();
         gameManager = new GameManager(emp.createEntityManager());
         gameManager.wipe();
-        userManager = new UserManager(emp.createEntityManager());
+        userManager = new UserManager(emp.createEntityManager(), new FriendHelperManager());
         userManager.wipe();
         activityManager = new ActivityManager(emp.createEntityManager(), gameManager);
         activityManager.wipe();
@@ -103,7 +112,7 @@ public abstract class ApiTest {
     public void cleanUp(){
         gameManager = new GameManager(emp.createEntityManager());
         gameManager.wipe();
-        userManager = new UserManager(emp.createEntityManager());
+        userManager = new UserManager(emp.createEntityManager(), new FriendHelperManager());
         userManager.wipe();
         activityManager = new ActivityManager(emp.createEntityManager(), gameManager);
         activityManager.wipe();
@@ -116,7 +125,7 @@ public abstract class ApiTest {
 
     protected int addGame(String name){
         final Response postResponse = RequestUtil.post(gamesTarget, token, new CreateGameJSON(name));
-        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        assertThat(postResponse.getStatus(), is(CREATED));
         final String location = postResponse.getHeaderString("Location");
         final WebTarget gameTarget = RequestUtil.newTarget(location);
         return Integer.parseInt(RequestUtil.getRelativePathDiff(gamesTarget, gameTarget));
@@ -124,7 +133,7 @@ public abstract class ApiTest {
 
     protected int addActivity(String name, int gameID){
         final Response postResponse = RequestUtil.post(activitiesTarget, token, new CreateActivityJSON(name, gameID));
-        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        assertThat(postResponse.getStatus(), is(CREATED));
         final String location = postResponse.getHeaderString("Location");
         final WebTarget activityTarget = RequestUtil.newTarget(location);
         return Integer.parseInt(RequestUtil.getRelativePathDiff(activitiesTarget, activityTarget));
@@ -132,7 +141,7 @@ public abstract class ApiTest {
 
     protected int addGroup(int slots, int activityID, int userID){
         final Response postResponse = RequestUtil.post(groupsTarget, token, new CreateGroupJSON(slots, activityID, userID));
-        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        assertThat(postResponse.getStatus(), is(CREATED));
         final String location = postResponse.getHeaderString("Location");
         final WebTarget groupTarget = RequestUtil.newTarget(location);
         return Integer.parseInt(RequestUtil.getRelativePathDiff(groupsTarget, groupTarget));
@@ -147,10 +156,10 @@ public abstract class ApiTest {
         }
 
         final Response signUpResponse = RequestUtil.post(signUpTarget, token, new SignUpJSON(email, password, username));
-        assertThat(signUpResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        assertThat(signUpResponse.getStatus(), is(CREATED));
 
         final Response signInResponse = RequestUtil.post(signInTarget, token, new SignInJSON(email, password));
-        assertThat(signInResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(signInResponse.getStatus(), is(OK));
 
         AuthenticationToken userToken;
         try {
@@ -171,5 +180,9 @@ public abstract class ApiTest {
         }
 
         return userData.getId();
+    }
+
+    protected <T> void assertContainsAll(List<T> actual, List<T> expected){
+        expected.forEach(x -> assertTrue(actual.contains(x)));
     }
 }

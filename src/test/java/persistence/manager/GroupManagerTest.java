@@ -45,6 +45,9 @@ public class GroupManagerTest {
     @Inject
     private EntityManagerProducer entityManagerProducer;
 
+    @Inject
+    private FriendHelperManager friendHelper;
+
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(EmbeddedGradleImporter.class)
@@ -136,7 +139,7 @@ public class GroupManagerTest {
         final EntityManager groupEM = entityManagerProducer.createEntityManager();
         GameManager gameManager = new GameManager(gameEM);
         ActivityManager activityManager = new ActivityManager(activityEM, gameManager);
-        UserManager userManager = new UserManager(userEM);
+        UserManager userManager = new UserManager(userEM, friendHelper);
         GroupManager groupManager = new GroupManager(groupEM, userManager, activityManager);
 
         final String gameName = "Overwatch";
@@ -188,7 +191,7 @@ public class GroupManagerTest {
         final EntityManager groupEM = entityManagerProducer.createEntityManager();
         GameManager gameManager = new GameManager(gameEM);
         ActivityManager activityManager = new ActivityManager(activityEM, gameManager);
-        UserManager userManager = new UserManager(userEM);
+        UserManager userManager = new UserManager(userEM, friendHelper);
 
         final String gameName = "Overwatch";
         GameEntity game = addGame(gameName);
@@ -230,7 +233,7 @@ public class GroupManagerTest {
         final EntityManager groupEM = entityManagerProducer.createEntityManager();
         GameManager gameManager = new GameManager(gameEM);
         ActivityManager activityManager = new ActivityManager(activityEM, gameManager);
-        UserManager userManager = new UserManager(userEM);
+        UserManager userManager = new UserManager(userEM, friendHelper);
         GroupManager groupManager = new GroupManager(groupEM, userManager, activityManager);
 
         final String gameName = "Overwatch";
@@ -275,7 +278,7 @@ public class GroupManagerTest {
         final EntityManager userEM = entityManagerProducer.createEntityManager();
         final EntityManager groupEM = entityManagerProducer.createEntityManager();
         GameManager gameManager = new GameManager(gameEM);
-        UserManager userManager = new UserManager(userEM);
+        UserManager userManager = new UserManager(userEM, friendHelper);
 
         final String gameName = "Overwatch";
         GameEntity game = addGame(gameName);

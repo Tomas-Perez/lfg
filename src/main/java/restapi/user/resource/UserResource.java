@@ -1,11 +1,7 @@
 package restapi.user.resource;
 
 import persistence.model.User;
-import restapi.group.model.MemberJSON;
-import restapi.user.model.ConfirmRequestJSON;
-import restapi.user.model.FriendRequestJSON;
-import restapi.user.model.UpdateUserJSON;
-import restapi.user.model.UserData;
+import restapi.user.model.*;
 import restapi.user.service.UserService;
 
 import javax.annotation.security.RolesAllowed;
@@ -68,10 +64,9 @@ public class UserResource {
 
     @GET
     @Path("{id}")
-    @RolesAllowed({"ADMIN"})
     public Response getUser(@PathParam("id") int id){
-        User user = service.getUser(id);
-        return Response.ok(new UserData(user)).build();
+        User user = service.getBasicUser(id);
+        return Response.ok(new BasicUserData(user)).build();
     }
 
     @DELETE
@@ -83,10 +78,9 @@ public class UserResource {
     }
 
     @GET
-    @RolesAllowed({"ADMIN"})
-    public Response getAll(){
-        List<User> users = service.getAll();
-        List<UserData> userJSONS = users.stream().map(UserData::new).collect(Collectors.toList());
+    public Response search(@QueryParam("search") String search){
+        List<User> users = search == null? service.getAll() : service.searchUser(search);
+        List<BasicUserData> userJSONS = users.stream().map(BasicUserData::new).collect(Collectors.toList());
         return Response.ok(userJSONS).build();
     }
 
@@ -96,7 +90,7 @@ public class UserResource {
         Principal principal = securityContext.getUserPrincipal();
         int id = service.getIDByEmail(principal.getName());
         List<User> friends = service.getFriends(id);
-        List<MemberJSON> memberJSONS = friends.stream().map(MemberJSON::new).collect(Collectors.toList());
+        List<BasicUserData> memberJSONS = friends.stream().map(BasicUserData::new).collect(Collectors.toList());
         return Response.ok(memberJSONS).build();
     }
 
@@ -134,7 +128,7 @@ public class UserResource {
         Principal principal = securityContext.getUserPrincipal();
         int id = service.getIDByEmail(principal.getName());
         List<User> requests = service.getReceivedRequests(id);
-        List<MemberJSON> memberJSONS = requests.stream().map(MemberJSON::new).collect(Collectors.toList());
+        List<BasicUserData> memberJSONS = requests.stream().map(BasicUserData::new).collect(Collectors.toList());
         return Response.ok(memberJSONS).build();
     }
 
@@ -144,7 +138,7 @@ public class UserResource {
         Principal principal = securityContext.getUserPrincipal();
         int id = service.getIDByEmail(principal.getName());
         List<User> requests = service.getSentRequests(id);
-        List<MemberJSON> memberJSONS = requests.stream().map(MemberJSON::new).collect(Collectors.toList());
+        List<BasicUserData> memberJSONS = requests.stream().map(BasicUserData::new).collect(Collectors.toList());
         return Response.ok(memberJSONS).build();
     }
 }

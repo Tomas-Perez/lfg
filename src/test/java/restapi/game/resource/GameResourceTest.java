@@ -29,7 +29,7 @@ public class GameResourceTest extends ApiTest {
         final String overwatch = "Overwatch";
         final Response postResponse = RequestUtil.post(webTarget, token, new CreateGameJSON(overwatch));
 
-        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        assertThat(postResponse.getStatus(), is(CREATED));
 
         final String location = postResponse.getHeaderString("Location");
         final WebTarget gameTarget = RequestUtil.newTarget(location);
@@ -37,7 +37,7 @@ public class GameResourceTest extends ApiTest {
 
         final Response getResponse = RequestUtil.get(gameTarget, token);
 
-        assertThat(getResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(getResponse.getStatus(), is(OK));
 
         GameJSON actual = RequestUtil.parseResponse(getResponse, GameJSON.class);
 
@@ -49,13 +49,13 @@ public class GameResourceTest extends ApiTest {
     @Test
     public void notFoundGet(@ArquillianResteasyResource("games/1") final WebTarget webTarget){
         final Response response = RequestUtil.get(webTarget, token);
-        assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+        assertThat(response.getStatus(), is(NOT_FOUND));
     }
 
     @Test
     public void notFoundDelete(@ArquillianResteasyResource("games/1") final WebTarget webTarget){
         final Response response = RequestUtil.delete(webTarget, token);
-        assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+        assertThat(response.getStatus(), is(NOT_FOUND));
     }
 
     @Test
@@ -63,7 +63,7 @@ public class GameResourceTest extends ApiTest {
         final String overwatch = "Overwatch";
         final Response postResponse = RequestUtil.post(webTarget, token, new CreateGameJSON(overwatch));
 
-        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        assertThat(postResponse.getStatus(), is(CREATED));
 
         final String location = postResponse.getHeaderString("Location");
         final WebTarget gameTarget = RequestUtil.newTarget(location);
@@ -72,10 +72,10 @@ public class GameResourceTest extends ApiTest {
         final String image = "Dog";
         final Response updateResponse = RequestUtil.post(gameTarget, token, new UpdateGameJSON(gow, image));
 
-        assertThat(updateResponse.getStatus(), is(Response.Status.NO_CONTENT.getStatusCode()));
+        assertThat(updateResponse.getStatus(), is(NO_CONTENT));
 
         final Response getResponse = RequestUtil.get(gameTarget, token);
-        assertThat(getResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(getResponse.getStatus(), is(OK));
 
         GameJSON actual = RequestUtil.parseResponse(getResponse, GameJSON.class);
 
@@ -90,7 +90,7 @@ public class GameResourceTest extends ApiTest {
         final String overwatch = "Overwatch";
         final Response postResponse = RequestUtil.post(webTarget, token, new CreateGameJSON(overwatch));
 
-        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        assertThat(postResponse.getStatus(), is(CREATED));
 
         final String location = postResponse.getHeaderString("Location");
         final WebTarget gameTarget = RequestUtil.newTarget(location);
@@ -101,10 +101,10 @@ public class GameResourceTest extends ApiTest {
 
         final Response updateResponse = RequestUtil.post(gameTarget, token, new UpdateGameJSON(gow, image));
 
-        assertThat(updateResponse.getStatus(), is(Response.Status.CONFLICT.getStatusCode()));
+        assertThat(updateResponse.getStatus(), is(CONFLICT));
 
         final Response getResponse = RequestUtil.get(gameTarget, token);
-        assertThat(getResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(getResponse.getStatus(), is(OK));
 
         GameJSON actual = RequestUtil.parseResponse(getResponse, GameJSON.class);
 
@@ -118,7 +118,7 @@ public class GameResourceTest extends ApiTest {
     public void getAll(@ArquillianResteasyResource("games") final WebTarget webTarget) throws Exception{
         final Response response = RequestUtil.get(webTarget, token);
 
-        assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(response.getStatus(), is(OK));
         List<GameJSON> games = RequestUtil.parseListResponse(response, GameJSON.class);
 
         assertTrue(games.isEmpty());
@@ -136,7 +136,7 @@ public class GameResourceTest extends ApiTest {
 
         final Response response2 = RequestUtil.get(webTarget, token);
 
-        assertThat(response2.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(response2.getStatus(), is(OK));
 
         List<GameJSON> games2 = RequestUtil.parseListResponse(response2, GameJSON.class);
 

@@ -38,7 +38,7 @@ public class ActivityResourceTest extends ApiTest {
                 new CreateActivityJSON(activityName, gameID)
         );
 
-        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        assertThat(postResponse.getStatus(), is(CREATED));
 
         final String location = postResponse.getHeaderString("Location");
         final WebTarget activityTarget = RequestUtil.newTarget(location);
@@ -46,7 +46,7 @@ public class ActivityResourceTest extends ApiTest {
 
         final Response getResponse = RequestUtil.get(activityTarget, token);
 
-        assertThat(getResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(getResponse.getStatus(), is(OK));
 
         GameJSON gameJSON = new GameJSON(gameID, gameName);
 
@@ -60,13 +60,13 @@ public class ActivityResourceTest extends ApiTest {
     @Test
     public void notFoundGet(@ArquillianResteasyResource("activities/1") final WebTarget webTarget){
         final Response response = RequestUtil.get(webTarget, token);
-        assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+        assertThat(response.getStatus(), is(NOT_FOUND));
     }
 
     @Test
     public void notFoundDelete(@ArquillianResteasyResource("activities/1") final WebTarget webTarget){
         final Response response = RequestUtil.delete(webTarget, token);
-        assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+        assertThat(response.getStatus(), is(NOT_FOUND));
     }
 
     @Test
@@ -83,17 +83,17 @@ public class ActivityResourceTest extends ApiTest {
                 new CreateActivityJSON(activityName, gameID)
         );
 
-        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        assertThat(postResponse.getStatus(), is(CREATED));
 
         final String location = postResponse.getHeaderString("Location");
         final WebTarget activityTarget = RequestUtil.newTarget(location);
 
         final Response updateResponse = RequestUtil.post(activityTarget, token, new UpdateActivityJSON(activityName2, gameID));
 
-        assertThat(updateResponse.getStatus(), is(Response.Status.NO_CONTENT.getStatusCode()));
+        assertThat(updateResponse.getStatus(), is(NO_CONTENT));
 
         final Response getResponse = RequestUtil.get(activityTarget, token);
-        assertThat(getResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(getResponse.getStatus(), is(OK));
 
         ActivityJSON actual = RequestUtil.parseResponse(getResponse, ActivityJSON.class);
         GameJSON gameJSON = new GameJSON(gameID, gameName);
@@ -120,18 +120,18 @@ public class ActivityResourceTest extends ApiTest {
                 new CreateActivityJSON(activityName, gameID)
         );
 
-        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        assertThat(postResponse.getStatus(), is(CREATED));
 
         final String location = postResponse.getHeaderString("Location");
         final WebTarget activityTarget = RequestUtil.newTarget(location);
 
         final Response updateResponse = RequestUtil.post(activityTarget, token, new UpdateActivityJSON(activityName, gameID2));
 
-        assertThat(updateResponse.getStatus(), is(Response.Status.NO_CONTENT.getStatusCode()));
+        assertThat(updateResponse.getStatus(), is(NO_CONTENT));
 
         final Response getResponse = RequestUtil.get(activityTarget, token);
         System.out.println(activityTarget.getUri());
-        assertThat(getResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(getResponse.getStatus(), is(OK));
 
         ActivityJSON actual = RequestUtil.parseResponse(getResponse, ActivityJSON.class);
         GameJSON gameJSON = new GameJSON(gameID2, gameName2);
@@ -161,7 +161,7 @@ public class ActivityResourceTest extends ApiTest {
                 token,
                 new CreateActivityJSON(activityName, gameID)
         );
-        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        assertThat(postResponse.getStatus(), is(CREATED));
         final String location = postResponse.getHeaderString("Location");
         final WebTarget activityTarget = RequestUtil.newTarget(location);
         final String id = RequestUtil.getRelativePathDiff(activitiesTarget, activityTarget);
@@ -179,10 +179,10 @@ public class ActivityResourceTest extends ApiTest {
 
         //Conflict by changing game
         final Response updateResponse = RequestUtil.post(activityTarget, token, new UpdateActivityJSON(activityName, gameID2));
-        assertThat(updateResponse.getStatus(), is(Response.Status.CONFLICT.getStatusCode()));
+        assertThat(updateResponse.getStatus(), is(CONFLICT));
 
         final Response getResponse = RequestUtil.get(activityTarget, token);
-        assertThat(getResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(getResponse.getStatus(), is(OK));
 
         ActivityJSON actual = RequestUtil.parseResponse(getResponse, ActivityJSON.class);
         GameJSON gameJSON = new GameJSON(gameID, gameName);
@@ -192,10 +192,10 @@ public class ActivityResourceTest extends ApiTest {
 
         //Conflict by changing name
         final Response updateResponse2 = RequestUtil.post(activityTarget, token, new UpdateActivityJSON(activityName2, gameID));
-        assertThat(updateResponse2.getStatus(), is(Response.Status.CONFLICT.getStatusCode()));
+        assertThat(updateResponse2.getStatus(), is(CONFLICT));
 
         final Response getResponse2 = RequestUtil.get(activityTarget, token);
-        assertThat(getResponse2.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(getResponse2.getStatus(), is(OK));
 
         ActivityJSON actual2 = RequestUtil.parseResponse(getResponse2, ActivityJSON.class);
         GameJSON gameJSON2 = new GameJSON(gameID, gameName);
@@ -209,7 +209,7 @@ public class ActivityResourceTest extends ApiTest {
 
         final Response response = RequestUtil.get(activitiesTarget, token);
 
-        assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(response.getStatus(), is(OK));
         List<ActivityJSON> activities = RequestUtil.parseListResponse(response, ActivityJSON.class);
 
         assertTrue(activities.isEmpty());
@@ -240,7 +240,7 @@ public class ActivityResourceTest extends ApiTest {
 
         final Response response2 = RequestUtil.get(activitiesTarget, token);
 
-        assertThat(response2.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(response2.getStatus(), is(OK));
 
         List<ActivityJSON> activities2 = RequestUtil.parseListResponse(response2, ActivityJSON.class);
 

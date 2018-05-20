@@ -47,6 +47,14 @@ public class UserService {
         }
     }
 
+    public User getBasicUser(int id){
+        try {
+            return modelBuilder.huskUser(id);
+        } catch (NoSuchElementException exc){
+            throw new NotFoundException();
+        }
+    }
+
     public void deleteUser(int id){
         try {
             manager.delete(id);
@@ -67,7 +75,14 @@ public class UserService {
     public List<User> getAll(){
         return manager.list()
                 .stream()
-                .map(modelBuilder::buildUser)
+                .map(modelBuilder::huskUser)
+                .collect(Collectors.toList());
+    }
+
+    public List<User> searchUser(String str){
+        return manager.search(str)
+                .stream()
+                .map(modelBuilder::huskUser)
                 .collect(Collectors.toList());
     }
 

@@ -149,7 +149,7 @@ public class ModelBuilder {
         );
     }
 
-    private User huskUser(int userID){
+    public User huskUser(int userID){
         UserEntity userEntity = userManager.get(userID);
         if(userEntity == null) throw new NoSuchElementException();
 

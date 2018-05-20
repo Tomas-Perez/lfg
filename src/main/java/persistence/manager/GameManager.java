@@ -25,7 +25,6 @@ public class GameManager extends Manager<GameEntity>{
 
     public GameManager(){}
 
-
     public int add(GameEntity game) throws ConstraintException {
         checkValidCreation(game.getName());
         persist(game);
@@ -104,5 +103,10 @@ public class GameManager extends Manager<GameEntity>{
         return new HashSet<>((manager.createQuery("SELECT A.id FROM ActivityEntity A WHERE A.gameId = :game")
                 .setParameter("game", gameID)
                 .getResultList()));
+    }
+
+    public void checkExistence(int gameID){
+        if(!exists(gameID))
+            throw new ConstraintException(String.format("Game with id: %d does not exist", gameID));
     }
 }

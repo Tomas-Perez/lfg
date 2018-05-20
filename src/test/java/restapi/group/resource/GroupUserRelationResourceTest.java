@@ -7,6 +7,7 @@ import restapi.ApiTest;
 import restapi.activity.model.ActivityJSON;
 import restapi.activity.model.GameJSON;
 import restapi.group.model.AddMemberJSON;
+import restapi.user.model.BasicUserData;
 import restapi.user.model.GroupJSON;
 import restapi.group.model.MemberJSON;
 import restapi.user.model.UserData;
@@ -56,24 +57,23 @@ public class GroupUserRelationResourceTest extends ApiTest {
 
         WebTarget ownerTarget = RequestUtil.newRelativeTarget(base, String.format("users/%d", ownerID));
         final Response getOwner = RequestUtil.get(ownerTarget, token);
-        UserData actual = RequestUtil.parseResponse(getOwner, UserData.class);
+        BasicUserData actual = RequestUtil.parseResponse(getOwner, BasicUserData.class);
 
-        GroupJSON groupJSON = createExpectedJSON(gameID, gameName, activityID, activityName, ownerID, username, groupID, slots);
-        UserData expectedOwnerData = new UserData(ownerID, username, email, false, Collections.singletonList(groupJSON), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        BasicUserData expectedOwnerData = new BasicUserData(ownerID, username);
 
         assertThat(actual, is(expectedOwnerData));
 
         WebTarget member1Target = RequestUtil.newRelativeTarget(base, String.format("users/%d", member1ID));
         final Response getMember1 = RequestUtil.get(member1Target, token);
-        UserData actualMember1 = RequestUtil.parseResponse(getMember1, UserData.class);
-        UserData expectedMember1Data = new UserData(member1ID, username1, email1, false, Collections.singletonList(groupJSON), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        BasicUserData actualMember1 = RequestUtil.parseResponse(getMember1, BasicUserData.class);
+        BasicUserData expectedMember1Data = new BasicUserData(member1ID, username1);
 
         assertThat(actualMember1, is(expectedMember1Data));
 
         WebTarget member2Target = RequestUtil.newRelativeTarget(base, String.format("users/%d", member2ID));
         final Response getMember2 = RequestUtil.get(member2Target, token);
-        UserData actualMember2 = RequestUtil.parseResponse(getMember2, UserData.class);
-        UserData expectedMember2Data = new UserData(member2ID, username2, email2, false, Collections.singletonList(groupJSON), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        BasicUserData actualMember2 = RequestUtil.parseResponse(getMember2, BasicUserData.class);
+        BasicUserData expectedMember2Data = new BasicUserData(member2ID, username2);
 
         assertThat(actualMember2, is(expectedMember2Data));
     }

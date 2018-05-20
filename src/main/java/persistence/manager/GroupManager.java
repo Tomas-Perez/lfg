@@ -47,8 +47,8 @@ public class GroupManager extends Manager<GroupEntity>{
     }
 
     public void addMemberToGroup(int groupID, int memberID){
-        checkUser(memberID);
-        checkGroup(groupID);
+        userManager.checkExistence(memberID);
+        checkExistence(groupID);
         GroupMemberEntity groupMemberEntity = new GroupMemberEntity(groupID, memberID, false);
         persist(groupMemberEntity);
     }
@@ -116,21 +116,11 @@ public class GroupManager extends Manager<GroupEntity>{
     }
 
     private void checkValidCreation(int ownerID, int activityID){
-        checkUser(ownerID);
-        checkActivity(activityID);
+        userManager.checkExistence(ownerID);
+        activityManager.checkExistence(activityID);
     }
 
-    private void checkUser(int userID){
-        if(!userManager.exists(userID))
-            throw new ConstraintException(String.format("User with id: %d does not exist", userID));
-    }
-
-    private void checkActivity(int activityID){
-        if(!activityManager.exists(activityID))
-            throw new ConstraintException(String.format("Activity with id: %d does not exist", activityID));
-    }
-
-    private void checkGroup(int groupID){
+    public void checkExistence(int groupID){
         if(!exists(groupID))
             throw new ConstraintException(String.format("Group with id: %d does not exist", groupID));
     }

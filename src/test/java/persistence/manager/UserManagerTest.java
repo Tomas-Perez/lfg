@@ -35,6 +35,9 @@ public class UserManagerTest {
     private UserManager manager;
 
     @Inject
+    private FriendHelperManager friendHelper;
+
+    @Inject
     private EntityManagerProducer emp;
 
     @Deployment
@@ -236,7 +239,7 @@ public class UserManagerTest {
     @Test
     public void removeFriend(){
         EntityManager userEM = emp.createEntityManager();
-        UserManager manager = new UserManager(userEM);
+        UserManager manager = new UserManager(userEM, friendHelper);
 
         UserDetails one = new UserDetails("Username", "pass", "email@email.com", false);
         UserDetails two = new UserDetails("someone", "pass", "another@email.com", false);
@@ -259,7 +262,7 @@ public class UserManagerTest {
         emp.closeEntityManager(userEM);
 
         EntityManager userEM2 = emp.createEntityManager();
-        UserManager userManager2 = new UserManager(userEM2);
+        UserManager userManager2 = new UserManager(userEM2, friendHelper);
 
         final Set<Integer> afterRemoveFriends = requestIDs.stream()
                 .filter(id -> id != removeID)

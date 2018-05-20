@@ -45,7 +45,7 @@ public class GroupResourceTest extends ApiTest {
 
         final Response postResponse = RequestUtil.post(groupsTarget, token, new CreateGroupJSON(slots, activityID, ownerID));
 
-        assertThat(postResponse.getStatus(), is(Response.Status.CREATED.getStatusCode()));
+        assertThat(postResponse.getStatus(), is(CREATED));
 
         final String location = postResponse.getHeaderString("Location");
         final WebTarget groupTarget = RequestUtil.newTarget(location);
@@ -53,7 +53,7 @@ public class GroupResourceTest extends ApiTest {
 
         final Response getResponse = RequestUtil.get(groupTarget, token);
 
-        assertThat(getResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(getResponse.getStatus(), is(OK));
 
         GroupJSON actual = RequestUtil.parseResponse(getResponse, GroupJSON.class);
 
@@ -70,13 +70,13 @@ public class GroupResourceTest extends ApiTest {
     @Test
     public void notFoundGet(@ArquillianResteasyResource("groups/1") final WebTarget webTarget){
         final Response response = RequestUtil.get(webTarget, token);
-        assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+        assertThat(response.getStatus(), is(NOT_FOUND));
     }
 
     @Test
     public void notFoundDelete(@ArquillianResteasyResource("groups/1") final WebTarget webTarget){
         final Response response = RequestUtil.delete(webTarget, token);
-        assertThat(response.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+        assertThat(response.getStatus(), is(NOT_FOUND));
     }
 
     @Test
@@ -105,18 +105,18 @@ public class GroupResourceTest extends ApiTest {
 
         final Response postResponse = RequestUtil.post(groupMembersTarget, token, new AddMemberJSON(member1ID));
 
-        assertThat(postResponse.getStatus(), is(Response.Status.NO_CONTENT.getStatusCode()));
+        assertThat(postResponse.getStatus(), is(NO_CONTENT));
 
         final Response postResponse2 = RequestUtil.post(groupMembersTarget, token, new AddMemberJSON(member2ID));
 
-        assertThat(postResponse2.getStatus(), is(Response.Status.NO_CONTENT.getStatusCode()));
+        assertThat(postResponse2.getStatus(), is(NO_CONTENT));
 
 
         WebTarget groupTarget = RequestUtil.newRelativeTarget(base, String.format("groups/%d", groupID));
 
         final Response getResponse = RequestUtil.get(groupTarget, token);
 
-        assertThat(getResponse.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(getResponse.getStatus(), is(OK));
 
         GroupJSON actual = RequestUtil.parseResponse(getResponse, GroupJSON.class);
 
@@ -142,11 +142,11 @@ public class GroupResourceTest extends ApiTest {
 
         final Response deleteResponse = RequestUtil.delete(groupMember1Target, token);
 
-        assertThat(deleteResponse.getStatus(), is(Response.Status.NO_CONTENT.getStatusCode()));
+        assertThat(deleteResponse.getStatus(), is(NO_CONTENT));
 
         final Response getResponse2 = RequestUtil.get(groupTarget, token);
 
-        assertThat(getResponse2.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(getResponse2.getStatus(), is(OK));
 
         actual = RequestUtil.parseResponse(getResponse2, GroupJSON.class);
 

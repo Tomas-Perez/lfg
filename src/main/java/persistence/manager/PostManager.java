@@ -74,7 +74,7 @@ public class PostManager extends Manager<PostEntity>{
 
     @SuppressWarnings("unchecked")
     public List<Integer> list(){
-        return manager.createQuery("SELECT P.id FROM PostEntity P").getResultList();
+        return manager.createQuery("SELECT P.id FROM PostEntity P ORDER BY P.date DESC").getResultList();
     }
 
     public PostEntity get(int postID){
@@ -82,17 +82,12 @@ public class PostManager extends Manager<PostEntity>{
     }
 
     private void checkValidCreation(int ownerID, int activityID){
-        checkUser(ownerID);
-        checkActivity(activityID);
+        userManager.checkExistence(ownerID);
+        activityManager.checkExistence(activityID);
     }
 
-    private void checkUser(int ownerID){
-        if(!userManager.exists(ownerID))
-            throw new ConstraintException(String.format("User with id: %d does not exist", ownerID));
-    }
-
-    private void checkActivity(int activityID){
-        if(!activityManager.exists(activityID))
-            throw new ConstraintException(String.format("Activity with id: %d does not exist", activityID));
+    public void checkExistence(int postID){
+        if(!exists(postID))
+            throw new ConstraintException(String.format("Post with id: %d does not exist", postID));
     }
 }

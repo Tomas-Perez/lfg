@@ -120,4 +120,8 @@ public class ActivityManager extends Manager<ActivityEntity>{
         return manager.find(ActivityEntity.class, activityID);
     }
 
+    public void checkExistence(int activityID){
+        if(!exists(activityID))
+            throw new ConstraintException(String.format("Activity with id: %d does not exist", activityID));
+    }
 }

@@ -1,5 +1,7 @@
 package persistence.manager;
 
+import persistence.manager.util.ManagerUtil;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.List;
@@ -19,15 +21,7 @@ public abstract class Manager<T> {
     public abstract int add(T entity);
 
     protected void persist(Object entity){
-        EntityTransaction tx = manager.getTransaction();
-        try {
-            tx.begin();
-            manager.persist(entity);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-        }
+        ManagerUtil.persist(manager, entity);
     }
 
     public abstract T get(int id);
@@ -43,4 +37,6 @@ public abstract class Manager<T> {
     }
 
     public abstract List<Integer> list();
+
+    public abstract void checkExistence(int id);
 }

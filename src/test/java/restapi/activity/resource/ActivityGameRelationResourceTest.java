@@ -56,7 +56,7 @@ public class ActivityGameRelationResourceTest extends ApiTest {
 
         final Response response = RequestUtil.get(gamesTarget, token);
 
-        assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(response.getStatus(), is(OK));
 
         List<GameJSON> games = RequestUtil.parseListResponse(response, GameJSON.class);
 
@@ -86,7 +86,7 @@ public class ActivityGameRelationResourceTest extends ApiTest {
 
         final Response response = RequestUtil.get(gamesTarget, token);
 
-        assertThat(response.getStatus(), is(Response.Status.OK.getStatusCode()));
+        assertThat(response.getStatus(), is(OK));
 
         List<GameJSON> games = RequestUtil.parseListResponse(response, GameJSON.class);
 
@@ -102,7 +102,7 @@ public class ActivityGameRelationResourceTest extends ApiTest {
         Response get1 = RequestUtil.get(activity1Target, token);
         Response get2 = RequestUtil.get(activity2Target, token);
 
-        assertThat(get1.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
-        assertThat(get2.getStatus(), is(Response.Status.NOT_FOUND.getStatusCode()));
+        assertThat(get1.getStatus(), is(NOT_FOUND));
+        assertThat(get2.getStatus(), is(NOT_FOUND));
     }
 }
