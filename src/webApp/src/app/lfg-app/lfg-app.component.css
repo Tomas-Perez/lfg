@@ -37,7 +37,6 @@
   overflow: hidden;
   position: relative;
   width: 60px;
-  padding: 5px 2px;
   text-align: center;
 }
 
@@ -81,7 +80,6 @@
   overflow: hidden;
 }
 
-
 .chat-wrapper{
   background-color: #202225;
   -webkit-box-shadow: 0 -1px 0 rgba(0,0,0,.1);
@@ -108,15 +106,6 @@
   display: -webkit-box;
   display: -ms-flexbox;
   position: relative;
-  height: 100%;
-  width: 100%;
-}
-
-
-app-friend-bar{
-  display: flex;
-  flex: 1 0 auto;
-  flex-direction: row;
   height: 100%;
   width: 100%;
 }

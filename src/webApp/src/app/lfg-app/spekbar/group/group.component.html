@@ -16,7 +16,7 @@
     </div>
   </div>
 
-  <form *ngIf="isOwner" #postForm="ngForm" class="post-group-form" (ngSubmit)="postForm.valid && postGroup()" novalidate>
+  <form *ngIf="isOwner && post != null" #postForm="ngForm" class="post-group-form" (ngSubmit)="postForm.valid && postGroup()" novalidate>
     <h2 class="group-subtitle">Post group</h2>
     <div class="form-group">
       <textarea name="TextAreaDescription" placeholder="Description" [(ngModel)]="post.description"

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {FriendBarService} from '../../_services/friend-bar.service';
+import {FriendLocation} from '../../_models/FriendLocation';
 
 @Component({
   selector: 'app-friend-requests',
@@ -7,9 +9,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FriendRequestsComponent implements OnInit {
 
-  constructor() { }
+  constructor(private friendBarService: FriendBarService) { }
 
   ngOnInit() {
+    this.friendBarService.friendLocationSubject.next(FriendLocation.REQUEST);
   }
 
 }

@@ -15,8 +15,7 @@ export class LfgAppComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<any> = new Subject();
   user: User;
 
-  constructor(private userService: UserService,
-  ) { }
+  constructor(private userService: UserService) { }
 
   ngOnInit() {
     this.userService.userSubject.takeUntil(this.ngUnsubscribe)

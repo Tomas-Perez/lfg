@@ -13,10 +13,12 @@ import {FriendRequestsComponent} from './friends/friend-requests/friend-requests
 
 const routes: Routes = [
   { path: 'app', component: LfgAppComponent, canActivate: [AuthUserGuardService], children: [
+    {path: '', component: PostFilterComponent, outlet: 'spekbar'},
     {path: 'filter-posts', component: PostFilterComponent, outlet: 'spekbar'},
     {path: 'new-post', component: NewPostComponent, canActivate: [NoGroupGuardService], outlet: 'spekbar'},
     {path: 'new-group', component: NewGroupComponent, canActivate: [NoGroupGuardService], outlet: 'spekbar'},
     {path: 'group', component: GroupComponent, canActivate: [GroupGuardService], outlet: 'spekbar'},
+    {path: '', component: FriendListComponent, outlet: 'friends'},
     {path: 'friend-list', component: FriendListComponent, outlet: 'friends'},
     {path: 'friend-requests', component: FriendRequestsComponent, outlet: 'friends'}
   ]}

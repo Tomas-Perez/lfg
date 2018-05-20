@@ -7,6 +7,8 @@ import {PostFilterService} from './post-filter.service';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
 import {PostFilter} from '../../../_models/post-filters/PostFilter';
+import {NavBarService} from '../../_services/nav-bar.service';
+import {SpekbarLocation} from '../../_models/SpekbarLocation';
 
 @Component({
   selector: 'app-post-filter',
@@ -23,10 +25,14 @@ export class PostFilterComponent implements OnInit, OnDestroy {
 
   constructor(
     private gameService: GameService,
+    private navBarService: NavBarService,
     private postFilterService: PostFilterService
   ) { }
 
   ngOnInit() {
+
+    this.navBarService.spekbarLocationSubject.next(SpekbarLocation.FILTER);
+
     this.gameService.gamesSubject.takeUntil(this.ngUnsubscribe)
       .subscribe(games => {
         this.games = games;

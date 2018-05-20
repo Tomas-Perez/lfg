@@ -8,6 +8,8 @@ import 'rxjs/add/operator/takeUntil';
 import {Subject} from 'rxjs/Subject';
 import {ActivatedRoute, Router} from '@angular/router';
 import {User} from '../../../_models/User';
+import {SpekbarLocation} from '../../_models/SpekbarLocation';
+import {NavBarService} from '../../_services/nav-bar.service';
 
 @Component({
   selector: 'app-new-group',
@@ -27,10 +29,13 @@ export class NewGroupComponent implements OnInit, OnDestroy {
               private userService: UserService,
               private gameService: GameService,
               private router: Router,
-              private route: ActivatedRoute) { }
+              private navBarService: NavBarService
+              ) { }
 
   ngOnInit() {
     this.group = new DbGroup();
+
+    this.navBarService.spekbarLocationSubject.next(SpekbarLocation.GROUP);
 
     this.gameService.gamesSubject.takeUntil(this.ngUnsubscribe)
       .subscribe(games => this.games = games);

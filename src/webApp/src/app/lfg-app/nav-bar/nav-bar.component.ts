@@ -6,6 +6,8 @@ import {User} from '../../_models/User';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
 import {GroupService} from '../../_services/group.service';
+import {NavBarService} from '../_services/nav-bar.service';
+import {SpekbarLocation} from '../_models/SpekbarLocation';
 
 @Component({
   selector: 'app-nav-bar',
@@ -14,14 +16,17 @@ import {GroupService} from '../../_services/group.service';
 })
 export class NavBarComponent implements OnInit, OnDestroy {
 
+  public SpekbarLocation = SpekbarLocation;
   private ngUnsubscribe: Subject<any> = new Subject();
   user: User;
   inGroup: boolean;
+  spekbarLocation: SpekbarLocation;
 
   constructor(
     private userService: UserService,
     private authService: AuthService,
     private groupService: GroupService,
+    private navBarService: NavBarService,
     private router: Router,
     private route: ActivatedRoute
               ) { }
@@ -29,9 +34,14 @@ export class NavBarComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.inGroup = false;
 
+    this.navBarService.spekbarLocationSubject.takeUntil(this.ngUnsubscribe)
+      .subscribe(spekLoc => {
+        this.spekbarLocation = spekLoc;
+      });
+
     this.groupService.currentGroupSubject.takeUntil(this.ngUnsubscribe)
       .subscribe(group => {
-        if (group !== null){
+        if (group !== null) {
           this.inGroup = true;
         } else {
           this.inGroup = false;
@@ -42,6 +52,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
       .subscribe(user => {
         this.user = user;
       });
+
   }
 
   logOut() {
@@ -56,6 +67,10 @@ export class NavBarComponent implements OnInit, OnDestroy {
         skipLocationChange: true
     });
     // [routerLink]="[{ outlets: {'spekbar':['new-post'] }}]"
+  }
+
+  resetSpekbarLocation() {
+    this.navBarService.spekbarLocationSubject.next(SpekbarLocation.NOTHING);
   }
 
   ngOnDestroy() {

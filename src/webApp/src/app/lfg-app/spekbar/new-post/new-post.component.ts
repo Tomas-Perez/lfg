@@ -9,6 +9,8 @@ import {NewPostService} from './new-post.service';
 import {NewPostModel} from './new-post.model';
 import {User} from '../../../_models/User';
 import {Post} from '../../../_models/Post';
+import {NavBarService} from '../../_services/nav-bar.service';
+import {SpekbarLocation} from '../../_models/SpekbarLocation';
 
 @Component({
   selector: 'app-new-post',
@@ -27,10 +29,13 @@ export class NewPostComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private gameService: GameService,
     private newPostService: NewPostService,
+    private navBarService: NavBarService,
     private postService: PostService
     ) { }
 
   ngOnInit() {
+
+    this.navBarService.spekbarLocationSubject.next(SpekbarLocation.NEWPOST);
 
     this.userService.userSubject.takeUntil(this.ngUnsubscribe)
       .subscribe( user => this.user = user);

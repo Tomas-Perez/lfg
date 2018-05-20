@@ -1,24 +1,29 @@
 <div class="nav-bar-wrapper">
-  <ul class="navbar-nav ml-auto">
-    <li class="app-nav-bar-item" [routerLinkActive]="['active']">
-      <a class="hand" (click)="logOut()">Log Out
+  <ul class="navbar-nav">
+    <li class="app-nav-bar-item logout" (click)="logOut()">
+      <a>Log Out
         <fa name="sign-out" rotate="horizontal"></fa>
       </a>
     </li>
-    <li *ngIf="user != null && user.admin" class="app-nav-bar-item">
-      <a class="hand" [routerLink]="['/admin-panel']">Admin panel</a>
+    <li class="app-nav-bar-item" [ngClass]="{'active': spekbarLocation == SpekbarLocation.FILTER}"
+        (click)="navigate('filter-posts')">
+      <span>Filter posts</span>
     </li>
-    <li class="app-nav-bar-item">
-      <a class="hand" (click)="navigate('filter-posts')">Filter posts</a>
+    <li *ngIf="!inGroup" class="app-nav-bar-item" [ngClass]="{'active': spekbarLocation == SpekbarLocation.NEWPOST}"
+        (click)="navigate('new-post')">
+      <span>New post</span>
     </li>
-    <li *ngIf="!inGroup"  class="app-nav-bar-item">
-      <a class="hand" (click)="navigate('new-post')">New post</a>
+    <li *ngIf="!inGroup" class="app-nav-bar-item" [ngClass]="{'active': spekbarLocation == SpekbarLocation.GROUP}"
+        (click)="navigate('new-group')">
+      <span>New group</span>
     </li>
-    <li *ngIf="!inGroup" class="app-nav-bar-item">
-      <a class="hand" (click)="navigate('new-group')">New group</a>
+    <li *ngIf="inGroup" class="app-nav-bar-item" [ngClass]="{'active': spekbarLocation == SpekbarLocation.GROUP}"
+        (click)="navigate('group')">
+      <span>Group</span>
     </li>
-    <li *ngIf="inGroup" class="app-nav-bar-item">
-      <a class="hand" (click)="navigate('group')">Group</a>
+    <li *ngIf="user != null && user.admin" class="app-nav-bar-item admin"
+        (click)="resetSpekbarLocation()" [routerLink]="['/admin-panel']">
+      <span>Admin panel</span>
     </li>
   </ul>
 </div>

@@ -27,3 +27,13 @@ li{
 .friends-bar-item:hover{
   color: white;
 }
+
+.active{
+  transition: all 0.4s;
+  color: white;
+  border-bottom: #687cc2 solid;
+  background: #303238;
+  -webkit-box-shadow: 0px -7px 23px 7px rgba(0,0,0,0.61);
+  -moz-box-shadow: 0px -7px 23px 7px rgba(0,0,0,0.61);
+  box-shadow: 0px -7px 23px 7px rgba(0,0,0,0.61);
+}

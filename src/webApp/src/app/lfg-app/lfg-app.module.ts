@@ -20,6 +20,8 @@ import { GroupPostService } from './spekbar/group/group-post.service';
 import { FriendListComponent } from './friends/friend-list/friend-list.component';
 import { FriendRequestsComponent } from './friends/friend-requests/friend-requests.component';
 import { FriendBarComponent } from './friends/friend-bar/friend-bar.component';
+import { NavBarService } from './_services/nav-bar.service';
+import { FriendBarService } from './_services/friend-bar.service';
 
 
 @NgModule({
@@ -48,7 +50,9 @@ import { FriendBarComponent } from './friends/friend-bar/friend-bar.component';
     PostFilterService,
     GroupGuardService,
     NoGroupGuardService,
-    GroupPostService
+    GroupPostService,
+    NavBarService,
+    FriendBarService
   ],
 })
 export class LfgAppModule { }

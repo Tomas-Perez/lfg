@@ -1,14 +1,16 @@
 <div class="friends-bar">
   <ul class="navbar-nav">
-    <li class="friends-bar-item">
-      <a class="hand" (click)="navigate('friend-list')">
-        <fa name="users"  size="2x"></fa>
-      </a>
+    <li class="friends-bar-item" (click)="navigate('friend-list')"
+        [ngClass]="{'active': friendLocation == FriendLocation.LIST}">
+      <span>
+        <fa name="users" size="2x"></fa>
+      </span>
     </li>
-    <li class="friends-bar-item">
-      <a class="hand" (click)="navigate('friend-requests')">
+    <li class="friends-bar-item" (click)="navigate('friend-requests')"
+        [ngClass]="{'active': friendLocation == FriendLocation.REQUEST}">
+      <span>
         1
-      </a>
+      </span>
     </li>
   </ul>
 </div>

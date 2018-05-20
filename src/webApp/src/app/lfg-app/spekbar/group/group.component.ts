@@ -9,6 +9,8 @@ import {GroupPostService} from './group-post.service';
 import {PostService} from '../../../_services/post.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Post} from '../../../_models/Post';
+import {NavBarService} from '../../_services/nav-bar.service';
+import {SpekbarLocation} from '../../_models/SpekbarLocation';
 
 @Component({
   selector: 'app-group',
@@ -28,11 +30,15 @@ export class GroupComponent implements OnInit, OnDestroy {
               private userService: UserService,
               private postService: PostService,
               private groupPostService: GroupPostService,
+              private navBarService: NavBarService,
               private router: Router,
               ) { }
 
   ngOnInit() {
     this.newPost = new DbPost();
+
+    this.navBarService.spekbarLocationSubject.next(SpekbarLocation.GROUP);
+
     this.groupService.currentGroupSubject.takeUntil(this.ngUnsubscribe)
       .subscribe((group: Group) => {
         if (group !== null) {
