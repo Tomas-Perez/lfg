@@ -28,13 +28,13 @@ import static org.junit.Assert.*;
 public class UserResourceTest extends ApiTest {
 
     @Test
-    public void getMe() throws Exception{
+    public void getMe(){
         String username = "username";
         String email = "email";
         String password = "password";
         int id = addUser(username, password, email);
 
-        final AuthenticationToken userToken = RequestUtil.getToken(base, email, password);
+        final AuthenticationToken userToken = RequestUtil.getToken(signInTarget, email, password);
 
         final Response meResponse = RequestUtil.get(meTarget, userToken);
         UserData meData = RequestUtil.parseResponse(meResponse, UserData.class);
@@ -45,7 +45,7 @@ public class UserResourceTest extends ApiTest {
     }
 
     @Test
-    public void sendFriendRequests() throws Exception{
+    public void sendFriendRequests(){
         String username1 = "username1";
         String email1 = "email1";
         String password1 = "password1";
@@ -61,9 +61,9 @@ public class UserResourceTest extends ApiTest {
         String password3 = "password3";
         int id3 = addUser(username3, password3, email3);
 
-        final AuthenticationToken user1Token = RequestUtil.getToken(base, email1, password1);
-        final AuthenticationToken user2Token = RequestUtil.getToken(base, email2, password2);
-        final AuthenticationToken user3Token = RequestUtil.getToken(base, email3, password3);
+        final AuthenticationToken user1Token = RequestUtil.getToken(signInTarget, email1, password1);
+        final AuthenticationToken user2Token = RequestUtil.getToken(signInTarget, email2, password2);
+        final AuthenticationToken user3Token = RequestUtil.getToken(signInTarget, email3, password3);
 
         final WebTarget requestsTarget = RequestUtil.newRelativeTarget(base, "users/me/friend-requests");
         final WebTarget sentRequestsTarget = RequestUtil.newRelativeTarget(base, "users/me/friend-requests/sent");
@@ -104,7 +104,7 @@ public class UserResourceTest extends ApiTest {
     }
 
     @Test
-    public void confirmFriendRequest() throws Exception{
+    public void confirmFriendRequest(){
         String username1 = "username1";
         String email1 = "email1";
         String password1 = "password1";
@@ -120,9 +120,9 @@ public class UserResourceTest extends ApiTest {
         String password3 = "password3";
         int id3 = addUser(username3, password3, email3);
 
-        final AuthenticationToken user1Token = RequestUtil.getToken(base, email1, password1);
-        final AuthenticationToken user2Token = RequestUtil.getToken(base, email2, password2);
-        final AuthenticationToken user3Token = RequestUtil.getToken(base, email3, password3);
+        final AuthenticationToken user1Token = RequestUtil.getToken(signInTarget, email1, password1);
+        final AuthenticationToken user2Token = RequestUtil.getToken(signInTarget, email2, password2);
+        final AuthenticationToken user3Token = RequestUtil.getToken(signInTarget, email3, password3);
 
         final WebTarget requestsTarget = RequestUtil.newRelativeTarget(base, "users/me/friend-requests");
         final WebTarget sentRequestsTarget = RequestUtil.newRelativeTarget(base, "users/me/friend-requests/sent");
@@ -193,7 +193,7 @@ public class UserResourceTest extends ApiTest {
     }
 
     @Test
-    public void anyUserGet() throws Exception{
+    public void anyUserGet(){
         String username1 = "username1";
         String email1 = "email1";
         String password1 = "password1";
@@ -204,7 +204,7 @@ public class UserResourceTest extends ApiTest {
         String password2 = "password2";
         int id2 = addUser(username2, password2, email2);
 
-        AuthenticationToken token2 = RequestUtil.getToken(base, email2, password2);
+        AuthenticationToken token2 = RequestUtil.getToken(signInTarget, email2, password2);
 
         final WebTarget user1Target = RequestUtil.newRelativeTarget(base, String.format("users/%d", id1));
         final Response getUserResponse = RequestUtil.get(user1Target, token2);
@@ -217,7 +217,7 @@ public class UserResourceTest extends ApiTest {
     }
 
     @Test
-    public void search() throws Exception{
+    public void search(){
         String username1 = "username1";
         String email1 = "email1";
         String password1 = "password1";

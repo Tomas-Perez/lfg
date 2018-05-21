@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 public class ActivityGameRelationResourceTest extends ApiTest {
 
     @Test
-    public void getAll() throws Exception{
+    public void getAll(){
 
         final String name1 = "God of war";
         int gameID1 = addGame(name1);
@@ -66,7 +66,7 @@ public class ActivityGameRelationResourceTest extends ApiTest {
     }
 
     @Test
-    public void deleteGameWithActivities() throws Exception{
+    public void deleteGameWithActivities(){
 
         final String name1 = "God of war";
         int gameID1 = addGame(name1);

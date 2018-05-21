@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 public class GameResourceTest extends ApiTest {
 
     @Test
-    public void create(@ArquillianResteasyResource("games") final WebTarget webTarget) throws Exception{
+    public void create(@ArquillianResteasyResource("games") final WebTarget webTarget){
         final String overwatch = "Overwatch";
         final Response postResponse = RequestUtil.post(webTarget, token, new CreateGameJSON(overwatch));
 
@@ -59,7 +59,7 @@ public class GameResourceTest extends ApiTest {
     }
 
     @Test
-    public void updateGame(@ArquillianResteasyResource("games") final WebTarget webTarget) throws Exception{
+    public void updateGame(@ArquillianResteasyResource("games") final WebTarget webTarget){
         final String overwatch = "Overwatch";
         final Response postResponse = RequestUtil.post(webTarget, token, new CreateGameJSON(overwatch));
 
@@ -86,7 +86,7 @@ public class GameResourceTest extends ApiTest {
     }
 
     @Test
-    public void updateGameExc(@ArquillianResteasyResource("games") final WebTarget webTarget) throws Exception{
+    public void updateGameExc(@ArquillianResteasyResource("games") final WebTarget webTarget){
         final String overwatch = "Overwatch";
         final Response postResponse = RequestUtil.post(webTarget, token, new CreateGameJSON(overwatch));
 
@@ -115,7 +115,7 @@ public class GameResourceTest extends ApiTest {
     }
 
     @Test
-    public void getAll(@ArquillianResteasyResource("games") final WebTarget webTarget) throws Exception{
+    public void getAll(@ArquillianResteasyResource("games") final WebTarget webTarget){
         final Response response = RequestUtil.get(webTarget, token);
 
         assertThat(response.getStatus(), is(OK));
