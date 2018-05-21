@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 public class PostResourceTest extends ApiTest {
 
     @Test
-    public void createSoloPost() throws Exception{
+    public void createSoloPost(){
         final String gameName = "Overwatch";
         int gameID = addGame(gameName);
         final String activityName = "Ranked";
@@ -66,7 +66,7 @@ public class PostResourceTest extends ApiTest {
     }
 
     @Test
-    public void createGroupPost() throws Exception{
+    public void createGroupPost(){
         final String gameName = "Overwatch";
         int gameID = addGame(gameName);
         final String activityName = "Ranked";
@@ -105,7 +105,7 @@ public class PostResourceTest extends ApiTest {
     }
 
     @Test
-    public void addsPostToUser() throws Exception{
+    public void addsPostToUser(){
         final String gameName = "Overwatch";
         int gameID = addGame(gameName);
         final String activityName = "Ranked";
@@ -122,7 +122,7 @@ public class PostResourceTest extends ApiTest {
         final WebTarget postTarget = RequestUtil.newTarget(location);
         final String id = RequestUtil.getRelativePathDiff(postsTarget, postTarget);
 
-        AuthenticationToken ownerToken = RequestUtil.getToken(base, ownerEmail, ownerPass);
+        AuthenticationToken ownerToken = RequestUtil.getToken(signInTarget, ownerEmail, ownerPass);
 
         final Response ownerMeResponse = RequestUtil.get(meTarget, ownerToken);
         assertThat(ownerMeResponse.getStatus(), is(OK));
@@ -140,7 +140,7 @@ public class PostResourceTest extends ApiTest {
     }
 
     @Test
-    public void addsGroupPostToUser() throws Exception{
+    public void addsGroupPostToUser(){
         final String gameName = "Overwatch";
         int gameID = addGame(gameName);
         final String activityName = "Ranked";
@@ -160,7 +160,7 @@ public class PostResourceTest extends ApiTest {
         final WebTarget postTarget = RequestUtil.newTarget(location);
         final String id = RequestUtil.getRelativePathDiff(postsTarget, postTarget);
 
-        AuthenticationToken ownerToken = RequestUtil.getToken(base, ownerEmail, ownerPass);
+        AuthenticationToken ownerToken = RequestUtil.getToken(signInTarget, ownerEmail, ownerPass);
 
         final Response ownerMeResponse = RequestUtil.get(meTarget, ownerToken);
         assertThat(ownerMeResponse.getStatus(), is(OK));

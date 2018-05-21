@@ -4,19 +4,12 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import restapi.ApiTest;
-import restapi.activity.model.ActivityJSON;
-import restapi.activity.model.GameJSON;
 import restapi.group.model.AddMemberJSON;
 import restapi.user.model.BasicUserData;
-import restapi.user.model.GroupJSON;
-import restapi.group.model.MemberJSON;
-import restapi.user.model.UserData;
 import util.RequestUtil;
 
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -29,7 +22,7 @@ import static org.junit.Assert.assertThat;
 public class GroupUserRelationResourceTest extends ApiTest {
 
     @Test
-    public void addRemoveMembers() throws Exception{
+    public void addRemoveMembers(){
         final String gameName = "Overwatch";
         int gameID = addGame(gameName);
         final String activityName = "Ranked";
