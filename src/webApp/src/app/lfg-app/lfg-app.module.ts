@@ -22,6 +22,8 @@ import { FriendRequestsComponent } from './friends/friend-requests/friend-reques
 import { FriendBarComponent } from './friends/friend-bar/friend-bar.component';
 import { NavBarService } from './_services/nav-bar.service';
 import { FriendBarService } from './_services/friend-bar.service';
+import { FriendService } from '../_services/friend.service';
+import { UserInfoComponent } from './friends/user-info/user-info.component';
 
 
 @NgModule({
@@ -35,7 +37,8 @@ import { FriendBarService } from './_services/friend-bar.service';
     NavBarComponent,
     FriendListComponent,
     FriendRequestsComponent,
-    FriendBarComponent
+    FriendBarComponent,
+    UserInfoComponent
   ],
   imports: [
     CommonModule,
@@ -52,7 +55,8 @@ import { FriendBarService } from './_services/friend-bar.service';
     NoGroupGuardService,
     GroupPostService,
     NavBarService,
-    FriendBarService
+    FriendBarService,
+    FriendService
   ],
 })
 export class LfgAppModule { }

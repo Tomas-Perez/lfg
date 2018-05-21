@@ -51,7 +51,7 @@ export class GroupComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.postService.currentPostSubject.subscribe(post => this.post = post);
+    this.postService.currentPostSubject.takeUntil(this.ngUnsubscribe).subscribe(post => this.post = post);
 
     this.groupPostService.postSubject.takeUntil(this.ngUnsubscribe)
       .subscribe((post: DbPost) => {

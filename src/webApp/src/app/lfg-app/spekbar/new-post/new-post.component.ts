@@ -65,14 +65,14 @@ export class NewPostComponent implements OnInit, OnDestroy {
     );
   }
 
-  deletePost(){
+  deletePost() {
     this.postService.deletePost().subscribe(
       response => {
-        if(response){
+        if (response) {
           console.log('Post deleted');
         }
       }
-    )
+    );
   }
 
   ngOnDestroy() {

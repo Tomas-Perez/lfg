@@ -6,7 +6,7 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/empty';
 import 'rxjs/add/operator/share';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute, Router} from '@angular/router';
 
 
 @Injectable()
@@ -144,7 +144,7 @@ export class AuthService {
     console.log('logged out');
     localStorage.removeItem('token');
     this.setLoggedIn(false);
-    this.router.navigate([''],
+    this.router.navigate([''], // TODO change this
       {
         relativeTo: this.route,
     });

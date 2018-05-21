@@ -11,7 +11,7 @@
     </li>
     <li *ngIf="!inGroup" class="app-nav-bar-item" [ngClass]="{'active': spekbarLocation == SpekbarLocation.NEWPOST}"
         (click)="navigate('new-post')">
-      <span>New post</span>
+      <span>New<br>post</span>
     </li>
     <li *ngIf="!inGroup" class="app-nav-bar-item" [ngClass]="{'active': spekbarLocation == SpekbarLocation.GROUP}"
         (click)="navigate('new-group')">

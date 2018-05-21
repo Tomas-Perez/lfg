@@ -1,3 +1,21 @@
-<p>
-  friend-requests works!
-</p>
+<div class="requests-list-wrapper">
+  <div class="title">
+    <h1>Friends requests</h1>
+  </div>
+  <div class="friend-list">
+    <div data-simplebar data-simplebar-auto-hide="false">
+      <div class="friend">
+        <fa name="circle" alt="far"></fa>
+        <span class="friend-username">
+          juanchi420
+        </span>
+      </div>
+      <div *ngFor="let request of requests" class="friend">
+        <fa name="circle" alt="far"></fa>
+        <span class="friend-username">
+          arikapo
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

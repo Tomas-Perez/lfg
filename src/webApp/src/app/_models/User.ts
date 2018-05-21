@@ -1,5 +1,4 @@
 import {JsonObject, JsonProperty} from 'json2typescript';
-import {Group} from './Group';
 
 @JsonObject
 class GroupsId {

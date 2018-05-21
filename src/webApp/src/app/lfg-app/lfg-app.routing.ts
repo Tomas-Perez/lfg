@@ -10,6 +10,7 @@ import {GroupGuardService} from '../_services/guards/group-guard.service';
 import {NoGroupGuardService} from '../_services/guards/no-group-guard.service';
 import {FriendListComponent} from './friends/friend-list/friend-list.component';
 import {FriendRequestsComponent} from './friends/friend-requests/friend-requests.component';
+import {UserInfoComponent} from './friends/user-info/user-info.component';
 
 const routes: Routes = [
   { path: 'app', component: LfgAppComponent, canActivate: [AuthUserGuardService], children: [
@@ -20,6 +21,7 @@ const routes: Routes = [
     {path: 'group', component: GroupComponent, canActivate: [GroupGuardService], outlet: 'spekbar'},
     {path: '', component: FriendListComponent, outlet: 'friends'},
     {path: 'friend-list', component: FriendListComponent, outlet: 'friends'},
+    {path: 'user-info/:id', component: UserInfoComponent, outlet: 'friends'},
     {path: 'friend-requests', component: FriendRequestsComponent, outlet: 'friends'}
   ]}
 ];

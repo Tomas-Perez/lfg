@@ -28,7 +28,7 @@ export class FriendBarComponent implements OnInit, OnDestroy {
   }
 
   navigate(url: string) {
-    this.router.navigate([{ outlets: {friends: [url] }}],
+    this.router.navigate([{outlets: {friends: [url]}}],
       {
         relativeTo: this.route,
         skipLocationChange: true

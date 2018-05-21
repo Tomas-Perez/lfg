@@ -1,0 +1,9 @@
+<div *ngIf="user != null" class="user-info-wrapper">
+  <div class="title">
+    <h1>{{user.username}}</h1>
+  </div>
+  <div class="options">
+    <span *ngIf="isAlreadyFriend">You are already friends with {{user.username}}</span>
+    <button *ngIf="!isAlreadyFriend" type="button" class="btn btn-primary-lfg" (click)="sendFriendRequest()">Send friend request</button>
+  </div>
+</div>

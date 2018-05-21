@@ -5,7 +5,7 @@
     <div class="post-info-wrapper">
       <div class="post-info-left">
         <div class="post-user">
-          {{post.owner.username}}
+          <span (click)="getUserInfo(post.owner.id)">{{post.owner.username}}</span>
         </div>
       </div>
 

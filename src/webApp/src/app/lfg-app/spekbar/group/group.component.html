@@ -16,10 +16,10 @@
     </div>
   </div>
 
-  <form *ngIf="isOwner && post != null" #postForm="ngForm" class="post-group-form" (ngSubmit)="postForm.valid && postGroup()" novalidate>
+  <form *ngIf="isOwner" #postForm="ngForm" class="post-group-form" (ngSubmit)="postForm.valid && postGroup()" novalidate>
     <h2 class="group-subtitle">Post group</h2>
     <div class="form-group">
-      <textarea name="TextAreaDescription" placeholder="Description" [(ngModel)]="post.description"
+      <textarea name="TextAreaDescription" placeholder="Description" [(ngModel)]="newPost.description"
                 id="TextAreaDescription" class="form-control form-text description-post"
                 aria-describedby="descriptionHelp">
       </textarea>
