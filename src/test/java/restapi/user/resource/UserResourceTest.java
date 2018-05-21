@@ -39,7 +39,7 @@ public class UserResourceTest extends ApiTest {
         final Response meResponse = RequestUtil.get(meTarget, userToken);
         UserData meData = RequestUtil.parseResponse(meResponse, UserData.class);
 
-        UserData expected = new UserData(id, username, email, false, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        UserData expected = new UserData(id, username, email, false, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), null);
 
         assertThat(meData, is(expected));
     }
@@ -193,6 +193,30 @@ public class UserResourceTest extends ApiTest {
     }
 
     @Test
+    public void anyUserGet() throws Exception{
+        String username1 = "username1";
+        String email1 = "email1";
+        String password1 = "password1";
+        int id1 = addUser(username1, password1, email1);
+
+        String username2 = "user5name2";
+        String email2 = "email2";
+        String password2 = "password2";
+        int id2 = addUser(username2, password2, email2);
+
+        AuthenticationToken token2 = RequestUtil.getToken(base, email2, password2);
+
+        final WebTarget user1Target = RequestUtil.newRelativeTarget(base, String.format("users/%d", id1));
+        final Response getUserResponse = RequestUtil.get(user1Target, token2);
+        assertThat(getUserResponse.getStatus(), is(OK));
+
+        final BasicUserData actualUser1Data = RequestUtil.parseResponse(getUserResponse, BasicUserData.class);
+        final BasicUserData expectedUser1Data = new BasicUserData(id1, username1);
+
+        assertThat(actualUser1Data, is(expectedUser1Data));
+    }
+
+    @Test
     public void search() throws Exception{
         String username1 = "username1";
         String email1 = "email1";
@@ -208,6 +232,8 @@ public class UserResourceTest extends ApiTest {
         String email3 = "email3";
         String password3 = "password3";
         int id3 = addUser(username3, password3, email3);
+
+
 
         List<BasicUserData> expectedGetAll = Arrays.asList(
                 new BasicUserData(id1, username1),

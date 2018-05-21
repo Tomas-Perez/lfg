@@ -77,14 +77,4 @@ public class GroupUserRelationResourceTest extends ApiTest {
 
         assertThat(actualMember2, is(expectedMember2Data));
     }
-
-    private GroupJSON createExpectedJSON(int gameID, String gameName,
-                                         int activityID, String activityName,
-                                         int ownerID, String username,
-                                         int id, int slots){
-        GameJSON gameJSON = new GameJSON(gameID, gameName);
-        ActivityJSON activityJSON = new ActivityJSON(activityID, activityName, gameJSON);
-        MemberJSON memberJSON = new MemberJSON(ownerID, username);
-        return new GroupJSON(id, slots, activityJSON, memberJSON);
-    }
 }

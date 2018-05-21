@@ -21,10 +21,12 @@ public class User {
     private Set<User> friends;
     private Set<User> sentRequests;
     private Set<User> receivedRequests;
+    private Post post;
 
     public User(UserEntity entity, Set<Group> groups,
                 Set<Game> games, Set<User> friends,
-                Set<User> sentRequests, Set<User> receivedRequests) {
+                Set<User> sentRequests, Set<User> receivedRequests,
+                Post post) {
         this.id = entity.getId();
         this.username = entity.getUsername();
         this.password = entity.getPassword();
@@ -35,6 +37,7 @@ public class User {
         this.friends = friends;
         this.sentRequests = sentRequests;
         this.receivedRequests = receivedRequests;
+        this.post = post;
     }
 
     public int getId() {
@@ -75,6 +78,9 @@ public class User {
         return receivedRequests;
     }
 
+    public Post getPost() {
+        return post;
+    }
 
     @Override
     public boolean equals(Object o) {

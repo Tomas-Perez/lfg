@@ -100,6 +100,10 @@ public class ModelBuilder {
                 .map(this::huskUser)
                 .collect(Collectors.toSet());
 
+        Integer postID = userManager
+                .getUserPost(userID);
+        Post post = postID == null? null : huskPost(postID);
+
 
         return new User(
                 userEntity,
@@ -107,7 +111,8 @@ public class ModelBuilder {
                 games,
                 friends,
                 sentRequests,
-                receivedRequests
+                receivedRequests,
+                post
         );
     }
 
@@ -159,6 +164,7 @@ public class ModelBuilder {
                 null,
                 null,
                 null,
+                null,
                 null
         );
     }
@@ -170,18 +176,30 @@ public class ModelBuilder {
         Activity activity = buildActivity(postEntity.getActivityId());
         User owner = huskUser(postEntity.getOwnerId());
 
-        final Integer groupId = postEntity.getGroupId();
-        Group group = null;
-        if(groupId != null){
-            group = buildGroup(groupId);
-        }
-
+        final Integer groupID = postEntity.getGroupId();
+        Group group = groupID == null? null : buildGroup(groupID);
 
         return new Post(
                 postEntity,
                 activity,
                 owner,
                 group,
+                null,
+                null
+        );
+    }
+
+    private Post huskPost(int postID){
+        PostEntity postEntity = postManager.get(postID);
+        if(postEntity == null) throw new NoSuchElementException();
+
+        Activity activity = buildActivity(postEntity.getActivityId());
+
+        return new Post(
+                postEntity,
+                activity,
+                null,
+                null,
                 null,
                 null
         );

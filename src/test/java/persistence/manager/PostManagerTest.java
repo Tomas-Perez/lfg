@@ -1,5 +1,7 @@
 package persistence.manager;
 
+import org.junit.After;
+import org.junit.Before;
 import persistence.entity.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -46,6 +48,16 @@ public class PostManagerTest {
                 .importBuildOutput().as(WebArchive.class);
     }
 
+    @Before
+    @After
+    public void cleanUp(){
+        postManager.wipe();
+        groupManager.wipe();
+        activityManager.wipe();
+        gameManager.wipe();
+        userManager.wipe();
+    }
+
     @Test
     public void shouldCreateManager() {
         assertNotNull(postManager);
@@ -57,8 +69,6 @@ public class PostManagerTest {
 
     @Test
     public void addPost(){
-        cleanUp();
-
         List<PostEntity> posts = postManager.list()
                 .stream()
                 .map(postManager::get)
@@ -95,14 +105,10 @@ public class PostManagerTest {
         assertThat(post.getActivityId(), is(ranked.getId()));
         assertThat(post.getDate(), is(dateTime));
         assertThat(post.getOwnerId(), is(user.getId()));
-
-        cleanUp();
     }
 
     @Test
     public void addGroupPost(){
-        cleanUp();
-
         List<PostEntity> posts = postManager.list()
                 .stream()
                 .map(postManager::get)
@@ -142,17 +148,32 @@ public class PostManagerTest {
         assertThat(post.getDate(), is(dateTime));
         assertThat(post.getOwnerId(), is(user.getId()));
         assertThat(post.getGroupId(), is(group.getId()));
-
-        cleanUp();
     }
 
-    private void cleanUp(){
-        postManager.wipe();
-        groupManager.wipe();
-        activityManager.wipe();
-        gameManager.wipe();
-        userManager.wipe();
+    @Test
+    public void getUserPost(){
+        final String gameName = "Overwatch";
+        GameEntity ow = addGame(gameName);
+
+        final String activityName = "Ranked";
+        ActivityEntity ranked = addActivity(activityName, ow);
+
+        final String username = "wewey";
+        final String password = "123123";
+        final String email = "xyz@lfg.com";
+        final boolean admin = false;
+        UserEntity user = addUser(username, password, email, admin);
+
+        final LocalDateTime dateTime = LocalDateTime.now();
+
+        final String description = "whatever";
+        PostEntity postEntity = new PostEntity(description, dateTime, ranked.getId(), user.getId(), null);
+        int expectedID = postManager.add(postEntity);
+
+        final Integer actualID = userManager.getUserPost(user.getId());
+        assertThat(actualID, is(expectedID));
     }
+
 
     private GameEntity addGame(String name){
         GameEntity gameEntity = new GameEntity(null, name);

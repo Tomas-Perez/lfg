@@ -175,7 +175,6 @@ public abstract class ApiTest {
         try {
             userData = RequestUtil.parseResponse(getUserResponse, UserData.class);
         } catch (Exception e) {
-            System.out.println(getUserResponse.readEntity(String.class));
             throw new RuntimeException(e);
         }
 

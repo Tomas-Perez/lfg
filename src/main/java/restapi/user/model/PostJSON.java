@@ -1,26 +1,24 @@
 package restapi.user.model;
 
-import persistence.model.Group;
-import restapi.activity.model.ActivityJSON;
-import restapi.group.model.MemberJSON;
+import persistence.model.Post;
 
 import java.util.Objects;
 
 /**
  * @author Tomas Perez Molina
  */
-public class GroupJSON {
+public class PostJSON {
     private int id;
 
-    public GroupJSON(int id) {
+    public PostJSON(int id) {
         this.id = id;
     }
 
-    public GroupJSON(Group group) {
-        this.id = group.getId();
+    public PostJSON() {
     }
 
-    public GroupJSON() {
+    public PostJSON(Post post) {
+        this.id = post.getId();
     }
 
     public int getId() {
@@ -31,13 +29,12 @@ public class GroupJSON {
         this.id = id;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof GroupJSON)) return false;
-        GroupJSON groupJSON = (GroupJSON) o;
-        return id == groupJSON.id;
+        if (!(o instanceof PostJSON)) return false;
+        PostJSON postJSON = (PostJSON) o;
+        return id == postJSON.id;
     }
 
     @Override
@@ -48,7 +45,8 @@ public class GroupJSON {
 
     @Override
     public String toString() {
-        return "GroupJSON{" +
-                "id=" + id + '}';
+        return "PostJSON{" +
+                "id=" + id +
+                '}';
     }
 }

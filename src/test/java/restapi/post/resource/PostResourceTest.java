@@ -10,11 +10,14 @@ import restapi.group.model.MemberJSON;
 import restapi.post.model.CreatePostJSON;
 import restapi.post.model.GroupJSON;
 import restapi.post.model.PostJSON;
+import restapi.security.authentication.model.AuthenticationToken;
+import restapi.user.model.UserData;
 import util.RequestUtil;
 
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -99,5 +102,78 @@ public class PostResourceTest extends ApiTest {
         PostJSON expected = new PostJSON(Integer.parseInt(id), description, null, activityJSON, ownerJSON, groupJSON);
 
         assertThat(actual, is(expected));
+    }
+
+    @Test
+    public void addsPostToUser() throws Exception{
+        final String gameName = "Overwatch";
+        int gameID = addGame(gameName);
+        final String activityName = "Ranked";
+        int activityID = addActivity(activityName, gameID);
+        final String ownerName = "owner";
+        final String ownerPass = "123";
+        final String ownerEmail = "owner@mail.com";
+        int ownerID = addUser(ownerName, ownerPass, ownerEmail);
+
+        final String description = "posty";
+        final Response postResponse = RequestUtil.post(postsTarget, token, new CreatePostJSON(description, activityID, ownerID, null));
+
+        final String location = postResponse.getHeaderString("Location");
+        final WebTarget postTarget = RequestUtil.newTarget(location);
+        final String id = RequestUtil.getRelativePathDiff(postsTarget, postTarget);
+
+        AuthenticationToken ownerToken = RequestUtil.getToken(base, ownerEmail, ownerPass);
+
+        final Response ownerMeResponse = RequestUtil.get(meTarget, ownerToken);
+        assertThat(ownerMeResponse.getStatus(), is(OK));
+
+        UserData actual = RequestUtil.parseResponse(ownerMeResponse, UserData.class);
+
+        UserData expected = new UserData(
+                ownerID, ownerName,
+                ownerEmail, false,
+                new ArrayList<>(), new ArrayList<>(),
+                new ArrayList<>(), new ArrayList<>(),
+                new restapi.user.model.PostJSON(Integer.parseInt(id)));
+
+        assertThat(expected, is(actual));
+    }
+
+    @Test
+    public void addsGroupPostToUser() throws Exception{
+        final String gameName = "Overwatch";
+        int gameID = addGame(gameName);
+        final String activityName = "Ranked";
+        int activityID = addActivity(activityName, gameID);
+        final String ownerName = "owner";
+        final String ownerPass = "123";
+        final String ownerEmail = "owner@mail.com";
+        int ownerID = addUser(ownerName, ownerPass, ownerEmail);
+
+        final int slots = 5;
+        int groupID = addGroup(slots, activityID, ownerID);
+
+        final String description = "posty";
+        final Response postResponse = RequestUtil.post(postsTarget, token, new CreatePostJSON(description, null, null, groupID));
+
+        final String location = postResponse.getHeaderString("Location");
+        final WebTarget postTarget = RequestUtil.newTarget(location);
+        final String id = RequestUtil.getRelativePathDiff(postsTarget, postTarget);
+
+        AuthenticationToken ownerToken = RequestUtil.getToken(base, ownerEmail, ownerPass);
+
+        final Response ownerMeResponse = RequestUtil.get(meTarget, ownerToken);
+        assertThat(ownerMeResponse.getStatus(), is(OK));
+
+        UserData actual = RequestUtil.parseResponse(ownerMeResponse, UserData.class);
+
+        UserData expected = new UserData(
+                ownerID, ownerName,
+                ownerEmail, false,
+                Collections.singletonList(new restapi.user.model.GroupJSON(groupID)), new ArrayList<>(),
+                new ArrayList<>(), new ArrayList<>(),
+                new restapi.user.model.PostJSON(Integer.parseInt(id)));
+
+        assertThat(expected, is(actual));
     }
 }

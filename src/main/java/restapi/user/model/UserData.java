@@ -1,9 +1,9 @@
 package restapi.user.model;
 
+import persistence.model.Post;
 import persistence.model.User;
 import restapi.group.model.MemberJSON;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -17,16 +17,18 @@ public class UserData {
     private String email;
     private boolean isAdmin;
     private List<GroupJSON> groups;
-    private List<MemberJSON> friends;
-    private List<MemberJSON> receivedRequests;
-    private List<MemberJSON> sentRequests;
+    private List<BasicUserData> friends;
+    private List<BasicUserData> receivedRequests;
+    private List<BasicUserData> sentRequests;
+    private PostJSON post;
 
 
 
     public UserData(int id, String username,
                     String email, boolean isAdmin,
-                    List<GroupJSON> groups, List<MemberJSON> friends,
-                    List<MemberJSON> receivedRequests, List<MemberJSON> sentRequests)
+                    List<GroupJSON> groups, List<BasicUserData> friends,
+                    List<BasicUserData> receivedRequests, List<BasicUserData> sentRequests,
+                    PostJSON post)
     {
         this.id = id;
         this.username = username;
@@ -36,6 +38,7 @@ public class UserData {
         this.friends = friends;
         this.receivedRequests = receivedRequests;
         this.sentRequests = sentRequests;
+        this.post = post;
     }
 
     public UserData() {
@@ -47,9 +50,11 @@ public class UserData {
         this.email = user.getEmail();
         this.isAdmin = user.isAdmin();
         this.groups = user.getGroups().stream().map(GroupJSON::new).collect(Collectors.toList());
-        this.friends = user.getFriends().stream().map(MemberJSON::new).collect(Collectors.toList());
-        this.sentRequests = user.getFriends().stream().map(MemberJSON::new).collect(Collectors.toList());
-        this.receivedRequests = user.getFriends().stream().map(MemberJSON::new).collect(Collectors.toList());
+        this.friends = user.getFriends().stream().map(BasicUserData::new).collect(Collectors.toList());
+        this.sentRequests = user.getSentRequests().stream().map(BasicUserData::new).collect(Collectors.toList());
+        this.receivedRequests = user.getReceivedRequests().stream().map(BasicUserData::new).collect(Collectors.toList());
+        final Post post = user.getPost();
+        this.post = post == null? null : new PostJSON(post);
     }
 
     public int getId() {
@@ -92,12 +97,36 @@ public class UserData {
         this.groups = groups;
     }
 
-    public List<MemberJSON> getFriends() {
+    public List<BasicUserData> getFriends() {
         return friends;
     }
 
-    public void setFriends(List<MemberJSON> friends) {
+    public void setFriends(List<BasicUserData> friends) {
         this.friends = friends;
+    }
+
+    public List<BasicUserData> getReceivedRequests() {
+        return receivedRequests;
+    }
+
+    public void setReceivedRequests(List<BasicUserData> receivedRequests) {
+        this.receivedRequests = receivedRequests;
+    }
+
+    public List<BasicUserData> getSentRequests() {
+        return sentRequests;
+    }
+
+    public void setSentRequests(List<BasicUserData> sentRequests) {
+        this.sentRequests = sentRequests;
+    }
+
+    public PostJSON getPost() {
+        return post;
+    }
+
+    public void setPost(PostJSON post) {
+        this.post = post;
     }
 
     @Override
@@ -110,13 +139,16 @@ public class UserData {
                 Objects.equals(username, userData.username) &&
                 Objects.equals(email, userData.email) &&
                 Objects.equals(groups, userData.groups) &&
-                Objects.equals(friends, userData.friends);
+                Objects.equals(friends, userData.friends) &&
+                Objects.equals(receivedRequests, userData.receivedRequests) &&
+                Objects.equals(sentRequests, userData.sentRequests) &&
+                Objects.equals(post, userData.post);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, username, email, isAdmin, groups, friends);
+        return Objects.hash(id, username, email, isAdmin, groups, friends, receivedRequests, sentRequests, post);
     }
 
     @Override
@@ -128,6 +160,9 @@ public class UserData {
                 ", isAdmin=" + isAdmin +
                 ", groups=" + groups +
                 ", friends=" + friends +
+                ", receivedRequests=" + receivedRequests +
+                ", sentRequests=" + sentRequests +
+                ", post=" + post +
                 '}';
     }
 }

@@ -136,6 +136,17 @@ public class UserManager extends Manager<UserEntity>{
         return new HashSet<>(resultList);
     }
 
+    @SuppressWarnings("unchecked")
+    public Integer getUserPost(int userID){
+        final List resultList = manager.createQuery(
+                "SELECT DISTINCT P.id " +
+                        "FROM PostEntity P " +
+                        "WHERE P.ownerId = :userID")
+                .setParameter("userID", userID)
+                .getResultList();
+        return (Integer) resultList.stream().findFirst().orElse(null);
+    }
+
     public void checkExistence(int userID){
         if(!exists(userID))
             throw new ConstraintException(String.format("User with id: %d does not exist", userID));
