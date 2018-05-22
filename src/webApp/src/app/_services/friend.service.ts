@@ -20,15 +20,25 @@ export class FriendService {
   private user: User;
   private friendList: BasicUser[];
   friendListSubject: BehaviorSubject<BasicUser[]>;
+  private friendRequests: BasicUser[];
+  friendRequestsSubject: BehaviorSubject<BasicUser[]>;
+  private sentRequestsList: BasicUser[];
+  sentRequestsSubject: BehaviorSubject<BasicUser[]>;
 
   constructor(private http: HttpClient, private userService: UserService) {
     this.friendListSubject = new BehaviorSubject<BasicUser[]>([]);
     this.friendListSubject.subscribe(friendList => this.friendList = friendList);
+    this.friendRequestsSubject = new BehaviorSubject<BasicUser[]>([]);
+    this.friendRequestsSubject.subscribe(friendRequests => this.friendRequests = friendRequests);
+    this.sentRequestsSubject = new BehaviorSubject<BasicUser[]>([]);
+    this.sentRequestsSubject.subscribe(sentrequests => this.sentRequestsList = sentrequests);
 
     this.userService.userSubject.subscribe( user => {
       this.user = user;
       if (user !== null) {
         this.updateFriends();
+        this.updateFriendRequests();
+        this.updateSentRequests();
       } else {
         this.friendListSubject.next([]);
       }
@@ -63,7 +73,7 @@ export class FriendService {
   }
 
   updateFriends(): void {
-    this.requestFriends().subscribe(posts => this.friendListSubject.next(posts));
+    this.requestFriends().subscribe(friends => this.friendListSubject.next(friends));
   }
 
   confirmFriendRequest(id: number): Observable<boolean> {
@@ -135,6 +145,10 @@ export class FriendService {
     return Observable.of(false);
   }
 
+  updateFriendRequests(): void {
+    this.getFriendRequests().subscribe(requests => this.friendRequestsSubject.next(requests));
+  }
+
   getSentFriendRequests(): Observable<BasicUser[]> {
     return this.http.get<any>(this.friendRequestSentUrl, {
       observe: 'response'
@@ -150,6 +164,10 @@ export class FriendService {
     return Observable.of(false);
   }
 
+  updateSentRequests(): void {
+    this.getSentFriendRequests().subscribe(requests => this.sentRequestsSubject.next(requests));
+  }
+
   isInFriendList(id: number): boolean {
     for (const friend of this.friendList) {
       if (friend.id === id) {
@@ -158,4 +176,23 @@ export class FriendService {
     }
     return false;
   }
+
+  isInReceivedRequestsList(id: number): boolean {
+    for (const friend of this.friendRequests) {
+      if (friend.id === id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  isInSentRequestsList(id: number): boolean {
+    for (const friend of this.sentRequestsList) {
+      if (friend.id === id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 }

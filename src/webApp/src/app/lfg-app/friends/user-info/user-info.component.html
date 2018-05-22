@@ -1,9 +1,26 @@
 <div *ngIf="user != null" class="user-info-wrapper">
   <div class="title">
+    <span *ngIf="isAlreadyFriend" class="friend-icon" title="You are friends with {{user.username}}">
+      <fa name="user"></fa>
+    </span>
     <h1>{{user.username}}</h1>
   </div>
   <div class="options">
-    <span *ngIf="isAlreadyFriend">You are already friends with {{user.username}}</span>
-    <button *ngIf="!isAlreadyFriend" type="button" class="btn btn-primary-lfg" (click)="sendFriendRequest()">Send friend request</button>
+    <button *ngIf="!isAlreadyFriend && !isRequestSent && !isRequestReceived" type="button"
+            class="btn btn-primary-lfg" (click)="sendFriendRequest()">
+      Send friend request
+    </button>
+    <button *ngIf="isAlreadyFriend" type="button" class="btn btn-primary-lfg" (click)="removeFriend()">
+      Remove friend
+    </button>
+    <button *ngIf="isRequestSent" type="button" class="btn btn-primary-lfg" (click)="cancelRequest()">
+      Cancel friend request
+    </button>
+    <button *ngIf="isRequestReceived" type="button" class="btn btn-primary-lfg" (click)="acceptRequest()">
+      Accept friend request
+    </button>
+    <button *ngIf="isRequestReceived" type="button" class="btn btn-primary-lfg" (click)="deleteRequest()">
+      Remove friend request
+    </button>
   </div>
 </div>

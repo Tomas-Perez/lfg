@@ -1,0 +1,69 @@
+.friend-list-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.title{
+  text-align: center;
+  margin: 0.3rem 0;
+}
+
+.title h1{
+  margin: unset;
+}
+
+.subtitle{
+  display: flex;
+  flex-direction: row;
+  flex:1 0;
+  color: #e4daffc4;
+  font-weight: 600;
+}
+
+.subtitle h2{
+  margin: 0;
+}
+
+hr{
+  border: 0;
+  height: 1px;
+  background: #e4daffc4;
+  flex: 1 0;
+  margin: auto 0.5em;
+}
+
+.friend-list {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1em;
+}
+
+.friend{
+  display: flex;
+  flex-direction: row;
+  margin: 0.3em 0;
+  padding-left: 0.2rem;
+  border-bottom: solid 1px #ffffff1a;
+}
+
+.friend-username{
+  display: flex;
+  flex: 1 0;
+  margin-left: 0.3rem;
+  cursor: pointer;
+}
+
+.accept-request, .delete-request{
+  display: flex;
+  flex: 0 0 auto;
+  font-weight: 600;
+}
+
+.accept-request{
+  color: #51da43;
+  margin-right: 0.3em;
+}
+
+.delete-request{
+  color: #da2121;
+}

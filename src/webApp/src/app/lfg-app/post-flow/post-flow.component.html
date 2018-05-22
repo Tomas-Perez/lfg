@@ -5,7 +5,8 @@
     <div class="post-info-wrapper">
       <div class="post-info-left">
         <div class="post-user">
-          <span (click)="getUserInfo(post.owner.id)">{{post.owner.username}}</span>
+          <span *ngIf="post.owner.id != user.id" (click)="getUserInfo(post.owner.id)">{{post.owner.username}}</span>
+          <span *ngIf="post.owner.id == user.id">{{post.owner.username}}</span>
         </div>
       </div>
 

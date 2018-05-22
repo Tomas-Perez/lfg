@@ -4,17 +4,13 @@
   </div>
   <div class="friend-list">
     <div data-simplebar data-simplebar-auto-hide="false">
-      <div class="friend">
-        <fa name="circle" alt="far"></fa>
-        <span class="friend-username">
-          juanchi420
-        </span>
-      </div>
-      <div class="friend">
-        <fa name="circle" alt="far"></fa>
-        <span class="friend-username">
-          arikapo
-        </span>
+      <div *ngFor="let friend of friends" class="friend-wrapper">
+        <div class="friend">
+          <fa name="circle"></fa>
+          <span (click)="getUserInfo(friend.id)" class="friend-username">
+            {{friend.username}}
+          </span>
+        </div>
       </div>
     </div>
   </div>

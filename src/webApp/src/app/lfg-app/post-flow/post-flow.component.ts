@@ -5,6 +5,8 @@ import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
 import {GroupService} from '../../_services/group.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {UserService} from '../../_services/user.service';
+import {User} from '../../_models/User';
 
 @Component({
   selector: 'app-post-flow',
@@ -16,14 +18,19 @@ export class PostFlowComponent implements OnInit, OnDestroy {
   posts: Post[];
   private ngUnsubscribe: Subject<any> = new Subject();
   inGroup: boolean;
+  user: User;
 
   constructor(private postService: PostService,
               private groupService: GroupService,
+              private userService: UserService,
               private router: Router,
               private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
+    this.userService.userSubject.takeUntil(this.ngUnsubscribe).subscribe(
+      user => this.user = user
+    );
     this.groupService.currentGroupSubject.takeUntil(this.ngUnsubscribe).subscribe(
       group => this.inGroup = group != null
     );

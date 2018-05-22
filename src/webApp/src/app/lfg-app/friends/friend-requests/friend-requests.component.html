@@ -1,20 +1,37 @@
 <div class="requests-list-wrapper">
   <div class="title">
-    <h1>Friends requests</h1>
+    <h1>Friend requests</h1>
   </div>
   <div class="friend-list">
+    <div class="subtitle">
+      <h2>Received</h2>
+      <hr>
+      <span>{{receivedRequests.length}}</span>
+    </div>
     <div data-simplebar data-simplebar-auto-hide="false">
-      <div class="friend">
-        <fa name="circle" alt="far"></fa>
-        <span class="friend-username">
-          juanchi420
+      <div *ngFor="let request of receivedRequests" class="friend">
+        <fa name="circle"></fa>
+        <span (click)="getUserInfo(request.id)" class="friend-username">
+          {{request.username}}
         </span>
+        <span class="hand accept-request" title="Accept request" (click)="acceptRequest(request.id)">Accept</span>
+        <span class="hand delete-request" title="Delete request" (click)="deleteRequest(request.id)">x</span>
       </div>
-      <div *ngFor="let request of requests" class="friend">
-        <fa name="circle" alt="far"></fa>
-        <span class="friend-username">
-          arikapo
+    </div>
+  </div>
+  <div class="friend-list">
+    <div class="subtitle">
+      <h2>Sent</h2>
+      <hr>
+      <span>{{sentRequests.length}}</span>
+    </div>
+    <div data-simplebar data-simplebar-auto-hide="false">
+      <div *ngFor="let request of sentRequests" class="friend">
+        <fa name="circle"></fa>
+        <span (click)="getUserInfo(request.id)" class="friend-username">
+          {{request.username}}
         </span>
+        <span class="hand delete-request" title="Delete request" (click)="deleteSentRequest(request.id)">x</span>
       </div>
     </div>
   </div>

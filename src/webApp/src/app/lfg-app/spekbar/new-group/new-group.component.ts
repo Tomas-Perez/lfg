@@ -6,7 +6,7 @@ import {UserService} from '../../../_services/user.service';
 import {GameService} from '../../../_services/game.service';
 import 'rxjs/add/operator/takeUntil';
 import {Subject} from 'rxjs/Subject';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {User} from '../../../_models/User';
 import {SpekbarLocation} from '../../_models/SpekbarLocation';
 import {NavBarService} from '../../_services/nav-bar.service';
