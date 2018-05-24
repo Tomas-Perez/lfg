@@ -8,15 +8,15 @@ import {JsonConvert} from 'json2typescript';
 import {Filter} from '../_models/post-filters/Filter';
 import {DbPost} from '../_models/DbModels/DbPost';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {User} from '../_models/User';
+import {UserService} from './user.service';
 import {SocketUtil} from '../_models/Sockets/SocketUtil';
 import {SocketEvent} from '../_models/Sockets/SocketEvent';
 
 @Injectable()
 export class PostService {
 
-  private socketUtil: SocketUtil;
-
-  private posts: Post[];
+  private user: User;
   postsSubject: BehaviorSubject<Post[]>;
   private filters: PostFilter[];
   filtersSubject: BehaviorSubject<PostFilter[]>;
@@ -25,7 +25,7 @@ export class PostService {
   private currentPost: Post;
   currentPostSubject: BehaviorSubject<Post>;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private userService: UserService) {
     this.postsSubject = new BehaviorSubject([]);
 
     this.currentPostSubject = new BehaviorSubject<Post>(null);
@@ -36,11 +36,40 @@ export class PostService {
       this.filters = filters;
       this.updatePosts();
     });
+    this.userService.userSubject.subscribe( user => {
+      this.user = user;
+      if (user !== null && user.post) {
+        this.getPost(user.post.id).subscribe();
+      } else {
+        this.currentPostSubject.next(null);
+      }
+    });
 
     /*
     this.socketUtil = new SocketUtil(this.postUrl);
     this.socketUtil.initSocket();
     */
+  }
+
+  getPost(id: number): Observable<boolean> {
+    return this.http.get<any>(this.postUrl + '/' + id, {
+      observe: 'response'
+    })
+      .pipe(
+        map( getPostResponse => {
+            const newPost = this.jsonConvert.deserialize(getPostResponse.body, Post);
+            this.currentPostSubject.next(newPost);
+            return true;
+          }
+        ),
+        catchError((err: any) => this.getPostErrorHandle(err))
+      );
+  }
+
+  private getPostErrorHandle(err: any){
+    console.log('Error getting post');
+    console.log(err);
+    return Observable.of(false);
   }
 
   requestPosts(): Observable<Post[]> {
