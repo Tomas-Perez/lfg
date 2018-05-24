@@ -14,8 +14,8 @@ import { NewPostService } from './spekbar/new-post/new-post.service';
 import { PostFilterService } from './spekbar/post-filter/post-filter.service';
 import { GroupComponent } from './spekbar/group/group.component';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
-import {GroupGuardService} from '../_services/guards/group-guard.service';
-import {NoGroupGuardService} from '../_services/guards/no-group-guard.service';
+import { GroupGuardService } from '../_services/guards/group-guard.service';
+import { NoGroupGuardService } from '../_services/guards/no-group-guard.service';
 import { GroupPostService } from './spekbar/group/group-post.service';
 import { FriendListComponent } from './friends/friend-list/friend-list.component';
 import { FriendRequestsComponent } from './friends/friend-requests/friend-requests.component';
@@ -56,7 +56,7 @@ import { UserInfoComponent } from './friends/user-info/user-info.component';
     GroupPostService,
     NavBarService,
     FriendBarService,
-    FriendService
+    FriendService,
   ],
 })
 export class LfgAppModule { }

@@ -8,13 +8,15 @@ import {JsonConvert} from 'json2typescript';
 import {Filter} from '../_models/post-filters/Filter';
 import {DbPost} from '../_models/DbModels/DbPost';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {User} from '../_models/User';
-import {UserService} from './user.service';
+import {SocketUtil} from '../_models/Sockets/SocketUtil';
+import {SocketEvent} from '../_models/Sockets/SocketEvent';
 
 @Injectable()
 export class PostService {
 
-  private user: User;
+  private socketUtil: SocketUtil;
+
+  private posts: Post[];
   postsSubject: BehaviorSubject<Post[]>;
   private filters: PostFilter[];
   filtersSubject: BehaviorSubject<PostFilter[]>;
@@ -23,7 +25,7 @@ export class PostService {
   private currentPost: Post;
   currentPostSubject: BehaviorSubject<Post>;
 
-  constructor(private http: HttpClient, private userService: UserService) {
+  constructor(private http: HttpClient) {
     this.postsSubject = new BehaviorSubject([]);
 
     this.currentPostSubject = new BehaviorSubject<Post>(null);
@@ -34,35 +36,11 @@ export class PostService {
       this.filters = filters;
       this.updatePosts();
     });
-    this.userService.userSubject.subscribe( user => {
-      this.user = user;
-      if (user !== null && user.post) {
-        this.getPost(user.post.id).subscribe();
-      } else {
-        this.currentPostSubject.next(null);
-      }
-    });
-  }
 
-  getPost(id: number): Observable<boolean> {
-    return this.http.get<any>(this.postUrl + '/' + id, {
-      observe: 'response'
-    })
-      .pipe(
-        map( getPostResponse => {
-            const newPost = this.jsonConvert.deserialize(getPostResponse.body, Post);
-            this.currentPostSubject.next(newPost);
-            return true;
-          }
-        ),
-        catchError((err: any) => this.getPostErrorHandle(err))
-      );
-  }
-
-  private getPostErrorHandle(err: any){
-    console.log('Error getting post');
-    console.log(err);
-    return Observable.of(false);
+    /*
+    this.socketUtil = new SocketUtil(this.postUrl);
+    this.socketUtil.initSocket();
+    */
   }
 
   requestPosts(): Observable<Post[]> {
@@ -74,7 +52,6 @@ export class PostService {
         tap(response => console.log(response)),
         map(response => this.jsonConvert.deserialize(response.body, Post)),
         map(posts => posts.filter(post => filterer.filter(post, this.filters))),
-        tap(posts => console.log(posts)),
         catchError(err => this.requestPostsErrorHandle(err))
       );
   }
@@ -86,7 +63,10 @@ export class PostService {
   }
 
   updatePosts(): void {
-    this.requestPosts().subscribe(posts => this.postsSubject.next(posts));
+    this.requestPosts().subscribe(posts => {
+      this.posts = posts;
+      this.postsSubject.next(posts);
+    });
   }
 
   newPost(post: DbPost): Observable<boolean> {
@@ -139,4 +119,36 @@ export class PostService {
     console.log(err);
     return Observable.of(false);
   }
+
+
+
+
+
+  // WEBSOCKETS
+
+  private setSocketActions() {
+    this.socketUtil.onEvent(SocketEvent.CONNECT)
+      .subscribe(() => {
+        console.log('connected');
+      });
+
+    this.socketUtil.onEvent(SocketEvent.DISCONNECT)
+      .subscribe(() => {
+        console.log('disconnected');
+      });
+
+    this.socketUtil.onEvent('new post')
+      .subscribe((data) => {
+          this.posts.unshift(this.jsonConvert.deserialize(data.post, Post));
+          this.postsSubject.next(this.posts);
+        }
+      );
+
+  }
+
+
+
+
+
+
 }
