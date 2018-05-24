@@ -31,7 +31,7 @@ export class FriendService {
     this.friendRequestsSubject = new BehaviorSubject<BasicUser[]>([]);
     this.friendRequestsSubject.subscribe(friendRequests => this.friendRequests = friendRequests);
     this.sentRequestsSubject = new BehaviorSubject<BasicUser[]>([]);
-    this.sentRequestsSubject.subscribe(sentrequests => this.sentRequestsList = sentrequests);
+    this.sentRequestsSubject.subscribe(sentRequests => this.sentRequestsList = sentRequests);
 
     this.userService.userSubject.subscribe( user => {
       this.user = user;

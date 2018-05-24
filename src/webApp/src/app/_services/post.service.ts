@@ -8,10 +8,15 @@ import {JsonConvert} from 'json2typescript';
 import {Filter} from '../_models/post-filters/Filter';
 import {DbPost} from '../_models/DbModels/DbPost';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {SocketUtil} from '../_models/Sockets/SocketUtil';
+import {SocketEvent} from '../_models/Sockets/SocketEvent';
 
 @Injectable()
 export class PostService {
 
+  private socketUtil: SocketUtil;
+
+  private posts: Post[];
   postsSubject: BehaviorSubject<Post[]>;
   private filters: PostFilter[];
   filtersSubject: BehaviorSubject<PostFilter[]>;
@@ -31,6 +36,11 @@ export class PostService {
       this.filters = filters;
       this.updatePosts();
     });
+
+    /*
+    this.socketUtil = new SocketUtil(this.postUrl);
+    this.socketUtil.initSocket();
+    */
   }
 
   requestPosts(): Observable<Post[]> {
@@ -53,7 +63,10 @@ export class PostService {
   }
 
   updatePosts(): void {
-    this.requestPosts().subscribe(posts => this.postsSubject.next(posts));
+    this.requestPosts().subscribe(posts => {
+      this.posts = posts;
+      this.postsSubject.next(posts);
+    });
   }
 
   newPost(post: DbPost): Observable<boolean> {
@@ -106,4 +119,36 @@ export class PostService {
     console.log(err);
     return Observable.of(false);
   }
+
+
+
+
+
+  // WEBSOCKETS
+
+  private setSocketActions() {
+    this.socketUtil.onEvent(SocketEvent.CONNECT)
+      .subscribe(() => {
+        console.log('connected');
+      });
+
+    this.socketUtil.onEvent(SocketEvent.DISCONNECT)
+      .subscribe(() => {
+        console.log('disconnected');
+      });
+
+    this.socketUtil.onEvent('new post')
+      .subscribe((data) => {
+          this.posts.unshift(this.jsonConvert.deserialize(data.post, Post));
+          this.postsSubject.next(this.posts);
+        }
+      );
+
+  }
+
+
+
+
+
+
 }
