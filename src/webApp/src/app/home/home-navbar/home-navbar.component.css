@@ -21,6 +21,7 @@
   color: #ffffff;
 }
 .navbar .navbar-nav .nav-link {
+  transition: all 0.4s;
   color: #d9d9d9;
   border-radius: .25rem;
   margin: 0 0.25em;

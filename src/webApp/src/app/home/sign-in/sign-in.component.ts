@@ -21,6 +21,7 @@ export class SignInComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
+    this.wrongInfo = false;
     this.formValid = false;
     this.emailValid = true;
     this.passwordValid = true;

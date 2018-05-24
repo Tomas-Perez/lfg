@@ -7,11 +7,12 @@ import {GroupService} from '../../_services/group.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserService} from '../../_services/user.service';
 import {User} from '../../_models/User';
+import {MomentModule} from 'ngx-moment';
 
 @Component({
   selector: 'app-post-flow',
   templateUrl: './post-flow.component.html',
-  styleUrls: ['./post-flow.component.css']
+  styleUrls: ['./post-flow.component.css'],
 })
 export class PostFlowComponent implements OnInit, OnDestroy {
 

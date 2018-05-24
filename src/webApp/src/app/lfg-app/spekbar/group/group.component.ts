@@ -70,6 +70,16 @@ export class GroupComponent implements OnInit, OnDestroy {
     );
   }
 
+  deletePost() {
+    this.postService.deletePost().subscribe(
+      response => {
+        if (response) {
+          console.log('Post deleted');
+        }
+      }
+    );
+  }
+
   leaveGroup() {
     this.groupService.leaveGroup().subscribe(
       response => {

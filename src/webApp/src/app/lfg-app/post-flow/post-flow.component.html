@@ -1,11 +1,12 @@
-<button type="button" (click)="updatePosts()">Refresh</button>
+<a class="hand" (click)="updatePosts()"><fa name="retweet"></fa></a>
 
 <div *ngFor="let post of posts" class="post-wrapper">
   <div class="post-container">
     <div class="post-info-wrapper">
       <div class="post-info-left">
         <div class="post-user">
-          <span *ngIf="post.owner.id != user.id" (click)="getUserInfo(post.owner.id)">{{post.owner.username}}</span>
+          <span *ngIf="post.owner.id != user.id" class="username"
+                (click)="getUserInfo(post.owner.id)">{{post.owner.username}}</span>
           <span *ngIf="post.owner.id == user.id">{{post.owner.username}}</span>
         </div>
       </div>
@@ -18,7 +19,8 @@
           </div>
           <!--<span>{{post.group.id}}</span>-->
 
-          <button *ngIf="!inGroup" type="button" class="btn btn-primary-lfg" (click)="joinGroup(post.group.id)">join</button>
+          <button *ngIf="!inGroup" type="button" class="btn btn-primary-lfg"
+                  (click)="joinGroup(post.group.id)">join</button>
         </div>
       </div>
     </div>
@@ -28,7 +30,7 @@
         <div class="activity-name"><span>{{post.activity.name}}</span></div>
       </div>
       <div class="post-description-options">
-        <div class="post-description"><p>{{post.description}}</p></div>
+        <div class="post-description"><p>{{post.description}}</p>  <time>{{post.date}}</time>  </div>
         <div class="post-options"></div>
       </div>
     </div>

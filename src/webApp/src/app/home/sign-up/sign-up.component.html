@@ -6,6 +6,10 @@
 
       <form #signUpForm="ngForm" class="auth-form" (ngSubmit)="checkErrors(username.valid, email.valid, password.valid); signUpForm.valid && sendForm()" novalidate>
 
+        <div *ngIf="wrongInfo" class="form-group alert alert-danger">
+          Username or email already in use.
+        </div>
+
         <div class="form-group">
           <label for="InputUsername">
             <span class="bold" [ngClass]="{'error':!usernameValid || usernameTaken}">Username</span>

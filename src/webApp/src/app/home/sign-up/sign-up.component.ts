@@ -16,6 +16,7 @@ export class SignUpComponent implements OnInit {
   emailValid: boolean;
   emailTaken: boolean;
   passwordValid: boolean;
+  wrongInfo: boolean;
 
 
   constructor(private userService: UserService) { }
@@ -27,6 +28,7 @@ export class SignUpComponent implements OnInit {
     this.usernameTaken = false;
     this.emailValid = true;
     this.passwordValid = true;
+    this.wrongInfo = false;
   }
 
   sendForm() {
@@ -45,7 +47,7 @@ export class SignUpComponent implements OnInit {
       .subscribe(response => {
         switch (response) {
           case SignUpStatus.success: {
-            console.log('Signed in');
+            console.log('Signed up');
             // TODO sign in, route user
             break;
           }
@@ -59,6 +61,7 @@ export class SignUpComponent implements OnInit {
             break;
           }
           case SignUpStatus.error: {
+            this.notifyError();
             console.log('error occured');
             break;
           }
@@ -67,7 +70,7 @@ export class SignUpComponent implements OnInit {
   }
 
   notifyError(): void {
-    this.formValid = true;
+    this.wrongInfo = true;
   }
 
   checkErrors(username, email, password): void {

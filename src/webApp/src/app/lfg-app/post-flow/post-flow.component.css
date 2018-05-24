@@ -83,6 +83,9 @@
   font-weight: 600;
   display: flex;
   flex: 0 0 auto;
+}
+
+.username{
   cursor: pointer;
   text-decoration: underline;
 }

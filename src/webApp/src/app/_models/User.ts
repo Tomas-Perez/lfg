@@ -7,6 +7,12 @@ class GroupsId {
 }
 
 @JsonObject
+class PostId {
+  @JsonProperty('id', Number)
+  id: number = undefined;
+}
+
+@JsonObject
 export class User {
 
   @JsonProperty('id', Number, true)
@@ -26,4 +32,7 @@ export class User {
 
   @JsonProperty('groups', [GroupsId], true)
   groups?: GroupsId[] = undefined;
+
+  @JsonProperty('post', PostId, true)
+  post?: PostId = undefined;
 }
