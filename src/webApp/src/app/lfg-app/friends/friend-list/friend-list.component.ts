@@ -5,7 +5,7 @@ import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
 import {BasicUser} from '../../../_models/BasicUser';
 import {FriendService} from '../../../_services/friend.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-friend-list',
@@ -19,8 +19,7 @@ export class FriendListComponent implements OnInit, OnDestroy {
 
   constructor(private friendBarService: FriendBarService,
               private friendService: FriendService,
-              private router: Router,
-              private route: ActivatedRoute
+              private router: Router
               ) { }
 
   ngOnInit() {
@@ -30,11 +29,9 @@ export class FriendListComponent implements OnInit, OnDestroy {
   }
 
   getUserInfo(id: number) {
-    this.router.navigate([{outlets: {friends: ['user-info', id]}}],
-      {
-        relativeTo: this.route,
-        skipLocationChange: true
-      });
+    this.router.navigate(['/app', { outlets: {friends: ['user-info', id] }}], {
+      skipLocationChange: true
+    });
   }
 
   ngOnDestroy() {

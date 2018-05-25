@@ -4,10 +4,9 @@ import {PostService} from '../../_services/post.service';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
 import {GroupService} from '../../_services/group.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {UserService} from '../../_services/user.service';
 import {User} from '../../_models/User';
-import {MomentModule} from 'ngx-moment';
 
 @Component({
   selector: 'app-post-flow',
@@ -24,8 +23,7 @@ export class PostFlowComponent implements OnInit, OnDestroy {
   constructor(private postService: PostService,
               private groupService: GroupService,
               private userService: UserService,
-              private router: Router,
-              private route: ActivatedRoute
+              private router: Router
   ) { }
 
   ngOnInit() {
@@ -59,11 +57,9 @@ export class PostFlowComponent implements OnInit, OnDestroy {
   }
 
   getUserInfo(id: number) {
-    this.router.navigate([{outlets: {friends: ['user-info', id]}}],
-      {
-        relativeTo: this.route,
-        skipLocationChange: true
-      });
+    this.router.navigate(['/app', { outlets: {friends: ['user-info', id] }}], {
+      skipLocationChange: true
+    });
   }
 
   ngOnDestroy() {

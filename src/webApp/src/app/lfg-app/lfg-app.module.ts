@@ -24,10 +24,13 @@ import { NavBarService } from './_services/nav-bar.service';
 import { FriendBarService } from './_services/friend-bar.service';
 import { FriendService } from '../_services/friend.service';
 import { UserInfoComponent } from './friends/user-info/user-info.component';
+import {TimeAgoPipe} from 'time-ago-pipe';
+import {MeInfoComponent} from './me-info/me-info.component';
 
 
 @NgModule({
   declarations: [
+    TimeAgoPipe,
     LfgAppComponent,
     NewPostComponent,
     NewGroupComponent,
@@ -38,7 +41,8 @@ import { UserInfoComponent } from './friends/user-info/user-info.component';
     FriendListComponent,
     FriendRequestsComponent,
     FriendBarComponent,
-    UserInfoComponent
+    UserInfoComponent,
+    MeInfoComponent
   ],
   imports: [
     CommonModule,

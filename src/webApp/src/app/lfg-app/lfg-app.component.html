@@ -3,8 +3,8 @@
     <app-nav-bar></app-nav-bar>
   </div>
   <div class="spekbar-user-wrapper">
-    <div *ngIf="user !== null" class="user-info-wrapper">
-      {{user.username}}
+    <div class="user-info-wrapper">
+      <app-me-info></app-me-info>
     </div>
     <div class="spekbar">
       <router-outlet name="spekbar"></router-outlet>

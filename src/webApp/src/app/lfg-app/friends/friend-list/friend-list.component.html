@@ -6,7 +6,9 @@
     <div data-simplebar data-simplebar-auto-hide="false">
       <div *ngFor="let friend of friends" class="friend-wrapper">
         <div class="friend">
-          <fa name="circle"></fa>
+          <div class="user-img-wrapper">
+            <img src="/assets/user/user-default.png" class="user-img">
+          </div>
           <span (click)="getUserInfo(friend.id)" class="friend-username">
             {{friend.username}}
           </span>

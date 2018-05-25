@@ -1,0 +1,31 @@
+.user-img-wrapper{
+  width: fit-content;
+  height: fit-content;
+}
+
+.user-info{
+  display: flex;
+  flex-direction: row;
+  flex: 1 0 auto;
+}
+
+.user-img{
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: #b9b9bb;
+}
+
+.username-wrapper{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 0 0;
+  font-size: 17px;
+}
+
+.username{
+  margin: 0;
+  border-bottom: #687cc2 solid 2px;
+}

@@ -4,8 +4,8 @@
   <div class="post-container">
     <div class="post-info-wrapper">
       <div class="post-info-left">
-        <div class="post-user">
-          <span *ngIf="post.owner.id != user.id" class="username"
+        <div *ngIf="user != null" class="post-user">
+          <span *ngIf=" post.owner.id != user.id" class="username-wrapper"
                 (click)="getUserInfo(post.owner.id)">{{post.owner.username}}</span>
           <span *ngIf="post.owner.id == user.id">{{post.owner.username}}</span>
         </div>
@@ -28,9 +28,10 @@
       <div class="game-activity-title">
         <div class="game-name"><span>{{post.activity.game.name}}</span></div>
         <div class="activity-name"><span>{{post.activity.name}}</span></div>
+        <div class="post-time"><span>{{post.date | timeAgo}}</span></div>
       </div>
       <div class="post-description-options">
-        <div class="post-description"><p>{{post.description}}</p>  <time>{{post.date}}</time>  </div>
+        <div class="post-description"><p>{{post.description}}</p></div>
         <div class="post-options"></div>
       </div>
     </div>

@@ -1,32 +1,17 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import 'simplebar';
-import {User} from '../_models/User';
 import {UserService} from '../_services/user.service';
 import 'rxjs/add/operator/takeUntil';
-import {Subject} from 'rxjs/Subject';
 
 @Component({
   selector: 'app-lfg-app',
   templateUrl: './lfg-app.component.html',
   styleUrls: ['./lfg-app.component.css']
 })
-export class LfgAppComponent implements OnInit, OnDestroy {
+export class LfgAppComponent implements OnInit {
 
-  private ngUnsubscribe: Subject<any> = new Subject();
-  user: User;
+  constructor() { }
 
-  constructor(private userService: UserService) { }
-
-  ngOnInit() {
-    this.userService.userSubject.takeUntil(this.ngUnsubscribe)
-      .subscribe(user => {
-        this.user = user;
-      });
-  }
-
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
+  ngOnInit() {}
 
 }

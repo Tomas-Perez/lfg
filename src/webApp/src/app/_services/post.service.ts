@@ -16,7 +16,10 @@ import {SocketEvent} from '../_models/Sockets/SocketEvent';
 @Injectable()
 export class PostService {
 
+  private socketUtil: SocketUtil;
+
   private user: User;
+  private posts: Post[];
   postsSubject: BehaviorSubject<Post[]>;
   private filters: PostFilter[];
   filtersSubject: BehaviorSubject<PostFilter[]>;

@@ -55,6 +55,14 @@
   flex: 4 0;
 }
 
+.post-time {
+  display: flex;
+  flex: 1 0;
+  flex-direction: row;
+  justify-content: flex-end;
+  padding: 0 0.3rem;
+}
+
 .post-description-options{
   display: flex;
   flex: 1 0;
@@ -85,7 +93,7 @@
   flex: 0 0 auto;
 }
 
-.username{
+.username-wrapper{
   cursor: pointer;
   text-decoration: underline;
 }

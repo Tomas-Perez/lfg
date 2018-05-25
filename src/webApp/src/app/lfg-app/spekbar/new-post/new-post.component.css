@@ -1,3 +1,7 @@
+h2{
+  margin-bottom: 0.3em;
+}
+
 .description-post {
   resize: none;
   height: 60px;
@@ -5,4 +9,10 @@
 
 .btn-post{
   width: 120px;
+}
+
+.post-info{
+  border-top: solid 1px #ffffff1a;
+  border-bottom: solid 1px #ffffff1a;
+  padding: 0.3em 0.3em;
 }

@@ -33,30 +33,28 @@ export class FriendRequestsComponent implements OnInit, OnDestroy {
   }
 
   getUserInfo(id: number) {
-    this.router.navigate([{outlets: {friends: ['user-info', id]}}],
-      {
-        relativeTo: this.route,
-        skipLocationChange: true
-      });
+    this.router.navigate(['/app', { outlets: {friends: ['user-info', id] }}], {
+      skipLocationChange: true
+    });
   }
 
-  acceptRequest(id: number){ // TODO interface
+  acceptRequest(id: number) { // TODO interface
     this.friendService.confirmFriendRequest(id).subscribe(response => {
       this.friendService.updateFriendRequests();
       this.friendService.updateFriends();
-    })
+    });
   }
 
-  deleteRequest(id: number){ // TODO interface
+  deleteRequest(id: number) { // TODO interface
     this.friendService.removeFriend(id).subscribe(response => {
       this.friendService.updateFriendRequests();
-    })
+    });
   }
 
-  deleteSentRequest(id: number){ // TODO interface
+  deleteSentRequest(id: number) { // TODO interface
     this.friendService.removeFriend(id).subscribe(response => {
       this.friendService.updateSentRequests();
-    })
+    });
   }
 
   ngOnDestroy() {

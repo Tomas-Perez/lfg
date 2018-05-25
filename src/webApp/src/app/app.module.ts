@@ -17,7 +17,7 @@ import {AdminGuardService} from './_services/guards/admin-guard.service';
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
     HttpClientModule,

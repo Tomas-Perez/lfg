@@ -2,37 +2,55 @@
   <div class="title">
     <h1>New Post</h1>
   </div>
-    <form #postForm="ngForm" class="game-form" (ngSubmit)="postForm.valid && newPost()" novalidate>
+  <form #postForm="ngForm" class="game-form" (ngSubmit)="postForm.valid && newPost()" novalidate>
 
-      <div class="form-group">
-        <label for="SelectGame">
-          <span class="bold">Game</span>
-        </label>
-        <select class="form-control form-select" id="SelectGame" [(ngModel)]="newPostModel.selectedGameIndex" name="game" required>
-          <option class="form-option" *ngFor="let game of games; index as i" [ngValue]='i'>{{game.name}}</option>
-        </select>
+    <div class="form-group">
+      <label for="SelectGame">
+        <span class="bold">Game</span>
+      </label>
+      <select class="form-control form-select" id="SelectGame" [(ngModel)]="newPostModel.selectedGameIndex" name="game" required>
+        <option class="form-option" *ngFor="let game of games; index as i" [ngValue]='i'>{{game.name}}</option>
+      </select>
+    </div>
+    <div *ngIf="newPostModel.selectedGameIndex > -1" class="form-group">
+      <label for="SelectActivity">
+        <span class="bold">Activity</span>
+      </label>
+      <select class="form-control form-select" id="SelectActivity" [(ngModel)]="newPostModel.dbPost.activityID" name="activity" required>
+        <option class="form-option" *ngFor="let activity of games[newPostModel.selectedGameIndex].activities" [ngValue]='activity.id'>{{activity.name}}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="TextAreaDescription">
+        <span class="bold">Description</span>
+      </label>
+      <textarea name="TextAreaDescription" placeholder="Description" [(ngModel)]="newPostModel.dbPost.description"
+                id="TextAreaDescription" class="form-control form-text description-post" aria-describedby="descriptionHelp"></textarea>
+    </div>
+    <div class="form-group text-center">
+      <button *ngIf="post == null" type="submit" class="btn btn-primary-lfg btn-submit">Post</button>
+    </div>
+    <div class="form-group text-center">
+      <button *ngIf="post != null" type="button" (click)="deletePost()" class="btn btn-primary-lfg btn-submit btn-post">Delete post</button>
+      <button *ngIf="post != null" type="submit" class="btn btn-primary-lfg btn-submit btn-post">Repost</button>
+    </div>
+  </form>
+  <div *ngIf="post != null">
+    <h2>Active post</h2>
+    <div class="post-info">
+      <div class="post-group">
+        <span>
+          {{post.activity.game.name}}, {{post.activity.name}}
+        </span>
       </div>
-      <div *ngIf="newPostModel.selectedGameIndex > -1" class="form-group">
-        <label for="SelectActivity">
-          <span class="bold">Activity</span>
-        </label>
-        <select class="form-control form-select" id="SelectActivity" [(ngModel)]="newPostModel.dbPost.activityID" name="activity" required>
-          <option class="form-option" *ngFor="let activity of games[newPostModel.selectedGameIndex].activities" [ngValue]='activity.id'>{{activity.name}}</option>
-        </select>
+      <div class="post-group">
+        <p class="m-0">{{post.description}}</p>
       </div>
-      <div class="form-group">
-        <label for="TextAreaDescription">
-          <span class="bold">Description</span>
-        </label>
-        <textarea name="TextAreaDescription" placeholder="Description" [(ngModel)]="newPostModel.dbPost.description"
-                  id="TextAreaDescription" class="form-control form-text description-post" aria-describedby="descriptionHelp"></textarea>
+      <div class="post-group">
+        <span>
+          {{post.date | timeAgo}}
+        </span>
       </div>
-      <div class="form-group text-center">
-        <button *ngIf="post == null" type="submit" class="btn btn-primary-lfg btn-submit">Post</button>
-      </div>
-      <div class="form-group text-center">
-        <button *ngIf="post != null" type="button" (click)="deletePost()" class="btn btn-primary-lfg btn-submit btn-post">Delete post</button>
-        <button *ngIf="post != null" type="submit" class="btn btn-primary-lfg btn-submit btn-post">Repost</button>
-      </div>
-    </form>
+    </div>
+  </div>
 </div>
