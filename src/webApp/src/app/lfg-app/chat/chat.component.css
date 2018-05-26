@@ -1,0 +1,114 @@
+.chat-container{
+  display: flex;
+  flex: 1 0;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  -webkit-box-direction: normal;
+  -webkit-box-orient: vertical;
+  position: relative;
+  -webkit-box-shadow: 0 -1px 0 rgba(0,0,0,.1);
+  box-shadow: 0 -1px 0 rgba(0,0,0,.1);
+  border-top: solid 1px #343a40;
+  background-color: #18191c;
+}
+
+.chat-tabs-wrapper{
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: row;
+  -ms-flex-direction: row;
+  -webkit-box-direction: normal;
+  -webkit-box-orient: horizontal;
+  height: 30px;
+  background: #27292d;
+}
+
+.tab{
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  justify-content: center;
+  width: 150px;
+  border-radius: 4px 4px 0 0;
+  padding: 0 0.3em;
+  cursor: pointer;
+}
+
+.tab-active{
+  background-color: #18191c;
+}
+
+.tab-content{
+  display: flex;
+  flex-direction: row;
+}
+
+.tab-username{
+  display: flex;
+  flex: 1 0 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.tab-close{
+  font-size: 20px;
+  line-height: normal;
+}
+
+.messages-wrapper{
+  flex: 1 0;
+  padding: 0.5em;
+}
+
+.send-message-wrapper{
+  display: flex;
+  flex-direction: row;
+  height: 40px;
+  border-top: solid 1px #343a40;
+}
+
+.send-message-wrapper form{
+  display: flex;
+  flex: 1 0;
+  flex-direction: row;
+}
+
+.form-input, .form-input:focus{
+  display: flex;
+  flex: 1 0;
+  font: 400 13.3333px Arial;
+  border: none;
+  color: #ffffff;
+  box-shadow: none;
+  outline: none;
+  padding-left: 1em;
+  background: #484c52 !important;
+  border: unset;
+}
+
+
+.btn-send-message{
+  font-size: 20px;
+  color: white;
+  background-color: #7f91cc;
+  border: none;
+  line-height: normal;
+  border-radius: 0;
+}
+
+.btn-send-message:active,
+.btn-send-message.active,
+.btn-send-message:active:focus,
+.btn-send-message.active:focus {
+  background-color: rgba(145,162,255,.85);
+}
+
+.btn-send-message:focus {
+  box-shadow: -0.1rem 0 rgba(8, 17, 27, 0.43);
+}
+
+.btn-send-message:hover {
+  box-shadow: none;
+  background-color: rgba(123, 137, 215, 0.85);
+}

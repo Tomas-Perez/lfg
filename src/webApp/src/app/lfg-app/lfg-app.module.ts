@@ -26,6 +26,7 @@ import { FriendService } from '../_services/friend.service';
 import { UserInfoComponent } from './friends/user-info/user-info.component';
 import {TimeAgoPipe} from 'time-ago-pipe';
 import {MeInfoComponent} from './me-info/me-info.component';
+import { ChatComponent } from './chat/chat.component';
 
 
 @NgModule({
@@ -42,7 +43,8 @@ import {MeInfoComponent} from './me-info/me-info.component';
     FriendRequestsComponent,
     FriendBarComponent,
     UserInfoComponent,
-    MeInfoComponent
+    MeInfoComponent,
+    ChatComponent
   ],
   imports: [
     CommonModule,
