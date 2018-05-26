@@ -25,6 +25,7 @@ public abstract class Manager<T> {
         ManagerUtil.persist(manager, entity);
     }
 
+    @SuppressWarnings("unchecked")
     protected void delete(Class clazz, int id){
         EntityTransaction tx = manager.getTransaction();
         try {

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.codehaus.plexus.util.StringUtils;
-import restapi.security.authentication.model.AuthenticationToken;
-import restapi.security.authentication.model.SignInJSON;
+import api.rest.security.authentication.model.AuthenticationToken;
+import api.rest.security.authentication.model.SignInJSON;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;

@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -34,6 +35,16 @@ public class ChatManager extends Manager<ChatEntity> {
     public int add(ChatEntity chat) {
         persist(chat);
         return chat.getId();
+    }
+
+    public int addPrivateChat(ChatEntity chat, int user1ID, int user2ID){
+        return addGroupChat(chat, Arrays.asList(user1ID, user2ID));
+    }
+
+    public int addGroupChat(ChatEntity chat, List<Integer> userIDs){
+        int chatID = add(chat);
+        userIDs.forEach(id -> addMemberToChat(chatID, id));
+        return chatID;
     }
 
     @Override
@@ -60,8 +71,7 @@ public class ChatManager extends Manager<ChatEntity> {
     }
 
     public void addMemberToChat(int chatID, int userID){
-        userManager.checkExistence(userID);
-        checkExistence(chatID);
+        checkAddMember(chatID, userID);
         ChatMemberEntity chatMemberEntity = new ChatMemberEntity(chatID, userID);
         persist(chatMemberEntity);
     }
@@ -82,7 +92,34 @@ public class ChatManager extends Manager<ChatEntity> {
             e.printStackTrace();
         }
 
-        //TODO delete chat with only one member left.
+        if(singleMemberChat(chatID)){
+            delete(chatID);
+        }
+    }
+
+    private void checkAddMember(int chatID, int userID){
+        userManager.checkExistence(userID);
+        checkExistence(chatID);
+        if(isUserInChat(chatID, userID)){
+            final String constraintName =
+                    String.format("User with id %d is already in the chat with id %d", userID, chatID);
+            throw new ConstraintException(constraintName);
+        }
+    }
+
+    private boolean isUserInChat(int chatID, int userID){
+        return manager.createQuery(
+                "SELECT 1 FROM ChatMemberEntity " +
+                        "WHERE EXISTS ( " +
+                        "SELECT 1 FROM ChatMemberEntity M " +
+                        "WHERE M.memberId = :userID AND M.chatId = :chatID)")
+                .setParameter("userID", userID)
+                .setParameter("chatID", chatID)
+                .getResultList().size() > 0;
+    }
+
+    private boolean singleMemberChat(int chatID){
+        return getChatMembers(chatID).size() <= 1;
     }
 
     @SuppressWarnings("unchecked")
@@ -95,6 +132,11 @@ public class ChatManager extends Manager<ChatEntity> {
     }
 
     public int sendMessage(int chatID, int fromID, String message, LocalDateTime date){
+        if(!isUserInChat(chatID, fromID)){
+            final String format =
+                    String.format("User with id %d is not a member of the chat with id %d", fromID, chatID);
+            throw new ConstraintException(format);
+        }
         ChatMessageEntity messageEntity = new ChatMessageEntity(chatID, fromID, message, date);
         persist(messageEntity);
         return messageEntity.getId();
