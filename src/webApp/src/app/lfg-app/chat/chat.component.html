@@ -1,0 +1,19 @@
+<div class="chat-container">
+  <div class="chat-tabs-wrapper">
+    <div *ngFor="let tab of chats; let i = index" class="tab" [ngClass]="{'tab-active': activatedTabIndex == i}" (click)="activateTab(i)">
+      <div class="tab-content">
+        <span class="tab-username">{{tab.username}}</span>
+        <span class="tab-close" (click)="closeTab(i)">×</span>
+      </div>
+    </div>
+  </div>
+  <div class="messages-wrapper">
+    Hola
+  </div>
+  <div class="send-message-wrapper">
+    <form #messageForm="ngForm" (ngSubmit)="messageForm.valid && sendMessage()" novalidate>
+      <input name="InputMessage" [(ngModel)]="messageInput" type="text" id="InputMessage" class="form-input" placeholder="Message USERNAME" required>
+      <button type="submit" class="btn btn-send-message">»</button>
+    </form>
+  </div>
+</div>

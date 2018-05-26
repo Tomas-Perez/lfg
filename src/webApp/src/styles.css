@@ -108,7 +108,7 @@ app-root{
   display: block;
 }
 
-app-group, app-game-list, app-friend-list, app-nav-bar, app-friend-bar,app-me-info{
+app-group, app-game-list, app-friend-list, app-nav-bar, app-friend-bar,app-me-info, app-chat{
   all: inherit;
   padding: 0;
   height: 100%;
@@ -133,7 +133,6 @@ app-userinterface, app-user-navigation{
 .btn-primary-lfg{
   color: white;
   background-color: rgba(114,137,218,.85);
-
   border: none;
   box-shadow: none;
 }
@@ -142,7 +141,6 @@ app-userinterface, app-user-navigation{
 .btn-primary-lfg.active,
 .btn-primary-lfg:active:focus,
 .btn-primary-lfg.active:focus {
-
   background-color: rgba(145,162,255,.85);
 }
 
