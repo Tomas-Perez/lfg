@@ -35,6 +35,9 @@
         <class>persistence.entity.GroupMemberEntity</class>
         <class>persistence.entity.PostEntity</class>
         <class>persistence.entity.FriendEntity</class>
+        <class>persistence.entity.ChatEntity</class>
+        <class>persistence.entity.ChatMemberEntity</class>
+        <class>persistence.entity.ChatMessageEntity</class>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
             <property name ="hibernate.dialect" value ="org.hibernate.dialect.HSQLDialect"/>
