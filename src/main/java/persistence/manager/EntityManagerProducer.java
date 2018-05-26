@@ -1,5 +1,8 @@
 package persistence.manager;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
@@ -11,6 +14,7 @@ import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceException;
 
 /**
  * CDI producer for the JPA {@link EntityManager}.
@@ -18,21 +22,26 @@ import javax.persistence.Persistence;
  */
 @ApplicationScoped
 public class EntityManagerProducer {
+    private static Logger logger = LogManager.getLogger(EntityManagerProducer.class);
 
     private EntityManagerFactory factory;
 
     @PostConstruct
     public void init() {
-        System.out.println("Initiating EntityManagerProducer");
-        String test2 = "test2";
-        System.out.println(test2);
-        factory = Persistence.createEntityManagerFactory(test2);
+        logger.debug("Initiating EntityManagerProducer");
+        String unitName = "test2";
+        logger.debug("Unit name: " + unitName);
+        try {
+            factory = Persistence.createEntityManagerFactory(unitName);
+        } catch (PersistenceException exc){
+            logger.fatal("Cannot connect to database", exc);
+        }
     }
 
     @Produces
     @RequestScoped
     public EntityManager createEntityManager() {
-        System.out.println("Creating Entity Manager");
+        logger.debug("Creating Entity Manager");
         return factory.createEntityManager();
     }
 
@@ -51,7 +60,6 @@ public class EntityManagerProducer {
 
     //Eager factory instantiation
     public void init(@Observes @Initialized(ApplicationScoped.class) Object init) {
-        System.out.println("QUICKLY");
         factory.createEntityManager().close();
     }
 }

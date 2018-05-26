@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 public class GroupResourceTest extends ApiTest {
 
     @Test
-    public void create() throws Exception {
+    public void create(){
         final String gameName = "Overwatch";
         int gameID = addGame(gameName);
         final String activityName = "Ranked";
@@ -79,7 +79,7 @@ public class GroupResourceTest extends ApiTest {
     }
 
     @Test
-    public void addRemoveMembers() throws Exception{
+    public void addRemoveMembers(){
         final String gameName = "Overwatch";
         int gameID = addGame(gameName);
         final String activityName = "Ranked";
@@ -164,7 +164,7 @@ public class GroupResourceTest extends ApiTest {
         return new GroupJSON(id, slots, activityJSON, memberJSON, Collections.singletonList(memberJSON));
     }
     @Test
-    public void getAll() throws Exception{
+    public void getAll(){
         List<UserDetails> group1Members = Arrays.asList(
                 new UserDetails("member11", "132", "member11@mail.com"),
                 new UserDetails("member21", "132", "member21@mail.com"),
@@ -199,7 +199,7 @@ public class GroupResourceTest extends ApiTest {
         assertTrue(actual.contains(group3));
     }
 
-    public GroupJSON fullExpected(String gameName, String activityName, UserDetails owner, List<UserDetails> members) throws Exception{
+    private GroupJSON fullExpected(String gameName, String activityName, UserDetails owner, List<UserDetails> members){
         int gameID = addGame(gameName);
         int activityID = addActivity(activityName, gameID);
         int ownerID = addUser(owner.getUsername(), owner.getPassword(), owner.getEmail());
@@ -236,21 +236,21 @@ public class GroupResourceTest extends ApiTest {
         String password;
         String email;
 
-        public UserDetails(String username, String password, String email) {
+        UserDetails(String username, String password, String email) {
             this.username = username;
             this.password = password;
             this.email = email;
         }
 
-        public String getUsername() {
+        String getUsername() {
             return username;
         }
 
-        public String getPassword() {
+        String getPassword() {
             return password;
         }
 
-        public String getEmail() {
+        String getEmail() {
             return email;
         }
     }

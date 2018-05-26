@@ -22,7 +22,7 @@ import static org.junit.Assert.assertThat;
 public class GroupUserRelationResourceTest extends ApiTest {
 
     @Test
-    public void addRemoveMembers() throws Exception{
+    public void addRemoveMembers(){
         final String gameName = "Overwatch";
         int gameID = addGame(gameName);
         final String activityName = "Ranked";

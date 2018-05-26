@@ -73,7 +73,7 @@ public abstract class ApiTest {
     protected static final int CREATED = Response.Status.CREATED.getStatusCode();
 
     @Before
-    public void setup() throws Exception{
+    public void setup(){
         emp = new EntityManagerProducer();
         emp.init();
         gameManager = new GameManager(emp.createEntityManager());
@@ -90,8 +90,6 @@ public abstract class ApiTest {
         UserEntity userEntity = new UserEntity(true, EMAIL, PASSWORD, USERNAME);
         userManager.add(userEntity);
 
-        token = RequestUtil.getToken(base, EMAIL, PASSWORD);
-
         assertNotNull(groupManager);
         assertNotNull(userManager);
         assertNotNull(activityManager);
@@ -105,6 +103,8 @@ public abstract class ApiTest {
         signUpTarget = RequestUtil.newRelativeTarget(base, "sign-up");
         usersTarget = RequestUtil.newRelativeTarget(base, "users");
         meTarget = RequestUtil.newRelativeTarget(base, "users/me");
+
+        token = RequestUtil.getToken(signInTarget, EMAIL, PASSWORD);
     }
 
     @After

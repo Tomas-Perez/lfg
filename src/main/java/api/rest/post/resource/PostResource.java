@@ -56,7 +56,7 @@ public class PostResource {
         return Response.noContent().build();
     }
 
-    @GET
+    @GET // GET posts/id
     @Path("{id}")
     public Response get(@PathParam("id") int id){
         System.out.println(id);

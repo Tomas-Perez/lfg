@@ -13,6 +13,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
@@ -23,10 +24,7 @@ import java.util.List;
  */
 public class RequestUtil {
 
-    public static AuthenticationToken getToken(URL base, String email, String password) throws Exception {
-        Client client = ClientBuilder.newClient();
-        WebTarget signInTarget = client.target(URI.create(new URL(base, "sign-in").toExternalForm()));
-
+    public static AuthenticationToken getToken(WebTarget signInTarget, String email, String password){
         final Response response = signInTarget
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.json(new SignInJSON(
@@ -37,19 +35,32 @@ public class RequestUtil {
         return parseResponse(response, AuthenticationToken.class);
     }
 
-    public static <T> List<T> parseListResponse(Response r, Class<T> cls) throws Exception{
-        JsonNode node = r.readEntity(JsonNode.class);
-        ObjectMapper mapper = new ObjectMapper();
-        JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, cls);
-        return mapper.readValue(mapper.treeAsTokens(node), type);
+    public static <T> List<T> parseListResponse(Response r, Class<T> cls){
+        r.bufferEntity();
+        try {
+            JsonNode node = r.readEntity(JsonNode.class);
+            ObjectMapper mapper = new ObjectMapper();
+            JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, cls);
+            return mapper.readValue(mapper.treeAsTokens(node), type);
+        } catch (Exception exc){
+            String serverMsg = r.readEntity(String.class);
+            System.out.println(serverMsg);
+            throw new RuntimeException(exc);
+        }
     }
 
-    public static <T> T parseResponse(Response r, Class<T> cls) throws Exception{
-        JsonNode node = r.readEntity(JsonNode.class);
-        System.out.println(node);
-        ObjectMapper mapper = new ObjectMapper();
-        JavaType type = mapper.getTypeFactory().constructType(cls);
-        return mapper.readValue(mapper.treeAsTokens(node), type);
+    public static <T> T parseResponse(Response r, Class<T> cls){
+        r.bufferEntity();
+        try {
+            JsonNode node = r.readEntity(JsonNode.class);
+            ObjectMapper mapper = new ObjectMapper();
+            JavaType type = mapper.getTypeFactory().constructType(cls);
+            return mapper.readValue(mapper.treeAsTokens(node), type);
+        } catch (Exception exc){
+            String serverMsg = r.readEntity(String.class);
+            System.out.println(serverMsg);
+            throw new RuntimeException(exc);
+        }
     }
 
     public static Response get(WebTarget target, AuthenticationToken token){
@@ -85,8 +96,12 @@ public class RequestUtil {
         return difference.substring(1);
     }
 
-    public static WebTarget newRelativeTarget(URL base, String path) throws Exception {
-        Client client = ClientBuilder.newClient();
-        return client.target(URI.create(new URL(base, path).toExternalForm()));
+    public static WebTarget newRelativeTarget(URL base, String path){
+        try {
+            Client client = ClientBuilder.newClient();
+            return client.target(URI.create(new URL(base, path).toExternalForm()));
+        } catch (MalformedURLException exc){
+            throw new RuntimeException(exc);
+        }
     }
 }

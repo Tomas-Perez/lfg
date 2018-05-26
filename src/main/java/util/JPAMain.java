@@ -15,7 +15,7 @@ import javax.persistence.EntityTransaction;
 public class JPAMain {
 
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args){
         EntityManagerProducer emp = new EntityManagerProducer();
         emp.init();
         EntityManager manager = emp.createEntityManager();
