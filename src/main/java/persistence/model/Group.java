@@ -1,10 +1,7 @@
 package persistence.model;
 
-import org.jetbrains.annotations.NotNull;
 import persistence.entity.GroupEntity;
 
-import javax.persistence.*;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 

@@ -26,7 +26,6 @@ public class PortKill {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<Integer> futurePID = executor.submit(getPID);
 
-        p.waitFor();
         executor.shutdown();
 
         final Integer pid = futurePID.get();
@@ -52,6 +51,8 @@ public class PortKill {
                     break;
             }
         }
+
+        p.waitFor();
 
         if(kill != null){
             kill.waitFor();
