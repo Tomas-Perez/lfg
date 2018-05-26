@@ -11,7 +11,7 @@ import javax.ws.rs.ApplicationPath;
 public class ServerConfig extends ResourceConfig {
 
     public ServerConfig() {
-        packages("restapi");
+        packages("api.rest");
         System.out.println("CONFIGURED");
     }
 }
