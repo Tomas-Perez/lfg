@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  */
 
 @Dependent
-@ServerEndpoint(value = "/websockets/chat/{id}",
+@ServerEndpoint(value = "/websockets/chats/{id}",
         encoders = ChatMessageEncoder.class,
         decoders = ChatMessageDecoder.class)
 public class ChatEndpoint {

@@ -13,20 +13,51 @@ public class BroadcastTextMessagePayload implements Payload {
 
     public static final String TYPE = "broadcastTextMessage";
 
-    private MessageJSON message;
+    private int id;
+    private String message;
+    private int sender;
+    private String date;
+
 
     public BroadcastTextMessagePayload() {}
 
     public BroadcastTextMessagePayload(MessageJSON message) {
-        this.message = message;
+        this.message = message.getMessage();
+        this.id = message.getId();
+        this.sender = message.getSender();
+        this.date = message.getDate();
     }
 
-    public MessageJSON getMessage() {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(MessageJSON message) {
+    public void setMessage(String message) {
         this.message = message;
+    }
+
+    public int getSender() {
+        return sender;
+    }
+
+    public void setSender(int sender) {
+        this.sender = sender;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     @Override
