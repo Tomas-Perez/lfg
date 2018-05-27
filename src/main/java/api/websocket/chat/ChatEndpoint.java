@@ -1,13 +1,16 @@
 package api.websocket.chat;
 
+import api.rest.chat.model.MessageJSON;
 import api.websocket.chat.codec.ChatMessageDecoder;
 import api.websocket.chat.codec.ChatMessageEncoder;
 import api.websocket.chat.model.ChatSocketMessage;
 import api.websocket.chat.model.payload.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import persistence.manager.ChatManager;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -15,6 +18,7 @@ import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,6 +33,9 @@ import java.util.stream.Collectors;
 public class ChatEndpoint {
     private static final Map<Integer, Set<Session>> sessionsMap = Collections.synchronizedMap(new HashMap<>());
     private static final Logger logger = LogManager.getLogger(ChatEndpoint.class);
+
+    @Inject
+    private ChatManager chatManager;
 
     @OnOpen
     public void onOpen(Session currentSession, @PathParam("id") int id){
@@ -90,10 +97,11 @@ public class ChatEndpoint {
         broadcast(new ChatSocketMessage(payload), chatID);
     }
 
-    private void broadcastTextMessage(int id, String text, int chatID) {
-        BroadcastTextMessagePayload payload = new BroadcastTextMessagePayload();
-        payload.setContent(text);
-        payload.setId(id);
+    private void broadcastTextMessage(int userID, String text, int chatID) {
+        final LocalDateTime date = LocalDateTime.now();
+        int id = chatManager.sendMessage(chatID, userID, text, date);
+        MessageJSON message = new MessageJSON(id, userID, text, date.toString());
+        BroadcastTextMessagePayload payload = new BroadcastTextMessagePayload(message);
         broadcast(new ChatSocketMessage(payload), chatID);
     }
 

@@ -15,9 +15,7 @@ public class BroadcastAvailableUsersPayload implements Payload {
 
     private Set<Integer> ids;
 
-    public BroadcastAvailableUsersPayload() {
-
-    }
+    public BroadcastAvailableUsersPayload() {}
 
     public Set<Integer> getIds() {
         return ids;

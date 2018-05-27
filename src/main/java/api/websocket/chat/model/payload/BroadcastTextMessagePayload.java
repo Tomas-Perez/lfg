@@ -1,6 +1,7 @@
 package api.websocket.chat.model.payload;
 
 
+import api.rest.chat.model.MessageJSON;
 import api.websocket.common.model.Payload;
 
 /**
@@ -12,25 +13,20 @@ public class BroadcastTextMessagePayload implements Payload {
 
     public static final String TYPE = "broadcastTextMessage";
 
-    private Integer id;
-    private String content;
+    private MessageJSON message;
 
     public BroadcastTextMessagePayload() {}
 
-    public String getContent() {
-        return content;
+    public BroadcastTextMessagePayload(MessageJSON message) {
+        this.message = message;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public MessageJSON getMessage() {
+        return message;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
+    public void setMessage(MessageJSON message) {
+        this.message = message;
     }
 
     @Override
