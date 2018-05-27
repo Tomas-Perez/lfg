@@ -118,7 +118,7 @@ public class UserManager extends Manager<UserEntity>{
     public Set<Integer> getUserGroups(int userID){
         final List resultList = manager.createQuery(
                 "SELECT DISTINCT M.groupId " +
-                        "FROM GroupMemberEntity M JOIN GroupEntity G ON G.id = M.groupId " +
+                        "FROM GroupMemberEntity M " +
                         "WHERE M.memberId = :userID")
                 .setParameter("userID", userID)
                 .getResultList();
@@ -129,7 +129,7 @@ public class UserManager extends Manager<UserEntity>{
     public Set<Integer> getUserGames(int userID){
         final List resultList = manager.createQuery(
                 "SELECT DISTINCT O.gameId " +
-                        "FROM OwnsGameEntity O JOIN GameEntity G ON G.id = O.gameId " +
+                        "FROM OwnsGameEntity O " +
                         "WHERE O.ownerId = :userID")
                 .setParameter("userID", userID)
                 .getResultList();
@@ -145,6 +145,17 @@ public class UserManager extends Manager<UserEntity>{
                 .setParameter("userID", userID)
                 .getResultList();
         return (Integer) resultList.stream().findFirst().orElse(null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Set<Integer> getUserChats(int userID){
+        final List resultList = manager.createQuery(
+                "SELECT DISTINCT C.chatId " +
+                        "FROM ChatMemberEntity C " +
+                        "WHERE C.memberId = :userID")
+                .setParameter("userID", userID)
+                .getResultList();
+        return new HashSet<>(resultList);
     }
 
     public void checkExistence(int userID){

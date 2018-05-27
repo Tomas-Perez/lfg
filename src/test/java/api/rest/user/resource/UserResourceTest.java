@@ -39,7 +39,7 @@ public class UserResourceTest extends ApiTest {
         final Response meResponse = RequestUtil.get(meTarget, userToken);
         UserData meData = RequestUtil.parseResponse(meResponse, UserData.class);
 
-        UserData expected = new UserData(id, username, email, false, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), null);
+        UserData expected = new UserData(id, username, email, false, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), null);
 
         assertThat(meData, is(expected));
     }

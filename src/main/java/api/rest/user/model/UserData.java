@@ -19,6 +19,7 @@ public class UserData {
     private List<BasicUserData> friends;
     private List<BasicUserData> receivedRequests;
     private List<BasicUserData> sentRequests;
+    private List<ChatJSON> chats;
     private PostJSON post;
 
 
@@ -27,7 +28,7 @@ public class UserData {
                     String email, boolean isAdmin,
                     List<GroupJSON> groups, List<BasicUserData> friends,
                     List<BasicUserData> receivedRequests, List<BasicUserData> sentRequests,
-                    PostJSON post)
+                    List<ChatJSON> chats, PostJSON post)
     {
         this.id = id;
         this.username = username;
@@ -37,6 +38,7 @@ public class UserData {
         this.friends = friends;
         this.receivedRequests = receivedRequests;
         this.sentRequests = sentRequests;
+        this.chats = chats;
         this.post = post;
     }
 
@@ -52,6 +54,7 @@ public class UserData {
         this.friends = user.getFriends().stream().map(BasicUserData::new).collect(Collectors.toList());
         this.sentRequests = user.getSentRequests().stream().map(BasicUserData::new).collect(Collectors.toList());
         this.receivedRequests = user.getReceivedRequests().stream().map(BasicUserData::new).collect(Collectors.toList());
+        this.chats = user.getChats().stream().map(ChatJSON::new).collect(Collectors.toList());
         final Post post = user.getPost();
         this.post = post == null? null : new PostJSON(post);
     }
@@ -128,6 +131,14 @@ public class UserData {
         this.post = post;
     }
 
+    public List<ChatJSON> getChats() {
+        return chats;
+    }
+
+    public void setChats(List<ChatJSON> chats) {
+        this.chats = chats;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -141,13 +152,14 @@ public class UserData {
                 Objects.equals(friends, userData.friends) &&
                 Objects.equals(receivedRequests, userData.receivedRequests) &&
                 Objects.equals(sentRequests, userData.sentRequests) &&
+                Objects.equals(chats, userData.chats) &&
                 Objects.equals(post, userData.post);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, username, email, isAdmin, groups, friends, receivedRequests, sentRequests, post);
+        return Objects.hash(id, username, email, isAdmin, groups, friends, receivedRequests, sentRequests, chats, post);
     }
 
     @Override
@@ -161,6 +173,7 @@ public class UserData {
                 ", friends=" + friends +
                 ", receivedRequests=" + receivedRequests +
                 ", sentRequests=" + sentRequests +
+                ", chats=" + chats +
                 ", post=" + post +
                 '}';
     }

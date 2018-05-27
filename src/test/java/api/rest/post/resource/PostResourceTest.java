@@ -134,7 +134,7 @@ public class PostResourceTest extends ApiTest {
                 ownerEmail, false,
                 new ArrayList<>(), new ArrayList<>(),
                 new ArrayList<>(), new ArrayList<>(),
-                new api.rest.user.model.PostJSON(Integer.parseInt(id)));
+                new ArrayList<>(), new api.rest.user.model.PostJSON(Integer.parseInt(id)));
 
         assertThat(expected, is(actual));
     }
@@ -172,7 +172,7 @@ public class PostResourceTest extends ApiTest {
                 ownerEmail, false,
                 Collections.singletonList(new api.rest.user.model.GroupJSON(groupID)), new ArrayList<>(),
                 new ArrayList<>(), new ArrayList<>(),
-                new api.rest.user.model.PostJSON(Integer.parseInt(id)));
+                new ArrayList<>(), new api.rest.user.model.PostJSON(Integer.parseInt(id)));
 
         assertThat(expected, is(actual));
     }

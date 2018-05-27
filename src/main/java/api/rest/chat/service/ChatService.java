@@ -1,8 +1,8 @@
-package api.rest.group.service;
+package api.rest.chat.service;
 
-import persistence.entity.GroupEntity;
-import persistence.manager.GroupManager;
-import persistence.model.Group;
+import persistence.entity.ChatEntity;
+import persistence.manager.ChatManager;
+import persistence.model.Chat;
 import persistence.model.ModelBuilder;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -15,45 +15,43 @@ import java.util.stream.Collectors;
 /**
  * @author Tomas Perez Molina
  */
+
 @ApplicationScoped
-public class GroupService {
+public class ChatService {
 
     @Inject
-    private GroupManager groupManager;
+    private ChatManager chatManager;
 
     @Inject
     private ModelBuilder modelBuilder;
 
-    public List<Group> getAll(){
-        return groupManager.list()
+    public List<Chat> getAll(){
+        return chatManager.list()
                 .stream()
-                .map(modelBuilder::buildGroup)
+                .map(modelBuilder::buildChat)
                 .collect(Collectors.toList());
     }
 
-    public int newGroup(int slots, int activityID, int ownerID){
-        GroupEntity group = new GroupEntity(slots, activityID, null, null, ownerID);
-        return groupManager.add(group);
+    public int newChat(List<Integer> members){
+        ChatEntity chatEntity = new ChatEntity();
+        return chatManager.addGroupChat(chatEntity, members);
     }
 
-    public Group getGroup(int id){
+    public Chat getChat(int id){
         try {
-            return modelBuilder.buildGroup(id);
+            return modelBuilder.buildChat(id);
         } catch (NoSuchElementException exc){
-            throw new NotFoundException();
-        } catch (Exception exc){
-            exc.printStackTrace();
             throw new NotFoundException();
         }
     }
 
     public void wipe(){
-        groupManager.wipe();
+        chatManager.wipe();
     }
 
-    public void deleteGroup(int id){
+    public void deleteChat(int id){
         try {
-            groupManager.delete(id);
+            chatManager.delete(id);
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
@@ -61,15 +59,15 @@ public class GroupService {
 
     public void addMember(int id, int userID){
         try {
-            groupManager.addMemberToGroup(id, userID);
-        } catch (NoSuchElementException exc){
+            chatManager.addMemberToChat(id, userID);
+        }  catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
     }
 
     public void removeMember(int id, int userID){
         try {
-            groupManager.removeMemberFromGroup(id, userID);
+            chatManager.removeMemberFromChat(id, userID);
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }

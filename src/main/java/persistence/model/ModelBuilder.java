@@ -5,6 +5,7 @@ import persistence.manager.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ public class ModelBuilder {
     @Inject private PostManager postManager;
     @Inject private ActivityManager activityManager;
     @Inject private GroupManager groupManager;
+    @Inject private ChatManager chatManager;
 
     private Activity huskActivity(int activityID){
         ActivityEntity activityEntity = activityManager.get(activityID);
@@ -100,6 +102,12 @@ public class ModelBuilder {
                 .map(this::huskUser)
                 .collect(Collectors.toSet());
 
+        Set<Chat> chats = userManager
+                .getUserChats(userID)
+                .stream()
+                .map(this::huskChat)
+                .collect(Collectors.toSet());
+
         Integer postID = userManager
                 .getUserPost(userID);
         Post post = postID == null? null : huskPost(postID);
@@ -112,6 +120,7 @@ public class ModelBuilder {
                 friends,
                 sentRequests,
                 receivedRequests,
+                chats,
                 post
         );
     }
@@ -165,6 +174,7 @@ public class ModelBuilder {
                 null,
                 null,
                 null,
+                null,
                 null
         );
     }
@@ -203,5 +213,40 @@ public class ModelBuilder {
                 null,
                 null
         );
+    }
+
+    public Chat buildChat(int chatID){
+        ChatEntity chatEntity = chatManager.get(chatID);
+        if(chatEntity == null) throw new NoSuchElementException();
+
+        Set<Message> messages = chatManager
+                .getChatMessages(chatID)
+                .stream()
+                .map(this::buildMessage)
+                .collect(Collectors.toSet());
+
+        Set<User> members = chatManager
+                .getChatMembers(chatID)
+                .stream()
+                .map(this::huskUser)
+                .collect(Collectors.toSet());
+
+        return new Chat(chatEntity, members, messages);
+    }
+
+    private Chat huskChat(int chatID){
+        ChatEntity chatEntity = chatManager.get(chatID);
+        if(chatEntity == null) throw new NoSuchElementException();
+
+        return new Chat(chatEntity, null, null);
+    }
+
+    public Message buildMessage(int msgID){
+        ChatMessageEntity messageEntity = chatManager.getMessage(msgID);
+        if(messageEntity == null) throw new NoSuchElementException();
+
+        User sender = huskUser(messageEntity.getSenderId());
+
+        return new Message(messageEntity, sender);
     }
 }

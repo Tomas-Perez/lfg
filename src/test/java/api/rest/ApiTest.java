@@ -1,5 +1,6 @@
 package api.rest;
 
+import api.rest.chat.model.CreateChatJSON;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -39,6 +40,7 @@ public abstract class ApiTest {
     private ActivityManager activityManager;
     private GroupManager groupManager;
     private PostManager postManager;
+    private ChatManager chatManager;
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
@@ -60,6 +62,7 @@ public abstract class ApiTest {
     protected WebTarget signUpTarget;
     protected WebTarget usersTarget;
     protected WebTarget meTarget;
+    protected WebTarget chatsTarget;
 
     private static final String USERNAME = "testUser";
     private static final String EMAIL = "test@mail.com";
@@ -86,6 +89,9 @@ public abstract class ApiTest {
         groupManager.wipe();
         postManager = new PostManager(emp.createEntityManager(), userManager, activityManager, groupManager);
         postManager.wipe();
+        chatManager = new ChatManager(emp.createEntityManager(), userManager);
+        chatManager.wipe();
+
 
         UserEntity userEntity = new UserEntity(true, EMAIL, PASSWORD, USERNAME);
         userManager.add(userEntity);
@@ -103,6 +109,7 @@ public abstract class ApiTest {
         signUpTarget = RequestUtil.newRelativeTarget(base, "sign-up");
         usersTarget = RequestUtil.newRelativeTarget(base, "users");
         meTarget = RequestUtil.newRelativeTarget(base, "users/me");
+        chatsTarget = RequestUtil.newRelativeTarget(base, "chats");
 
         token = RequestUtil.getToken(signInTarget, EMAIL, PASSWORD);
     }
@@ -119,6 +126,8 @@ public abstract class ApiTest {
         groupManager.wipe();
         postManager = new PostManager(emp.createEntityManager(), userManager, activityManager, groupManager);
         postManager.wipe();
+        chatManager = new ChatManager(emp.createEntityManager(), userManager);
+        chatManager.wipe();
         emp.destroy();
     }
 
@@ -144,6 +153,14 @@ public abstract class ApiTest {
         final String location = postResponse.getHeaderString("Location");
         final WebTarget groupTarget = RequestUtil.newTarget(location);
         return Integer.parseInt(RequestUtil.getRelativePathDiff(groupsTarget, groupTarget));
+    }
+
+    protected int addChat(List<Integer> members){
+        final Response postResponse = RequestUtil.post(chatsTarget, token, new CreateChatJSON(members));
+        assertThat(postResponse.getStatus(), is(CREATED));
+        final String location = postResponse.getHeaderString("Location");
+        final WebTarget chatTarget = RequestUtil.newTarget(location);
+        return Integer.parseInt(RequestUtil.getRelativePathDiff(chatsTarget, chatTarget));
     }
 
     protected int addUser(String username, String password, String email){

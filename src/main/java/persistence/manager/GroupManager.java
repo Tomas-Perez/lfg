@@ -101,7 +101,7 @@ public class GroupManager extends Manager<GroupEntity>{
     @SuppressWarnings("unchecked")
     public List<Integer> getGroupMembers(int groupID){
         return manager.createQuery("SELECT M.memberId " +
-                "FROM GroupMemberEntity M JOIN UserEntity U ON U.id = M.memberId " +
+                "FROM GroupMemberEntity M " +
                 "WHERE M.groupId = :groupID")
                 .setParameter("groupID", groupID)
                 .getResultList();
@@ -109,7 +109,7 @@ public class GroupManager extends Manager<GroupEntity>{
 
     public Integer getGroupOwner(int groupID){
         return (Integer) manager.createQuery("SELECT M.memberId " +
-                "FROM GroupMemberEntity M JOIN UserEntity U ON U.id = M.memberId " +
+                "FROM GroupMemberEntity M " +
                 "WHERE M.groupId = :groupID AND M.owner = true")
                 .setParameter("groupID", groupID)
                 .getSingleResult();

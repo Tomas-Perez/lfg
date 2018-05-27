@@ -21,12 +21,13 @@ public class User {
     private Set<User> friends;
     private Set<User> sentRequests;
     private Set<User> receivedRequests;
+    private Set<Chat> chats;
     private Post post;
 
     public User(UserEntity entity, Set<Group> groups,
                 Set<Game> games, Set<User> friends,
                 Set<User> sentRequests, Set<User> receivedRequests,
-                Post post) {
+                Set<Chat> chats, Post post) {
         this.id = entity.getId();
         this.username = entity.getUsername();
         this.password = entity.getPassword();
@@ -38,6 +39,7 @@ public class User {
         this.sentRequests = sentRequests;
         this.receivedRequests = receivedRequests;
         this.post = post;
+        this.chats = chats;
     }
 
     public int getId() {
@@ -82,6 +84,10 @@ public class User {
         return post;
     }
 
+    public Set<Chat> getChats() {
+        return chats;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -96,13 +102,15 @@ public class User {
                 Objects.equals(games, user.games) &&
                 Objects.equals(friends, user.friends) &&
                 Objects.equals(sentRequests, user.sentRequests) &&
-                Objects.equals(receivedRequests, user.receivedRequests);
+                Objects.equals(receivedRequests, user.receivedRequests) &&
+                Objects.equals(chats, user.chats) &&
+                Objects.equals(post, user.post);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, username, password, email, admin, groups, games, friends, sentRequests, receivedRequests);
+        return Objects.hash(id, username, password, email, admin, groups, games, friends, sentRequests, receivedRequests, chats, post);
     }
 
     @Override
@@ -118,6 +126,8 @@ public class User {
                 ", friends=" + friends +
                 ", sentRequests=" + sentRequests +
                 ", receivedRequests=" + receivedRequests +
+                ", chats=" + chats +
+                ", post=" + post +
                 '}';
     }
 }
