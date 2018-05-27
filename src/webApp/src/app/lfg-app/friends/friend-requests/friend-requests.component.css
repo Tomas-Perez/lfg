@@ -38,18 +38,25 @@ hr{
   margin-bottom: 1em;
 }
 
+.friend-wrapper{
+  display: flex;
+  flex-direction: column;
+  margin: 0.3em 0;
+  padding: 0.3em;
+}
+
 .friend{
   display: flex;
   flex-direction: row;
   margin: 0.3em 0;
   padding-left: 0.2rem;
-  border-bottom: solid 1px #ffffff1a;
 }
 
 .friend-username{
   display: flex;
-  flex: 1 0;
-  margin-left: 0.3rem;
+  flex: 1 0 auto;
+  flex-direction: column;
+  justify-content: center;
   cursor: pointer;
 }
 
@@ -65,5 +72,20 @@ hr{
 }
 
 .delete-request{
+  height: fit-content;
+  margin: auto;
   color: #da2121;
+}
+
+.user-img{
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: #b9b9bb;
+}
+
+.user-img-wrapper{
+  width: fit-content;
+  height: fit-content;
 }

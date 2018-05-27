@@ -1,8 +1,11 @@
 <div *ngIf="user != null" class="user-info-wrapper">
+  <span *ngIf="isAlreadyFriend" class="friend-icon" title="You are friends with {{user.username}}">
+    <fa name="user"></fa>
+  </span>
   <div class="title">
-    <span *ngIf="isAlreadyFriend" class="friend-icon" title="You are friends with {{user.username}}">
-      <fa name="user"></fa>
-    </span>
+    <div class="user-img-wrapper">
+      <img src="/assets/user/user-default.png" class="user-img">
+    </div>
     <h1>{{user.username}}</h1>
   </div>
   <div class="options">

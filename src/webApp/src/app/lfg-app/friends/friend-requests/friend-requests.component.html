@@ -9,13 +9,17 @@
       <span>{{receivedRequests.length}}</span>
     </div>
     <div data-simplebar data-simplebar-auto-hide="false">
-      <div *ngFor="let request of receivedRequests" class="friend">
-        <fa name="circle"></fa>
-        <span (click)="getUserInfo(request.id)" class="friend-username">
-          {{request.username}}
-        </span>
-        <span class="hand accept-request" title="Accept request" (click)="acceptRequest(request.id)">Accept</span>
-        <span class="hand delete-request" title="Delete request" (click)="deleteRequest(request.id)">x</span>
+      <div *ngFor="let request of receivedRequests"  class="friend-wrapper">
+        <div class="friend">
+          <div class="user-img-wrapper">
+            <img src="/assets/user/user-default.png" class="user-img">
+          </div>
+          <span (click)="getUserInfo(request.id)" class="friend-username">
+            {{request.username}}
+          </span>
+          <span class="hand accept-request" title="Accept request" (click)="acceptRequest(request.id)">Accept</span>
+          <span class="hand delete-request" title="Delete request" (click)="deleteRequest(request.id)">x</span>
+        </div>
       </div>
     </div>
   </div>
@@ -26,12 +30,16 @@
       <span>{{sentRequests.length}}</span>
     </div>
     <div data-simplebar data-simplebar-auto-hide="false">
-      <div *ngFor="let request of sentRequests" class="friend">
-        <fa name="circle"></fa>
-        <span (click)="getUserInfo(request.id)" class="friend-username">
-          {{request.username}}
-        </span>
-        <span class="hand delete-request" title="Delete request" (click)="deleteSentRequest(request.id)">x</span>
+      <div *ngFor="let request of sentRequests" class="friend-wrapper">
+        <div class="friend">
+          <div class="user-img-wrapper">
+            <img src="/assets/user/user-default.png" class="user-img">
+          </div>
+          <span (click)="getUserInfo(request.id)" class="friend-username">
+            {{request.username}}
+          </span>
+          <span class="hand delete-request" title="Delete request" (click)="deleteSentRequest(request.id)">x</span>
+        </div>
       </div>
     </div>
   </div>
