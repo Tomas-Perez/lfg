@@ -87,7 +87,6 @@
   display: flex;
   flex-shrink: 0;
   position: relative;
-  height: 170px;
 }
 
 .friends-wrapper{

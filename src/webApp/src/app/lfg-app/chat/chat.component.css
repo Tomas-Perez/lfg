@@ -12,15 +12,32 @@
   background-color: #18191c;
 }
 
+.chat-header{
+  display: flex;
+  height: 35px;
+  flex: 0 0 auto;
+  flex-direction: row;
+  background: #27292d;
+}
+
+.chat-toggle{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 36px;
+  cursor: pointer;
+}
+
+.chat-toggle fa{
+  text-align: center;
+}
+
 .chat-tabs-wrapper{
   display: flex;
-  flex-shrink: 0;
+  flex: 1 0;
+  height: 100%;
   flex-direction: row;
-  -ms-flex-direction: row;
-  -webkit-box-direction: normal;
-  -webkit-box-orient: horizontal;
-  height: 30px;
-  background: #27292d;
 }
 
 .tab{
@@ -30,7 +47,7 @@
   justify-content: center;
   width: 150px;
   border-radius: 4px 4px 0 0;
-  padding: 0 0.3em;
+  padding: 0 0.3em 0 0.6em;
   cursor: pointer;
 }
 
@@ -57,32 +74,64 @@
 }
 
 .messages-wrapper{
-  flex: 1 0;
-  padding: 0.5em;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  padding: 0.2em 0.5em 0.2em 0.5em;
+  height: 160px;
 }
 
-.send-message-wrapper{
+.message{
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+}
+
+.message-margin-bottom{
+  margin-bottom: 10px;
+}
+
+.message-info{
+  display: flex;
+  flex-direction: row;
+  flex: 1 0;
+  font-size: 13px;
+}
+
+.message-username{
+  color: #b5b5b5;
+}
+
+.message-time{
+  align-self: flex-end;
+  color: #787878;
+  font-size: 12px;
+  margin-left: 0.5em;
+}
+
+.message-text{
+
+}
+
+.send-message-wrapper, .send-message-wrapper form{
   display: flex;
   flex-direction: row;
   height: 40px;
+  width: 100%;
   border-top: solid 1px #343a40;
+  flex: 0 0 auto;
 }
 
-.send-message-wrapper form{
+.message-input, .message-input:focus{
   display: flex;
-  flex: 1 0;
-  flex-direction: row;
-}
-
-.form-input, .form-input:focus{
-  display: flex;
-  flex: 1 0;
+  flex: 1 0 auto;
+  height: 100%;
   font: 400 13.3333px Arial;
   border: none;
   color: #ffffff;
   box-shadow: none;
   outline: none;
-  padding-left: 1em;
+  padding: 0 0 0 1em;
   background: #484c52 !important;
   border: unset;
 }
@@ -111,4 +160,27 @@
 .btn-send-message:hover {
   box-shadow: none;
   background-color: rgba(123, 137, 215, 0.85);
+}
+
+.chat-toggle-icon {
+  transition: transform 1.5s;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.hidden-zone{
+  transition: padding, height 1.5s;
+  height: 200px;
+}
+
+.no-height{
+  transition: padding, height 1.5s;
+  height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.rotate-toggle{
+  transition: transform 1.5s;
+  transform: rotate(180deg);
 }
