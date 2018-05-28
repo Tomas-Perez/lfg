@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, OnInit, QueryList, ViewChildren} from '@angular/core';
 import * as SimpleBar from 'simplebar';
+import {ChatService} from '../../_services/chat.service';
 
 @Component({
   selector: 'app-chat',
@@ -17,7 +18,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
   messageInput: string;
   chatOpen: boolean;
 
-  constructor() { }
+  constructor(private chatService: ChatService) { }
 
   ngOnInit() {
     this.messageInput = '';
@@ -40,7 +41,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.scrollToBottom();
     this.messageFor.changes.subscribe(t => {
-      console.log('asdfasdf');
       this.scrollToBottom();
     });
   }
@@ -52,6 +52,10 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
   toggleChat(){
     this.chatOpen = !this.chatOpen;
+  }
+
+  openChat(){
+    this.chatOpen = true;
   }
 
   sendMessage() {

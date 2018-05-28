@@ -58,6 +58,7 @@
 .post-time {
   display: flex;
   flex: 1 0;
+  min-width: fit-content;
   flex-direction: row;
   justify-content: flex-end;
   padding: 0 0.3rem;

@@ -25,6 +25,7 @@
     "@types/simplebar": "^2.4.1",
     "@types/socket.io-client": "^1.4.32",
     "angular-font-awesome": "^3.1.2",
+    "angular2-websocket": "^0.9.6",
     "bootstrap": "^4.1.1",
     "core-js": "^2.5.5",
     "font-awesome": "^4.7.0",
@@ -32,7 +33,6 @@
     "npm": "^6.0.1",
     "rxjs": "^5.5.10",
     "simplebar": "^2.6.1",
-    "socket.io-client": "^2.1.1",
     "time-ago-pipe": "^1.3.2",
     "zone.js": "^0.8.26"
   },

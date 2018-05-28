@@ -68,7 +68,7 @@ hr{
 
 .accept-request{
   color: #51da43;
-  margin-right: 0.3em;
+  margin: auto 0.3em auto 0;
 }
 
 .delete-request{

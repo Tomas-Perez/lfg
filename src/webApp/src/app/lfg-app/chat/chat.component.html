@@ -3,7 +3,7 @@
     <div class="chat-tabs-wrapper">
       <div *ngFor="let tab of chats; let i = index" class="tab" [ngClass]="{'tab-active': activatedTabIndex == i}" (click)="activateTab(i)">
         <div class="tab-content">
-          <span class="tab-username">{{tab.username}}</span>
+          <span class="tab-username" (click)="openChat()">{{tab.username}}</span>
           <span class="tab-close" (click)="closeTab(i)">×</span>
         </div>
       </div>

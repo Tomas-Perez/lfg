@@ -87,7 +87,7 @@ export class GameService {
   }
 
   private newGameErrorHandle(code: any) {
-    console.log('Error adding new game');
+    console.log('Error adding new game code: ' + code);
     return Observable.of(code);
   }
 

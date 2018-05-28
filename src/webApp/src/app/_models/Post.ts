@@ -1,16 +1,7 @@
-import {JsonConverter, JsonCustomConvert, JsonObject, JsonProperty} from 'json2typescript';
+import {JsonObject, JsonProperty} from 'json2typescript';
 import {DbActivity} from './DbModels/DbActivity';
 import {Group} from './Group';
-
-@JsonConverter
-class DateConverter implements JsonCustomConvert<Date> {
-    serialize(date: Date): any {
-        return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" +  date.getDate();
-    }
-    deserialize(date: any): Date {
-        return new Date(date);
-    }
-}
+import {DateConverter} from './JsonConverters/DateConverter';
 
 @JsonObject
 class Owner {
