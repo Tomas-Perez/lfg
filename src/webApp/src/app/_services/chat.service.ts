@@ -7,6 +7,7 @@ import {catchError, map, switchMap} from 'rxjs/operators';
 import {Observable} from 'rxjs/Observable';
 import {JsonConvert} from 'json2typescript';
 import {AuthService} from './auth.service';
+import {Message} from '../_models/Message';
 
 @Injectable()
 export class ChatService {
@@ -28,20 +29,61 @@ export class ChatService {
 
   }
 
+  onAvailableUsers(ids: number[], chat: Chat){
+    /*
+    console.log("onAvailableUsers");
+    chat.updateMembers(ids);
+    console.log("updated chat " + chat.id + " users");
+    */
+  }
+
+  onChatMessage(message: Message, chat: Chat){
+    chat.pushMessage(message);
+  }
+
+  onConnectedUser(id: number, chat: Chat){
+    chat.addMember(id);
+  }
+
+  onDisconnectedUser(id: number, chat: Chat){
+    chat.removeMember(id);
+  }
+
   newChat(ids: number[]){
     this.requestNewChat(ids).subscribe((data: {chat: Chat, wsUrl: string}) => {
-      this.chats.push(data.chat);
+      const chat = data.chat;
+      const wsUrl = data.wsUrl;
+      this.chats.push(chat);
       this.chatsSubject.next(this.chats);
-      const ws = new $WebSocket(data.wsUrl + '?access-token=' + this.authService.getAccessToken());
+      const ws = new $WebSocket(wsUrl + '?access-token=' + this.authService.getAccessToken());
 
       ws.onMessage(
         (msg: MessageEvent)=> {
-          console.log("onMessage ", msg.data);
+          const msgData = JSON.parse(msg.data);
+          console.log(msgData);
+          console.log("type ", msgData.type);
+          switch (msgData.type){
+            case "broadcastTextMessage": {
+              this.onChatMessage(this.jsonConvert.deserialize(msgData.payload.message, Message), chat);
+              break;
+            }
+            case "broadcastAvailableUsers": {
+              this.onAvailableUsers(msgData.payload, chat);
+              break;
+            }
+            case "broadcastConnectedUser": {
+              this.onConnectedUser(msgData.payload, chat);
+              break;
+            }
+            case "broadcastDisconnectedUser": {
+              this.onDisconnectedUser(msgData.payload, chat);
+              break;
+            }
+          }
           // TODO
         }
       );
 
-      // TODO subscribe to ws
       this.chatsWs.push(ws);
     })
   }

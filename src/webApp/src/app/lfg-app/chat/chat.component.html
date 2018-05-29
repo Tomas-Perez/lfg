@@ -1,9 +1,9 @@
 <div class="chat-container">
   <div class="chat-header">
     <div class="chat-tabs-wrapper">
-      <div *ngFor="let tab of chats; let i = index" class="tab" [ngClass]="{'tab-active': activatedTabIndex == i}" (click)="activateTab(i)">
+      <div *ngFor="let chat of chats; let i = index" class="tab" [ngClass]="{'tab-active': activatedTabIndex == i}" (click)="activateTab(i)">
         <div class="tab-content">
-          <span class="tab-username" (click)="openChat()">{{tab.username}}</span>
+          <span class="tab-username" (click)="openChat()">{{chat.chat.members[0].id}}</span>
           <span class="tab-close" (click)="closeTab(i)">×</span>
         </div>
       </div>
@@ -13,13 +13,13 @@
     </div>
   </div>
   <div class="hidden-zone" [ngClass]="{'no-height': !chatOpen}">
-    <div class="messages-wrapper">
+    <div *ngIf="chats.length" class="messages-wrapper">
       <div data-simplebar id="scrollbar">
         <div #messages *ngFor="let message of chats[activatedTabIndex].messages; let i = index; let last = last"
             class="message"
-            [ngClass]="{'message-margin-bottom': !last && message.id != chats[activatedTabIndex].messages[i+1].id}">
+            [ngClass]="{'message-margin-bottom': !last && message.senderId != chats[activatedTabIndex].messages[i+1].senderId}">
           <div *ngIf="i == 0 || message.id != chats[activatedTabIndex].messages[i-1].id" class="message-info">
-            <span class="message-username">{{message.id == user.id ? 'You' : chats[activatedTabIndex].username}}:</span>
+            <span class="message-username">{{message.senderId == user.id ? 'You' : message.senderId}}:</span>
             <span class="message-time">
               {{message.date.getDay()}}/{{message.date.getMonth()}}/{{message.date.getFullYear()}},
               {{message.date.getHours()}}:{{message.date.getSeconds()}}
