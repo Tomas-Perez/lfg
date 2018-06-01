@@ -25,11 +25,11 @@ export class ChatService {
     this.chats = [];
     this.chatsSubject = new BehaviorSubject<Chat[]>(this.chats);
 
-    this.newChat([2443, 2444])
+    this.newChat([2443, 2444]);
 
   }
 
-  onAvailableUsers(ids: number[], chat: Chat){
+  onAvailableUsers(ids: number[], chat: Chat) {
     /*
     console.log("onAvailableUsers");
     chat.updateMembers(ids);
@@ -37,19 +37,19 @@ export class ChatService {
     */
   }
 
-  onChatMessage(message: Message, chat: Chat){
+  onChatMessage(message: Message, chat: Chat) {
     chat.pushMessage(message);
   }
 
-  onConnectedUser(id: number, chat: Chat){
+  onConnectedUser(id: number, chat: Chat) {
     chat.addMember(id);
   }
 
-  onDisconnectedUser(id: number, chat: Chat){
+  onDisconnectedUser(id: number, chat: Chat) {
     chat.removeMember(id);
   }
 
-  newChat(ids: number[]){
+  newChat(ids: number[]) {
     this.requestNewChat(ids).subscribe((data: {chat: Chat, wsUrl: string}) => {
       const chat = data.chat;
       const wsUrl = data.wsUrl;
@@ -58,24 +58,23 @@ export class ChatService {
       const ws = new $WebSocket(wsUrl + '?access-token=' + this.authService.getAccessToken());
 
       ws.onMessage(
-        (msg: MessageEvent)=> {
+        (msg: MessageEvent) => {
           const msgData = JSON.parse(msg.data);
           console.log(msgData);
-          console.log("type ", msgData.type);
-          switch (msgData.type){
-            case "broadcastTextMessage": {
+          switch (msgData.type) {
+            case 'broadcastTextMessage': {
               this.onChatMessage(this.jsonConvert.deserialize(msgData.payload.message, Message), chat);
               break;
             }
-            case "broadcastAvailableUsers": {
+            case 'broadcastAvailableUsers': {
               this.onAvailableUsers(msgData.payload, chat);
               break;
             }
-            case "broadcastConnectedUser": {
+            case 'broadcastConnectedUser': {
               this.onConnectedUser(msgData.payload, chat);
               break;
             }
-            case "broadcastDisconnectedUser": {
+            case 'broadcastDisconnectedUser': {
               this.onDisconnectedUser(msgData.payload, chat);
               break;
             }
@@ -85,10 +84,12 @@ export class ChatService {
       );
 
       this.chatsWs.push(ws);
-    })
+    });
   }
 
-  requestNewChat(ids: number[]): Observable<{chat: Chat, wsUrl: string}>{
+
+
+  requestNewChat(ids: number[]): Observable<{chat: Chat, wsUrl: string}> {
     return this.http.post<any>(this.chatUrl, {members: ids} , {
       observe: 'response'
     })

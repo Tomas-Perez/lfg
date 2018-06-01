@@ -52,7 +52,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.chatService.chatsSubject.takeUntil(this.ngUnsubscribe).subscribe(
       chats => {
-        for(const chat of chats){
+        for (const chat of chats){
           let messages: Message[];
           const messageSub = chat.messagesSubject.takeUntil(this.ngUnsubscribe)
             .subscribe(msgs => messages = msgs);
@@ -65,7 +65,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.scrollToBottom();
+    //this.scrollToBottom();
     this.messageFor.changes.subscribe(t => {
       this.scrollToBottom();
     });
@@ -93,6 +93,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     this.messageInput = '';
     */
     // TODO send message
+
+
   }
 
   activateTab(index: number) {
