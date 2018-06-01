@@ -3,11 +3,12 @@ import {$WebSocket} from 'angular2-websocket/angular2-websocket';
 import {Chat} from '../_models/Chat';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {HttpClient} from '@angular/common/http';
-import {catchError, map, switchMap} from 'rxjs/operators';
+import {catchError, switchMap} from 'rxjs/operators';
 import {Observable} from 'rxjs/Observable';
 import {JsonConvert} from 'json2typescript';
 import {AuthService} from './auth.service';
 import {Message} from '../_models/Message';
+import {SendMessage} from '../_models/Sockets/SendMessage';
 
 @Injectable()
 export class ChatService {
@@ -15,13 +16,13 @@ export class ChatService {
   private chatUrl = 'http://localhost:8080/lfg/chats';
   private chatWsUrl = 'ws://localhost:8080/lfg/websockets/chats/';
   private jsonConvert: JsonConvert = new JsonConvert();
-  private chatsWs: $WebSocket[]; // TODO map with chat id?
+  private chatsWs: Map<number, $WebSocket>;
   private chats: Chat[];
   chatsSubject: BehaviorSubject<Chat[]>;
 
 
   constructor(private http: HttpClient, private authService: AuthService) {
-    this.chatsWs = [];
+    this.chatsWs = new Map();
     this.chats = [];
     this.chatsSubject = new BehaviorSubject<Chat[]>(this.chats);
 
@@ -83,11 +84,19 @@ export class ChatService {
         }
       );
 
-      this.chatsWs.push(ws);
+      this.chatsWs.set(chat.id, ws);
     });
   }
 
-
+  sendMessage(id: number, message: string): boolean{
+    const ws = this.chatsWs.get(id);
+    if (!ws){
+      return false;
+    }
+    const sendMsg = new SendMessage('sendTextMessage', message);
+    ws.send(this.jsonConvert.serialize(sendMsg));
+    return true;
+  }
 
   requestNewChat(ids: number[]): Observable<{chat: Chat, wsUrl: string}> {
     return this.http.post<any>(this.chatUrl, {members: ids} , {

@@ -93,7 +93,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     this.messageInput = '';
     */
     // TODO send message
-
+    this.chatService.sendMessage(this.chats[this.activatedTabIndex].chat.id, this.messageInput);
 
   }
 
