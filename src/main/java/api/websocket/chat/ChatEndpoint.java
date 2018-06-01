@@ -37,11 +37,6 @@ public class ChatEndpoint {
     @Inject
     private ChatManager chatManager;
 
-    @PostConstruct
-    public void init() {
-        logger.info(chatManager);
-    }
-
     @OnOpen
     public void onOpen(Session currentSession, @PathParam("id") int id){
         Set<Session> chatSessions = sessionsMap.getOrDefault(id, Collections.synchronizedSet(new HashSet<>()));
