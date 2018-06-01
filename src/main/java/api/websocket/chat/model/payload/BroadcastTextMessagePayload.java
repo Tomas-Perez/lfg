@@ -7,7 +7,7 @@ import api.websocket.common.model.Payload;
 /**
  * Represents the payload of a WebSocket frame to broadcast a text message.
  *
- * @author cassiomolin
+ * @author Tomas Perez Molina
  */
 public class BroadcastTextMessagePayload implements Payload {
 

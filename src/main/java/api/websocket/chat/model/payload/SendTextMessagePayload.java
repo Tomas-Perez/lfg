@@ -5,7 +5,7 @@ import api.websocket.common.model.Payload;
 /**
  * Payload with details of a message sent by the client.
  *
- * @author cassiomolin
+ * @author Tomas Perez Molina
  */
 public class SendTextMessagePayload implements Payload {
 

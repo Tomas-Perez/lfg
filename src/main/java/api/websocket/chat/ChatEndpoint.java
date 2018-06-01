@@ -5,6 +5,7 @@ import api.websocket.chat.codec.ChatMessageDecoder;
 import api.websocket.chat.codec.ChatMessageEncoder;
 import api.websocket.chat.model.ChatSocketMessage;
 import api.websocket.chat.model.payload.*;
+import api.websocket.common.config.CdiAwareConfigurator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import persistence.manager.ChatManager;
@@ -12,10 +13,7 @@ import persistence.manager.ChatManager;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
+import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.security.Principal;
@@ -30,7 +28,8 @@ import java.util.stream.Collectors;
 @Dependent
 @ServerEndpoint(value = "/websockets/chats/{id}",
         encoders = ChatMessageEncoder.class,
-        decoders = ChatMessageDecoder.class)
+        decoders = ChatMessageDecoder.class,
+        configurator = CdiAwareConfigurator.class)
 public class ChatEndpoint {
     private static final Map<Integer, Set<Session>> sessionsMap = Collections.synchronizedMap(new HashMap<>());
     private static final Logger logger = LogManager.getLogger(ChatEndpoint.class);
@@ -75,6 +74,11 @@ public class ChatEndpoint {
 
         logger.info(String.format("Session %s closed", currentSession.getId()));
         logger.info(String.format("%d sessions open on chat %d", chatSessions.size(), id));
+    }
+
+    @OnError
+    public void onError(Session session, Throwable throwable){
+        logger.error(throwable.getMessage());
     }
 
     private void broadcastUserConnected(Session currentSession, int id, int chatID) {
