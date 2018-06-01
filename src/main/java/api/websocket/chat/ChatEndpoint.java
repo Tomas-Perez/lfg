@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import persistence.manager.ChatManager;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.websocket.OnClose;
@@ -36,6 +37,11 @@ public class ChatEndpoint {
 
     @Inject
     private ChatManager chatManager;
+
+    @PostConstruct
+    public void init() {
+        logger.info(chatManager);
+    }
 
     @OnOpen
     public void onOpen(Session currentSession, @PathParam("id") int id){

@@ -94,7 +94,7 @@ export class ChatService {
       return false;
     }
     const sendMsg = new SendMessage('sendTextMessage', message);
-    ws.send(this.jsonConvert.serialize(sendMsg));
+    ws.send(this.jsonConvert.serialize(sendMsg)).subscribe();
     return true;
   }
 
