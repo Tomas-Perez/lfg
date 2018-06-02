@@ -65,7 +65,7 @@ export class PostFlowComponent implements OnInit, OnDestroy {
   }
 
   newChat(id: number) {
-    this.chatService.newChat([id]);
+    this.chatService.newChat([this.user.id, id]);
   }
 
   ngOnDestroy() {

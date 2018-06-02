@@ -93,7 +93,7 @@ export class ChatService {
           console.log(msgData);
           switch (msgData.type) {
             case 'broadcastTextMessage': {
-              this.onChatMessage(this.jsonConvert.deserialize(msgData.payload.message, Message), chat);
+              this.onChatMessage(this.jsonConvert.deserialize(msgData.payload, Message), chat);
               break;
             }
             case 'broadcastAvailableUsers': {
