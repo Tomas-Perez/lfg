@@ -13,8 +13,9 @@ public class BroadcastDisconnectedUserPayload implements Payload {
 
     private Integer id;
 
-    public BroadcastDisconnectedUserPayload() {
-
+    public BroadcastDisconnectedUserPayload() {}
+    public BroadcastDisconnectedUserPayload(int id) {
+        this.id = id;
     }
 
     public Integer getId() {
@@ -28,5 +29,12 @@ public class BroadcastDisconnectedUserPayload implements Payload {
     @Override
     public String getType() {
         return TYPE;
+    }
+
+    @Override
+    public String toString() {
+        return "BroadcastDisconnectedUserPayload{" +
+                "id=" + id +
+                '}';
     }
 }

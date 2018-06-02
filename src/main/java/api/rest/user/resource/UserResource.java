@@ -116,9 +116,9 @@ public class UserResource {
     @Path("me/friend-requests")
     public Response sendFriendRequest(FriendRequestJSON friendRequestJSON){
         Principal principal = securityContext.getUserPrincipal();
-        int id = service.getIDByEmail(principal.getName());
-        final int otherID = friendRequestJSON.getId();
-        service.sendFriendRequest(id, otherID);
+        int senderID = service.getIDByEmail(principal.getName());
+        final int receiverID = friendRequestJSON.getId();
+        service.sendFriendRequest(senderID, receiverID);
         return Response.status(Response.Status.CREATED).build();
     }
 

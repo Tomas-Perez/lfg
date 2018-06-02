@@ -48,4 +48,12 @@ public class ChatSocketMessage{
     public void setPayload(Payload payload) {
         this.payload = payload;
     }
+
+    @Override
+    public String toString() {
+        return "ChatSocketMessage{" +
+                "type='" + type + '\'' +
+                ", payload=" + payload +
+                '}';
+    }
 }

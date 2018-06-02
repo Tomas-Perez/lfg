@@ -34,6 +34,10 @@ public class PostManager extends Manager<PostEntity>{
 
     public int add(PostEntity post) {
         checkValidCreation(post.getOwnerId(), post.getActivityId());
+        Integer postID = userManager.getUserPost(post.getOwnerId());
+        if(postID != null) {
+            delete(postID);
+        }
         persist(post);
         return post.getId();
     }
@@ -50,6 +54,11 @@ public class PostManager extends Manager<PostEntity>{
                 groupOwner,
                 group.getId()
         );
+
+        Integer postID = userManager.getUserPost(post.getOwnerId());
+        if(postID != null) {
+            delete(postID);
+        }
 
         persist(post);
 

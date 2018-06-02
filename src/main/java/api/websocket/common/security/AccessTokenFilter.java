@@ -2,6 +2,7 @@ package api.websocket.common.security;
 
 import api.rest.security.authentication.service.AuthenticationTokenDetails;
 import api.rest.security.authentication.service.AuthenticationTokenService;
+import api.rest.user.model.BasicUserData;
 import persistence.entity.UserEntity;
 import persistence.manager.UserManager;
 
@@ -51,7 +52,7 @@ public class AccessTokenFilter implements Filter {
         Optional<UserEntity> optionalUser = userManager.getByEmail(tokenDetails.getEmail());
         if(optionalUser.isPresent()){
             UserEntity user = optionalUser.get();
-            filterChain.doFilter(new AuthenticatedRequest(request, Integer.toString(user.getId())), servletResponse);
+            filterChain.doFilter(new AuthenticatedRequest(request, new BasicUserData(user.getId(), user.getUsername())), servletResponse);
         } else {
             returnForbiddenError(response, "Invalid access token");
         }
@@ -72,16 +73,16 @@ public class AccessTokenFilter implements Filter {
 
     private static class AuthenticatedRequest extends HttpServletRequestWrapper {
 
-        private String id;
+        private BasicUserData userData;
 
-        private AuthenticatedRequest(HttpServletRequest request, String id) {
+        private AuthenticatedRequest(HttpServletRequest request, BasicUserData data) {
             super(request);
-            this.id = id;
+            this.userData = data;
         }
 
         @Override
         public Principal getUserPrincipal() {
-            return () -> id;
+            return new AuthenticatedPrincipal(userData);
         }
     }
 }

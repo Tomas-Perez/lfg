@@ -1,6 +1,6 @@
 package api.websocket.user.codec;
 
-import api.websocket.user.model.ChatSocketMessage;
+import api.websocket.user.model.UserSocketMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.websocket.DecodeException;
@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  * @author Tomas Perez Molina
  */
-public class ChatMessageDecoder implements Decoder.Text<ChatSocketMessage> {
+public class ChatMessageDecoder implements Decoder.Text<UserSocketMessage> {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
@@ -21,9 +21,9 @@ public class ChatMessageDecoder implements Decoder.Text<ChatSocketMessage> {
     public void destroy() {}
 
     @Override
-    public ChatSocketMessage decode(String s) throws DecodeException {
+    public UserSocketMessage decode(String s) throws DecodeException {
         try {
-            return mapper.readValue(s, ChatSocketMessage.class);
+            return mapper.readValue(s, UserSocketMessage.class);
         } catch (IOException e) {
             throw new DecodeException(s, e.getMessage(), e);
         }

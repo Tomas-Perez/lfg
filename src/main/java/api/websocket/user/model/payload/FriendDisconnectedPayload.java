@@ -7,14 +7,16 @@ import api.websocket.common.model.Payload;
  *
  * @author Tomas Perez Molina
  */
-public class BroadcastDisconnectedUserPayload implements Payload {
+public class FriendDisconnectedPayload implements Payload {
 
-    public static final String TYPE = "broadcastDisconnectedUser";
+    public static final String TYPE = "friendDisconnected";
 
     private Integer id;
 
-    public BroadcastDisconnectedUserPayload() {
+    public FriendDisconnectedPayload() {}
 
+    public FriendDisconnectedPayload(Integer id) {
+        this.id = id;
     }
 
     public Integer getId() {
@@ -28,5 +30,12 @@ public class BroadcastDisconnectedUserPayload implements Payload {
     @Override
     public String getType() {
         return TYPE;
+    }
+
+    @Override
+    public String toString() {
+        return "FriendDisconnectedPayload{" +
+                "id=" + id +
+                '}';
     }
 }

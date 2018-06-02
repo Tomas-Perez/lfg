@@ -1,6 +1,6 @@
 package api.websocket.user.codec;
 
-import api.websocket.user.model.ChatSocketMessage;
+import api.websocket.user.model.UserSocketMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -11,7 +11,7 @@ import javax.websocket.EndpointConfig;
 /**
  * @author Tomas Perez Molina
  */
-public class ChatMessageEncoder implements Encoder.Text<ChatSocketMessage> {
+public class ChatMessageEncoder implements Encoder.Text<UserSocketMessage> {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
@@ -21,7 +21,7 @@ public class ChatMessageEncoder implements Encoder.Text<ChatSocketMessage> {
     public void destroy() {}
 
     @Override
-    public String encode(ChatSocketMessage message) throws EncodeException {
+    public String encode(UserSocketMessage message) throws EncodeException {
         try {
             return mapper.writeValueAsString(message);
         } catch (JsonProcessingException e) {
