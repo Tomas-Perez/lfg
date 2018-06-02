@@ -3,18 +3,18 @@
     <div class="chat-tabs-wrapper">
       <div *ngFor="let chat of chats; let i = index" class="tab" [ngClass]="{'tab-active': activatedTabIndex == i}" (click)="activateTab(i)">
         <div class="tab-content">
-          <span class="tab-username" (click)="openChat()">{{chat.chat.members[0].id}}</span>
-          <span class="tab-close" (click)="closeTab(i)">×</span>
+          <span class="tab-username" (click)="openChat()">{{chat.members[0].id}}</span>
+          <span class="tab-close" (click)="closeTab(chat.id)">×</span>
         </div>
       </div>
     </div>
     <div class="chat-toggle" (click)="toggleChat()">
-      <fa name="angle-down" class="chat-toggle-icon" [ngClass]="{'rotate-toggle': !chatOpen}"></fa>
+      <i class="fa fa-angle-down chat-toggle-icon" [ngClass]="{'rotate-toggle': !chatOpen}"></i>
     </div>
   </div>
   <div class="hidden-zone" [ngClass]="{'no-height': !chatOpen}">
-    <div *ngIf="chats.length" class="messages-wrapper">
-      <div data-simplebar id="scrollbar">
+    <div class="messages-wrapper">
+      <div *ngIf="chats.length" data-simplebar id="scrollbar">
         <div #messages *ngFor="let message of chats[activatedTabIndex].messages; let i = index; let last = last"
             class="message"
             [ngClass]="{'message-margin-bottom': !last && message.senderId != chats[activatedTabIndex].messages[i+1].senderId}">
@@ -33,7 +33,9 @@
       <form>
        <input name="InputMessage" [(ngModel)]="messageInput" type="text" id="InputMessage" class="message-input"
              autocomplete="off" placeholder="{{chats.length ? 'Message ' + chats[activatedTabIndex].username : ''}}">
-        <button type="submit" class="btn btn-send-message" (click)="sendMessage()">»</button>
+        <button type="submit" class="btn btn-send-message" (click)="sendMessage()">
+          »
+        </button>
       </form>
     </div>
   </div>

@@ -1,11 +1,12 @@
 .friend-list-wrapper {
   display: flex;
+  flex: 1 0;
   flex-direction: column;
 }
 
 .title{
   text-align: center;
-  margin: 0.3rem 0;
+  margin: 0.5rem 0;
 }
 
 .title h1{
@@ -52,3 +53,16 @@
   height: fit-content;
 }
 
+.no-friends{
+  color: #ffffff9e;
+  font-size: 30px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1 0;
+}
+
+.no-friends span{
+  display: block;
+}

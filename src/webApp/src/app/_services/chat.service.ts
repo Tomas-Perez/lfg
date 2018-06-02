@@ -26,8 +26,34 @@ export class ChatService {
     this.chats = [];
     this.chatsSubject = new BehaviorSubject<Chat[]>(this.chats);
 
-    this.newChat([2443, 2444]);
+    //this.newChat([2443, 2444]);
 
+  }
+
+  /**
+   * Checks if a chat with the same members exists, returns true if it does.
+   * @param {number[]} ids
+   * @returns {boolean}
+   */
+  checkIfChatAlreadyExists(ids: number[]): boolean {
+    for (const chat of this.chats) {
+      let checks = true;
+      for (const chatMember of chat.members) {
+        for (const id of ids) {
+          if (id !== chatMember.id) {
+            checks = false;
+            break;
+          }
+        }
+        if (!checks) {
+          break;
+        }
+      }
+      if (checks) {
+        return true;
+      }
+    }
+    return false;
   }
 
   onAvailableUsers(ids: number[], chat: Chat) {
@@ -50,7 +76,10 @@ export class ChatService {
     chat.removeMember(id);
   }
 
-  newChat(ids: number[]) {
+  newChat(ids: number[]): boolean {
+
+    if (this.checkIfChatAlreadyExists(ids)) { return false; }
+
     this.requestNewChat(ids).subscribe((data: {chat: Chat, wsUrl: string}) => {
       const chat = data.chat;
       const wsUrl = data.wsUrl;
@@ -80,17 +109,17 @@ export class ChatService {
               break;
             }
           }
-          // TODO
         }
       );
 
       this.chatsWs.set(chat.id, ws);
     });
+    return true;
   }
 
-  sendMessage(id: number, message: string): boolean{
+  sendMessage(id: number, message: string): boolean {
     const ws = this.chatsWs.get(id);
-    if (!ws){
+    if (!ws) {
       return false;
     }
     const sendMsg = new SendMessage('sendTextMessage', message);
@@ -127,6 +156,15 @@ export class ChatService {
   private newChatErrorHandle(code: any) {
     console.log('Error creating new chat code: ' + code);
     return Observable.of(null);
+  }
+
+  deleteChat(id: number) {
+    for (let i = 0; i < this.chats.length; i++) {
+      if (this.chats[i].id === id) {
+        this.chats.splice(i, 1);
+        return;
+      }
+    }
   }
 
 }

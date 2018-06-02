@@ -37,12 +37,14 @@
 .game-activity-title{
   display: flex;
   flex-direction: row;
-  background: #7289dad9;
+  /*background: linear-gradient(to right, #748ada , #499e5b, #d24008);*/
+  background: linear-gradient(to right, #748adab3 , #499e5bbd, #d240088c);
 }
 
 .game-name {
   display: flex;
   justify-content: left;
+  font-weight: 600;
   text-align: center;
   flex: 1 0;
   padding-left: 0.3rem;
@@ -51,6 +53,7 @@
 .activity-name {
   display: flex;
   justify-content: center;
+  font-weight: 600;
   text-align: center;
   flex: 4 0;
 }
@@ -88,15 +91,30 @@
   flex-direction: column;
 }
 
+.post-info-left-top{
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: row;
+}
+
 .post-user{
   font-weight: 600;
   display: flex;
-  flex: 0 0 auto;
+  flex: 1 0 auto;
 }
 
 .username-wrapper{
   cursor: pointer;
   text-decoration: underline;
+}
+
+.send-message-icon{
+  display: flex;
+  flex: 0 0 auto;
+  padding: 0 0.2em;
+  flex-direction: column;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .post-info-right{
@@ -108,7 +126,37 @@
 }
 
 .group-type{
-  text-align: center;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: center;
   font-weight: 700;
   text-transform: uppercase;
+}
+
+.group-info-wrapper{
+  display: flex;
+  flex-direction: column;
+  flex: 1 0;
+  justify-content: space-between;
+  padding-bottom: 0.5em;
+}
+
+.group-data {
+  display: flex;
+  flex-direction: row;
+  flex: 0 0 auto;
+  justify-content: center;
+  width: 100%;
+}
+
+.join-group {
+  display: flex;
+  flex: 0 0 auto;
+  width: fit-content;
+  padding: 0 0.4rem;
+  border-radius: 0 0 5px 5px;
+  border-bottom: #6b7db7 solid 2px;
+  box-shadow: 0 6px 8px -4px #0000009c;
+  background: linear-gradient(#565d69, #5e6673);
+  cursor: pointer;
 }

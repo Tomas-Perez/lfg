@@ -41,18 +41,20 @@
 }
 
 .tab{
+  transition: all 0.4s;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   justify-content: center;
   width: 150px;
   border-radius: 4px 4px 0 0;
-  padding: 0 0.3em 0 0.6em;
+  padding: 0 0.6em 0 0.6em;
   cursor: pointer;
 }
 
 .tab-active{
-  background-color: #18191c;
+  border-bottom: #5ece76 solid 2px;
+  box-shadow: 6px 0 10px -4px #000000cc, -6px 0 10px -4px #000000cc;
 }
 
 .tab-content{
@@ -140,7 +142,7 @@
 .btn-send-message{
   font-size: 20px;
   color: white;
-  background-color: #7f91cc;
+  background-color: #73ca85;
   border: none;
   line-height: normal;
   border-radius: 0;
@@ -150,7 +152,7 @@
 .btn-send-message.active,
 .btn-send-message:active:focus,
 .btn-send-message.active:focus {
-  background-color: rgba(145,162,255,.85);
+  background-color: #7ad085;
 }
 
 .btn-send-message:focus {
@@ -159,13 +161,16 @@
 
 .btn-send-message:hover {
   box-shadow: none;
-  background-color: rgba(123, 137, 215, 0.85);
+  background-color: #68b16b;
 }
 
 .chat-toggle-icon {
   transition: transform 1.5s;
+  width: fit-content;
   font-size: 22px;
   font-weight: 600;
+  margin: auto;
+  color: #5ece76;
 }
 
 .hidden-zone{

@@ -3,7 +3,6 @@ import * as SimpleBar from 'simplebar';
 import {ChatService} from '../../_services/chat.service';
 import {Subject} from 'rxjs/Subject';
 import {Chat} from '../../_models/Chat';
-import {Message} from '../../_models/Message';
 import {Subscription} from 'rxjs/Subscription';
 import {UserService} from '../../_services/user.service';
 import {User} from '../../_models/User';
@@ -17,9 +16,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private ngUnsubscribe: Subject<any> = new Subject();
   //chats: {username: string, messages: {id: number, date: Date, message: string}[]}[];
+  //chats: {chat: Chat, messages: Message[], messageSubscription: Subscription}[];
   user: User;
-  chats: {chat: Chat, messages: Message[], messageSubscription: Subscription}[];
-
+  chats: Chat[];
+  messageSubscriptions: Map<number, Subscription>;
 
 
   @ViewChildren('messages') messageFor: QueryList<any>;
@@ -34,6 +34,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     this.activatedTabIndex = 0;
     this.chatOpen = false;
     this.chats = [];
+    this.messageSubscriptions = new Map<number, Subscription>();
 
     /*
     this.chats = [
@@ -50,9 +51,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.userService.userSubject.takeUntil(this.ngUnsubscribe).subscribe(user => this.user = user);
 
+    /*
     this.chatService.chatsSubject.takeUntil(this.ngUnsubscribe).subscribe(
       chats => {
-        for (const chat of chats){
+        for (const chat of chats) {
           let messages: Message[];
           const messageSub = chat.messagesSubject.takeUntil(this.ngUnsubscribe)
             .subscribe(msgs => messages = msgs);
@@ -61,7 +63,17 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
       }
     );
+    */
 
+    this.chatService.chatsSubject.takeUntil(this.ngUnsubscribe).subscribe(chats => {
+      for (const chat of chats) {
+        if (!this.messageSubscriptions.has(chat.id)) {
+          const messageSub = chat.messagesSubject.takeUntil(this.ngUnsubscribe).subscribe();
+          this.messageSubscriptions.set(chat.id, messageSub);
+        }
+      }
+      this.chats = chats;
+    });
   }
 
   ngAfterViewInit() {
@@ -76,11 +88,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     el.getScrollElement().scrollTop = el.getContentElement().clientHeight;
   }
 
-  toggleChat(){
+  toggleChat() {
     this.chatOpen = !this.chatOpen;
   }
 
-  openChat(){
+  openChat() {
     this.chatOpen = true;
   }
 
@@ -93,18 +105,19 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     this.messageInput = '';
     */
     // TODO send message
-    const b = this.chatService.sendMessage(this.chats[this.activatedTabIndex].chat.id, this.messageInput);
+    const b = this.chatService.sendMessage(this.chats[this.activatedTabIndex].id, this.messageInput);
   }
 
   activateTab(index: number) {
     this.activatedTabIndex = index;
   }
 
-  closeTab(index: number) {
-    if (index === this.activatedTabIndex) {
-      this.activatedTabIndex = 0;
+  closeTab(id: number) {
+    if (this.activatedTabIndex === this.chats.length - 1 && this.activatedTabIndex > 0) {
+      this.activatedTabIndex--;
     }
-    this.chats.splice(index, 1); // TODO delete from actual chats
+    this.messageSubscriptions.get(id).unsubscribe();
+    this.chatService.deleteChat(id);
   }
 
   ngOnDestroy() {

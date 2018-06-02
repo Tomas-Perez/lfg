@@ -61,6 +61,7 @@
   flex-wrap: nowrap;
   contain: layout;
   min-height: 0;
+  width: 280px;
   position: relative;
   -ms-flex-pack: start;
   -webkit-box-pack: start;
@@ -95,7 +96,7 @@
   display: -ms-flexbox;
   display: flex;
   flex-direction: column;
-  min-width: 240px;
+  width: 240px;
   position: relative;
 }
 

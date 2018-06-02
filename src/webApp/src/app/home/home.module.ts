@@ -7,7 +7,6 @@ import {HomeRouting} from './home.routing';
 import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import {AngularFontAwesomeModule} from 'angular-font-awesome';
 import {NotFoundComponent} from './not-found/not-found.component';
 
 
@@ -22,7 +21,6 @@ import {NotFoundComponent} from './not-found/not-found.component';
   imports: [
     CommonModule,
     FormsModule,
-    AngularFontAwesomeModule,
     NgbModule.forRoot(),
     HomeRouting
   ],

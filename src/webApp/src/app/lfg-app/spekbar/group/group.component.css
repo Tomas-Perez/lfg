@@ -18,12 +18,21 @@ h2{
   margin-bottom: 1rem;
 }
 
-.group-subtitle {
-  display: inline-block;
+.group-subtitle-wrapper{
+  display: flex;
+  flex-direction: row;
+  flex: 0 0 auto;
   margin-bottom: 0.2rem;
 }
 
+.group-subtitle {
+  display: flex;
+  flex: 0 0 auto;
+}
+
 .member-count {
+  display: flex;
+  flex: 0 0 auto;
   margin: 0 0 0 0.5rem;
 }
 
@@ -37,13 +46,30 @@ h2{
   flex-direction: row;
   margin: 0.3em 0;
   padding-left: 0.2rem;
+  flex: 1 0 auto;
+  /*
   border-bottom: solid 1px #ffffff1a;
+  */
 }
 
 .member-username{
   display: flex;
-  flex: 1 0;
-  margin-left: 0.3rem;
+  flex: 0 0 auto;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.user-img{
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: #b9b9bb;
+}
+
+.user-img-wrapper{
+  width: fit-content;
+  height: fit-content;
 }
 
 .kick-player{

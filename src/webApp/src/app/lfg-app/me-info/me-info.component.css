@@ -27,5 +27,6 @@
 
 .username{
   margin: 0;
+  padding: 0 0.2rem;
   border-bottom: #687cc2 solid 2px;
 }

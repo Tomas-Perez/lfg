@@ -3,14 +3,17 @@
     <li class="friends-bar-item" (click)="navigate('friend-list')"
         [ngClass]="{'active': friendLocation == FriendLocation.LIST}">
       <span>
-        <fa name="users" size="2x"></fa>
+        <i class="fa fa-users fa-2x"></i>
       </span>
     </li>
     <li class="friends-bar-item" (click)="navigate('friend-requests')"
         [ngClass]="{'active': friendLocation == FriendLocation.REQUEST}">
-      <span>
-        <fa name="address-book" size="2x"></fa>
+
+      <span class="fa-stack">
+        <i class="fa fa-address-book fa-2x fa-stack-1x"></i>
+        <span *ngIf="friendRequests" class="data-count">{{friendRequests}}</span>
       </span>
+
     </li>
   </ul>
 </div>

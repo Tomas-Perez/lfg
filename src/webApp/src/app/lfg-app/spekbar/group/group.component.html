@@ -4,11 +4,18 @@
   </div>
   <div class="game-activity">{{group.activity.game.name + ': ' + group.activity.name}}</div>
 
-  <h2 class="group-subtitle">Members</h2>
-  <label class="member-count">{{group.members.length}}/{{group.slots}}</label>
+  <div class="group-subtitle-wrapper">
+    <h2 class="group-subtitle">Members</h2>
+    <label class="member-count">{{group.members.length}}/{{group.slots}}</label>
+  </div>
   <div class="members-wrapper">
     <div *ngFor="let member of group.members" class="member">
+      <div class="user-img-wrapper">
+        <img src="/assets/user/user-default.png" class="user-img">
+      </div>
+      <!--
       <fa name="circle" alt="far"></fa>
+      -->
       <span class="member-username">
         {{member.username}}
       </span>

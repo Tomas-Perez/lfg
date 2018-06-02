@@ -7,6 +7,7 @@ import {GroupService} from '../../_services/group.service';
 import {Router} from '@angular/router';
 import {UserService} from '../../_services/user.service';
 import {User} from '../../_models/User';
+import {ChatService} from '../../_services/chat.service';
 
 @Component({
   selector: 'app-post-flow',
@@ -22,6 +23,7 @@ export class PostFlowComponent implements OnInit, OnDestroy {
 
   constructor(private postService: PostService,
               private groupService: GroupService,
+              private chatService: ChatService,
               private userService: UserService,
               private router: Router
   ) { }
@@ -60,6 +62,10 @@ export class PostFlowComponent implements OnInit, OnDestroy {
     this.router.navigate(['/app', { outlets: {friends: ['user-info', id] }}], {
       skipLocationChange: true
     });
+  }
+
+  newChat(id: number) {
+    this.chatService.newChat([id]);
   }
 
   ngOnDestroy() {

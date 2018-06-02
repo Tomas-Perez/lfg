@@ -1,13 +1,20 @@
+.btn-primary-lfg{
+  background-color: #a74724;
+}
+
 .title{
   display: flex;
   flex-direction: row;
   flex: 1 0;
   text-align: center;
-  margin: 0.3rem 0;
+  margin: 0.5rem 0;
 }
 
 .title h1{
   margin: unset;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .friend-icon{

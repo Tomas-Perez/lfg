@@ -29,27 +29,27 @@ export class Chat {
   messages: Message[] = [];
   messagesSubject: BehaviorSubject<Message[]> = new BehaviorSubject<Message[]>(this.messages);
 
-  pushMessage(message: Message){
+  pushMessage(message: Message) {
     this.messages.push(message);
     this.messagesSubject.next(this.messages);
   }
 
-  updateMembers(ids: number[]){
+  updateMembers(ids: number[]) {
     this.members = [];
-    for (const id of ids){
+    for (const id of ids) {
       const member = new Member(id);
       this.members.push(member);
     }
   }
 
-  addMember(id: number){
-    for(const member of this.members){
+  addMember(id: number) {
+    for (const member of this.members) {
       if (member.id === id){
         return;
       }
     }
-    const member = new Member(id);
-    this.members.push(member);
+    const newMember = new Member(id);
+    this.members.push(newMember);
   }
 
   removeMember(id: number){

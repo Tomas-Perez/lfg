@@ -2,7 +2,7 @@
   <div class="title">
     <h1>Friends</h1>
   </div>
-  <div class="friend-list">
+  <div *ngIf="friends.length" class="friend-list">
     <div data-simplebar data-simplebar-auto-hide="false">
       <div *ngFor="let friend of friends" class="friend-wrapper">
         <div class="friend">
@@ -15,5 +15,9 @@
         </div>
       </div>
     </div>
+  </div>
+  <div *ngIf="!friends.length" class="no-friends">
+    <span>You don't have any friends</span>
+    <i class="fa fa-frown-o fa-5x" ></i>
   </div>
 </div>

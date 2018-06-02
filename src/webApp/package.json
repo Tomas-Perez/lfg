@@ -24,7 +24,6 @@
     "@ng-bootstrap/ng-bootstrap": "^1.1.2",
     "@types/simplebar": "^2.4.1",
     "@types/socket.io-client": "^1.4.32",
-    "angular-font-awesome": "^3.1.2",
     "angular2-websocket": "^0.9.6",
     "bootstrap": "^4.1.1",
     "core-js": "^2.5.5",

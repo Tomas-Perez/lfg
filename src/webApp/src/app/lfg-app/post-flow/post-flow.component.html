@@ -1,26 +1,35 @@
-<a class="hand" (click)="updatePosts()"><fa name="retweet"></fa></a>
+<a class="hand" (click)="updatePosts()">
+  <i class="fa fa-retweet"></i>
+</a>
 
 <div *ngFor="let post of posts" class="post-wrapper">
   <div class="post-container">
     <div class="post-info-wrapper">
       <div class="post-info-left">
-        <div *ngIf="user != null" class="post-user">
-          <span *ngIf=" post.owner.id != user.id" class="username-wrapper"
-                (click)="getUserInfo(post.owner.id)">{{post.owner.username}}</span>
-          <span *ngIf="post.owner.id == user.id">{{post.owner.username}}</span>
+        <div class="post-info-left-top">
+          <div *ngIf="user != null" class="post-user">
+            <span *ngIf=" post.owner.id != user.id" class="username-wrapper"
+                  (click)="getUserInfo(post.owner.id)">{{post.owner.username}}</span>
+            <span *ngIf="post.owner.id == user.id">{{post.owner.username}}</span>
+          </div>
+          <div class="send-message-icon" (click)="newChat(post.owner.id)">
+            <i class="fa fa-envelope-o"></i>
+          </div>
         </div>
       </div>
 
       <div class="post-info-right">
         <span class="group-type">{{post.group !== null ? 'LFM' : 'LFG'}}</span>
-        <div *ngIf="post.group !== null">
-          <div class="group-slots">
+        <div *ngIf="post.group !== null" class="group-info-wrapper">
+          <div class="group-data">
             <span>{{post.group.members.length}}/{{post.group.slots}}</span>
           </div>
           <!--<span>{{post.group.id}}</span>-->
-
-          <button *ngIf="!inGroup" type="button" class="btn btn-primary-lfg"
-                  (click)="joinGroup(post.group.id)">join</button>
+          <div class="group-data">
+            <span *ngIf="!inGroup" class="join-group" (click)="joinGroup(post.group.id)">
+              join
+            </span>
+          </div>
         </div>
       </div>
     </div>

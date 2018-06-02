@@ -5,7 +5,7 @@
 
 .title{
   text-align: center;
-  margin: 0.3rem 0;
+  margin: 0.5rem 0;
 }
 
 .title h1{
@@ -16,7 +16,7 @@
   display: flex;
   flex-direction: row;
   flex:1 0;
-  color: #e4daffc4;
+  color: #ffffff9e;
   font-weight: 600;
 }
 
@@ -27,7 +27,7 @@
 hr{
   border: 0;
   height: 1px;
-  background: #e4daffc4;
+  background: #ffffff9e;
   flex: 1 0;
   margin: auto 0.5em;
 }
@@ -63,6 +63,9 @@ hr{
 .accept-request, .delete-request{
   display: flex;
   flex: 0 0 auto;
+}
+
+.delete-request{
   font-weight: 600;
 }
 
