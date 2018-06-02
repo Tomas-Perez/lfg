@@ -9,10 +9,13 @@ import api.websocket.common.config.CdiAwareConfigurator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import persistence.manager.ChatManager;
+import persistence.manager.EntityManagerProducer;
+import persistence.manager.FriendHelperManager;
+import persistence.manager.UserManager;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
@@ -35,7 +38,7 @@ public class ChatEndpoint {
     private static final Logger logger = LogManager.getLogger(ChatEndpoint.class);
 
     @Inject
-    private ChatManager chatManager;
+    private EntityManagerProducer entityManagerProducer;
 
     @OnOpen
     public void onOpen(Session currentSession, @PathParam("id") int id){
@@ -104,7 +107,7 @@ public class ChatEndpoint {
 
     private void broadcastTextMessage(int userID, String text, int chatID) {
         final LocalDateTime date = LocalDateTime.now();
-        int id = chatManager.sendMessage(chatID, userID, text, date);
+        int id = sendMessage(chatID, userID, text, date);
         MessageJSON message = new MessageJSON(id, userID, text, date.toString());
         BroadcastTextMessagePayload payload = new BroadcastTextMessagePayload(message);
         broadcast(new ChatSocketMessage(payload), chatID);
@@ -135,5 +138,15 @@ public class ChatEndpoint {
 
     private int getUserID(Session session){
         return Integer.parseInt(session.getUserPrincipal().getName());
+    }
+
+    private int sendMessage(int chatID, int userID, String text, LocalDateTime date){
+        EntityManager em = entityManagerProducer.createEntityManager();
+        UserManager userManager = new UserManager(em, new FriendHelperManager());
+        ChatManager chatManager = new ChatManager(em, userManager);
+        int id = chatManager.sendMessage(chatID, userID, text, date);
+        entityManagerProducer.closeEntityManager(em);
+
+        return id;
     }
 }
