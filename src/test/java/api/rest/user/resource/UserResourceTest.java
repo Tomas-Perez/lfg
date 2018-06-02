@@ -70,6 +70,7 @@ public class UserResourceTest extends ApiTest {
         final WebTarget receivedRequestsTarget = RequestUtil.newRelativeTarget(base, "users/me/friend-requests/received");
 
         final Response sendRequestResponse1 = RequestUtil.post(requestsTarget, user1Token, new FriendRequestJSON(id2));
+        System.out.println(sendRequestResponse1.readEntity(String.class));
         assertThat(sendRequestResponse1.getStatus(), is(CREATED));
 
         final Response sendRequestResponse2 = RequestUtil.post(requestsTarget, user1Token, new FriendRequestJSON(id3));

@@ -27,4 +27,11 @@ public class SendTextMessagePayload implements Payload {
     public String getType() {
         return TYPE;
     }
+
+    @Override
+    public String toString() {
+        return "SendTextMessagePayload{" +
+                "content='" + content + '\'' +
+                '}';
+    }
 }

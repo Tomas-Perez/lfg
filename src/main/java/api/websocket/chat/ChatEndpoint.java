@@ -1,11 +1,14 @@
 package api.websocket.chat;
 
 import api.rest.chat.model.MessageJSON;
+import api.rest.user.model.BasicUserData;
 import api.websocket.chat.codec.ChatMessageDecoder;
 import api.websocket.chat.codec.ChatMessageEncoder;
 import api.websocket.chat.model.ChatSocketMessage;
 import api.websocket.chat.model.payload.*;
+import api.websocket.common.AuthenticatedEndpoint;
 import api.websocket.common.config.CdiAwareConfigurator;
+import api.websocket.common.security.AuthenticatedPrincipal;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import persistence.manager.ChatManager;
@@ -33,7 +36,7 @@ import java.util.stream.Collectors;
         encoders = ChatMessageEncoder.class,
         decoders = ChatMessageDecoder.class,
         configurator = CdiAwareConfigurator.class)
-public class ChatEndpoint {
+public class ChatEndpoint extends AuthenticatedEndpoint {
     private static final Map<Integer, Set<Session>> sessionsMap = Collections.synchronizedMap(new HashMap<>());
     private static final Logger logger = LogManager.getLogger(ChatEndpoint.class);
 
@@ -45,8 +48,8 @@ public class ChatEndpoint {
         Set<Session> chatSessions = sessionsMap.getOrDefault(id, Collections.synchronizedSet(new HashSet<>()));
         chatSessions.add(currentSession);
         sessionsMap.put(id, chatSessions);
-        final int userID = getUserID(currentSession);
-        broadcastUserConnected(currentSession, userID, id);
+
+        broadcastUserConnected(currentSession, id);
         broadcastAvailableUsers(id);
 
         logger.info(String.format("Session %s opened", currentSession.getId()));
@@ -79,29 +82,25 @@ public class ChatEndpoint {
         logger.error(throwable.getMessage());
     }
 
-    private void broadcastUserConnected(Session currentSession, int id, int chatID) {
-        BroadcastConnectedUserPayload payload = new BroadcastConnectedUserPayload();
-        payload.setId(id);
+    private void broadcastUserConnected(Session currentSession, int chatID) {
+        BasicUserData data = getPrincipal(currentSession).getData();
+        BroadcastConnectedUserPayload payload = new BroadcastConnectedUserPayload(data);
         broadcast(currentSession, new ChatSocketMessage(payload), chatID);
     }
 
     private void broadcastUserDisconnected(int id, int chatID) {
-        BroadcastDisconnectedUserPayload payload = new BroadcastDisconnectedUserPayload();
-        payload.setId(id);
+        BroadcastDisconnectedUserPayload payload = new BroadcastDisconnectedUserPayload(id);
         broadcast(new ChatSocketMessage(payload), chatID);
     }
 
     private void broadcastAvailableUsers(int chatID) {
         Set<Session> chatSessions = sessionsMap.get(chatID);
-        Set<Integer> ids = chatSessions.stream()
-                .map(Session::getUserPrincipal)
-                .map(Principal::getName)
-                .map(Integer::parseInt)
-                .distinct()
+        Set<BasicUserData> users = chatSessions.stream()
+                .map(this::getPrincipal)
+                .map(AuthenticatedPrincipal::getData)
                 .collect(Collectors.toSet());
 
-        BroadcastAvailableUsersPayload payload = new BroadcastAvailableUsersPayload();
-        payload.setIds(ids);
+        BroadcastAvailableUsersPayload payload = new BroadcastAvailableUsersPayload(users);
         broadcast(new ChatSocketMessage(payload), chatID);
     }
 
@@ -134,10 +133,6 @@ public class ChatEndpoint {
 
             logger.info(String.format("Broadcasting \"%s\" to %d sessions in chat %d", msg, chatSessions.size(), chatID));
         }
-    }
-
-    private int getUserID(Session session){
-        return Integer.parseInt(session.getUserPrincipal().getName());
     }
 
     private int sendMessage(int chatID, int userID, String text, LocalDateTime date){

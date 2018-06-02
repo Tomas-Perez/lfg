@@ -64,4 +64,14 @@ public class BroadcastTextMessagePayload implements Payload {
     public String getType() {
         return TYPE;
     }
+
+    @Override
+    public String toString() {
+        return "BroadcastTextMessagePayload{" +
+                "id=" + id +
+                ", message='" + message + '\'' +
+                ", sender=" + sender +
+                ", date='" + date + '\'' +
+                '}';
+    }
 }

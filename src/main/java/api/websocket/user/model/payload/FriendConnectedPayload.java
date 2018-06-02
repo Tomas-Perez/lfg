@@ -1,4 +1,4 @@
-package api.websocket.chat.model.payload;
+package api.websocket.user.model.payload;
 
 import api.websocket.common.model.Payload;
 
@@ -7,14 +7,15 @@ import api.websocket.common.model.Payload;
  *
  * @author Tomas Perez Molina
  */
-public class BroadcastDisconnectedUserPayload implements Payload {
+public class FriendConnectedPayload implements Payload {
 
-    public static final String TYPE = "broadcastDisconnectedUser";
+    public static final String TYPE = "friendConnected";
 
     private Integer id;
 
-    public BroadcastDisconnectedUserPayload() {}
-    public BroadcastDisconnectedUserPayload(int id) {
+    public FriendConnectedPayload() {}
+
+    public FriendConnectedPayload(Integer id) {
         this.id = id;
     }
 
@@ -33,7 +34,7 @@ public class BroadcastDisconnectedUserPayload implements Payload {
 
     @Override
     public String toString() {
-        return "BroadcastDisconnectedUserPayload{" +
+        return "FriendConnectedPayload{" +
                 "id=" + id +
                 '}';
     }

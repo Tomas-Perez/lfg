@@ -1,5 +1,6 @@
 package api.websocket.chat.model.payload;
 
+import api.rest.user.model.BasicUserData;
 import api.websocket.common.model.Payload;
 
 import java.util.Set;
@@ -13,20 +14,31 @@ public class BroadcastAvailableUsersPayload implements Payload {
 
     public static final String TYPE = "broadcastAvailableUsers";
 
-    private Set<Integer> ids;
+    private Set<BasicUserData> users;
 
     public BroadcastAvailableUsersPayload() {}
 
-    public Set<Integer> getIds() {
-        return ids;
+    public BroadcastAvailableUsersPayload(Set<BasicUserData> users) {
+        this.users = users;
     }
 
-    public void setIds(Set<Integer> ids) {
-        this.ids = ids;
+    public Set<BasicUserData> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<BasicUserData> users) {
+        this.users = users;
     }
 
     @Override
     public String getType() {
         return TYPE;
+    }
+
+    @Override
+    public String toString() {
+        return "BroadcastAvailableUsersPayload{" +
+                "users=" + users +
+                '}';
     }
 }

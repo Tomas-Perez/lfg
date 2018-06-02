@@ -1,5 +1,7 @@
 package api.rest.user.service;
 
+import api.common.event.friendrequest.*;
+import api.rest.user.model.BasicUserData;
 import persistence.entity.UserEntity;
 import persistence.manager.UserManager;
 import persistence.manager.patcher.UserPatcher;
@@ -8,6 +10,7 @@ import persistence.model.User;
 import api.rest.security.authentication.exception.AuthenticationException;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.util.List;
@@ -26,6 +29,18 @@ public class UserService {
 
     @Inject
     private ModelBuilder modelBuilder;
+
+    @Inject
+    @FriendRequest
+    private Event<FriendRequestEvent> friendRequestEvent;
+
+    @Inject
+    @NewFriend
+    private Event<FriendEvent> newFriendEvent;
+
+    @Inject
+    @DeleteFriend
+    private Event<FriendEvent> deleteFriendEvent;
 
     public User getUserByEmail(String email){
         UserEntity userEntity = manager.getByEmail(email)
@@ -107,15 +122,34 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public void sendFriendRequest(int id1, int id2){
-        manager.addFriendRequest(id1, id2);
+    public void sendFriendRequest(int senderID, int receiverID){
+        manager.addFriendRequest(senderID, receiverID);
+        friendRequestEvent.fire(createFriendRequestEvent(senderID, receiverID));
     }
 
-    public void confirmFriendRequest(int id1, int id2){
-        manager.confirmFriend(id1, id2);
+    public void confirmFriendRequest(int receiverID, int senderID){
+        manager.confirmFriend(receiverID, senderID);
+        newFriendEvent.fire(createFriendEvent(receiverID, senderID));
     }
 
     public void removeFriend(int id1, int id2){
         manager.removeFriend(id1, id2);
+        deleteFriendEvent.fire(createFriendEvent(id1, id2));
+    }
+
+    private FriendRequestEvent createFriendRequestEvent(int senderID, int receiverID){
+        UserEntity sender = manager.get(senderID);
+        UserEntity receiver = manager.get(receiverID);
+        BasicUserData senderData = new BasicUserData(sender.getId(), sender.getUsername());
+        BasicUserData receiverData = new BasicUserData(receiver.getId(), receiver.getUsername());
+        return new FriendRequestEvent(senderData, receiverData);
+    }
+
+    private FriendEvent createFriendEvent(int user1ID, int user2ID){
+        UserEntity user1 = manager.get(user1ID);
+        UserEntity user2 = manager.get(user2ID);
+        BasicUserData senderData = new BasicUserData(user1.getId(), user1.getUsername());
+        BasicUserData receiverData = new BasicUserData(user2.getId(), user2.getUsername());
+        return new FriendEvent(senderData, receiverData);
     }
 }
