@@ -20,7 +20,6 @@ public class CreatePostJSON {
                           @JsonProperty(value = "groupID") Integer groupID)
     {
         if(groupID == null && (activityID == null || ownerID == null)) {
-            System.out.println("Why am i here?");
             throw new BadRequestException("Invalid post creation syntax");
         }
         this.description = description;

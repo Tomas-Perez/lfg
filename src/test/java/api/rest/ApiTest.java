@@ -155,8 +155,8 @@ public abstract class ApiTest {
         return Integer.parseInt(RequestUtil.getRelativePathDiff(groupsTarget, groupTarget));
     }
 
-    protected int addChat(List<Integer> members){
-        final Response postResponse = RequestUtil.post(chatsTarget, token, new CreateChatJSON(members));
+    protected int addChat(CreateChatJSON.ChatType type, List<Integer> members){
+        final Response postResponse = RequestUtil.post(chatsTarget, token, new CreateChatJSON(type, members));
         assertThat(postResponse.getStatus(), is(CREATED));
         final String location = postResponse.getHeaderString("Location");
         final WebTarget chatTarget = RequestUtil.newTarget(location);

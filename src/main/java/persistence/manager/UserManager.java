@@ -152,7 +152,7 @@ public class UserManager extends Manager<UserEntity>{
         final List resultList = manager.createQuery(
                 "SELECT DISTINCT C.chatId " +
                         "FROM ChatMemberEntity C " +
-                        "WHERE C.memberId = :userID")
+                        "WHERE C.memberId = :userID AND C.openChat = true")
                 .setParameter("userID", userID)
                 .getResultList();
         return new HashSet<>(resultList);

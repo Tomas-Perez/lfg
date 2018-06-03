@@ -38,10 +38,18 @@ public class ChatManager extends Manager<ChatEntity> {
     }
 
     public int addPrivateChat(ChatEntity chat, int user1ID, int user2ID){
-        return addGroupChat(chat, Arrays.asList(user1ID, user2ID));
+        Integer chatID = getPrivateChat(user1ID, user2ID);
+        if(chatID == null) {
+            chat.setType(ChatEntity.ChatType.PRIVATE);
+            chatID = add(chat);
+            addMemberToChat(chatID, user1ID);
+            addMemberToChat(chatID, user2ID);
+        }
+        return chatID;
     }
 
     public int addGroupChat(ChatEntity chat, List<Integer> userIDs){
+        chat.setType(ChatEntity.ChatType.GROUP);
         int chatID = add(chat);
         userIDs.forEach(id -> addMemberToChat(chatID, id));
         return chatID;
@@ -118,6 +126,43 @@ public class ChatManager extends Manager<ChatEntity> {
                 .getResultList().size() > 0;
     }
 
+    private void setOpenChat(int chatID, int userID, boolean open){
+        ChatMemberEntityPK key = new ChatMemberEntityPK(chatID, userID);
+        ChatMemberEntity chatMemberEntity = manager.find(ChatMemberEntity.class, key);
+        if(chatMemberEntity == null) throw new NoSuchElementException();
+
+        EntityTransaction tx = manager.getTransaction();
+        try {
+            tx.begin();
+            chatMemberEntity.setOpenChat(open);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+        }
+    }
+
+    public void openChat(int chatID, int userID){
+        setOpenChat(chatID, userID, true);
+    }
+
+    public void closeChat(int chatID, int userID){
+        setOpenChat(chatID, userID, false);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Integer getPrivateChat(int user1ID, int user2ID){
+        return (Integer) manager.createQuery("" +
+                "SELECT C.id FROM ChatMemberEntity M\n" +
+                "JOIN ChatEntity C on M.chatId = C.id\n" +
+                "JOIN ChatMemberEntity M2 on M2.chatId = C.id AND M2.memberId != M.memberId\n" +
+                "WHERE C.type = :chatType AND M.memberId = :user1ID AND M2.memberId = :user2ID")
+                .setParameter("chatType", ChatEntity.ChatType.PRIVATE)
+                .setParameter("user1ID", user1ID)
+                .setParameter("user2ID", user2ID)
+                .getResultList().stream().findFirst().orElse(null);
+    }
+
     private boolean singleMemberChat(int chatID){
         return getChatMembers(chatID).size() <= 1;
     }
@@ -127,6 +172,15 @@ public class ChatManager extends Manager<ChatEntity> {
         return manager.createQuery("SELECT M.memberId " +
                 "FROM ChatMemberEntity M " +
                 "WHERE M.chatId = :chatID")
+                .setParameter("chatID", chatID)
+                .getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Integer> getClosedChatMembers(int chatID){
+        return manager.createQuery("SELECT M.memberId " +
+                "FROM ChatMemberEntity M " +
+                "WHERE M.chatId = :chatID AND NOT M.openChat")
                 .setParameter("chatID", chatID)
                 .getResultList();
     }

@@ -1,5 +1,7 @@
 package api.websocket.chat;
 
+import api.common.event.chat.ChatEvent;
+import api.common.event.chat.NewChat;
 import api.rest.chat.model.MessageJSON;
 import api.rest.user.model.BasicUserData;
 import api.websocket.chat.codec.ChatMessageDecoder;
@@ -17,6 +19,7 @@ import persistence.manager.FriendHelperManager;
 import persistence.manager.UserManager;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.websocket.*;
@@ -42,6 +45,10 @@ public class ChatEndpoint extends AuthenticatedEndpoint {
 
     @Inject
     private EntityManagerProducer entityManagerProducer;
+
+    @Inject
+    @NewChat
+    private Event<ChatEvent> newChatEvent;
 
     @OnOpen
     public void onOpen(Session currentSession, @PathParam("id") int id){
@@ -140,6 +147,10 @@ public class ChatEndpoint extends AuthenticatedEndpoint {
         UserManager userManager = new UserManager(em, new FriendHelperManager());
         ChatManager chatManager = new ChatManager(em, userManager);
         int id = chatManager.sendMessage(chatID, userID, text, date);
+        final List<Integer> closedChatMembers = chatManager.getClosedChatMembers(chatID);
+        newChatEvent.fire(new ChatEvent(chatID, new HashSet<>(closedChatMembers)));
+
+        closedChatMembers.forEach(uID -> chatManager.openChat(chatID, uID));
         entityManagerProducer.closeEntityManager(em);
 
         return id;

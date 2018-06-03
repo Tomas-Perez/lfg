@@ -46,10 +46,17 @@ public class ChatService {
                 .collect(Collectors.toList());
     }
 
-    public int newChat(List<Integer> members){
+    public int newGroupChat(List<Integer> members){
         ChatEntity chatEntity = new ChatEntity();
         final int chatID = chatManager.addGroupChat(chatEntity, members);
         newChatEvent.fire(new ChatEvent(chatID, new HashSet<>(members)));
+        return chatID;
+    }
+
+    public int newPrivateChat(int member1, int member2){
+        ChatEntity chatEntity = new ChatEntity();
+        final int chatID = chatManager.addPrivateChat(chatEntity, member1, member2);
+        newChatEvent.fire(new ChatEvent(chatID, new HashSet<>(member1, member2)));
         return chatID;
     }
 
@@ -94,5 +101,13 @@ public class ChatService {
         }
 
         deleteChatEvent.fire(new ChatEvent(id, new HashSet<>(userID)));
+    }
+
+    public void closeChat(int id, int userID){
+        try{
+            chatManager.closeChat(id, userID);
+        } catch (NoSuchElementException exc){
+            throw new NotFoundException();
+        }
     }
 }

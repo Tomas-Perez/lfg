@@ -12,10 +12,12 @@ import java.util.Objects;
 public class ChatMemberEntity {
     private int chatId;
     private int memberId;
+    private boolean openChat;
 
     public ChatMemberEntity(int chatId, int memberId) {
         this.chatId = chatId;
         this.memberId = memberId;
+        this.openChat = true;
     }
 
     public ChatMemberEntity() {
@@ -39,6 +41,16 @@ public class ChatMemberEntity {
 
     public void setMemberId(int memberId) {
         this.memberId = memberId;
+    }
+
+    @Basic
+    @Column(name = "OPEN_CHAT", nullable = false)
+    public boolean isOpenChat() {
+        return openChat;
+    }
+
+    public void setOpenChat(boolean openChat) {
+        this.openChat = openChat;
     }
 
     @Override

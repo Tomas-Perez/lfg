@@ -1,9 +1,6 @@
 package api.rest.chat.resource;
 
-import api.rest.chat.model.AddMemberJSON;
-import api.rest.chat.model.ChatJSON;
-import api.rest.chat.model.CreateChatJSON;
-import api.rest.chat.model.WebsocketPathJSON;
+import api.rest.chat.model.*;
 import api.rest.chat.service.ChatService;
 import persistence.model.Chat;
 
@@ -16,7 +13,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,8 +40,20 @@ public class ChatResource {
     }
 
     @POST
-    public Response post(CreateChatJSON chatJSON) throws URISyntaxException {
-        int id = service.newChat(chatJSON.getMembers());
+    public Response post(CreateChatJSON chatJSON){
+        int id;
+        switch (chatJSON.getType()){
+            case GROUP:
+                id = service.newGroupChat(chatJSON.getMembers());
+                break;
+            case PRIVATE:
+                id = service.newPrivateChat(
+                        chatJSON.getMembers().get(0),
+                        chatJSON.getMembers().get(1));
+                break;
+            default:
+                throw new BadRequestException("Invalid type.");
+        }
         final String idString = Integer.toString(id);
         URI path = uriInfo.getAbsolutePathBuilder().path(idString).build();
         URI base = uriInfo.getBaseUri();
@@ -66,6 +74,15 @@ public class ChatResource {
     public Response get(@PathParam("id") int id){
         Chat chat = service.getChat(id);
         return Response.ok(new ChatJSON(chat)).build();
+    }
+
+    @POST
+    @Path("{id}")
+    public Response closeChat(@PathParam("id") int id, CloseChatJSON closeChat){
+        if(closeChat.isClose()){
+            service.closeChat(id, closeChat.getMemberID());
+        }
+        return Response.noContent().build();
     }
 
     @DELETE

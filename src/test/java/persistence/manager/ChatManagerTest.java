@@ -68,6 +68,20 @@ public class ChatManagerTest {
     }
 
     @Test
+    public void addPrivateChatTwice(){
+        UserEntity user1 = new UserEntity(false, "email1", "password1", "username1");
+        int user1ID = userManager.add(user1);
+        UserEntity user2 = new UserEntity(false, "email2", "password2", "username2");
+        int user2ID = userManager.add(user2);
+
+        ChatEntity chat = new ChatEntity();
+        int id1 = chatManager.addPrivateChat(chat, user1ID, user2ID);
+        int id2 = chatManager.addPrivateChat(chat, user1ID, user2ID);
+
+        assertThat(id1, is(id2));
+    }
+
+    @Test
     public void addPrivateChat(){
         UserEntity user1 = new UserEntity(false, "email1", "password1", "username1");
         int user1ID = userManager.add(user1);

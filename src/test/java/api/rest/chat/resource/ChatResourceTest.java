@@ -47,7 +47,7 @@ public class ChatResourceTest extends ApiTest {
 
         List<Integer> members = Arrays.asList(user1ID, user2ID, user3ID);
 
-        final Response postResponse = RequestUtil.post(chatsTarget, token, new CreateChatJSON(members));
+        final Response postResponse = RequestUtil.post(chatsTarget, token, new CreateChatJSON(CreateChatJSON.ChatType.GROUP, members));
 
         assertThat(postResponse.getStatus(), is(CREATED));
 
@@ -109,7 +109,7 @@ public class ChatResourceTest extends ApiTest {
 
         List<Integer> startMembers = Arrays.asList(user1ID, user2ID, user3ID);
 
-        int chatID = addChat(startMembers);
+        int chatID = addChat(CreateChatJSON.ChatType.GROUP, startMembers);
 
         WebTarget chatMembersTarget = RequestUtil.newRelativeTarget(base, String.format("chats/%d/members", chatID));
 

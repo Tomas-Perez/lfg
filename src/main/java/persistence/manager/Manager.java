@@ -17,7 +17,7 @@ public abstract class Manager<T> {
         this.manager = manager;
     }
 
-    public Manager(){ }
+    public Manager(){}
 
     public abstract int add(T entity);
 
