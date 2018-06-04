@@ -180,7 +180,7 @@ public class ChatManager extends Manager<ChatEntity> {
     public List<Integer> getClosedChatMembers(int chatID){
         return manager.createQuery("SELECT M.memberId " +
                 "FROM ChatMemberEntity M " +
-                "WHERE M.chatId = :chatID AND NOT M.openChat")
+                "WHERE M.chatId = :chatID AND M.openChat = false")
                 .setParameter("chatID", chatID)
                 .getResultList();
     }
