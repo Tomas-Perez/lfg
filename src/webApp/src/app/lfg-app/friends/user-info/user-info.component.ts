@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FriendService} from '../../../_services/friend.service';
 import {BasicUser} from '../../../_models/BasicUser';
-import {FriendBarService} from '../../_services/friend-bar.service';
+import {FriendStateService} from '../../_services/friend-state.service';
 import {FriendLocation} from '../../_models/FriendLocation';
 
 @Component({
@@ -19,7 +19,7 @@ export class UserInfoComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private friendService: FriendService,
-              private friendBarService: FriendBarService
+              private friendBarService: FriendStateService
   ) { }
 
   ngOnInit() {

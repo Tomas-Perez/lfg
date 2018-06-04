@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FriendBarService} from '../../_services/friend-bar.service';
+import {FriendStateService} from '../../_services/friend-state.service';
 import {FriendLocation} from '../../_models/FriendLocation';
 import {BasicUser} from '../../../_models/BasicUser';
 import {FriendService} from '../../../_services/friend.service';
@@ -18,7 +18,7 @@ export class FriendRequestsComponent implements OnInit, OnDestroy {
   receivedRequests: BasicUser[];
   sentRequests: BasicUser[];
 
-  constructor(private friendBarService: FriendBarService,
+  constructor(private friendBarService: FriendStateService,
               private friendService: FriendService,
               private router: Router,
               private route: ActivatedRoute

@@ -8,6 +8,7 @@ import {Router} from '@angular/router';
 import {UserService} from '../../_services/user.service';
 import {User} from '../../_models/User';
 import {ChatService} from '../../_services/chat.service';
+import {ChatType} from '../../_models/ChatType';
 
 @Component({
   selector: 'app-post-flow',
@@ -65,7 +66,7 @@ export class PostFlowComponent implements OnInit, OnDestroy {
   }
 
   newChat(id: number) {
-    this.chatService.newChat([this.user.id, id]);
+    this.chatService.newChat(ChatType.PRIVATE, [this.user.id, id]);
   }
 
   ngOnDestroy() {

@@ -3,7 +3,9 @@
     <div class="chat-tabs-wrapper">
       <div *ngFor="let chat of chats; let i = index" class="tab" [ngClass]="{'tab-active': activatedTabIndex == i}" (click)="activateTab(i)">
         <div class="tab-content">
-          <span class="tab-username" (click)="openChat()">{{chat.members[0].id}}</span>
+          <span *ngFor="let member of chat.members" [hidden]="member.id == user.id" class="tab-username" (click)="openChat()">
+            {{member.username}}
+          </span>
           <span class="tab-close" (click)="closeTab(chat.id)">×</span>
         </div>
       </div>
@@ -16,12 +18,14 @@
     <div class="messages-wrapper">
       <div *ngIf="chats.length" data-simplebar id="scrollbar">
         <div #messages *ngFor="let message of chats[activatedTabIndex].messages; let i = index; let last = last"
-            class="message"
-            [ngClass]="{'message-margin-bottom': !last && message.senderId != chats[activatedTabIndex].messages[i+1].senderId}">
+            class="message" [ngClass]="{'message-margin-bottom': !last && message.senderId !=
+            chats[activatedTabIndex].messages[i+1].senderId}">
           <div *ngIf="i == 0 || message.id != chats[activatedTabIndex].messages[i-1].id" class="message-info">
-            <span class="message-username">{{message.senderId == user.id ? 'You' : message.senderId}}:</span>
+            <span class="message-username">
+              {{message.senderId == user.id ? 'You' : getSenderUsername(message.senderId)}}:
+            </span>
             <span class="message-time">
-              {{message.date.getDay()}}/{{message.date.getMonth()}}/{{message.date.getFullYear()}},
+              {{message.date.getDate()}}/{{message.date.getMonth()+1}}/{{message.date.getFullYear()}},
               {{message.date.getHours()}}:{{message.date.getSeconds()}}
             </span>
           </div>
@@ -30,10 +34,10 @@
       </div>
     </div>
     <div class="send-message-wrapper">
-      <form>
+      <form (ngSubmit)="sendMessage()">
        <input name="InputMessage" [(ngModel)]="messageInput" type="text" id="InputMessage" class="message-input"
              autocomplete="off" placeholder="{{chats.length ? 'Message ' + chats[activatedTabIndex].username : ''}}">
-        <button type="submit" class="btn btn-send-message" (click)="sendMessage()">
+        <button type="submit" class="btn btn-send-message">
           »
         </button>
       </form>

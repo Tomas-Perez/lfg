@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FriendLocation} from '../../_models/FriendLocation';
-import {FriendBarService} from '../../_services/friend-bar.service';
+import {FriendStateService} from '../../_services/friend-state.service';
 import {Subject} from 'rxjs/Subject';
 import {FriendService} from '../../../_services/friend.service';
 
@@ -16,9 +16,10 @@ export class FriendBarComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<any> = new Subject();
   private friendRequests: number;
   friendLocation: FriendLocation;
+  private isOpen: Boolean;
 
   constructor(
-    private friendBarService: FriendBarService,
+    private friendStateService: FriendStateService,
     private friendService: FriendService,
     private router: Router,
     private route: ActivatedRoute
@@ -26,11 +27,17 @@ export class FriendBarComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.friendRequests = 0;
-    this.friendBarService.friendLocationSubject.takeUntil(this.ngUnsubscribe)
+
+    this.friendStateService.friendLocationSubject.takeUntil(this.ngUnsubscribe)
       .subscribe(friendLocation => this.friendLocation = friendLocation);
+
+    this.friendStateService.openSubject.takeUntil(this.ngUnsubscribe)
+      .subscribe(isOpen => this.isOpen = isOpen);
+
     this.friendService.friendRequestsSubject.takeUntil(this.ngUnsubscribe)
       .subscribe(requests => this.friendRequests = requests.length);
   }
+
 
   navigate(url: string) {
     this.router.navigate([{outlets: {friends: [url]}}],

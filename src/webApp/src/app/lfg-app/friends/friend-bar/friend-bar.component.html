@@ -1,5 +1,5 @@
 <div class="friends-bar">
-  <ul class="navbar-nav">
+  <ul *ngIf="isOpen" class="navbar-nav">
     <li class="friends-bar-item" (click)="navigate('friend-list')"
         [ngClass]="{'active': friendLocation == FriendLocation.LIST}">
       <span>

@@ -1,17 +1,34 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import 'simplebar';
-import {UserService} from '../_services/user.service';
 import 'rxjs/add/operator/takeUntil';
+import {FriendStateService} from './_services/friend-state.service';
+import {Subject} from 'rxjs/Subject';
 
 @Component({
   selector: 'app-lfg-app',
   templateUrl: './lfg-app.component.html',
   styleUrls: ['./lfg-app.component.css']
 })
-export class LfgAppComponent implements OnInit {
+export class LfgAppComponent implements OnInit, OnDestroy {
 
-  constructor() { }
+  private ngUnsubscribe: Subject<any> = new Subject();
+  isFriendsOpen: Boolean;
 
-  ngOnInit() {}
+  constructor(private friendStateService: FriendStateService) { }
+
+  ngOnInit() {
+    this.friendStateService.openSubject.takeUntil(this.ngUnsubscribe)
+      .subscribe(isOpen => this.isFriendsOpen = isOpen);
+  }
+
+
+  toggleFriendsOpen() {
+    this.friendStateService.toggleOpen();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
 
 }

@@ -51,20 +51,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.userService.userSubject.takeUntil(this.ngUnsubscribe).subscribe(user => this.user = user);
 
-    /*
-    this.chatService.chatsSubject.takeUntil(this.ngUnsubscribe).subscribe(
-      chats => {
-        for (const chat of chats) {
-          let messages: Message[];
-          const messageSub = chat.messagesSubject.takeUntil(this.ngUnsubscribe)
-            .subscribe(msgs => messages = msgs);
-          this.chats.push({chat: chat, messages: messages, messageSubscription: messageSub});
-        }
-
-      }
-    );
-    */
-
     this.chatService.chatsSubject.takeUntil(this.ngUnsubscribe).subscribe(chats => {
       for (const chat of chats) {
         if (!this.messageSubscriptions.has(chat.id)) {
@@ -73,6 +59,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
       this.chats = chats;
+      if (this.chats.length){
+        this.openChat();
+      }
     });
   }
 
@@ -97,15 +86,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   sendMessage() {
-    /*
-    if (this.chats.length && this.messageInput.trim() === '') {
-      return;
+    if(this.messageInput.trim() !== ''){
+      const b = this.chatService.sendMessage(this.chats[this.activatedTabIndex].id, this.messageInput);
+      this.messageInput = '';
     }
-    this.chats[this.activatedTabIndex].messages.push({id: this.user.id, date: new Date(), message: this.messageInput});
-    this.messageInput = '';
-    */
-    // TODO send message
-    const b = this.chatService.sendMessage(this.chats[this.activatedTabIndex].id, this.messageInput);
   }
 
   activateTab(index: number) {
@@ -118,6 +102,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.messageSubscriptions.get(id).unsubscribe();
     this.chatService.deleteChat(id);
+  }
+
+  getSenderUsername(idSender: number): string {
+    const name = this.chats[this.activatedTabIndex].getMemberUsername(idSender);
+    return name != null ? name : 'Unknown';
   }
 
   ngOnDestroy() {

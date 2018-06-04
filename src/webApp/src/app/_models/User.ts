@@ -13,6 +13,12 @@ class PostId {
 }
 
 @JsonObject
+class ChatId {
+  @JsonProperty('id', Number)
+  id: number = undefined;
+}
+
+@JsonObject
 export class User {
 
   @JsonProperty('id', Number, true)
@@ -35,4 +41,8 @@ export class User {
 
   @JsonProperty('post', PostId, true)
   post?: PostId = undefined;
+
+
+  @JsonProperty('chats', [ChatId], true)
+  chats?: ChatId[] = undefined;
 }

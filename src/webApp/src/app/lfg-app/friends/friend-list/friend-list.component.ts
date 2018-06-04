@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FriendBarService} from '../../_services/friend-bar.service';
+import {FriendStateService} from '../../_services/friend-state.service';
 import {FriendLocation} from '../../_models/FriendLocation';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
@@ -17,7 +17,7 @@ export class FriendListComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<any> = new Subject();
   private friends: BasicUser[];
 
-  constructor(private friendBarService: FriendBarService,
+  constructor(private friendBarService: FriendStateService,
               private friendService: FriendService,
               private router: Router
               ) { }

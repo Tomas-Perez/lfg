@@ -91,6 +91,7 @@
 }
 
 .friends-wrapper{
+  transition: width 1.5s;
   background-color: #303238;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -148,4 +149,31 @@
   -ms-flex-pack: start;
   -webkit-box-pack: start;
   justify-content: flex-start;
+}
+
+.no-width {
+  width: 0;
+}
+
+.friends-toggle{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 36px;
+  cursor: pointer;
+}
+
+.friends-toggle-icon {
+  transition: transform 1.5s;
+  width: fit-content;
+  font-size: 22px;
+  font-weight: 600;
+  margin: auto;
+  color: #5ece76;
+}
+
+.rotate-toggle{
+  transition: transform 1.5s;
+  transform: rotate(180deg);
 }

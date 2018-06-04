@@ -20,7 +20,7 @@ import { FriendListComponent } from './friends/friend-list/friend-list.component
 import { FriendRequestsComponent } from './friends/friend-requests/friend-requests.component';
 import { FriendBarComponent } from './friends/friend-bar/friend-bar.component';
 import { NavBarService } from './_services/nav-bar.service';
-import { FriendBarService } from './_services/friend-bar.service';
+import { FriendStateService } from './_services/friend-state.service';
 import { FriendService } from '../_services/friend.service';
 import { UserInfoComponent } from './friends/user-info/user-info.component';
 import {TimeAgoPipe} from 'time-ago-pipe';
@@ -60,7 +60,7 @@ import { ChatService } from '../_services/chat.service';
     NoGroupGuardService,
     GroupPostService,
     NavBarService,
-    FriendBarService,
+    FriendStateService,
     FriendService,
     ChatService,
   ],

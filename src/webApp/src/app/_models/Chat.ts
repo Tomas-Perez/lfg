@@ -7,8 +7,8 @@ class Member {
   @JsonProperty('id', Number)
   id: number = undefined;
 
-  @JsonProperty('username', String, true)
-  username?: string = undefined;
+  @JsonProperty('username', String)
+  username: string = undefined;
 
   constructor(id?: number, username?: string){
     this.id = id || undefined;
@@ -25,8 +25,9 @@ export class Chat {
   @JsonProperty('members', [Member])
   members: Member[] = undefined;
 
-
+  @JsonProperty('messages', [Message], true)
   messages: Message[] = [];
+
   messagesSubject: BehaviorSubject<Message[]> = new BehaviorSubject<Message[]>(this.messages);
 
   pushMessage(message: Message) {
@@ -59,6 +60,15 @@ export class Chat {
         return;
       }
     }
+  }
+
+  getMemberUsername(id: number): string{
+    for (const member of this.members) {
+      if (id === member.id) {
+        return member.username;
+      }
+    }
+    return null;
   }
 
 }

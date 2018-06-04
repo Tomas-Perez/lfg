@@ -29,10 +29,6 @@
   cursor: pointer;
 }
 
-.chat-toggle fa{
-  text-align: center;
-}
-
 .chat-tabs-wrapper{
   display: flex;
   flex: 1 0;

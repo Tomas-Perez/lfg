@@ -20,7 +20,10 @@
       <app-chat></app-chat>
     </div>
   </div>
-  <div class="friends-wrapper">
+  <div class="friends-wrapper" [ngClass]="{'no-width': !isFriendsOpen}">
+    <div class="friends-toggle" (click)="toggleFriendsOpen()">
+      <i class="fa fa-angle-right friends-toggle-icon" [ngClass]="{'rotate-toggle': !isFriendsOpen}"></i>
+    </div>
     <div class="friends-bar-wrapper">
       <app-friend-bar></app-friend-bar>
     </div>
