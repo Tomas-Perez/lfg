@@ -330,21 +330,21 @@ public class ChatManagerTest {
         ChatEntity chat = new ChatEntity();
         int id = chatManager.addPrivateChat(chat, user1ID, user2ID);
 
-        final LocalDateTime now = LocalDateTime.now();
+        final LocalDateTime now = LocalDateTime.of(2018, 1, 1, 0, 0);
         final String msgString = "Hello";
         int msgID1 = chatManager.sendMessage(id, user1ID, msgString, now);
 
-        final LocalDateTime now2 = LocalDateTime.now();
+        final LocalDateTime now2 = LocalDateTime.of(2018, 2, 1, 0, 0);
         final String msgString2 = "Hello2";
         int msgID2 = chatManager.sendMessage(id, user1ID, msgString2, now2);
 
-        final LocalDateTime now3 = LocalDateTime.now();
+        final LocalDateTime now3 = LocalDateTime.of(2018, 3, 1, 0, 0);
         final String msgString3 = "Hello";
         int msgID3 = chatManager.sendMessage(id, user1ID, msgString3, now3);
 
         List<Integer> expected = Arrays.asList(msgID1, msgID2, msgID3);
         List<Integer> actual = chatManager.getChatMessages(id);
 
-        assertThat(new HashSet<>(actual), is(new HashSet<>(expected)));
+        assertThat(actual, is(expected));
     }
 }
