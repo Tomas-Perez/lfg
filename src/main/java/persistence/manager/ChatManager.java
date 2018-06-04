@@ -208,7 +208,7 @@ public class ChatManager extends Manager<ChatEntity> {
     public List<Integer> getChatMessages(int chatID){
         return manager.createQuery("SELECT M.id " +
                 "FROM ChatMessageEntity M " +
-                "WHERE M.chatId = :chatID")
+                "WHERE M.chatId = :chatID ORDER BY M.date DESC")
                 .setParameter("chatID", chatID)
                 .getResultList();
     }

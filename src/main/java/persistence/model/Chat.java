@@ -3,6 +3,7 @@ package persistence.model;
 
 import persistence.entity.ChatEntity;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -12,9 +13,9 @@ import java.util.Set;
 public class Chat {
     private int id;
     private Set<User> members;
-    private Set<Message> messages;
+    private List<Message> messages;
 
-    public Chat(ChatEntity entity, Set<User> members, Set<Message> messages) {
+    public Chat(ChatEntity entity, Set<User> members, List<Message> messages) {
         this.id = entity.getId();
         this.members = members;
         this.messages = messages;
@@ -28,7 +29,7 @@ public class Chat {
         return members;
     }
 
-    public Set<Message> getMessages() {
+    public List<Message> getMessages() {
         return messages;
     }
 

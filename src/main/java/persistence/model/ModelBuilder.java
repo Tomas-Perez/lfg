@@ -219,11 +219,11 @@ public class ModelBuilder {
         ChatEntity chatEntity = chatManager.get(chatID);
         if(chatEntity == null) throw new NoSuchElementException();
 
-        Set<Message> messages = chatManager
+        List<Message> messages = chatManager
                 .getChatMessages(chatID)
                 .stream()
                 .map(this::buildMessage)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
 
         Set<User> members = chatManager
                 .getChatMembers(chatID)
