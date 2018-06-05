@@ -1,4 +1,5 @@
 build
+bin
 .idea/
 target/
 .idea_modules/
