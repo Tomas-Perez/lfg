@@ -28,6 +28,8 @@ export class UserService {
     this.authService.isLoggedInBS().subscribe(loggedIn => {
       if (loggedIn) {
         this.updateUserInfo();
+      } else{
+        this.userSubject.next(null);
       }
     });
 

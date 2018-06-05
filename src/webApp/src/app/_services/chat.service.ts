@@ -35,6 +35,15 @@ export class ChatService {
 
     this.userService.userSubject.subscribe( user => {
       this.user = user;
+
+      // TODO change the way logout is handled
+      for (const chat of Array.from(this.chatsWs)) { // close ws
+        chat[1].close();
+      }
+      this.chatsWs = new Map();
+      this.chatsSubject.next([]);
+      //
+
       if (user !== null && user.chats) {
         for (const chat of user.chats) {
           this.getChatAndConnect(chat.id)
@@ -54,7 +63,7 @@ export class ChatService {
     return this.getChat(id).pipe(
       map(chat => {
         if (chat != null) {
-          this.connectToChat(chat, this.chatWsUrl);
+          this.connectToChat(chat, this.chatWsUrl, true);
           return chat;
         }
       })
@@ -125,8 +134,8 @@ export class ChatService {
     chat.removeMember(id);
   }
 
-  connectToChat(chat: Chat, wsUrl: string) { // TODO handle error
-    const ws = new $WebSocket(wsUrl + chat.id + '?access-token=' + this.authService.getAccessToken());
+  connectToChat(chat: Chat, wsUrl: string, addId: boolean) { // TODO handle error
+    const ws = new $WebSocket(wsUrl + (addId ? chat.id : '') + '?access-token=' + this.authService.getAccessToken());
 
     ws.onMessage(
     (msg: MessageEvent) => {
@@ -164,7 +173,7 @@ export class ChatService {
       const wsUrl = data.wsUrl;
       this.chatsSubject.next(this.chats.concat([chat]));
 
-      this.connectToChat(chat, wsUrl);
+      this.connectToChat(chat, wsUrl, false);
     });
     return true;
   }

@@ -91,7 +91,6 @@
 }
 
 .friends-wrapper{
-  transition: width 1.5s;
   background-color: #303238;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -161,19 +160,20 @@
   justify-content: center;
   flex: 0 0 auto;
   width: 36px;
+  position: absolute;
+  left: -35px;
+  background: #27292d;
   cursor: pointer;
 }
 
 .friends-toggle-icon {
-  transition: transform 1.5s;
   width: fit-content;
   font-size: 22px;
   font-weight: 600;
   margin: auto;
-  color: #5ece76;
+  color: #d24008;
 }
 
 .rotate-toggle{
-  transition: transform 1.5s;
   transform: rotate(180deg);
 }

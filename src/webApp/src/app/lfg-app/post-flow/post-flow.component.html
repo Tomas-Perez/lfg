@@ -12,7 +12,7 @@
                   (click)="getUserInfo(post.owner.id)">{{post.owner.username}}</span>
             <span *ngIf="post.owner.id == user.id">{{post.owner.username}}</span>
           </div>
-          <div class="send-message-icon" (click)="newChat(post.owner.id)">
+          <div *ngIf="post.owner.id == user.id" class="send-message-icon" (click)="newChat(post.owner.id)">
             <i class="fa fa-envelope-o"></i>
           </div>
         </div>
