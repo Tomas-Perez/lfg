@@ -6,13 +6,13 @@
   <div class="post-container">
     <div class="post-info-wrapper">
       <div class="post-info-left">
-        <div class="post-info-left-top">
-          <div *ngIf="user != null" class="post-user">
+        <div *ngIf="user != null" class="post-info-left-top">
+          <div class="post-user">
             <span *ngIf=" post.owner.id != user.id" class="username-wrapper"
                   (click)="getUserInfo(post.owner.id)">{{post.owner.username}}</span>
             <span *ngIf="post.owner.id == user.id">{{post.owner.username}}</span>
           </div>
-          <div *ngIf="post.owner.id == user.id" class="send-message-icon" (click)="newChat(post.owner.id)">
+          <div *ngIf="post.owner.id != user.id" class="send-message-icon" (click)="newChat(post.owner.id)">
             <i class="fa fa-envelope-o"></i>
           </div>
         </div>

@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {UserService} from '../../_services/user.service';
 import {SignUpStatus} from '../../_models/SignUpStatus';
 import {User} from '../../_models/User';
+import {AuthService} from '../../_services/auth.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-sign-up',
@@ -19,7 +21,10 @@ export class SignUpComponent implements OnInit {
   wrongInfo: boolean;
 
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService,
+              private authService: AuthService,
+              private router: Router
+              ) { }
 
   ngOnInit() {
     this.signUpInfo = new User;
@@ -48,7 +53,12 @@ export class SignUpComponent implements OnInit {
         switch (response) {
           case SignUpStatus.success: {
             console.log('Signed up');
-            // TODO sign in, route user
+            this.authService.authenticate(this.signUpInfo.email, this.signUpInfo.password)
+              .subscribe(b => {
+                if(b) {
+                  this.router.navigate(['/app'])}
+                }
+              );
             break;
           }
           case SignUpStatus.emailTaken: {
