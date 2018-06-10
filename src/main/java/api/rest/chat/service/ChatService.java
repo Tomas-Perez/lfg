@@ -12,10 +12,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -56,7 +53,7 @@ public class ChatService {
     public int newPrivateChat(int member1, int member2){
         ChatEntity chatEntity = new ChatEntity();
         final int chatID = chatManager.addPrivateChat(chatEntity, member1, member2);
-        newChatEvent.fire(new ChatEvent(chatID, new HashSet<>(member1, member2)));
+        newChatEvent.fire(new ChatEvent(chatID, new HashSet<>(Arrays.asList(member1, member2))));
         return chatID;
     }
 
@@ -90,7 +87,7 @@ public class ChatService {
             throw new NotFoundException();
         }
 
-        newChatEvent.fire(new ChatEvent(id, new HashSet<>(userID)));
+        newChatEvent.fire(new ChatEvent(id, new HashSet<>(Collections.singletonList(userID))));
     }
 
     public void removeMember(int id, int userID){
@@ -100,7 +97,7 @@ public class ChatService {
             throw new NotFoundException();
         }
 
-        deleteChatEvent.fire(new ChatEvent(id, new HashSet<>(userID)));
+        deleteChatEvent.fire(new ChatEvent(id, new HashSet<>(Collections.singletonList(userID))));
     }
 
     public void closeChat(int id, int userID){
