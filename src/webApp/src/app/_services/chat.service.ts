@@ -33,12 +33,10 @@ export class ChatService {
 
     this.chatsWs = new Map();
     this.chatsSubject = new BehaviorSubject<Chat[]>([]);
-    this.chatsSubject.subscribe(chats => this.chats = chats);
-
-    this.userSocketService.newChatSubject.subscribe(
-      chatId => this.getChatAndConnect(chatId)
-        .subscribe(chat => this.addChat(chat))
-    );
+    this.chatsSubject.subscribe(chats => {
+      console.log(chats);
+      this.chats = chats;
+    });
 
     this.userService.userSubject.subscribe( user => {
       this.user = user;
@@ -53,15 +51,25 @@ export class ChatService {
 
       if (user !== null && user.chats) {
         for (const chat of user.chats) {
-          this.getChatAndConnect(chat.id)
-            .subscribe(newChat => {
-              if (newChat != null) {
-                this.addChat(newChat);
-              }
-            });
+          if (!this.chatExistsById(chat.id)) {
+            this.getChatAndConnect(chat.id)
+              .subscribe(newChat => {
+                if (newChat != null) {
+                  this.addChat(newChat);
+                }
+              });
+          }
         }
       }
     });
+
+    this.userSocketService.newChatSubject.subscribe(
+      chatId => {
+        if (!this.chatExistsById(chatId)) {
+          this.getChatAndConnect(chatId).subscribe(chat => this.addChat(chat));
+        }
+      }
+    );
   }
 
   private addChat(chat: Chat) {
@@ -102,21 +110,35 @@ export class ChatService {
    * @param {number[]} ids
    * @returns {boolean}
    */
-  checkIfChatAlreadyExists(ids: number[]): boolean {
+  chatExistsByIds(ids: number[]): boolean {
     for (const chat of this.chats) {
-      let checks = true;
+      console.log(chat);
+      let checks = false;
       for (const chatMember of chat.members) {
+        checks = false;
         for (const id of ids) {
-          if (id !== chatMember.id) {
-            checks = false;
+          console.log(id + "   " + chatMember.id);
+          if (id === chatMember.id) {
+            checks = true;
             break;
           }
         }
+
         if (!checks) {
           break;
         }
       }
+
       if (checks) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  chatExistsById(id: number): boolean {
+    for (const chat of this.chats) {
+      if (chat.id === id) {
         return true;
       }
     }
@@ -175,7 +197,8 @@ export class ChatService {
 
   newChat(type: ChatType, ids: number[]): boolean {
 
-    if (this.checkIfChatAlreadyExists(ids)) { return false; }
+    if (this.chatExistsByIds(ids)) { return false; }
+    console.log("asdf");
 
     this.requestNewChat(type, ids).subscribe((data: {chat: Chat, wsUrl: string}) => {
       const chat = data.chat;

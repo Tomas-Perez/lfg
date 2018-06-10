@@ -79,7 +79,14 @@ h2{
   font-weight: 600;
   height: fit-content;
   margin: auto;
+}
+
+.kick-player{
   color: #da2121;
+}
+
+.leader{
+  color: #fff900;
 }
 
 .post-group-form{
