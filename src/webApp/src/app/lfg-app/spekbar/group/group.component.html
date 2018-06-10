@@ -19,7 +19,10 @@
       <span class="member-username">
         {{member.username}}
       </span>
-      <span *ngIf="isOwner && member.id != user.id" class="hand kick-player" title="Kick player" (click)="kickPlayer(member.id)">x</span>
+      <span *ngIf="isOwner && member.id != user.id" class="hand member-option" title="Kick player" (click)="kickPlayer(member.id)">x</span>
+      <span *ngIf="member.id == group.owner.id" class="hand member-option" title="Group leader">
+        <i class="fa fa-crown"></i>
+      </span>
     </div>
   </div>
 

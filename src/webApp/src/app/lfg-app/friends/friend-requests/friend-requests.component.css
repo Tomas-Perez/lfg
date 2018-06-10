@@ -65,16 +65,13 @@ hr{
   flex: 0 0 auto;
 }
 
-.delete-request{
-  font-weight: 600;
-}
-
 .accept-request{
   color: #51da43;
   margin: auto 0.3em auto 0;
 }
 
 .delete-request{
+  font-weight: 600;
   height: fit-content;
   margin: auto;
   color: #da2121;

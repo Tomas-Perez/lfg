@@ -27,6 +27,7 @@ import {TimeAgoPipe} from 'time-ago-pipe';
 import {MeInfoComponent} from './me-info/me-info.component';
 import { ChatComponent } from './chat/chat.component';
 import { ChatService } from '../_services/chat.service';
+import { UserSocketService } from '../_services/user-socket.service';
 
 
 @NgModule({
@@ -63,6 +64,7 @@ import { ChatService } from '../_services/chat.service';
     FriendStateService,
     FriendService,
     ChatService,
+    UserSocketService,
   ],
 })
 export class LfgAppModule { }

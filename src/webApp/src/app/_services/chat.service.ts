@@ -12,6 +12,7 @@ import {SendMessage} from '../_models/SendMessage';
 import {ChatType} from '../_models/ChatType';
 import {User} from '../_models/User';
 import {UserService} from './user.service';
+import {UserSocketService} from './user-socket.service';
 
 @Injectable()
 export class ChatService {
@@ -27,11 +28,17 @@ export class ChatService {
 
   constructor(private http: HttpClient,
               private authService: AuthService,
-              private userService: UserService) {
+              private userService: UserService,
+              private userSocketService: UserSocketService) {
 
     this.chatsWs = new Map();
     this.chatsSubject = new BehaviorSubject<Chat[]>([]);
     this.chatsSubject.subscribe(chats => this.chats = chats);
+
+    this.userSocketService.newChatSubject.subscribe(
+      chatId => this.getChatAndConnect(chatId)
+        .subscribe(chat => this.addChat(chat))
+    );
 
     this.userService.userSubject.subscribe( user => {
       this.user = user;
@@ -48,15 +55,17 @@ export class ChatService {
         for (const chat of user.chats) {
           this.getChatAndConnect(chat.id)
             .subscribe(newChat => {
-              if (newChat != null){
-                this.chatsSubject.next(this.chats.concat([newChat]));
+              if (newChat != null) {
+                this.addChat(newChat);
               }
             });
         }
       }
     });
-    //this.newChat([2443, 2444]);
+  }
 
+  private addChat(chat: Chat) {
+    this.chatsSubject.next(this.chats.concat([chat]));
   }
 
   getChatAndConnect(id: number): Observable<Chat> {
@@ -171,8 +180,7 @@ export class ChatService {
     this.requestNewChat(type, ids).subscribe((data: {chat: Chat, wsUrl: string}) => {
       const chat = data.chat;
       const wsUrl = data.wsUrl;
-      this.chatsSubject.next(this.chats.concat([chat]));
-
+      this.addChat(chat);
       this.connectToChat(chat, wsUrl, false);
     });
     return true;

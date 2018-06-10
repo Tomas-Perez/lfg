@@ -5,6 +5,7 @@ import api.common.event.chat.DeleteChat;
 import api.common.event.chat.NewChat;
 import api.common.event.friendrequest.*;
 import api.websocket.common.AuthenticatedEndpoint;
+import api.websocket.common.config.CdiAwareConfigurator;
 import api.websocket.common.model.Payload;
 import api.websocket.user.codec.ChatMessageDecoder;
 import api.websocket.user.codec.ChatMessageEncoder;
@@ -34,7 +35,8 @@ import java.util.*;
 @Dependent
 @ServerEndpoint(value = "/websockets/user",
         encoders = ChatMessageEncoder.class,
-        decoders = ChatMessageDecoder.class)
+        decoders = ChatMessageDecoder.class,
+        configurator = CdiAwareConfigurator.class)
 public class UserEndpoint extends AuthenticatedEndpoint {
     private static final Map<Integer, Session> sessionsMap = Collections.synchronizedMap(new HashMap<>());
     private static final Map<Integer, Session> recentlyConnectedMap = Collections.synchronizedMap(new HashMap<>());

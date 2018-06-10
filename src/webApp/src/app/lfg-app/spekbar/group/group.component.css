@@ -54,9 +54,10 @@ h2{
 
 .member-username{
   display: flex;
-  flex: 0 0 auto;
+  flex: 1 0 auto;
   flex-direction: column;
   justify-content: center;
+  cursor: pointer;
 }
 
 .user-img{
@@ -72,10 +73,12 @@ h2{
   height: fit-content;
 }
 
-.kick-player{
+.member-option{
   display: flex;
   flex: 0 0 auto;
   font-weight: 600;
+  height: fit-content;
+  margin: auto;
   color: #da2121;
 }
 
