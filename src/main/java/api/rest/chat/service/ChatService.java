@@ -53,7 +53,7 @@ public class ChatService {
     public int newPrivateChat(int member1, int member2){
         ChatEntity chatEntity = new ChatEntity();
         final int chatID = chatManager.addPrivateChat(chatEntity, member1, member2);
-        newChatEvent.fire(new ChatEvent(chatID, new HashSet<>(Arrays.asList(member1, member2))));
+//        newChatEvent.fire(new ChatEvent(chatID, new HashSet<>(Arrays.asList(member1, member2))));
         return chatID;
     }
 
