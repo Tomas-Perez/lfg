@@ -42,8 +42,10 @@ public class ChatManager extends Manager<ChatEntity> {
         if(chatID == null) {
             chat.setType(ChatEntity.ChatType.PRIVATE);
             chatID = add(chat);
-            addMemberToChat(chatID, user1ID);
-            addMemberToChat(chatID, user2ID);
+            addMemberToChat(chatID, user1ID, true);
+            addMemberToChat(chatID, user2ID, false);
+        } else {
+            setOpenChat(chatID, user1ID, true);
         }
         return chatID;
     }
@@ -51,7 +53,7 @@ public class ChatManager extends Manager<ChatEntity> {
     public int addGroupChat(ChatEntity chat, List<Integer> userIDs){
         chat.setType(ChatEntity.ChatType.GROUP);
         int chatID = add(chat);
-        userIDs.forEach(id -> addMemberToChat(chatID, id));
+        userIDs.forEach(id -> addMemberToChat(chatID, id, true));
         return chatID;
     }
 
@@ -79,6 +81,12 @@ public class ChatManager extends Manager<ChatEntity> {
     }
 
     public void addMemberToChat(int chatID, int userID){
+        checkAddMember(chatID, userID);
+        ChatMemberEntity chatMemberEntity = new ChatMemberEntity(chatID, userID);
+        persist(chatMemberEntity);
+    }
+
+    private void addMemberToChat(int chatID, int userID, boolean open){
         checkAddMember(chatID, userID);
         ChatMemberEntity chatMemberEntity = new ChatMemberEntity(chatID, userID);
         persist(chatMemberEntity);
