@@ -36,7 +36,12 @@
     <div class="send-message-wrapper">
       <form (ngSubmit)="sendMessage()">
        <input name="InputMessage" [(ngModel)]="messageInput" type="text" id="InputMessage" class="message-input"
-             autocomplete="off" placeholder="{{chats.length ? 'Message ' + chats[activatedTabIndex].username : ''}}">
+             autocomplete="off" placeholder="{{chats.length ? 'Message ' +
+             (
+             chats[activatedTabIndex].members[0].id == user.id ?
+             chats[activatedTabIndex].members[1].username :
+             chats[activatedTabIndex].members[0].username
+             ) : ''}}"> <!-- TODO omg delet dis-->
         <button type="submit" class="btn btn-send-message">
           »
         </button>
