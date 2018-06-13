@@ -101,7 +101,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       this.activatedTabIndex--;
     }
     this.messageSubscriptions.get(id).unsubscribe();
-    this.chatService.deleteChat(id);
+    this.chatService.deleteChat(id).subscribe();
   }
 
   getSenderUsername(idSender: number): string {

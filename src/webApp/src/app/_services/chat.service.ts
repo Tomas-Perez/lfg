@@ -251,14 +251,36 @@ export class ChatService {
     return Observable.of(null);
   }
 
-  deleteChat(id: number) {
-    for (let i = 0; i < this.chats.length; i++) {
-      if (this.chats[i].id === id) {
-        this.chats.splice(i, 1); // TODO should be immutable
-        this.chatsSubject.next(this.chats);
-        return;
-      }
-    }
+  deleteChat(id: number): Observable<boolean> {
+     return this.http.post<any>(this.chatUrl + '/' + id, {close: true, memberID: this.user.id}, {
+       observe: 'response'
+     })
+       .pipe(
+         map(response => {
+           console.log(response);
+           for (let i = 0; i < this.chats.length; i++) {
+            if (this.chats[i].id === id) {
+              this.chats.splice(i, 1); // TODO should be immutable
+              this.chatsSubject.next(this.chats);
+              this.closeAndDeleteWs(id);
+              return;
+            }
+           }
+           return true;
+         }),
+         catchError((err: any) => this.deleteChatErrorHandle(err))
+      );
+  }
+
+  private deleteChatErrorHandle(err: any) {
+    console.log('Error deleting chat');
+    console.log(err);
+    return Observable.of(null);
+  }
+
+  closeAndDeleteWs(id: number) {
+    this.chatsWs.get(id).close();
+    this.chatsWs.delete(id);
   }
 
 }
