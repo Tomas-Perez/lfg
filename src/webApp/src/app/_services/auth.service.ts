@@ -144,10 +144,7 @@ export class AuthService {
     console.log('logged out');
     localStorage.removeItem('token');
     this.setLoggedIn(false);
-    this.router.navigate([''], // TODO change this
-      {
-        relativeTo: this.route,
-    });
+    this.router.navigate(['']); // TODO change this ?
   }
 
 }

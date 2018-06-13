@@ -35,21 +35,31 @@
       <button *ngIf="post != null" type="submit" class="btn btn-primary-lfg btn-submit btn-post">Repost</button>
     </div>
   </form>
-  <div *ngIf="post != null">
-    <h2>Active post</h2>
-    <div class="post-info">
-      <div class="post-group">
-        <span>
-          {{post.activity.game.name}}, {{post.activity.name}}
-        </span>
+  <!-- post info -->
+  <div class="post-info-wrapper" [ngClass]="{'inactive': post == null}">
+    <h2 >Active post</h2>
+    <div class="post-info" *ngIf="post == null">
+      <div class="post-group post-inactive">
+          <span>
+            No active post
+          </span>
       </div>
-      <div class="post-group">
-        <p class="m-0">{{post.description}}</p>
-      </div>
-      <div class="post-group">
-        <span>
-          {{post.date | timeAgo}}
-        </span>
+    </div>
+    <div class="hidden-zone" [ngClass]="{'post-height': post == null}">
+      <div class="post-info" *ngIf="post != null">
+        <div class="post-group">
+          <span>
+            {{post.activity.game.name}}, {{post.activity.name}}
+          </span>
+        </div>
+        <div class="post-group">
+          <p class="m-0">{{post.description}}</p>
+        </div>
+        <div class="post-group">
+          <span>
+            {{post.date | timeAgo}}
+          </span>
+        </div>
       </div>
     </div>
   </div>
