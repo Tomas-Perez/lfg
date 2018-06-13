@@ -148,6 +148,7 @@ public class ChatEndpoint extends AuthenticatedEndpoint {
         ChatManager chatManager = new ChatManager(em, userManager);
         int id = chatManager.sendMessage(chatID, userID, text, date);
         final List<Integer> closedChatMembers = chatManager.getClosedChatMembers(chatID);
+        logger.info("closedChatMembers: " + closedChatMembers);
         newChatEvent.fire(new ChatEvent(chatID, new HashSet<>(closedChatMembers)));
 
         closedChatMembers.forEach(uID -> chatManager.openChat(chatID, uID));

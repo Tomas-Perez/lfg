@@ -89,6 +89,7 @@ public class ChatManager extends Manager<ChatEntity> {
     private void addMemberToChat(int chatID, int userID, boolean open){
         checkAddMember(chatID, userID);
         ChatMemberEntity chatMemberEntity = new ChatMemberEntity(chatID, userID);
+        chatMemberEntity.setOpenChat(open);
         persist(chatMemberEntity);
     }
 

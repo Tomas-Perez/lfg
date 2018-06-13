@@ -49,8 +49,8 @@ public class UserEndpoint extends AuthenticatedEndpoint {
     public void onOpen(Session currentSession){
         final int userID = getUserID(currentSession);
         sessionsMap.put(userID, currentSession);
-        if(recentlyConnectedMap.get(userID) == null)
-            broadcastUserConnected(userID);
+//        if(recentlyConnectedMap.get(userID) == null)
+//            broadcastUserConnected(userID);
 
         logger.info(String.format("Session %s opened", currentSession.getId()));
     }
@@ -62,20 +62,20 @@ public class UserEndpoint extends AuthenticatedEndpoint {
     public void onClose(Session currentSession){
         final int userID = getUserID(currentSession);
         sessionsMap.remove(userID);
-        recentlyConnectedMap.put(userID, currentSession);
-
-        new Timer().schedule(
-                new TimerTask() {
-                    @Override
-                    public void run() {
-                        if(sessionsMap.get(userID) == null) {
-                            recentlyConnectedMap.remove(userID);
-                            broadcastUserDisconnected(userID);
-                        }
-                    }
-                },
-                3000
-        );
+//        recentlyConnectedMap.put(userID, currentSession);
+//
+//        new Timer().schedule(
+//                new TimerTask() {
+//                    @Override
+//                    public void run() {
+//                        if(sessionsMap.get(userID) == null) {
+//                            recentlyConnectedMap.remove(userID);
+//                            broadcastUserDisconnected(userID);
+//                        }
+//                    }
+//                },
+//                3000
+//        );
 
         logger.info(String.format("Session %s closed", currentSession.getId()));
     }
