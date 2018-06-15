@@ -16,7 +16,8 @@
   </div>
   <div class="hidden-zone" [ngClass]="{'no-height': !chatOpen}">
     <div class="messages-wrapper">
-      <div *ngIf="chats.length" data-simplebar id="scrollbar">
+      <div data-simplebar id="scrollbar">
+      <div *ngIf="chats.length">
         <div #messages *ngFor="let message of chats[activatedTabIndex].messages; let i = index; let last = last"
             class="message" [ngClass]="{'message-margin-bottom': !last && message.senderId !=
             chats[activatedTabIndex].messages[i+1].senderId}">
@@ -33,15 +34,11 @@
         </div>
       </div>
     </div>
+    </div>
     <div class="send-message-wrapper">
       <form (ngSubmit)="sendMessage()">
        <input name="InputMessage" [(ngModel)]="messageInput" type="text" id="InputMessage" class="message-input"
-             autocomplete="off" placeholder="{{chats.length ? 'Message ' +
-             (
-             chats[activatedTabIndex].members[0].id == user.id ?
-             chats[activatedTabIndex].members[1].username :
-             chats[activatedTabIndex].members[0].username
-             ) : ''}}"> <!-- TODO omg delet dis-->
+             autocomplete="off" placeholder="{{chats.length ? 'Message ' + getChatTitle() : ''}}">
         <button type="submit" class="btn btn-send-message">
           »
         </button>
