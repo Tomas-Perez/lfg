@@ -114,6 +114,20 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     return name != null ? name : 'Unknown';
   }
 
+  /**
+   * Returns name of the chatter if its only one or 'Group' if its a group
+   * @returns {string}
+   */
+  getChatTitle(): string {
+    const members = this.chats[this.activatedTabIndex].members;
+    if (members.length > 2) {
+      return 'Group';
+    }
+    return members[0].id == this.user.id ?
+      this.chats[this.activatedTabIndex].members[1].username:
+      this.chats[this.activatedTabIndex].members[0].username
+  }
+
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
