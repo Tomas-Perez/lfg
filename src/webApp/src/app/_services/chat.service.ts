@@ -112,12 +112,10 @@ export class ChatService {
    */
   chatExistsByIds(ids: number[]): boolean {
     for (const chat of this.chats) {
-      console.log(chat);
       let checks = false;
       for (const chatMember of chat.members) {
         checks = false;
         for (const id of ids) {
-          console.log(id + "   " + chatMember.id);
           if (id === chatMember.id) {
             checks = true;
             break;

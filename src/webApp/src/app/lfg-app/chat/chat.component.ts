@@ -100,8 +100,13 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.activatedTabIndex === this.chats.length - 1 && this.activatedTabIndex > 0) {
       this.activatedTabIndex--;
     }
+
     this.messageSubscriptions.get(id).unsubscribe();
-    this.chatService.deleteChat(id).subscribe();
+    this.chatService.deleteChat(id).subscribe( b => {
+      if (this.chats.length == 0) {
+        this.chatOpen = false;
+      }
+    }); // TODO everything should depend on this subscription
   }
 
   getSenderUsername(idSender: number): string {
