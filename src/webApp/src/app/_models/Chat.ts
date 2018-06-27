@@ -45,7 +45,7 @@ export class Chat {
 
   addMember(id: number) {
     for (const member of this.members) {
-      if (member.id === id){
+      if (member.id === id) {
         return;
       }
     }
@@ -53,16 +53,16 @@ export class Chat {
     this.members.push(newMember);
   }
 
-  removeMember(id: number){
-    for(let i = 0; i < this.members.length; i++){
-      if (this.members[i].id === id){
+  removeMember(id: number) {
+    for(let i = 0; i < this.members.length; i++) {
+      if (this.members[i].id === id) {
         this.members.splice(i, 1);
         return;
       }
     }
   }
 
-  getMemberUsername(id: number): string{
+  getMemberUsername(id: number): string {
     for (const member of this.members) {
       if (id === member.id) {
         return member.username;

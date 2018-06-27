@@ -41,7 +41,7 @@ export class ChatService {
     this.userService.userSubject.subscribe( user => {
       this.user = user;
 
-      // TODO change the way logout is handled
+      // TODO change the way logout is handled?
       for (const chat of Array.from(this.chatsWs)) { // close ws
         chat[1].close();
       }
@@ -261,7 +261,7 @@ export class ChatService {
               this.chats.splice(i, 1); // TODO should be immutable
               this.chatsSubject.next(this.chats);
               this.closeAndDeleteWs(id);
-              return;
+              break;
             }
            }
            return true;

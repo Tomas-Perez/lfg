@@ -16,13 +16,49 @@ export class UserSocketService {
     this.userService.userSubject.subscribe( user => {
       if (user != null) {
         this.connect();
-      } else {}
+      } else {
+        if (this.userWs) {
+          this.userWs.close();
+        }
+      }
     });
   }
 
 
   onNewChat(id: number) {
     this.newChatSubject.next(id);
+  }
+
+  onDeleteChat(id: number) {
+
+  }
+
+  onFriendConnected(id: number) {
+
+  }
+
+  onFriendDisconnected(id: number) {
+
+  }
+
+
+  onNewFriend(id: number, username: string) {
+
+  }
+
+
+  onDeleteFriend(id: number) {
+
+  }
+
+
+  onReceivedFriendRequest(id: number, username: string) {
+
+  }
+
+
+  onSentFriendRequest(id: number, username: string) {
+
   }
 
   private connect() { // TODO handle error
@@ -38,24 +74,31 @@ export class UserSocketService {
             break;
           }
           case 'deleteChat': {
+            this.onDeleteChat(msgData.payload.id);
             break;
           }
           case 'friendConnected': {
+            this.onFriendConnected(msgData.payload.id);
             break;
           }
           case 'friendDisconnected': {
+            this.onFriendDisconnected(msgData.payload.id);
             break;
           }
           case 'newFriend': {
+            this.onNewFriend(msgData.payload.id, msgData.payload.username);
             break;
           }
           case 'deleteFriend': {
+            this.onDeleteFriend(msgData.payload.id);
             break;
           }
           case 'receivedFriendRequest': {
+            this.onReceivedFriendRequest(msgData.payload.id, msgData.payload.username);
             break;
           }
           case 'sentFriendRequest': {
+            this.onSentFriendRequest(msgData.payload.id, msgData.payload.username);
             break;
           }
         }
