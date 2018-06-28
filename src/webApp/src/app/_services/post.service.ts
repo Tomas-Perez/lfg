@@ -10,13 +10,9 @@ import {DbPost} from '../_models/DbModels/DbPost';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {User} from '../_models/User';
 import {UserService} from './user.service';
-import {SocketUtil} from '../_models/Sockets/SocketUtil';
-import {SocketEvent} from '../_models/Sockets/SocketEvent';
 
 @Injectable()
 export class PostService {
-
-  private socketUtil: SocketUtil;
 
   private user: User;
   private posts: Post[];
@@ -47,11 +43,6 @@ export class PostService {
         this.currentPostSubject.next(null);
       }
     });
-
-    /*
-    this.socketUtil = new SocketUtil(this.postUrl);
-    this.socketUtil.initSocket();
-    */
   }
 
   getPost(id: number): Observable<boolean> {
@@ -151,36 +142,5 @@ export class PostService {
     console.log(err);
     return Observable.of(false);
   }
-
-
-
-
-
-  // WEBSOCKETS
-
-  private setSocketActions() {
-    this.socketUtil.onEvent(SocketEvent.CONNECT)
-      .subscribe(() => {
-        console.log('connected');
-      });
-
-    this.socketUtil.onEvent(SocketEvent.DISCONNECT)
-      .subscribe(() => {
-        console.log('disconnected');
-      });
-
-    this.socketUtil.onEvent('new post')
-      .subscribe((data) => {
-          this.posts.unshift(this.jsonConvert.deserialize(data.post, Post));
-          this.postsSubject.next(this.posts);
-        }
-      );
-
-  }
-
-
-
-
-
 
 }

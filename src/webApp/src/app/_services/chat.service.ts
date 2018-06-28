@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {$WebSocket, WebSocketSendMode} from 'angular2-websocket/angular2-websocket';
+import {$WebSocket} from 'angular2-websocket/angular2-websocket';
 import {Chat} from '../_models/Chat';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {HttpClient} from '@angular/common/http';
@@ -13,6 +13,7 @@ import {ChatType} from '../_models/ChatType';
 import {User} from '../_models/User';
 import {UserService} from './user.service';
 import {UserSocketService} from './user-socket.service';
+import {ChatAction} from '../_models/sockets/ChatAction';
 
 @Injectable()
 export class ChatService {
@@ -63,10 +64,14 @@ export class ChatService {
       }
     });
 
-    this.userSocketService.newChatSubject.subscribe(
-      chatId => {
-        if (!this.chatExistsById(chatId)) {
-          this.getChatAndConnect(chatId).subscribe(chat => this.addChat(chat));
+    this.userSocketService.chatSubject.subscribe(
+      (element) => {
+        if (element.action === ChatAction.NEW) {
+          if (!this.chatExistsById(element.id)) {
+            this.getChatAndConnect(element.id).subscribe(chat => this.addChat(chat));
+          }
+        } else if (element.action === ChatAction.DELETE) {
+          this.deleteChatFromArray(element.id);
         }
       }
     );
@@ -196,7 +201,7 @@ export class ChatService {
   newChat(type: ChatType, ids: number[]): boolean {
 
     if (this.chatExistsByIds(ids)) { return false; }
-    console.log("asdf");
+    console.log('asdf');
 
     this.requestNewChat(type, ids).subscribe((data: {chat: Chat, wsUrl: string}) => {
       const chat = data.chat;
@@ -249,6 +254,17 @@ export class ChatService {
     return Observable.of(null);
   }
 
+  private deleteChatFromArray(id: number) {
+    for (let i = 0; i < this.chats.length; i++) {
+      if (this.chats[i].id === id) {
+        this.chats.splice(i, 1); // TODO should be immutable
+        this.chatsSubject.next(this.chats);
+        this.closeAndDeleteWs(id);
+        break;
+      }
+    }
+  }
+
   deleteChat(id: number): Observable<boolean> {
      return this.http.post<any>(this.chatUrl + '/' + id, {close: true, memberID: this.user.id}, {
        observe: 'response'
@@ -256,14 +272,7 @@ export class ChatService {
        .pipe(
          map(response => {
            console.log(response);
-           for (let i = 0; i < this.chats.length; i++) {
-            if (this.chats[i].id === id) {
-              this.chats.splice(i, 1); // TODO should be immutable
-              this.chatsSubject.next(this.chats);
-              this.closeAndDeleteWs(id);
-              break;
-            }
-           }
+           this.deleteChatFromArray(id);
            return true;
          }),
          catchError((err: any) => this.deleteChatErrorHandle(err))
