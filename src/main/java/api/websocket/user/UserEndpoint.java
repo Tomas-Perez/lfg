@@ -49,8 +49,8 @@ public class UserEndpoint extends AuthenticatedEndpoint {
     public void onOpen(Session currentSession){
         final int userID = getUserID(currentSession);
         sessionsMap.put(userID, currentSession);
-//        if(recentlyConnectedMap.get(userID) == null)
-//            broadcastUserConnected(userID);
+        if(recentlyConnectedMap.get(userID) == null)
+            broadcastUserConnected(userID);
 
         logger.info(String.format("Session %s opened", currentSession.getId()));
     }
@@ -62,20 +62,23 @@ public class UserEndpoint extends AuthenticatedEndpoint {
     public void onClose(Session currentSession){
         final int userID = getUserID(currentSession);
         sessionsMap.remove(userID);
-//        recentlyConnectedMap.put(userID, currentSession);
-//
-//        new Timer().schedule(
-//                new TimerTask() {
-//                    @Override
-//                    public void run() {
-//                        if(sessionsMap.get(userID) == null) {
-//                            recentlyConnectedMap.remove(userID);
-//                            broadcastUserDisconnected(userID);
-//                        }
-//                    }
-//                },
-//                3000
-//        );
+        recentlyConnectedMap.put(userID, currentSession);
+
+        Timer timer = new Timer("Connect Timer");
+
+        timer.schedule(
+                new TimerTask() {
+                    @Override
+                    public void run() {
+                        if(sessionsMap.get(userID) == null) {
+                            recentlyConnectedMap.remove(userID);
+                            broadcastUserDisconnected(userID);
+                            timer.cancel();
+                        }
+                    }
+                },
+                3000
+        );
 
         logger.info(String.format("Session %s closed", currentSession.getId()));
     }
@@ -136,8 +139,8 @@ public class UserEndpoint extends AuthenticatedEndpoint {
         SentFriendRequestPayload sentFriendRequestPayload
                 = new SentFriendRequestPayload(event.getReceiver());
 
-        sendMessage(receivedFriendRequestPayload, event.getSender().getId());
-        sendMessage(sentFriendRequestPayload, event.getReceiver().getId());
+        sendMessage(receivedFriendRequestPayload, event.getReceiver().getId());
+        sendMessage(sentFriendRequestPayload, event.getSender().getId());
     }
 
     private void newFriend(@Observes @NewFriend FriendEvent event){
