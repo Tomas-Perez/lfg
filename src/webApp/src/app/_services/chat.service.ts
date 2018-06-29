@@ -65,7 +65,7 @@ export class ChatService {
     });
 
     this.userSocketService.chatSubject.subscribe(
-      (element) => {
+      (element: {action: ChatAction, id: number}) => {
         if (element.action === ChatAction.NEW) {
           if (!this.chatExistsById(element.id)) {
             this.getChatAndConnect(element.id).subscribe(chat => this.addChat(chat));

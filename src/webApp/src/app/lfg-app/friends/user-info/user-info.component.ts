@@ -36,9 +36,9 @@ export class UserInfoComponent implements OnInit {
       const id = +params['id'];
       this.friendService.getUserInfo(id).subscribe(user => this.user = user);
       this.isAlreadyFriend = this.friendService.isInFriendList(id);
-      if(!this.isAlreadyFriend){
+      if (!this.isAlreadyFriend) {
         this.isRequestReceived = this.friendService.isInReceivedRequestsList(id);
-        if(!this.isRequestReceived){
+        if (!this.isRequestReceived) {
           this.isRequestSent = this.friendService.isInSentRequestsList(id);
         }
       }
@@ -48,7 +48,7 @@ export class UserInfoComponent implements OnInit {
   sendFriendRequest() {
     this.friendService.sendFriendRequest(this.user.id)
       .subscribe(response => {
-        if(response){
+        if (response) {
           this.isRequestSent = true;
           this.friendService.updateSentRequests();
           this.isRequestSent = true;
@@ -56,9 +56,9 @@ export class UserInfoComponent implements OnInit {
     });
   }
 
-  acceptRequest(){
+  acceptRequest() {
     this.friendService.confirmFriendRequest(this.user.id).subscribe(response => {
-      if(response){
+      if (response) {
         this.friendService.updateFriendRequests();
         this.friendService.updateFriends();
         this.isRequestReceived = false;
@@ -67,18 +67,18 @@ export class UserInfoComponent implements OnInit {
     });
   }
 
-  cancelRequest(){
+  cancelRequest() {
     this.friendService.removeFriend(this.user.id).subscribe(response => {
-      if(response){
+      if (response) {
         this.friendService.updateSentRequests();
         this.isRequestSent = false;
       }
     });
   }
 
-  deleteRequest(){
+  deleteRequest() {
     this.friendService.removeFriend(this.user.id).subscribe(response => {
-      if(response){
+      if (response) {
         this.friendService.updateFriendRequests();
         this.isRequestReceived = false;
       }
@@ -88,7 +88,7 @@ export class UserInfoComponent implements OnInit {
   removeFriend() {
     this.friendService.removeFriend(this.user.id)
       .subscribe(response => {
-        if(response) {
+        if (response) {
           this.friendService.updateFriends();
           this.isAlreadyFriend = false;
         }

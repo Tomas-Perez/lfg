@@ -7,6 +7,9 @@ import {Observable} from 'rxjs/Observable';
 import {catchError, map, tap} from 'rxjs/operators';
 import {User} from '../_models/User';
 import {UserService} from './user.service';
+import {UserSocketService} from './user-socket.service';
+import {ChatAction} from '../_models/sockets/ChatAction';
+import {FriendAction} from '../_models/sockets/FriendAction';
 
 @Injectable()
 export class FriendService {
@@ -20,19 +23,24 @@ export class FriendService {
   private user: User;
   private friendList: BasicUser[];
   friendListSubject: BehaviorSubject<BasicUser[]>;
-  private friendRequests: BasicUser[];
-  friendRequestsSubject: BehaviorSubject<BasicUser[]>;
+  private receivedFriendRequests: BasicUser[];
+  receivedRequestsSubject: BehaviorSubject<BasicUser[]>;
   private sentRequestsList: BasicUser[];
   sentRequestsSubject: BehaviorSubject<BasicUser[]>;
 
-  constructor(private http: HttpClient, private userService: UserService) {
+  constructor(private http: HttpClient, private userService: UserService, private userSocketService: UserSocketService) {
+    this.friendList = [];
+    this.receivedFriendRequests = [];
+    this.sentRequestsList = [];
     this.friendListSubject = new BehaviorSubject<BasicUser[]>([]);
-    this.friendListSubject.subscribe(friendList => this.friendList = friendList);
-    this.friendRequestsSubject = new BehaviorSubject<BasicUser[]>([]);
-    this.friendRequestsSubject.subscribe(friendRequests => this.friendRequests = friendRequests);
+    this.receivedRequestsSubject = new BehaviorSubject<BasicUser[]>([]);
     this.sentRequestsSubject = new BehaviorSubject<BasicUser[]>([]);
-    this.sentRequestsSubject.subscribe(sentRequests => this.sentRequestsList = sentRequests);
 
+    this.setUpUserSubject();
+    this.setUpFriendSocket();
+  }
+
+  private setUpUserSubject() {
     this.userService.userSubject.subscribe( user => {
       this.user = user;
       if (user !== null) {
@@ -40,9 +48,63 @@ export class FriendService {
         this.updateFriendRequests();
         this.updateSentRequests();
       } else {
+        this.friendList = [];
         this.friendListSubject.next([]);
       }
     });
+  }
+
+  private setUpFriendSocket() {
+    this.userSocketService.friendSubject.subscribe(
+      (element: {action: FriendAction, id: number, username?: string}) => {
+        const user = new BasicUser(element.id, element.username);
+        switch (element.action) {
+          case FriendAction.RECREQUEST: {
+            this.onReceivedRequest(user);
+            break;
+          }
+          case FriendAction.NEW: {
+            this.onNewFriend(user);
+            break;
+          }
+          case FriendAction.DELETE: {
+            this.onDeleteFriend(user);
+            break;
+          }
+        }
+      }
+    );
+  }
+
+  private onDeleteFriend(user: BasicUser) {
+    if (this.isInSentRequestsList(user.id)) {
+      this.deleteFriend(user.id, this.sentRequestsList);
+      this.sentRequestsSubject.next(this.sentRequestsList);
+    } else if (this.isInReceivedRequestsList(user.id)) {
+      this.deleteFriend(user.id, this.receivedFriendRequests);
+      this.receivedRequestsSubject.next(this.receivedFriendRequests);
+    } else {
+      this.deleteFriend(user.id, this.friendList);
+      this.friendListSubject.next(this.friendList);
+    }
+  }
+
+  private deleteFriend(id: number, array: BasicUser[]) {
+    for (let i = 0; i < array.length; i++) {
+      if (array[i].id === id) {
+        array.splice(i, 1);
+      }
+    }
+  }
+
+  private onNewFriend(user: BasicUser) {
+    this.friendList.push(user);
+    this.friendListSubject.next(this.friendList);
+  }
+
+  private onReceivedRequest(user: BasicUser) {
+    this.receivedFriendRequests.push(user);
+    this.receivedRequestsSubject.next(this.receivedFriendRequests);
   }
 
   getUserInfo(id: number): Observable<BasicUser> { // TODO when backend is ready
@@ -73,7 +135,10 @@ export class FriendService {
   }
 
   updateFriends(): void {
-    this.requestFriends().subscribe(friends => this.friendListSubject.next(friends));
+    this.requestFriends().subscribe(friends => {
+      this.friendList = friends;
+      this.friendListSubject.next(friends);
+    });
   }
 
   confirmFriendRequest(id: number): Observable<boolean> {
@@ -136,7 +201,7 @@ export class FriendService {
     })
       .pipe(
         map(response => this.jsonConvert.deserialize(response.body, BasicUser)),
-        catchError(err => this.requestFriendsErrorHandle(err))
+        catchError(err => this.getFriendRequestErrorHandle(err))
       );
   }
 
@@ -146,7 +211,10 @@ export class FriendService {
   }
 
   updateFriendRequests(): void {
-    this.getFriendRequests().subscribe(requests => this.friendRequestsSubject.next(requests));
+    this.getFriendRequests().subscribe(requests => {
+      this.receivedFriendRequests = requests;
+      this.receivedRequestsSubject.next(requests);
+    });
   }
 
   getSentFriendRequests(): Observable<BasicUser[]> {
@@ -155,7 +223,7 @@ export class FriendService {
     })
       .pipe(
         map(response => this.jsonConvert.deserialize(response.body, BasicUser)),
-        catchError(err => this.requestFriendsErrorHandle(err))
+        catchError(err => this.getSentFriendRequestErrorHandle(err))
       );
   }
 
@@ -165,7 +233,10 @@ export class FriendService {
   }
 
   updateSentRequests(): void {
-    this.getSentFriendRequests().subscribe(requests => this.sentRequestsSubject.next(requests));
+    this.getSentFriendRequests().subscribe(requests => {
+      this.sentRequestsList = requests;
+      this.sentRequestsSubject.next(requests);
+    });
   }
 
   isInFriendList(id: number): boolean {
@@ -178,7 +249,7 @@ export class FriendService {
   }
 
   isInReceivedRequestsList(id: number): boolean {
-    for (const friend of this.friendRequests) {
+    for (const friend of this.receivedFriendRequests) {
       if (friend.id === id) {
         return true;
       }

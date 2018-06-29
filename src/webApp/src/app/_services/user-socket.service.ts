@@ -16,6 +16,7 @@ export class UserSocketService {
 
   constructor(private authService: AuthService, private userService: UserService) {
     this.chatSubject = new Subject();
+    this.friendSubject = new Subject();
     this.userService.userSubject.subscribe( user => {
       if (user != null) {
         this.connect();

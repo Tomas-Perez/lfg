@@ -34,7 +34,7 @@ export class FriendBarComponent implements OnInit, OnDestroy {
     this.friendStateService.openSubject.takeUntil(this.ngUnsubscribe)
       .subscribe(isOpen => this.isOpen = isOpen);
 
-    this.friendService.friendRequestsSubject.takeUntil(this.ngUnsubscribe)
+    this.friendService.receivedRequestsSubject.takeUntil(this.ngUnsubscribe)
       .subscribe(requests => this.friendRequests = requests.length);
   }
 

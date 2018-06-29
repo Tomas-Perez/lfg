@@ -26,7 +26,7 @@ export class FriendRequestsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.friendBarService.friendLocationSubject.next(FriendLocation.REQUEST);
-    this.friendService.friendRequestsSubject.takeUntil(this.ngUnsubscribe)
+    this.friendService.receivedRequestsSubject.takeUntil(this.ngUnsubscribe)
       .subscribe(requests => this.receivedRequests = requests);
     this.friendService.sentRequestsSubject.takeUntil(this.ngUnsubscribe)
       .subscribe(requests => this.sentRequests = requests);
