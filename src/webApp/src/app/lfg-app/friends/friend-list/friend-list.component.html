@@ -7,7 +7,13 @@
       <div *ngFor="let friend of friends" class="friend-wrapper">
         <div class="friend">
           <div class="user-img-wrapper">
-            <img src="/assets/user/user-default.png" class="user-img">
+            <div>
+              <img src="/assets/user/user-default.png" class="user-img">
+            </div>
+            <div class="friend-status" title="{{friend.status == OnlineStatus.ONLINE ? 'Online' : 'Offline'}}"
+                 [ngClass]="{'online': friend.status == OnlineStatus.ONLINE}">
+              <i class="fa fa-circle" aria-hidden="true"></i>
+            </div>
           </div>
           <span (click)="getUserInfo(friend.id)" class="friend-username">
             {{friend.username}}

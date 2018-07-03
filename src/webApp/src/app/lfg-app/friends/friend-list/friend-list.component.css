@@ -30,7 +30,6 @@
   flex-direction: row;
   flex: 1 0 auto;
   font-size: 16px;
-  cursor: pointer;
 }
 
 .friend-username{
@@ -38,17 +37,20 @@
   flex: 0 0 auto;
   flex-direction: column;
   justify-content: center;
+  cursor: pointer;
 }
 
 .user-img{
   width: 30px;
   height: 30px;
-  margin-right: 10px;
   border-radius: 50%;
   background: #b9b9bb;
 }
 
 .user-img-wrapper{
+  position: relative;
+  margin-right: 10px;
+  padding: 0.2em 0;
   width: fit-content;
   height: fit-content;
 }
@@ -65,4 +67,16 @@
 
 .no-friends span{
   display: block;
+}
+
+.friend-status{
+  color: #eb5023;
+  font-size: 14px;
+  bottom: -5px;
+  position: absolute;
+  right: -1px;
+}
+
+.online{
+  color: #25da17;
 }

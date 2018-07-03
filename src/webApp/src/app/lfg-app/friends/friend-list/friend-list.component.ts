@@ -6,6 +6,7 @@ import 'rxjs/add/operator/takeUntil';
 import {BasicUser} from '../../../_models/BasicUser';
 import {FriendService} from '../../../_services/friend.service';
 import {Router} from '@angular/router';
+import {OnlineStatus} from '../../../_models/OnlineStatus';
 
 @Component({
   selector: 'app-friend-list',
@@ -14,6 +15,7 @@ import {Router} from '@angular/router';
 })
 export class FriendListComponent implements OnInit, OnDestroy {
 
+  public OnlineStatus = OnlineStatus;
   private ngUnsubscribe: Subject<any> = new Subject();
   private friends: BasicUser[];
 

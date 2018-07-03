@@ -10,6 +10,7 @@ import {UserService} from './user.service';
 import {UserSocketService} from './user-socket.service';
 import {ChatAction} from '../_models/sockets/ChatAction';
 import {FriendAction} from '../_models/sockets/FriendAction';
+import {OnlineStatus} from '../_models/OnlineStatus';
 
 @Injectable()
 export class FriendService {
@@ -71,9 +72,24 @@ export class FriendService {
             this.onDeleteFriend(user);
             break;
           }
+          case FriendAction.CONNECTED: {
+            this.onStatusChanged(user, OnlineStatus.ONLINE);
+            break;
+          }
+          case FriendAction.DISCONNECTED: {
+            this.onStatusChanged(user, OnlineStatus.OFFLINE);
+            break;
+          }
         }
       }
     );
+  }
+
+  private onStatusChanged(user: BasicUser, status: OnlineStatus) {
+    const i = this.getFriendIndex(user.id, this.friendList);
+    if (i >= 0) {
+      this.friendList[i].status = status;
+    }
   }
 
   private onDeleteFriend(user: BasicUser) {
@@ -90,11 +106,19 @@ export class FriendService {
   }
 
   private deleteFriend(id: number, array: BasicUser[]) {
+    const i = this.getFriendIndex(id, array);
+    if (i >= 0) {
+      array.splice(i, 1);
+    }
+  }
+
+  private getFriendIndex(id: number, array: BasicUser[]) {
     for (let i = 0; i < array.length; i++) {
       if (array[i].id === id) {
-        array.splice(i, 1);
+        return i;
       }
     }
+    return -1;
   }
 
   private onNewFriend(user: BasicUser) {
