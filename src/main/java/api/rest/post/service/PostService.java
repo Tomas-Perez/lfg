@@ -1,5 +1,8 @@
 package api.rest.post.service;
 
+import api.common.event.post.DeletePost;
+import api.common.event.post.NewPost;
+import api.common.event.post.PostEvent;
 import persistence.entity.GroupEntity;
 import persistence.entity.PostEntity;
 import persistence.manager.GroupManager;
@@ -7,6 +10,7 @@ import persistence.manager.PostManager;
 import persistence.model.*;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
@@ -29,18 +33,37 @@ public class PostService {
     @Inject
     private ModelBuilder modelBuilder;
 
+    @Inject
+    @NewPost
+    private Event<PostEvent> newPostEvent;
+
+    @Inject
+    @DeletePost
+    private Event<PostEvent> deletePostEvent;
+
     public List<Post> getAll(){
         return postManager.list().stream().map(modelBuilder::buildPost).collect(Collectors.toList());
     }
 
     public int newPost(String description, int activityID, int ownerID){
-        PostEntity post = new PostEntity(description, LocalDateTime.now(), activityID, ownerID, null);
-        return postManager.add(post);
+        PostEntity postEntity = new PostEntity(description, LocalDateTime.now(), activityID, ownerID, null);
+        final int id = postManager.add(postEntity);
+        newPostEvent.fire(createEvent(id));
+        return id;
+    }
+
+    private PostEvent createEvent(int id) {
+        Post post = modelBuilder.buildPost(id);
+        final Activity activity = post.getActivity();
+        final Game game = activity.getGame();
+        return new PostEvent(post.getId(), game.getId(), activity.getId());
     }
 
     public int newGroupPost(String description, int groupID){
         GroupEntity group = getGroup(groupID);
-        return postManager.addGroupPost(description, LocalDateTime.now(), group);
+        final int id = postManager.addGroupPost(description, LocalDateTime.now(), group);
+        newPostEvent.fire(createEvent(id));
+        return id;
     }
 
     public Post getPost(int id){
@@ -57,7 +80,9 @@ public class PostService {
 
     public void deletePost(int id){
         try {
+            PostEvent event = createEvent(id);
             postManager.delete(id);
+            deletePostEvent.fire(event);
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
