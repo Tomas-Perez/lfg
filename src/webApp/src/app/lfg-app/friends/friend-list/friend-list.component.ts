@@ -7,6 +7,8 @@ import {BasicUser} from '../../../_models/BasicUser';
 import {FriendService} from '../../../_services/friend.service';
 import {Router} from '@angular/router';
 import {OnlineStatus} from '../../../_models/OnlineStatus';
+import {ChatService} from '../../../_services/chat.service';
+import {ChatType} from '../../../_models/ChatType';
 
 @Component({
   selector: 'app-friend-list',
@@ -21,6 +23,7 @@ export class FriendListComponent implements OnInit, OnDestroy {
 
   constructor(private friendBarService: FriendStateService,
               private friendService: FriendService,
+              private chatService: ChatService,
               private router: Router
               ) { }
 
@@ -34,6 +37,10 @@ export class FriendListComponent implements OnInit, OnDestroy {
     this.router.navigate(['/app', { outlets: {friends: ['user-info', id] }}], {
       skipLocationChange: true
     });
+  }
+
+  newChat(id: number) {
+    this.chatService.newChat(ChatType.PRIVATE, [id]);
   }
 
   ngOnDestroy() {

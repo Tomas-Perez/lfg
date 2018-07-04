@@ -18,6 +18,9 @@
           <span (click)="getUserInfo(friend.id)" class="friend-username">
             {{friend.username}}
           </span>
+          <span class="friend-message" (click)="newChat(friend.id)">
+            <i class="fa fa-envelope-o"></i>
+          </span>
         </div>
       </div>
     </div>

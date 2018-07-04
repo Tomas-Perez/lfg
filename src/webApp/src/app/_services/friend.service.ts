@@ -29,7 +29,11 @@ export class FriendService {
   private sentRequestsList: BasicUser[];
   sentRequestsSubject: BehaviorSubject<BasicUser[]>;
 
+  // Buffer for friend status updates before the friend list is retrieved.
+  private friendStatusBuffer: {user: BasicUser, status: OnlineStatus}[];
+
   constructor(private http: HttpClient, private userService: UserService, private userSocketService: UserSocketService) {
+    this.friendStatusBuffer = [];
     this.friendList = [];
     this.receivedFriendRequests = [];
     this.sentRequestsList = [];
@@ -89,6 +93,8 @@ export class FriendService {
     const i = this.getFriendIndex(user.id, this.friendList);
     if (i >= 0) {
       this.friendList[i].status = status;
+    } else {
+      this.friendStatusBuffer.push({user: user, status: status});
     }
   }
 
@@ -131,6 +137,16 @@ export class FriendService {
     this.receivedRequestsSubject.next(this.receivedFriendRequests);
   }
 
+  private clearStatusBuffer() {
+    for (const userStatus of this.friendStatusBuffer) {
+      const i = this.getFriendIndex(userStatus.user.id, this.friendList);
+      if (i >= 0) {
+        this.friendList[i].status = userStatus.status;
+      }
+    }
+    this.friendStatusBuffer = [];
+  }
+
   getUserInfo(id: number): Observable<BasicUser> { // TODO when backend is ready
     return this.http.get<any>(this.userUrl + '/' + id, {
       observe: 'response'
@@ -162,6 +178,7 @@ export class FriendService {
     this.requestFriends().subscribe(friends => {
       this.friendList = friends;
       this.friendListSubject.next(friends);
+      this.clearStatusBuffer();
     });
   }
 

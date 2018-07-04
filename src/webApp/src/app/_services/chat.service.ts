@@ -35,7 +35,6 @@ export class ChatService {
     this.chatsWs = new Map();
     this.chatsSubject = new BehaviorSubject<Chat[]>([]);
     this.chatsSubject.subscribe(chats => {
-      console.log(chats);
       this.chats = chats;
     });
 
@@ -198,12 +197,18 @@ export class ChatService {
     this.chatsWs.set(chat.id, ws);
   }
 
+  /**
+   *
+   * @param {ChatType} type
+   * @param {number[]} ids chat participants ids excluiding current user id.
+   * @returns {boolean}
+   */
   newChat(type: ChatType, ids: number[]): boolean {
+    const idArray = [this.user.id].concat(ids);
 
-    if (this.chatExistsByIds(ids)) { return false; }
-    console.log('asdf');
+    if (this.chatExistsByIds(idArray)) { return false; }
 
-    this.requestNewChat(type, ids).subscribe((data: {chat: Chat, wsUrl: string}) => {
+    this.requestNewChat(type, idArray).subscribe((data: {chat: Chat, wsUrl: string}) => {
       const chat = data.chat;
       const wsUrl = data.wsUrl;
       this.addChat(chat);
