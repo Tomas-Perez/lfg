@@ -21,12 +21,10 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
+import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Tomas Perez Molina
@@ -49,14 +47,13 @@ public class UserEndpoint extends AuthenticatedEndpoint {
     public void onOpen(Session currentSession){
         final int userID = getUserID(currentSession);
         sessionsMap.put(userID, currentSession);
+        sendFriendsConnected(userID);
+
         if(recentlyConnectedMap.get(userID) == null)
             broadcastUserConnected(userID);
 
         logger.info(String.format("Session %s opened", currentSession.getId()));
     }
-
-    @OnMessage
-    public void onMessage(Session currentSession, UserSocketMessage message) {}
 
     @OnClose
     public void onClose(Session currentSession){
@@ -82,6 +79,14 @@ public class UserEndpoint extends AuthenticatedEndpoint {
 
         logger.info(String.format("Session %s closed", currentSession.getId()));
     }
+
+    @OnError
+    public void onError(Session session, Throwable throwable){
+        logger.error(throwable.getMessage());
+    }
+
+    @OnMessage
+    public void onMessage(Session currentSession, UserSocketMessage message) {}
 
     private void broadcastUserConnected(int id) {
         FriendConnectedPayload payload = new FriendConnectedPayload(id);
@@ -178,5 +183,20 @@ public class UserEndpoint extends AuthenticatedEndpoint {
         Set<Integer> friends = userManager.getUserFriends(id);
         emp.closeEntityManager(em);
         return friends;
+    }
+
+    private void sendFriendsConnected(int userID){
+        Set<Integer> friends = getUserFriends(userID);
+        Set<FriendConnectedPayload> connectedFriends;
+        synchronized (sessionsMap) {
+            connectedFriends = sessionsMap.entrySet().stream()
+                    .filter(e -> friends.contains(e.getKey()))
+                    .filter(e -> e.getValue().isOpen())
+                    .map(Map.Entry::getKey)
+                    .map(FriendConnectedPayload::new)
+                    .collect(Collectors.toSet());
+        }
+        if(connectedFriends == null) return;
+        connectedFriends.forEach(payload -> sendMessage(payload, userID));
     }
 }
