@@ -3,6 +3,7 @@ package api.rest.post.service;
 import api.common.event.post.DeletePost;
 import api.common.event.post.NewPost;
 import api.common.event.post.PostEvent;
+import common.postfilter.FilterPair;
 import persistence.entity.GroupEntity;
 import persistence.entity.PostEntity;
 import persistence.manager.GroupManager;
@@ -14,6 +15,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -45,18 +47,20 @@ public class PostService {
         return postManager.list().stream().map(modelBuilder::buildPost).collect(Collectors.toList());
     }
 
+    public List<Post> getFilteredPosts(List<FilterPair> filters){
+        return filters.stream()
+                .map(filter -> postManager.filteredList(filter))
+                .flatMap(List::stream)
+                .distinct()
+                .map(modelBuilder::buildPost)
+                .sorted(Comparator.comparing(Post::getDate).reversed()).collect(Collectors.toList());
+    }
+
     public int newPost(String description, int activityID, int ownerID){
         PostEntity postEntity = new PostEntity(description, LocalDateTime.now(), activityID, ownerID, null);
         final int id = postManager.add(postEntity);
         newPostEvent.fire(createEvent(id));
         return id;
-    }
-
-    private PostEvent createEvent(int id) {
-        Post post = modelBuilder.buildPost(id);
-        final Activity activity = post.getActivity();
-        final Game game = activity.getGame();
-        return new PostEvent(post.getId(), game.getId(), activity.getId());
     }
 
     public int newGroupPost(String description, int groupID){
@@ -93,5 +97,12 @@ public class PostService {
         GroupEntity group = groupManager.get(groupID);
         if(group == null) throw new NotFoundException("Group not found");
         return group;
+    }
+
+    private PostEvent createEvent(int id) {
+        Post post = modelBuilder.buildPost(id);
+        final Activity activity = post.getActivity();
+        final Game game = activity.getGame();
+        return new PostEvent(post.getId(), game.getId(), activity.getId());
     }
 }
