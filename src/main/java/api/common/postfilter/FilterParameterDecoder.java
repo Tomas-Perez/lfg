@@ -1,9 +1,9 @@
-package api.websocket.post.filter;
+package api.common.postfilter;
 
 import api.websocket.post.filter.exception.MalformedParameterException;
+import common.postfilter.FilterPair;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -36,16 +36,11 @@ public class FilterParameterDecoder {
         }
     }
 
-    private FilterPair fullPair(String gameIDStr, String activitiesStr){
+    private FilterPair fullPair(String gameIDStr, String activityStr){
         try {
             Integer gameID = Integer.parseInt(gameIDStr);
-            final String[] splitActivitiesStr = activitiesStr
-                    .substring(1, activitiesStr.length() - 1)
-                    .split(",");
-            List<Integer> activities = Arrays.stream(splitActivitiesStr)
-                    .map(Integer::parseInt)
-                    .collect(Collectors.toList());
-            return new FilterPair(gameID, activities);
+            Integer activityID = Integer.parseInt(activityStr);
+            return new FilterPair(gameID, activityID);
         } catch (NumberFormatException exc) {
             throw new MalformedParameterException("Filter parameter is malformed");
         }

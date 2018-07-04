@@ -1,5 +1,6 @@
 package persistence.manager;
 
+import common.postfilter.FilterPair;
 import org.jetbrains.annotations.NotNull;
 import persistence.manager.exception.ConstraintException;
 import persistence.entity.*;
@@ -9,6 +10,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -85,6 +87,35 @@ public class PostManager extends Manager<PostEntity>{
     public List<Integer> list(){
         return manager.createQuery("SELECT P.id FROM PostEntity P ORDER BY P.date DESC").getResultList();
     }
+
+    @SuppressWarnings("unchecked")
+    public List<Integer> filteredList(FilterPair filter){
+        if(filter.getGameID() == null) return list();
+        if(filter.getActivityID() == null) return getGamePosts(filter.getGameID());
+        return getGameActivityPosts(filter.getGameID(), filter.getActivityID());
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Integer> getGamePosts(int gameID){
+        return manager.createQuery("SELECT P.id FROM PostEntity P " +
+                "JOIN ActivityEntity A on A.id = P.activityId " +
+                "WHERE A.gameId = :gameID " +
+                "ORDER BY P.date DESC")
+                .setParameter("gameID", gameID)
+                .getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Integer> getGameActivityPosts(int gameID, int activityID){
+        return manager.createQuery("SELECT P.id FROM PostEntity P " +
+                "JOIN ActivityEntity A on A.id = P.activityId " +
+                "WHERE A.gameId = :gameID AND A.id = :activityID " +
+                "ORDER BY P.date DESC")
+                .setParameter("gameID", gameID)
+                .setParameter("activityID", activityID)
+                .getResultList();
+    }
+
 
     public PostEntity get(int postID){
         return manager.find(PostEntity.class, postID);

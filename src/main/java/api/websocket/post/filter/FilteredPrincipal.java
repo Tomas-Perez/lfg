@@ -1,5 +1,7 @@
 package api.websocket.post.filter;
 
+import common.postfilter.FilterPair;
+
 import java.security.Principal;
 import java.util.List;
 

@@ -1,4 +1,6 @@
 package api.rest.post.resource;
+import api.common.postfilter.FilterParameterDecoder;
+import common.postfilter.FilterPair;
 import persistence.model.Post;
 import api.rest.post.model.CreatePostJSON;
 import api.rest.post.model.PostJSON;
@@ -32,8 +34,19 @@ public class PostResource {
     private UriInfo uriInfo;
 
     @GET
-    public Response getAll(){
-        List<Post> posts = service.getAll();
+    public Response getPosts(@QueryParam("filter") List<String> filters){
+        List<Post> posts;
+        if(filters == null || filters.isEmpty()){
+            posts = service.getAll();
+        }
+        else {
+            FilterParameterDecoder decoder = new FilterParameterDecoder();
+            List<FilterPair> filterPairs = filters.stream()
+                    .map(decoder::decode)
+                    .distinct()
+                    .collect(Collectors.toList());
+            posts = service.getFilteredPosts(filterPairs);
+        }
         List<PostJSON> postJSONS = posts.stream().map(PostJSON::new).collect(Collectors.toList());
         return Response.ok(postJSONS).build();
     }

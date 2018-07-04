@@ -1,6 +1,5 @@
-package api.websocket.post.filter;
+package common.postfilter;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -8,11 +7,11 @@ import java.util.Objects;
  */
 public class FilterPair {
     private Integer gameID;
-    private List<Integer> activities;
+    private Integer activityID;
 
-    public FilterPair(Integer gameID, List<Integer> activities) {
+    public FilterPair(Integer gameID, Integer activities) {
         this.gameID = gameID;
-        this.activities = activities;
+        this.activityID = activities;
     }
 
     public FilterPair(Integer gameID) {
@@ -30,16 +29,24 @@ public class FilterPair {
         if(this.gameID == null) return true;
         if(this.gameID.equals(gameID)){
             if(activityID == null) return true;
-            return activities.contains(activityID);
+            return this.activityID.equals(activityID);
         }
         return false;
+    }
+
+    public Integer getGameID() {
+        return gameID;
+    }
+
+    public Integer getActivityID() {
+        return activityID;
     }
 
     @Override
     public String toString() {
         return "FilterPair{" +
                 "gameID=" + gameID +
-                ", activities=" + activities +
+                ", activityID=" + activityID +
                 '}';
     }
 
@@ -49,11 +56,11 @@ public class FilterPair {
         if (!(o instanceof FilterPair)) return false;
         FilterPair that = (FilterPair) o;
         return Objects.equals(gameID, that.gameID) &&
-                Objects.equals(activities, that.activities);
+                Objects.equals(activityID, that.activityID);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(gameID, activities);
+        return Objects.hash(gameID, activityID);
     }
 }
