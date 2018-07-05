@@ -1,9 +1,7 @@
 <div class="nav-bar-wrapper">
   <ul class="navbar-nav">
     <li class="app-nav-bar-item logout" (click)="logOut()">
-      <a>Log Out
-        <i class="fas fa-sign-out-alt" data-fa-transform="flip-h"></i>
-      </a>
+      <i class="fa fa-sign-out fa-flip-horizontal"></i>
     </li>
     <li class="app-nav-bar-item" [ngClass]="{'active': spekbarLocation == SpekbarLocation.FILTER}"
         (click)="navigate('filter-posts')">

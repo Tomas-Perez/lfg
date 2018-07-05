@@ -1,6 +1,6 @@
 <nav class="navbar navbar-dark navbar-fixed-top navbar-expand-lg">
 
-  <a [routerLink]="['']" (click)="navbarCollapsed = true">
+  <a [routerLink]="['/']" (click)="navbarCollapsed = true">
     <img class="navbar-logo" src="/assets/general/logoSmall.png">
   </a>
 
@@ -28,12 +28,12 @@
 
     <ul *ngIf="!isLoggedIn" class="navbar-nav ml-auto">
       <li class="nav-item" [routerLinkActive]="['active']">
-        <a class="nav-link" [routerLink]="['sign-in']" (click)="navbarCollapsed = true">
+        <a class="nav-link" [routerLink]="['/sign-in']" (click)="navbarCollapsed = true">
           Sign In <i class="fa fa-user" aria-hidden="true"></i>
         </a>
       </li>
       <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{ exact: true }">
-        <a class="nav-link" [routerLink]="['sign-up']"(click)="navbarCollapsed = true">
+        <a class="nav-link" [routerLink]="['/sign-up']" (click)="navbarCollapsed = true">
           Sign Up <i class="fa fa-user-plus"></i>
         </a>
       </li>

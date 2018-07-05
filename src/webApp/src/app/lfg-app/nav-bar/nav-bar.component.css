@@ -9,12 +9,13 @@
 }
 
 .logout{
-  padding: 2px;
+  padding: auto;
   height: 50px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   background-color: #7289dad9;
+  font-size: 20px;
 }
 
 .admin{

@@ -9,7 +9,7 @@ import {LandingComponent} from './landing/landing.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, children: [
-    { path: '', component: LandingComponent},
+    { path: '', pathMatch: 'full', component: LandingComponent},
     { path: 'not-found', component: NotFoundComponent},
     { path: 'sign-in', canActivate: [UnauthUserGuardService], component: SignInComponent},
     { path: 'sign-up', canActivate: [UnauthUserGuardService], component: SignUpComponent}
