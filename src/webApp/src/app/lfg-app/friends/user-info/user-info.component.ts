@@ -4,6 +4,8 @@ import {FriendService} from '../../../_services/friend.service';
 import {BasicUser} from '../../../_models/BasicUser';
 import {FriendStateService} from '../../_services/friend-state.service';
 import {FriendLocation} from '../../_models/FriendLocation';
+import {ChatType} from '../../../_models/ChatType';
+import {ChatService} from '../../../_services/chat.service';
 
 @Component({
   selector: 'app-user-info',
@@ -19,6 +21,7 @@ export class UserInfoComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private friendService: FriendService,
+              private chatService: ChatService,
               private friendBarService: FriendStateService
   ) { }
 
@@ -93,5 +96,9 @@ export class UserInfoComponent implements OnInit {
           this.isAlreadyFriend = false;
         }
       });
+  }
+
+  newChat() {
+    this.chatService.newChat(ChatType.PRIVATE, [this.user.id]);
   }
 }

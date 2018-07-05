@@ -10,6 +10,8 @@ import {Router} from '@angular/router';
 import {User} from '../../../_models/User';
 import {SpekbarLocation} from '../../_models/SpekbarLocation';
 import {NavBarService} from '../../_services/nav-bar.service';
+import {ChatService} from '../../../_services/chat.service';
+import {ChatType} from '../../../_models/ChatType';
 
 @Component({
   selector: 'app-new-group',
@@ -29,6 +31,7 @@ export class NewGroupComponent implements OnInit, OnDestroy {
               private userService: UserService,
               private gameService: GameService,
               private router: Router,
+              private chatService: ChatService,
               private navBarService: NavBarService
               ) { }
 
@@ -51,6 +54,8 @@ export class NewGroupComponent implements OnInit, OnDestroy {
       response => {
         if (response) {
           console.log('Group created');
+
+          // this.chatService.newChat(ChatType.GROUP, [this.user.id]); // TODO
 
           this.router.navigate(['app/', { outlets: {spekbar: ['group'] }}],
             {

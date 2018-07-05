@@ -132,7 +132,20 @@ button:focus {
   outline: none;
 }
 
-.hamburger-open{
+.hamburger-open {
   border-color: #94969b !important;
   border-width: 2px;
+}
+.navbar-logo {
+  transition: opacity 0.4s;
+  height: 37px;
+  opacity: 0.8;
+}
+
+.navbar-logo:hover {
+  opacity: 1;
+}
+
+.navbar-logo active {
+  opacity: 1;
 }

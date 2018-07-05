@@ -5,9 +5,11 @@ import {SignUpComponent} from './sign-up/sign-up.component';
 import {HomeComponent} from './home.component';
 import {UnauthUserGuardService} from '../_services/guards/unauth-user-guard.service';
 import {NotFoundComponent} from './not-found/not-found.component';
+import {LandingComponent} from './landing/landing.component';
 
 const routes: Routes = [
-  { path: 'home', component: HomeComponent, children: [
+  { path: '', component: HomeComponent, children: [
+    { path: '', component: LandingComponent},
     { path: 'not-found', component: NotFoundComponent},
     { path: 'sign-in', canActivate: [UnauthUserGuardService], component: SignInComponent},
     { path: 'sign-up', canActivate: [UnauthUserGuardService], component: SignUpComponent}

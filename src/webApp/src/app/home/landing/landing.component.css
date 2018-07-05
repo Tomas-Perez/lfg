@@ -1,0 +1,27 @@
+.lfg-container{
+  display: flex;
+  flex-direction: row;
+  flex: 1 0 auto;
+}
+
+.lfg-row{
+  display: flex;
+  flex-direction: row;
+  flex: 1 0 auto;
+  justify-content: center;
+}
+
+.lfg-column{
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  justify-content: center;
+}
+
+.logo{
+  width: 500px;
+}
+
+.logo-wrapper{
+  margin: 50px 0;
+}

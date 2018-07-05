@@ -8,6 +8,7 @@ import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {NotFoundComponent} from './not-found/not-found.component';
+import { LandingComponent } from './landing/landing.component';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import {NotFoundComponent} from './not-found/not-found.component';
     SignInComponent,
     NotFoundComponent,
     HomeNavbarComponent,
-    HomeComponent
+    HomeComponent,
+    LandingComponent
   ],
   imports: [
     CommonModule,

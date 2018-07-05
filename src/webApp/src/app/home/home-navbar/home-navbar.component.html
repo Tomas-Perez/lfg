@@ -1,6 +1,8 @@
 <nav class="navbar navbar-dark navbar-fixed-top navbar-expand-lg">
 
-  <a class="navbar-brand" [routerLink]="['/home']" (click)="navbarCollapsed = true">LFG</a>
+  <a [routerLink]="['']" (click)="navbarCollapsed = true">
+    <img class="navbar-logo" src="/assets/general/logoSmall.png">
+  </a>
 
   <button class="navbar-toggler navbar-toggler-right custom-toggler" type="button" (click)="navbarCollapsed = !navbarCollapsed"
           [attr.aria-expanded]="!navbarCollapsed" aria-controls="navbarContent" aria-expanded="false"

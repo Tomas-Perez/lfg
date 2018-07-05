@@ -2,6 +2,17 @@
   background-color: #a74724;
 }
 
+.btn-primary-lfg:active,
+.btn-primary-lfg.active,
+.btn-primary-lfg:active:focus,
+.btn-primary-lfg.active:focus {
+  background-color: #a74e1e;
+}
+
+.btn-primary-lfg:hover {
+  background-color: #a7593f;
+}
+
 .title{
   display: flex;
   flex-direction: row;
