@@ -116,6 +116,10 @@ public class PostManager extends Manager<PostEntity>{
                 .getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+    public Integer getUserPost(int userID){
+        return userManager.getUserPost(userID);
+    }
 
     public PostEntity get(int postID){
         return manager.find(PostEntity.class, postID);

@@ -57,6 +57,10 @@ public class PostService {
     }
 
     public int newPost(String description, int activityID, int ownerID){
+        Integer previousPostID = postManager.getUserPost(ownerID);
+        if(previousPostID != null) {
+            deletePost(previousPostID);
+        }
         PostEntity postEntity = new PostEntity(description, LocalDateTime.now(), activityID, ownerID, null);
         final int id = postManager.add(postEntity);
         newPostEvent.fire(createEvent(id));
@@ -103,6 +107,7 @@ public class PostService {
         Post post = modelBuilder.buildPost(id);
         final Activity activity = post.getActivity();
         final Game game = activity.getGame();
-        return new PostEvent(post.getId(), game.getId(), activity.getId());
+        final User owner = post.getOwner();
+        return new PostEvent(owner.getId(), post.getId(), game.getId(), activity.getId());
     }
 }

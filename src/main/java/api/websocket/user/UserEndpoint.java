@@ -4,6 +4,9 @@ import api.common.event.chat.ChatEvent;
 import api.common.event.chat.DeleteChat;
 import api.common.event.chat.NewChat;
 import api.common.event.friendrequest.*;
+import api.common.event.post.DeletePost;
+import api.common.event.post.NewPost;
+import api.common.event.post.PostEvent;
 import api.websocket.common.AuthenticatedEndpoint;
 import api.websocket.common.config.CdiAwareConfigurator;
 import api.websocket.common.model.Payload;
@@ -175,6 +178,16 @@ public class UserEndpoint extends AuthenticatedEndpoint {
     private void deleteChat(@Observes @DeleteChat ChatEvent event){
         DeleteChatPayload deleteChatPayload = new DeleteChatPayload(event.getId());
         broadcastTo(deleteChatPayload, event.getNotifySet());
+    }
+
+    private void newPost(@Observes @NewPost PostEvent event){
+        NewPostPayload payload = new NewPostPayload(event.getPostID());
+        sendMessage(payload, event.getOwnerID());
+    }
+
+    private void deletePost(@Observes @DeletePost PostEvent event){
+        DeletePostPayload payload = new DeletePostPayload(event.getPostID());
+        sendMessage(payload, event.getOwnerID());
     }
 
     private Set<Integer> getUserFriends(int id){
