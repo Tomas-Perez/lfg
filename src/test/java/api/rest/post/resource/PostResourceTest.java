@@ -1,5 +1,6 @@
 package api.rest.post.resource;
 
+import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +20,7 @@ import javax.ws.rs.core.Response;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
@@ -43,7 +45,6 @@ public class PostResourceTest extends ApiTest {
 
         final String description = "posty";
         final Response postResponse = RequestUtil.post(postsTarget, token, new CreatePostJSON(description, activityID, ownerID, null));
-
         assertThat(postResponse.getStatus(), is(CREATED));
 
         final String location = postResponse.getHeaderString("Location");
@@ -175,5 +176,56 @@ public class PostResourceTest extends ApiTest {
                 new ArrayList<>(), new api.rest.user.model.PostJSON(Integer.parseInt(id)));
 
         assertThat(expected, is(actual));
+    }
+
+    @Test
+    public void filterPosts(){
+        final String gameName = "Overwatch";
+        int gameID = addGame(gameName);
+        final String activityName = "Ranked";
+        int activityID = addActivity(activityName, gameID);
+        final String ownerName = "owner";
+        final String ownerPass = "123";
+        final String ownerEmail = "owner@mail.com";
+        int ownerID = addUser(ownerName, ownerPass, ownerEmail);
+
+        final String description = "posty";
+        final Response postResponse = RequestUtil.post(postsTarget, token, new CreatePostJSON(description, activityID, ownerID, null));
+
+        final String location = postResponse.getHeaderString("Location");
+        final WebTarget postTarget = RequestUtil.newTarget(location);
+        final String id = RequestUtil.getRelativePathDiff(postsTarget, postTarget);
+
+        final Response getResponse = RequestUtil.get(postsTarget, token);
+
+        List<PostJSON> actual = RequestUtil.parseListResponse(getResponse, PostJSON.class);
+
+        MemberJSON ownerJSON = new MemberJSON(ownerID, ownerName);
+        GameJSON gameJSON = new GameJSON(gameID, gameName);
+        ActivityJSON activityJSON = new ActivityJSON(activityID, activityName, gameJSON);
+
+        PostJSON expected = new PostJSON(Integer.parseInt(id), description, null, activityJSON, ownerJSON, null);
+
+        List<PostJSON> expectedList = Collections.singletonList(expected);
+
+        assertThat(actual, is(expectedList));
+
+        final Response getResponseFiltered = RequestUtil.get(postsTarget.queryParam("filter", Integer.toString(gameID)), token);
+
+        List<PostJSON> actualFiltered = RequestUtil.parseListResponse(getResponseFiltered, PostJSON.class);
+
+        assertThat(actualFiltered, is(expectedList));
+
+        final Response getResponseFiltered2 = RequestUtil.get(postsTarget.queryParam("filter", Integer.toString(gameID) + ":" + Integer.toString(activityID)), token);
+
+        List<PostJSON> actualFiltered2 = RequestUtil.parseListResponse(getResponseFiltered2, PostJSON.class);
+
+        assertThat(actualFiltered2, is(expectedList));
+
+        final Response getResponseFiltered3 = RequestUtil.get(postsTarget.queryParam("filter", 0 + ":" + 0), token);
+
+        List<PostJSON> actualFiltered3 = RequestUtil.parseListResponse(getResponseFiltered3, PostJSON.class);
+
+        assertThat(actualFiltered3, is(new ArrayList<>()));
     }
 }
