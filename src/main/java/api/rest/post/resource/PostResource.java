@@ -1,5 +1,6 @@
 package api.rest.post.resource;
 import api.common.postfilter.FilterParameterDecoder;
+import api.rest.post.model.FilterPostsJSON;
 import common.postfilter.FilterPair;
 import persistence.model.Post;
 import api.rest.post.model.CreatePostJSON;
@@ -10,12 +11,10 @@ import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -48,7 +47,7 @@ public class PostResource {
             posts = service.getFilteredPosts(filterPairs);
         }
         List<PostJSON> postJSONS = posts.stream().map(PostJSON::new).collect(Collectors.toList());
-        return Response.ok(postJSONS).build();
+        return Response.ok(new FilterPostsJSON(postJSONS, buildWsPath())).build();
     }
 
     @POST
@@ -83,5 +82,34 @@ public class PostResource {
     public Response delete(@PathParam("id") int id){
         service.deletePost(id);
         return Response.noContent().build();
+    }
+
+    private String buildWsPath(){
+        URI base = uriInfo.getBaseUri();
+        final MultivaluedMap<String, String> queryParamMap = uriInfo.getQueryParameters();
+        String queryParams = queryParamMap.entrySet().stream()
+                .map(this::entryToQueryParam)
+                .collect(Collectors.joining("&"));
+
+        String baseWsPath = String.format("ws://%s:%s%swebsockets/posts",
+                base.getHost(), base.getPort(), base.getPath());
+
+        return addParams(baseWsPath, queryParams);
+    }
+
+    private String entryToQueryParam(Map.Entry<String, List<String>> entry){
+        String queryParamName = entry.getKey();
+        List<String> queryParamValues = entry.getValue();
+        return queryParamValues.stream()
+                .map(val -> String.format("%s=%s", queryParamName, val))
+                .collect(Collectors.joining("&"));
+    }
+
+    private String addParams(String baseWsPath, String params){
+        if(params.length() > 0){
+            String strWithParams = String.format("%s?%s", baseWsPath, params);
+            return String.format("%s&%s", strWithParams, "access-token=");
+        }
+        return String.format("%s?%s", baseWsPath, "access-token=");
     }
 }

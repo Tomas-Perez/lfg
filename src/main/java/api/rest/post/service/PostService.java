@@ -69,6 +69,10 @@ public class PostService {
 
     public int newGroupPost(String description, int groupID){
         GroupEntity group = getGroup(groupID);
+        Integer previousPostID = postManager.getUserPost(group.getOwnerId());
+        if(previousPostID != null) {
+            deletePost(previousPostID);
+        }
         final int id = postManager.addGroupPost(description, LocalDateTime.now(), group);
         newPostEvent.fire(createEvent(id));
         return id;

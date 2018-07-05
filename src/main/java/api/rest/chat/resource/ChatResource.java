@@ -56,10 +56,7 @@ public class ChatResource {
         }
         final String idString = Integer.toString(id);
         URI path = uriInfo.getAbsolutePathBuilder().path(idString).build();
-        URI base = uriInfo.getBaseUri();
-        String websocketPath = String.format("ws://%s:%s%swebsockets/chats/%d",
-                base.getHost(), base.getPort(), base.getPath(), id);
-        return Response.created(path).entity(new WebsocketPathJSON(websocketPath)).build();
+        return Response.created(path).entity(buildChatWsPath(id)).build();
     }
 
     @DELETE
@@ -104,5 +101,12 @@ public class ChatResource {
     public Response removeMember(@PathParam("id") int id, @PathParam("memberID") int memberID){
         service.removeMember(id, memberID);
         return Response.noContent().build();
+    }
+
+    private WebsocketPathJSON buildChatWsPath(int id){
+        URI base = uriInfo.getBaseUri();
+        String websocketPath = String.format("ws://%s:%s%swebsockets/chats/%d",
+                base.getHost(), base.getPort(), base.getPath(), id);
+        return new WebsocketPathJSON(websocketPath);
     }
 }

@@ -50,6 +50,16 @@ public class FilterPair {
                 '}';
     }
 
+    public String asQueryParam(){
+        if(gameID != null){
+            if(activityID != null){
+                return String.format("filter=%d:%d", gameID, activityID);
+            }
+            return String.format("filter=%d", gameID);
+        }
+        return "";
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

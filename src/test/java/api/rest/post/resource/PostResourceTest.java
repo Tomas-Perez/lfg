@@ -1,5 +1,6 @@
 package api.rest.post.resource;
 
+import api.rest.post.model.FilterPostsJSON;
 import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
@@ -198,7 +199,7 @@ public class PostResourceTest extends ApiTest {
 
         final Response getResponse = RequestUtil.get(postsTarget, token);
 
-        List<PostJSON> actual = RequestUtil.parseListResponse(getResponse, PostJSON.class);
+        FilterPostsJSON actual = RequestUtil.parseResponse(getResponse, FilterPostsJSON.class);
 
         MemberJSON ownerJSON = new MemberJSON(ownerID, ownerName);
         GameJSON gameJSON = new GameJSON(gameID, gameName);
@@ -208,24 +209,29 @@ public class PostResourceTest extends ApiTest {
 
         List<PostJSON> expectedList = Collections.singletonList(expected);
 
-        assertThat(actual, is(expectedList));
+        assertThat(actual.getPosts(), is(expectedList));
+        System.out.println(actual.getSocketPath());
 
         final Response getResponseFiltered = RequestUtil.get(postsTarget.queryParam("filter", Integer.toString(gameID)), token);
 
-        List<PostJSON> actualFiltered = RequestUtil.parseListResponse(getResponseFiltered, PostJSON.class);
+        FilterPostsJSON actualFiltered = RequestUtil.parseResponse(getResponseFiltered, FilterPostsJSON.class);
 
-        assertThat(actualFiltered, is(expectedList));
+        assertThat(actualFiltered.getPosts(), is(expectedList));
+        System.out.println(actualFiltered.getSocketPath());
 
         final Response getResponseFiltered2 = RequestUtil.get(postsTarget.queryParam("filter", Integer.toString(gameID) + ":" + Integer.toString(activityID)), token);
 
-        List<PostJSON> actualFiltered2 = RequestUtil.parseListResponse(getResponseFiltered2, PostJSON.class);
+        FilterPostsJSON actualFiltered2 = RequestUtil.parseResponse(getResponseFiltered2, FilterPostsJSON.class);
 
-        assertThat(actualFiltered2, is(expectedList));
+        assertThat(actualFiltered2.getPosts(), is(expectedList));
+        System.out.println(actualFiltered2.getSocketPath());
 
         final Response getResponseFiltered3 = RequestUtil.get(postsTarget.queryParam("filter", 0 + ":" + 0), token);
 
-        List<PostJSON> actualFiltered3 = RequestUtil.parseListResponse(getResponseFiltered3, PostJSON.class);
+        FilterPostsJSON actualFiltered3 = RequestUtil.parseResponse(getResponseFiltered3, FilterPostsJSON.class);
 
-        assertThat(actualFiltered3, is(new ArrayList<>()));
+        assertThat(actualFiltered3.getPosts(), is(new ArrayList<>()));
+
+        System.out.println(actualFiltered3.getSocketPath());
     }
 }
