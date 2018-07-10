@@ -66,7 +66,7 @@ export class NewPostComponent implements OnInit, OnDestroy {
   }
 
   deletePost() {
-    this.postService.deletePost().subscribe(
+    this.postService.deleteCurrentPost().subscribe(
       response => {
         if (response) {
           console.log('Post deleted');

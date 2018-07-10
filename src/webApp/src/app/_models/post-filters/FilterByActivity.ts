@@ -5,10 +5,12 @@ export class FilterByActivity implements PostFilter {
 
   gameName: string;
   activityName: string;
+  gameId: number;
   activityId: number;
 
-  constructor(gameName: string, activityName: string, activityId: number) {
+  constructor(gameName: string, gameId: number, activityName: string, activityId: number) {
     this.gameName = gameName;
+    this.gameId = gameId;
     this.activityName = activityName;
     this.activityId = activityId;
   }

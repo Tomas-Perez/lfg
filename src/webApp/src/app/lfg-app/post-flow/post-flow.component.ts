@@ -41,7 +41,7 @@ export class PostFlowComponent implements OnInit, OnDestroy {
         this.posts = posts;
       }
     );
-    this.postService.updatePosts();
+    // this.postService.updatePosts();
   }
 
   updatePosts() {

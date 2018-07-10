@@ -102,3 +102,44 @@ h2{
   margin-top: auto;
 }
 
+.post-info{
+  border-top: solid 1px #ffffff1a;
+  border-bottom: solid 1px #ffffff1a;
+  padding: 0.3em 0.3em;
+}
+
+.post-info-wrapper{
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+}
+
+.inactive{
+  color: #ffffff9e;
+}
+
+.hidden-zone{
+  transition: max-height 1s;
+  display: flex;
+  flex-direction: column;
+  flex: auto;
+  max-height: 500px;
+}
+
+.post-height{
+  max-height: 0;
+}
+
+.post-info{
+  display: flex;
+  flex-direction: column;
+}
+
+.post-group{
+  display: flex;
+}
+
+.post-inactive{
+  flex-direction: row;
+  justify-content: center;
+}

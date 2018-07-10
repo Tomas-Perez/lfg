@@ -45,6 +45,35 @@
     </div>
   </form>
 
+  <!-- post info -->
+  <div *ngIf="isOwner" class="post-info-wrapper" [ngClass]="{'inactive': post == null}">
+    <h2 >Active post</h2>
+    <div class="post-info" *ngIf="post == null">
+      <div class="post-group post-inactive">
+          <span>
+            No active post
+          </span>
+      </div>
+    </div>
+    <div class="hidden-zone" [ngClass]="{'post-height': post == null}">
+      <div class="post-info" *ngIf="post != null">
+        <div class="post-group">
+          <span>
+            {{post.activity.game.name}}, {{post.activity.name}}
+          </span>
+        </div>
+        <div class="post-group">
+          <p class="m-0">{{post.description}}</p>
+        </div>
+        <div class="post-group">
+          <span>
+            {{post.date | timeAgo}}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <button type="button" class="btn btn-primary btn-primary-lfg btn-group-leave" (click)="leaveGroup()">Leave group</button>
 
 </div>

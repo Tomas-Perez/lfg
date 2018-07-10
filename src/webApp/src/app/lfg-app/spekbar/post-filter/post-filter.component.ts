@@ -52,7 +52,7 @@ export class PostFilterComponent implements OnInit, OnDestroy {
       const game = this.games[this.selectedGameIndex];
       if (this.selectedActivityIndex > -1) {
         const activity = game.activities[this.selectedActivityIndex];
-        this.postFilterService.addFilter(new FilterByActivity(game.name, activity.name, activity.id));
+        this.postFilterService.addFilter(new FilterByActivity(game.name, game.id, activity.name, activity.id));
       } else {
         this.postFilterService.addFilter(new FilterByGame(game.name, game.id));
       }

@@ -7,7 +7,7 @@ import {UserService} from '../../../_services/user.service';
 import {DbPost} from '../../../_models/DbModels/DbPost';
 import {GroupPostService} from './group-post.service';
 import {PostService} from '../../../_services/post.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {Post} from '../../../_models/Post';
 import {NavBarService} from '../../_services/nav-bar.service';
 import {SpekbarLocation} from '../../_models/SpekbarLocation';
@@ -71,7 +71,7 @@ export class GroupComponent implements OnInit, OnDestroy {
   }
 
   deletePost() {
-    this.postService.deletePost().subscribe(
+    this.postService.deleteCurrentPost().subscribe(
       response => {
         if (response) {
           console.log('Post deleted');
@@ -81,6 +81,7 @@ export class GroupComponent implements OnInit, OnDestroy {
   }
 
   leaveGroup() {
+    if (this.post !== null) { this.deletePost(); }
     this.groupService.leaveGroup().subscribe(
       response => {
         if (response) {
