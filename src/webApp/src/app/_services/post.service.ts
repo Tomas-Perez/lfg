@@ -89,7 +89,7 @@ export class PostService {
               this.onNewPost(msgData.payload.id);
               break;
             }
-            case 'deleteCurrentPost': {
+            case 'deletePost': {
               this.onDeletePost(msgData.payload.id);
               break;
             }
@@ -224,7 +224,6 @@ export class PostService {
               switchMap( getGroupResponse => {
                   const newPost = this.jsonConvert.deserialize(getGroupResponse.body, Post);
                   this.currentPostSubject.next(newPost);
-                  this.updatePosts(); // TODO delet this
                   return Observable.of(true);
                 }
               ),

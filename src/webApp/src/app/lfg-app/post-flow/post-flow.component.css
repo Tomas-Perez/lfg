@@ -98,6 +98,18 @@
   flex-direction: row;
 }
 
+.post-info-left-middle{
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: row;
+}
+
+.post-info-left-bottom{
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: row;
+}
+
 .post-user{
   font-weight: 600;
   display: flex;
