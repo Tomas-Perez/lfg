@@ -95,6 +95,7 @@ public class PostEndpoint {
                     .distinct()
                     .filter(Session::isOpen)
                     .forEach(session -> session.getAsyncRemote().sendObject(msg));
+            System.out.println("Broadcasting: " + msg);
         }
     }
 }

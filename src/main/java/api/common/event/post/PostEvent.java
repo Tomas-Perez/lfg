@@ -9,7 +9,7 @@ public class PostEvent {
     private Integer gameID;
     private Integer activityID;
 
-    public PostEvent(int postID, int ownerID, Integer gameID, Integer activityID) {
+    public PostEvent(int ownerID, int postID, Integer gameID, Integer activityID) {
         this.ownerID = ownerID;
         this.postID = postID;
         this.gameID = gameID;
