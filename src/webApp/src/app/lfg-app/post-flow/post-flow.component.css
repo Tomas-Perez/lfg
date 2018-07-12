@@ -106,8 +106,31 @@
 
 .post-info-left-bottom{
   display: flex;
-  flex: 1 0 auto;
+  flex: 0 0 auto;
+  flex-direction: column;
+}
+
+.post-info-platform{
+  display: flex;
+  flex: 0 0 auto;
   flex-direction: row;
+}
+
+.post-info-vc{
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: row;
+}
+
+.platform-label{
+  margin: 0 2px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.platform-img{
+  height: 20px;
+  width: auto;
 }
 
 .post-user{
@@ -119,6 +142,7 @@
 .username-wrapper{
   cursor: pointer;
   text-decoration: underline;
+  font-size: 15px;
 }
 
 .send-message-icon{
@@ -162,14 +186,28 @@
   width: 100%;
 }
 
-.join-group {
+.join-group, .join-group:focus {
+  transition: 0.4s box-shadow, background;
   display: flex;
   flex: 0 0 auto;
+  box-shadow: none;
+  outline: none;
+  color: white;
   width: fit-content;
-  padding: 0 0.4rem;
-  border-radius: 0 0 5px 5px;
+  padding: 0.2rem 1.3rem;
+  border: none;
+  border-radius: 5px;
   border-bottom: #6b7db7 solid 2px;
+  cursor: pointer;
+  background: #4b515a;
+}
+
+.join-group:hover:active{
+  background: #6c737d;
+  box-shadow: none;
+}
+
+.join-group:hover {
   box-shadow: 0 6px 8px -4px #0000009c;
   background: linear-gradient(#565d69, #5e6673);
-  cursor: pointer;
 }

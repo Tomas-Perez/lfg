@@ -19,14 +19,25 @@
 
 .username-wrapper{
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  flex: 0 0;
+  flex-direction: row;
+  justify-content: start;
+  flex: 1 0 auto;
   font-size: 17px;
 }
 
 .username{
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  justify-content: flex-end;
   margin: 0;
   padding: 0 0.2rem;
   border-bottom: #687cc2 solid 2px;
+}
+
+.edit-wrapper{
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  justify-content: center;
 }

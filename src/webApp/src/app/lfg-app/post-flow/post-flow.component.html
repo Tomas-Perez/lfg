@@ -20,7 +20,22 @@
 
         </div>
         <div class="post-info-left-bottom">
-
+          <div class="post-info-platform">
+            <label class="platform-label">Platform:</label>
+            <img src="/assets/platform/pc.png" title="PC" class="platform-img">
+            <img src="/assets/platform/ps.png" title="Playstation" class="platform-img">
+            <img src="/assets/platform/xbox.png" title="Playstation" class="platform-img">
+          </div>
+          <div class="post-info-vc">
+            <label class="platform-label">Voice Chat:</label>
+            <a href="https://discordapp.com" target="_blank">
+              <img src="/assets/platform/discord.svg" title="Discord" class="platform-img">
+            </a>
+            <a href="https://www.teamspeak.com" target="_blank">
+              <img src="/assets/platform/teamspeak.png" title="TeamSpeak" class="platform-img">
+            </a>
+            <img src="/assets/platform/ingame.png" title="In-Game" class="platform-img">
+          </div>
         </div>
       </div>
 
@@ -32,9 +47,9 @@
           </div>
           <!--<span>{{post.group.id}}</span>-->
           <div class="group-data">
-            <span *ngIf="!inGroup" class="join-group" (click)="joinGroup(post.group.id)">
+            <button *ngIf="!inGroup" class="join-group" (click)="joinGroup(post.group.id)">
               join
-            </span>
+            </button>
           </div>
         </div>
       </div>

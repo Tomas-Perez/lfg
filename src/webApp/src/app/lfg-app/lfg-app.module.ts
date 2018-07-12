@@ -28,6 +28,8 @@ import {MeInfoComponent} from './me-info/me-info.component';
 import { ChatComponent } from './chat/chat.component';
 import { ChatService } from '../_services/chat.service';
 import { UserSocketService } from '../_services/user-socket.service';
+import { EditUserComponent } from './spekbar/edit-user/edit-user.component';
+import {ImageUploadModule} from 'angular2-image-upload';
 
 
 @NgModule({
@@ -45,12 +47,14 @@ import { UserSocketService } from '../_services/user-socket.service';
     FriendBarComponent,
     UserInfoComponent,
     MeInfoComponent,
-    ChatComponent
+    ChatComponent,
+    EditUserComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
     NgbModule.forRoot(),
+    ImageUploadModule.forRoot(),
     LfgAppRouting
   ],
   providers: [

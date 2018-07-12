@@ -1,0 +1,34 @@
+<div class="edit-user-wrapper">
+  <div class="title">
+    <h1>Edit profile</h1>
+  </div>
+  <div class="user-info-wrapper">
+    <div class="user-img-wrapper">
+      <img src="/assets/user/user-default.png" class="user-img">
+    </div>
+    <div class="username-wrapper">
+      <h2>{{user.username}}</h2>
+    </div>
+  </div>
+  <div class="options-wrapper">
+    <div class="option">
+      <span>Change Avatar:</span>
+      <div class="image-upload-wrapper">
+        <div [ngClass]="{'hide': imgState}">
+          <image-upload
+            [max]="1"
+            [class]="'image-upload'"
+            [buttonCaption]="'Select image'"
+            dropBoxMessage="Drop image here"
+            [clearButtonCaption]="'Clear'"
+            (removed)="onRemoved($event)"
+            (uploadFinished)="onUploadFinished($event)"
+          ></image-upload>
+        </div>
+        <div class="upload-wrapper">
+          <button [disabled]="!imgState" class="btn btn-primary-lfg btn-upload">Upload</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
