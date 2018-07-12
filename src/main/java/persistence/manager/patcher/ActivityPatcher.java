@@ -40,10 +40,8 @@ public class ActivityPatcher {
     }
 
     public void patch(ActivityEntity activity){
-        System.out.println("BEFORE PATCH: " + activity);
         if(name != null) activity.setName(name);
         if(game != null) activity.setGameId(game);
-        System.out.println("AFTER PATCH: " + activity);
     }
 
     public static class Builder{

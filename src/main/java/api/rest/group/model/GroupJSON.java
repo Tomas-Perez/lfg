@@ -1,5 +1,6 @@
 package api.rest.group.model;
 
+import api.rest.user.model.ChatJSON;
 import persistence.model.Group;
 import api.rest.activity.model.ActivityJSON;
 
@@ -17,13 +18,15 @@ public class GroupJSON {
     private ActivityJSON activity;
     private MemberJSON owner;
     private List<MemberJSON> members;
+    private ChatJSON chat;
 
-    public GroupJSON(int id, int slots, ActivityJSON activity, MemberJSON owner, List<MemberJSON> members) {
+    public GroupJSON(int id, int slots, ActivityJSON activity, MemberJSON owner, List<MemberJSON> members, ChatJSON chat) {
         this.id = id;
         this.slots = slots;
         this.activity = activity;
         this.owner = owner;
         this.members = members;
+        this.chat = chat;
     }
 
     public GroupJSON() {
@@ -35,6 +38,7 @@ public class GroupJSON {
         this.activity = new ActivityJSON(group.getActivity());
         this.owner = new MemberJSON(group.getOwner());
         this.members = group.getMembers().stream().map(MemberJSON::new).collect(Collectors.toList());
+        this.chat = new ChatJSON(group.getChat());
     }
 
     public int getId() {
@@ -77,6 +81,14 @@ public class GroupJSON {
         this.members = members;
     }
 
+    public ChatJSON getChat() {
+        return chat;
+    }
+
+    public void setChat(ChatJSON chat) {
+        this.chat = chat;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -86,12 +98,14 @@ public class GroupJSON {
                 slots == groupJSON.slots &&
                 Objects.equals(activity, groupJSON.activity) &&
                 Objects.equals(owner, groupJSON.owner) &&
-                new HashSet<>(members).equals(new HashSet<>(groupJSON.members));
+                Objects.equals(members, groupJSON.members) &&
+                Objects.equals(chat, groupJSON.chat);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, slots, activity, owner, members);
+
+        return Objects.hash(id, slots, activity, owner, members, chat);
     }
 
     @Override
@@ -102,6 +116,7 @@ public class GroupJSON {
                 ", activity=" + activity +
                 ", owner=" + owner +
                 ", members=" + members +
+                ", chat=" + chat +
                 '}';
     }
 }

@@ -5,6 +5,7 @@ import api.rest.chat.model.AddMemberJSON;
 import api.rest.chat.model.ChatJSON;
 import api.rest.chat.model.CreateChatJSON;
 import api.rest.chat.model.WebsocketPathJSON;
+import api.rest.group.model.GroupJSON;
 import api.rest.group.model.MemberJSON;
 import org.jboss.arquillian.extension.rest.client.ArquillianResteasyResource;
 import org.jboss.arquillian.junit.Arquillian;
@@ -17,6 +18,7 @@ import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
@@ -45,21 +47,11 @@ public class ChatResourceTest extends ApiTest {
         final String email3 = "email3";
         int user3ID = addUser(username3, password3, email3);
 
-        List<Integer> members = Arrays.asList(user1ID, user2ID, user3ID);
+        List<Integer> members = Arrays.asList(user2ID, user3ID);
 
-        final Response postResponse = RequestUtil.post(chatsTarget, token, new CreateChatJSON(CreateChatJSON.ChatType.GROUP, members));
+        int id = createGroupChat(user1ID, members);
 
-        assertThat(postResponse.getStatus(), is(CREATED));
-
-        WebsocketPathJSON path = RequestUtil.parseResponse(postResponse, WebsocketPathJSON.class);
-
-        System.out.println(System.lineSeparator());
-        System.out.println(path);
-        System.out.println(System.lineSeparator());
-
-        final String location = postResponse.getHeaderString("Location");
-        final WebTarget chatTarget = RequestUtil.newTarget(location);
-        final Integer id = Integer.parseInt(RequestUtil.getRelativePathDiff(chatsTarget, chatTarget));
+        WebTarget chatTarget = RequestUtil.newRelativeTarget(base, String.format("chats/%d", id));
 
         final Response getResponse = RequestUtil.get(chatTarget, token);
 
@@ -107,9 +99,9 @@ public class ChatResourceTest extends ApiTest {
         final String email3 = "email3";
         int user3ID = addUser(username3, password3, email3);
 
-        List<Integer> startMembers = Arrays.asList(user1ID, user2ID, user3ID);
+        List<Integer> startMembers = Arrays.asList(user2ID, user3ID);
 
-        int chatID = addChat(CreateChatJSON.ChatType.GROUP, startMembers);
+        int chatID = createGroupChat(user1ID, startMembers);
 
         WebTarget chatMembersTarget = RequestUtil.newRelativeTarget(base, String.format("chats/%d/members", chatID));
 
@@ -186,5 +178,27 @@ public class ChatResourceTest extends ApiTest {
         expected.setMembers(expectedMembers2);
 
         assertThat(actual, is(expected));
+    }
+
+    private int createGroupChat(int ownerID, List<Integer> startMembers) {
+        int gameID = addGame("Overwatch");
+        int activityID = addActivity("Ranked", gameID);
+        List<api.rest.group.model.AddMemberJSON> addMemberJSONS = startMembers.stream()
+                .map(api.rest.group.model.AddMemberJSON::new)
+                .collect(Collectors.toList());
+        final int slots = 5;
+        int groupID = addGroup(slots, activityID, ownerID);
+
+        WebTarget groupMembersTarget = RequestUtil.newRelativeTarget(base, String.format("groups/%d/members", groupID));
+
+        addMemberJSONS.forEach(addMemberJSON -> RequestUtil.post(groupMembersTarget, token, addMemberJSON));
+
+        WebTarget groupTarget = RequestUtil.newRelativeTarget(base, String.format("groups/%d", groupID));
+
+        final Response getResponse = RequestUtil.get(groupTarget, token);
+
+        GroupJSON actual = RequestUtil.parseResponse(getResponse, GroupJSON.class);
+
+        return actual.getChat().getId();
     }
 }

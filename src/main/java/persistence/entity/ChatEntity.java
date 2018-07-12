@@ -10,10 +10,13 @@ import java.util.Objects;
 @Table(name = "CHAT", schema = "PUBLIC", catalog = "PUBLIC")
 public class ChatEntity {
     private int id;
-    private ChatType type;
+    private Integer groupId;
 
-    public ChatEntity() {
-        type = ChatType.GROUP;
+    public ChatEntity(int groupId) {
+        this.groupId = groupId;
+    }
+
+    public ChatEntity(){
     }
 
     @Id
@@ -27,18 +30,9 @@ public class ChatEntity {
         this.id = id;
     }
 
-    @Enumerated
-    @Column(name = "TYPE", nullable = false, columnDefinition = "smallint")
+    @Transient
     public ChatType getType() {
-        return type;
-    }
-
-    public void setType(ChatType type) {
-        this.type = type;
-    }
-
-    public enum ChatType {
-        PRIVATE, GROUP
+        return groupId == null? ChatType.PRIVATE : ChatType.GROUP;
     }
 
     @Override
@@ -47,12 +41,25 @@ public class ChatEntity {
         if (!(o instanceof ChatEntity)) return false;
         ChatEntity that = (ChatEntity) o;
         return id == that.id &&
-                type == that.type;
+                Objects.equals(groupId, that.groupId);
     }
 
     @Override
     public int hashCode() {
+        return Objects.hash(id, groupId);
+    }
 
-        return Objects.hash(id, type);
+    @Basic
+    @Column(name = "GROUP_ID")
+    public Integer getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
+    }
+
+    public enum ChatType {
+        PRIVATE, GROUP
     }
 }

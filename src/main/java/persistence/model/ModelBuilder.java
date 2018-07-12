@@ -130,6 +130,7 @@ public class ModelBuilder {
         if(groupEntity == null) throw new NoSuchElementException();
 
         User owner = huskUser(groupManager.getGroupOwner(groupEntity.getId()));
+        Chat chat = huskChat(groupManager.getGroupChat(groupID));
 
         return new Group(
                 groupEntity,
@@ -137,7 +138,8 @@ public class ModelBuilder {
                 owner,
                 null,
                 null,
-                null
+                null,
+                chat
         );
     }
 
@@ -152,6 +154,7 @@ public class ModelBuilder {
                 .collect(Collectors.toSet());
 
         User owner = huskUser(groupManager.getGroupOwner(groupEntity.getId()));
+        Chat chat = huskChat(groupManager.getGroupChat(groupID));
 
         return new Group(
                 groupEntity,
@@ -159,7 +162,8 @@ public class ModelBuilder {
                 owner,
                 null,
                 null,
-                members
+                members,
+                chat
         );
     }
 

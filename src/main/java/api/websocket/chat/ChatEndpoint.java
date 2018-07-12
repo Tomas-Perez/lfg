@@ -13,10 +13,7 @@ import api.websocket.common.config.CdiAwareConfigurator;
 import api.websocket.common.security.AuthenticatedPrincipal;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import persistence.manager.ChatManager;
-import persistence.manager.EntityManagerProducer;
-import persistence.manager.FriendHelperManager;
-import persistence.manager.UserManager;
+import persistence.manager.*;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -145,7 +142,10 @@ public class ChatEndpoint extends AuthenticatedEndpoint {
     private int sendMessage(int chatID, int userID, String text, LocalDateTime date){
         EntityManager em = entityManagerProducer.createEntityManager();
         UserManager userManager = new UserManager(em, new FriendHelperManager());
-        ChatManager chatManager = new ChatManager(em, userManager);
+        GameManager gameManager = new GameManager(em);
+        ActivityManager activityManager = new ActivityManager(em, gameManager);
+        GroupManager groupManager = new GroupManager(em, userManager, activityManager);
+        ChatManager chatManager = new ChatManager(em, userManager, groupManager);
         int id = chatManager.sendMessage(chatID, userID, text, date);
         final List<Integer> closedChatMembers = chatManager.getClosedChatMembers(chatID);
         logger.info("closedChatMembers: " + closedChatMembers);

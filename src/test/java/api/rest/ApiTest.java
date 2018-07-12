@@ -89,7 +89,7 @@ public abstract class ApiTest {
         groupManager.wipe();
         postManager = new PostManager(emp.createEntityManager(), userManager, activityManager, groupManager);
         postManager.wipe();
-        chatManager = new ChatManager(emp.createEntityManager(), userManager);
+        chatManager = new ChatManager(emp.createEntityManager(), userManager, groupManager);
         chatManager.wipe();
 
 
@@ -126,7 +126,7 @@ public abstract class ApiTest {
         groupManager.wipe();
         postManager = new PostManager(emp.createEntityManager(), userManager, activityManager, groupManager);
         postManager.wipe();
-        chatManager = new ChatManager(emp.createEntityManager(), userManager);
+        chatManager = new ChatManager(emp.createEntityManager(), userManager, groupManager);
         chatManager.wipe();
         emp.destroy();
     }
@@ -155,8 +155,8 @@ public abstract class ApiTest {
         return Integer.parseInt(RequestUtil.getRelativePathDiff(groupsTarget, groupTarget));
     }
 
-    protected int addChat(CreateChatJSON.ChatType type, List<Integer> members){
-        final Response postResponse = RequestUtil.post(chatsTarget, token, new CreateChatJSON(type, members));
+    protected int addChat(CreateChatJSON chatJSON){
+        final Response postResponse = RequestUtil.post(chatsTarget, token, chatJSON);
         assertThat(postResponse.getStatus(), is(CREATED));
         final String location = postResponse.getHeaderString("Location");
         final WebTarget chatTarget = RequestUtil.newTarget(location);

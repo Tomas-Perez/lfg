@@ -9,9 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import persistence.entity.ChatEntity;
-import persistence.entity.ChatMessageEntity;
-import persistence.entity.UserEntity;
+import persistence.entity.*;
 import persistence.manager.exception.ConstraintException;
 
 import javax.inject.Inject;
@@ -38,6 +36,15 @@ public class ChatManagerTest {
     @Inject
     private ChatManager chatManager;
 
+    @Inject
+    private GroupManager groupManager;
+
+    @Inject
+    private GameManager gameManager;
+
+    @Inject
+    private ActivityManager activityManager;
+
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(EmbeddedGradleImporter.class)
@@ -49,6 +56,9 @@ public class ChatManagerTest {
     @After
     public void setup(){
         chatManager.wipe();
+        gameManager.wipe();
+        groupManager.wipe();
+        activityManager.wipe();
         userManager.wipe();
     }
 
@@ -74,9 +84,8 @@ public class ChatManagerTest {
         UserEntity user2 = new UserEntity(false, "email2", "password2", "username2");
         int user2ID = userManager.add(user2);
 
-        ChatEntity chat = new ChatEntity();
-        int id1 = chatManager.addPrivateChat(chat, user1ID, user2ID);
-        int id2 = chatManager.addPrivateChat(chat, user1ID, user2ID);
+        int id1 = chatManager.addPrivateChat(user1ID, user2ID);
+        int id2 = chatManager.addPrivateChat(user1ID, user2ID);
 
         assertThat(id1, is(id2));
     }
@@ -88,8 +97,7 @@ public class ChatManagerTest {
         UserEntity user2 = new UserEntity(false, "email2", "password2", "username2");
         int user2ID = userManager.add(user2);
 
-        ChatEntity chat = new ChatEntity();
-        int id = chatManager.addPrivateChat(chat, user1ID, user2ID);
+        int id = chatManager.addPrivateChat(user1ID, user2ID);
 
         List<Integer> memberIDs = chatManager.getChatMembers(id);
         List<Integer> expectedIDs = Arrays.asList(user1ID, user2ID);
@@ -108,14 +116,18 @@ public class ChatManagerTest {
         UserEntity user4 = new UserEntity(false, "email4", "password4", "username4");
         int user4ID = userManager.add(user4);
 
+        List<Integer> memberIDs = Arrays.asList(user2ID, user3ID, user4ID);
         List<Integer> expectedIDs = Arrays.asList(user1ID, user2ID, user3ID, user4ID);
 
-        ChatEntity chat = new ChatEntity();
-        int id = chatManager.addGroupChat(chat, expectedIDs);
+        int groupID = addGroup(5, user1ID);
 
-        List<Integer> memberIDs = chatManager.getChatMembers(id);
+        addMembersToGroup(groupID, memberIDs);
 
-        assertThat(new HashSet<>(memberIDs), is(new HashSet<>(expectedIDs)));
+        int id = chatManager.addGroupChat(groupID);
+
+        List<Integer> actualMemberIds = chatManager.getChatMembers(id);
+
+        assertThat(new HashSet<>(actualMemberIds), is(new HashSet<>(expectedIDs)));
     }
 
     @Test
@@ -125,17 +137,20 @@ public class ChatManagerTest {
         UserEntity user2 = new UserEntity(false, "email2", "password2", "username2");
         int user2ID = userManager.add(user2);
 
-        ChatEntity chat = new ChatEntity();
-        int id1 = chatManager.addPrivateChat(chat, user1ID, user2ID);
+        int id1 = chatManager.addPrivateChat(user1ID, user2ID);
 
         UserEntity user3 = new UserEntity(false, "email3", "password3", "username3");
         int user3ID = userManager.add(user3);
         UserEntity user4 = new UserEntity(false, "email4", "password4", "username4");
         int user4ID = userManager.add(user4);
 
-        List<Integer> memberIDs = Arrays.asList(user1ID, user2ID, user3ID, user4ID);
-        ChatEntity chat2 = new ChatEntity();
-        int id2 = chatManager.addGroupChat(chat2, memberIDs);
+        List<Integer> memberIDs = Arrays.asList(user2ID, user3ID, user4ID);
+
+        int groupID = addGroup(5, user1ID);
+
+        addMembersToGroup(groupID, memberIDs);
+
+        int id2 = chatManager.addGroupChat(groupID);
 
         List<Integer> expectedIDs = Arrays.asList(id1, id2);
         List<Integer> actualIDs = chatManager.list();
@@ -157,22 +172,21 @@ public class ChatManagerTest {
         EntityManager chatEM = entityManagerProducer.createEntityManager();
         FriendHelperManager friendHelperManager = new FriendHelperManager();
         UserManager userManager = new UserManager(userEM, friendHelperManager);
-        ChatManager chatManager = new ChatManager(chatEM, userManager);
+        ChatManager chatManager = new ChatManager(chatEM, userManager, groupManager);
 
         UserEntity user1 = new UserEntity(false, "email1", "password1", "username1");
         int user1ID = userManager.add(user1);
         UserEntity user2 = new UserEntity(false, "email2", "password2", "username2");
         int user2ID = userManager.add(user2);
 
-        ChatEntity chat = new ChatEntity();
-        int id = chatManager.addPrivateChat(chat, user1ID, user2ID);
+        int id = chatManager.addPrivateChat(user1ID, user2ID);
 
         userManager.delete(user1ID);
 
         entityManagerProducer.closeEntityManager(userEM);
         EntityManager userEM2 = entityManagerProducer.createEntityManager();
         UserManager userManager2 = new UserManager(userEM2, friendHelperManager);
-        ChatManager chatManager2 = new ChatManager(chatEM, userManager2);
+        ChatManager chatManager2 = new ChatManager(chatEM, userManager2, groupManager);
 
         List<Integer> actualMembers = chatManager2.getChatMembers(id);
         List<Integer> expectedMembers = Collections.singletonList(user2ID);
@@ -190,8 +204,7 @@ public class ChatManagerTest {
         UserEntity user2 = new UserEntity(false, "email2", "password2", "username2");
         int user2ID = userManager.add(user2);
 
-        ChatEntity chat = new ChatEntity();
-        int id = chatManager.addPrivateChat(chat, user1ID, user2ID);
+        int id = chatManager.addPrivateChat(user1ID, user2ID);
 
         Set<Integer> member1Chats = userManager.getUserChats(user1ID);
         Set<Integer> expectedChats = new HashSet<>(Collections.singletonList(id));
@@ -210,17 +223,20 @@ public class ChatManagerTest {
         UserEntity user4 = new UserEntity(false, "email4", "password4", "username4");
         int user4ID = userManager.add(user4);
 
-        List<Integer> initialMemberIDs = Arrays.asList(user1ID, user2ID, user3ID, user4ID);
+        List<Integer> initialMemberIDs = Arrays.asList(user2ID, user3ID, user4ID);
 
-        ChatEntity chat = new ChatEntity();
-        int id = chatManager.addGroupChat(chat, initialMemberIDs);
+
+        int groupID = addGroup(5, user1ID);
+
+        addMembersToGroup(groupID, initialMemberIDs);
+
+        int id = chatManager.addGroupChat(groupID);
 
         chatManager.removeMemberFromChat(id, user1ID);
 
         List<Integer> memberIDs = chatManager.getChatMembers(id);
-        List<Integer> expectedIDs = Arrays.asList(user2ID, user3ID, user4ID);
 
-        assertThat(new HashSet<>(memberIDs), is(new HashSet<>(expectedIDs)));
+        assertThat(new HashSet<>(memberIDs), is(new HashSet<>(initialMemberIDs)));
     }
 
     @Test
@@ -229,7 +245,7 @@ public class ChatManagerTest {
         EntityManager chatEM = entityManagerProducer.createEntityManager();
         FriendHelperManager friendHelperManager = new FriendHelperManager();
         UserManager userManager = new UserManager(userEM, friendHelperManager);
-        ChatManager chatManager = new ChatManager(chatEM, userManager);
+        ChatManager chatManager = new ChatManager(chatEM, userManager, groupManager);
 
 
         UserEntity user1 = new UserEntity(false, "email1", "password1", "username1");
@@ -237,14 +253,13 @@ public class ChatManagerTest {
         UserEntity user2 = new UserEntity(false, "email2", "password2", "username2");
         int user2ID = userManager.add(user2);
 
-        ChatEntity chat = new ChatEntity();
-        int id = chatManager.addPrivateChat(chat, user1ID, user2ID);
+        int id = chatManager.addPrivateChat(user1ID, user2ID);
 
         chatManager.removeMemberFromChat(id, user1ID);
 
         entityManagerProducer.closeEntityManager(chatEM);
         EntityManager chatEM2 = entityManagerProducer.createEntityManager();
-        ChatManager chatManager2 = new ChatManager(chatEM2, userManager);
+        ChatManager chatManager2 = new ChatManager(chatEM2, userManager, groupManager);
 
         assertNull(chatManager2.get(id));
         assertThat(userManager.getUserChats(user1ID), is(new HashSet<>()));
@@ -261,8 +276,7 @@ public class ChatManagerTest {
         UserEntity user2 = new UserEntity(false, "email2", "password2", "username2");
         int user2ID = userManager.add(user2);
 
-        ChatEntity chat = new ChatEntity();
-        int id = chatManager.addPrivateChat(chat, user1ID, user2ID);
+        int id = chatManager.addPrivateChat(user1ID, user2ID);
 
         chatManager.addMemberToChat(id, user1ID);
     }
@@ -274,8 +288,7 @@ public class ChatManagerTest {
         UserEntity user2 = new UserEntity(false, "email2", "password2", "username2");
         int user2ID = userManager.add(user2);
 
-        ChatEntity chat = new ChatEntity();
-        int id = chatManager.addPrivateChat(chat, user1ID, user2ID);
+        int id = chatManager.addPrivateChat(user1ID, user2ID);
 
         final LocalDateTime now = LocalDateTime.now();
         final String msgString = "Hello";
@@ -294,7 +307,7 @@ public class ChatManagerTest {
         EntityManager chatEM = entityManagerProducer.createEntityManager();
         FriendHelperManager friendHelperManager = new FriendHelperManager();
         UserManager userManager = new UserManager(userEM, friendHelperManager);
-        ChatManager chatManager = new ChatManager(chatEM, userManager);
+        ChatManager chatManager = new ChatManager(chatEM, userManager, groupManager);
 
 
         UserEntity user1 = new UserEntity(false, "email1", "password1", "username1");
@@ -302,8 +315,7 @@ public class ChatManagerTest {
         UserEntity user2 = new UserEntity(false, "email2", "password2", "username2");
         int user2ID = userManager.add(user2);
 
-        ChatEntity chat = new ChatEntity();
-        int id = chatManager.addPrivateChat(chat, user1ID, user2ID);
+        int id = chatManager.addPrivateChat(user1ID, user2ID);
 
         final LocalDateTime now = LocalDateTime.now();
         final String msgString = "Hello";
@@ -312,7 +324,7 @@ public class ChatManagerTest {
 
         entityManagerProducer.closeEntityManager(chatEM);
         EntityManager chatEM2 = entityManagerProducer.createEntityManager();
-        ChatManager chatManager2 = new ChatManager(chatEM2, userManager);
+        ChatManager chatManager2 = new ChatManager(chatEM2, userManager, groupManager);
 
         assertNull(chatManager2.getMessage(msgID));
 
@@ -327,8 +339,7 @@ public class ChatManagerTest {
         UserEntity user2 = new UserEntity(false, "email2", "password2", "username2");
         int user2ID = userManager.add(user2);
 
-        ChatEntity chat = new ChatEntity();
-        int id = chatManager.addPrivateChat(chat, user1ID, user2ID);
+        int id = chatManager.addPrivateChat(user1ID, user2ID);
 
         final LocalDateTime now = LocalDateTime.of(2018, 1, 1, 0, 0);
         final String msgString = "Hello";
@@ -346,5 +357,21 @@ public class ChatManagerTest {
         List<Integer> actual = chatManager.getChatMessages(id);
 
         assertThat(actual, is(expected));
+    }
+
+
+    private int addGroup(int slots, int userID){
+        GameEntity game = new GameEntity(null, "Overwatch");
+        int gameID = gameManager.add(game);
+
+        ActivityEntity activity = new ActivityEntity("Ranked", gameID);
+        int activityID = activityManager.add(activity);
+
+        GroupEntity group = new GroupEntity(slots, activityID, null, null, userID);
+        return groupManager.add(group);
+    }
+
+    private void addMembersToGroup(int groupID, List<Integer> members){
+        members.forEach(member -> groupManager.addMemberToGroup(groupID, member));
     }
 }
