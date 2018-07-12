@@ -26,12 +26,14 @@
   box-shadow: 1px 0 rgba(0,0,0,.1);
   -webkit-box-shadow: 1px 0 rgba(0,0,0,.1);
   padding: 0.3rem;
+  white-space: nowrap;
 }
 
 .post-game-activity-description{
   display: flex;
   flex-direction: column;
   flex: 6 0;
+  white-space: nowrap;
 }
 
 .game-activity-title{
@@ -188,13 +190,11 @@
 
 .join-group, .join-group:focus {
   transition: 0.4s box-shadow, background;
-  display: flex;
-  flex: 0 0 auto;
+  width: 90%;
   box-shadow: none;
   outline: none;
   color: white;
-  width: fit-content;
-  padding: 0.2rem 1.3rem;
+  padding: 0.2rem 0;
   border: none;
   border-radius: 5px;
   border-bottom: #6b7db7 solid 2px;

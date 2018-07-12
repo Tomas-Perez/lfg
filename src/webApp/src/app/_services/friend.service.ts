@@ -69,6 +69,7 @@ export class FriendService {
             break;
           }
           case FriendAction.NEW: {
+            this.onDeleteFriend(user);
             this.onNewFriend(user);
             break;
           }

@@ -40,4 +40,9 @@
   flex: 0 0 auto;
   flex-direction: column;
   justify-content: center;
+  color: #d9d9d9;
+}
+
+.edit-wrapper:hover{
+  color: #ffffff;
 }
