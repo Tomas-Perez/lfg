@@ -2,17 +2,17 @@ package api.rest.chat.resource;
 
 import api.rest.chat.model.*;
 import api.rest.chat.service.ChatService;
+import api.rest.user.service.UserService;
 import persistence.model.Chat;
+import persistence.model.User;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,8 +29,14 @@ public class ChatResource {
     @Inject
     private ChatService service;
 
+    @Inject
+    private UserService userService;
+
     @Context
     private UriInfo uriInfo;
+
+    @Context
+    private SecurityContext securityContext;
 
     @GET
     public Response getAll(){
@@ -41,15 +47,15 @@ public class ChatResource {
 
     @POST
     public Response post(CreateChatJSON chatJSON){
+        Principal principal = securityContext.getUserPrincipal();
+        int senderID = userService.getIDByEmail(principal.getName());
         int id;
         switch (chatJSON.getType()){
             case GROUP:
-                id = service.newGroupChat(chatJSON.getMembers());
+                id = service.newGroupChat(chatJSON.getGroupID());
                 break;
             case PRIVATE:
-                id = service.newPrivateChat(
-                        chatJSON.getMembers().get(0),
-                        chatJSON.getMembers().get(1));
+                id = service.newPrivateChat(senderID, chatJSON.getRecipient());
                 break;
             default:
                 throw new BadRequestException("Invalid type.");

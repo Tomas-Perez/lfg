@@ -18,8 +18,9 @@ public class Group {
     private ChatPlatform chatPlatform;
     private GamePlatform gamePlatform;
     private Set<User> members;
+    private Chat chat;
 
-    public Group(GroupEntity entity, Activity activity, User owner, ChatPlatform chatPlatform, GamePlatform gamePlatform, Set<User> members) {
+    public Group(GroupEntity entity, Activity activity, User owner, ChatPlatform chatPlatform, GamePlatform gamePlatform, Set<User> members, Chat chat) {
         this.id = entity.getId();
         this.slots = entity.getSlots();
         this.activity = activity;
@@ -27,6 +28,7 @@ public class Group {
         this.chatPlatform = chatPlatform;
         this.gamePlatform = gamePlatform;
         this.members = members;
+        this.chat = chat;
     }
 
     public int getId() {
@@ -57,10 +59,14 @@ public class Group {
         return members;
     }
 
+    public Chat getChat() {
+        return chat;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Group)) return false;
         Group group = (Group) o;
         return id == group.id &&
                 slots == group.slots &&
@@ -68,13 +74,14 @@ public class Group {
                 Objects.equals(owner, group.owner) &&
                 Objects.equals(chatPlatform, group.chatPlatform) &&
                 Objects.equals(gamePlatform, group.gamePlatform) &&
-                Objects.equals(members, group.members);
+                Objects.equals(members, group.members) &&
+                Objects.equals(chat, group.chat);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, slots, activity, owner, chatPlatform, gamePlatform, members);
+        return Objects.hash(id, slots, activity, owner, chatPlatform, gamePlatform, members, chat);
     }
 
     @Override
@@ -87,6 +94,9 @@ public class Group {
                 ", chatPlatform=" + chatPlatform +
                 ", gamePlatform=" + gamePlatform +
                 ", members=" + members +
+                ", chat=" + chat +
                 '}';
     }
 }
+
+

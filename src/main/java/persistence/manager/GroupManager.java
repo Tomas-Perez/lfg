@@ -56,13 +56,12 @@ public class GroupManager extends Manager<GroupEntity>{
     public void removeMemberFromGroup(int groupID, int memberID){
         EntityTransaction tx = manager.getTransaction();
         GroupMemberEntityPK key = new GroupMemberEntityPK(groupID, memberID);
-        boolean deleteGroup = false;
+        boolean reassignOwner = false;
         try {
             tx.begin();
             GroupMemberEntity groupMemberEntity = manager.find(GroupMemberEntity.class, key);
             if(groupMemberEntity == null) throw new IllegalArgumentException();
-            if(groupMemberEntity.isOwner())
-                deleteGroup = true;
+            if(groupMemberEntity.isOwner()) reassignOwner = true;
             manager.remove(groupMemberEntity);
             tx.commit();
         } catch (IllegalArgumentException exc){
@@ -73,8 +72,8 @@ public class GroupManager extends Manager<GroupEntity>{
             e.printStackTrace();
         }
 
-        if(deleteGroup)
-            delete(groupID);
+        if(emptyGroup(groupID)) delete(groupID);
+        else if(reassignOwner) reassignOwner(groupID);
     }
 
     public void delete(int groupID){
@@ -115,6 +114,14 @@ public class GroupManager extends Manager<GroupEntity>{
                 .getSingleResult();
     }
 
+    public Integer getGroupChat(int groupID){
+        return (Integer) manager.createQuery("SELECT C.id " +
+                "FROM ChatEntity C " +
+                "WHERE C.groupId = :groupID")
+                .setParameter("groupID", groupID)
+                .getSingleResult();
+    }
+
     private void checkValidCreation(int ownerID, int activityID){
         userManager.checkExistence(ownerID);
         activityManager.checkExistence(activityID);
@@ -123,5 +130,39 @@ public class GroupManager extends Manager<GroupEntity>{
     public void checkExistence(int groupID){
         if(!exists(groupID))
             throw new ConstraintException(String.format("Group with id: %d does not exist", groupID));
+    }
+
+    private void reassignOwner(int groupID){
+        Integer newOwnerID = getNewOwnerID(groupID);
+        assignOwner(groupID, newOwnerID);
+    }
+
+    private void assignOwner(int groupID, int newOwnerID){
+        EntityTransaction tx = manager.getTransaction();
+        GroupMemberEntityPK key = new GroupMemberEntityPK(groupID, newOwnerID);
+        try {
+            tx.begin();
+            GroupMemberEntity groupMemberEntity = manager.find(GroupMemberEntity.class, key);
+            groupMemberEntity.setOwner(true);
+            tx.commit();
+        } catch (IllegalArgumentException exc){
+            if (tx!=null) tx.rollback();
+            throw new NoSuchElementException();
+        } catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+        }
+    }
+
+    private Integer getNewOwnerID(int groupID){
+        return (Integer) manager.createQuery("SELECT M.memberId " +
+                "FROM GroupMemberEntity M " +
+                "WHERE M.groupId = :groupID AND M.owner = false")
+                .setParameter("groupID", groupID)
+                .getSingleResult();
+    }
+
+    private boolean emptyGroup(int groupID){
+        return getGroupMembers(groupID).size() < 1;
     }
 }

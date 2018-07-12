@@ -22,11 +22,13 @@ import java.util.NoSuchElementException;
 @ApplicationScoped
 public class ChatManager extends Manager<ChatEntity> {
     private UserManager userManager;
+    private GroupManager groupManager;
 
     @Inject
-    public ChatManager(EntityManager manager, UserManager userManager) {
+    public ChatManager(EntityManager manager, UserManager userManager, GroupManager groupManager) {
         super(manager);
         this.userManager = userManager;
+        this.groupManager = groupManager;
     }
 
     public ChatManager() {}
@@ -37,10 +39,10 @@ public class ChatManager extends Manager<ChatEntity> {
         return chat.getId();
     }
 
-    public int addPrivateChat(ChatEntity chat, int user1ID, int user2ID){
+    public int addPrivateChat(int user1ID, int user2ID){
+        ChatEntity chat = new ChatEntity();
         Integer chatID = getPrivateChat(user1ID, user2ID);
         if(chatID == null) {
-            chat.setType(ChatEntity.ChatType.PRIVATE);
             chatID = add(chat);
             addMemberToChat(chatID, user1ID, true);
             addMemberToChat(chatID, user2ID, false);
@@ -50,10 +52,12 @@ public class ChatManager extends Manager<ChatEntity> {
         return chatID;
     }
 
-    public int addGroupChat(ChatEntity chat, List<Integer> userIDs){
-        chat.setType(ChatEntity.ChatType.GROUP);
+    public int addGroupChat(int groupID){
+        groupManager.checkExistence(groupID);
+        ChatEntity chat = new ChatEntity(groupID);
         int chatID = add(chat);
-        userIDs.forEach(id -> addMemberToChat(chatID, id, true));
+        groupManager.getGroupMembers(groupID)
+                .forEach(id -> addMemberToChat(chatID, id, true));
         return chatID;
     }
 
@@ -109,7 +113,7 @@ public class ChatManager extends Manager<ChatEntity> {
             e.printStackTrace();
         }
 
-        if(singleMemberChat(chatID)){
+        if(singleMemberChat(chatID) && isChatOfType(chatID, ChatEntity.ChatType.PRIVATE)){
             delete(chatID);
         }
     }
@@ -165,8 +169,7 @@ public class ChatManager extends Manager<ChatEntity> {
                 "SELECT C.id FROM ChatMemberEntity M\n" +
                 "JOIN ChatEntity C on M.chatId = C.id\n" +
                 "JOIN ChatMemberEntity M2 on M2.chatId = C.id AND M2.memberId != M.memberId\n" +
-                "WHERE C.type = :chatType AND M.memberId = :user1ID AND M2.memberId = :user2ID")
-                .setParameter("chatType", ChatEntity.ChatType.PRIVATE)
+                "WHERE C.groupId = NULL AND M.memberId = :user1ID AND M2.memberId = :user2ID")
                 .setParameter("user1ID", user1ID)
                 .setParameter("user2ID", user2ID)
                 .getResultList().stream().findFirst().orElse(null);
@@ -220,5 +223,9 @@ public class ChatManager extends Manager<ChatEntity> {
                 "WHERE M.chatId = :chatID ORDER BY M.date ASC")
                 .setParameter("chatID", chatID)
                 .getResultList();
+    }
+
+    private boolean isChatOfType(int chatID, ChatEntity.ChatType chatType){
+        return get(chatID).getType() == chatType;
     }
 }

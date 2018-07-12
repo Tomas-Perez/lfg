@@ -161,7 +161,7 @@ public class GroupResourceTest extends ApiTest {
         GameJSON gameJSON = new GameJSON(gameID, gameName);
         ActivityJSON activityJSON = new ActivityJSON(activityID, activityName, gameJSON);
         MemberJSON memberJSON = new MemberJSON(ownerID, username);
-        return new GroupJSON(id, slots, activityJSON, memberJSON, Collections.singletonList(memberJSON));
+        return new GroupJSON(id, slots, activityJSON, memberJSON, Collections.singletonList(memberJSON), null);
     }
     @Test
     public void getAll(){

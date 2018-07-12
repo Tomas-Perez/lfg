@@ -11,25 +11,39 @@ import java.util.List;
  */
 public class CreateChatJSON {
     private ChatType type;
-    private List<Integer> members;
+    private Integer recipient;
+    private Integer groupID;
 
     @JsonCreator
     public CreateChatJSON(
             @JsonProperty(value = "type", required = true) ChatType type,
-            @JsonProperty(value = "members", required = true) List<Integer> members) {
+            @JsonProperty(value = "recipient") Integer recipient,
+            @JsonProperty(value = "groupID") Integer groupID) {
         this.type = type;
-        if(type == ChatType.PRIVATE && members.size() > 2){
-            throw new BadRequestException("Private chats are for only two members.");
+        if (type == ChatType.PRIVATE){
+            if(recipient == null)
+                throw new BadRequestException("Need a recipient to create a private chat");
+        } else if (groupID == null) {
+            throw new BadRequestException("Need a group ID to make a group chat.");
         }
-        this.members = members;
+        this.groupID = groupID;
+        this.recipient = recipient;
     }
 
-    public List<Integer> getMembers() {
-        return members;
+    public Integer getRecipient() {
+        return recipient;
     }
 
-    public void setMembers(List<Integer> members) {
-        this.members = members;
+    public void setRecipient(Integer recipient) {
+        this.recipient = recipient;
+    }
+
+    public Integer getGroupID() {
+        return groupID;
+    }
+
+    public void setGroupID(Integer groupID) {
+        this.groupID = groupID;
     }
 
     public ChatType getType() {

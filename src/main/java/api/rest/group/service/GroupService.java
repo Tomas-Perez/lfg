@@ -1,5 +1,6 @@
 package api.rest.group.service;
 
+import api.rest.chat.service.ChatService;
 import persistence.entity.GroupEntity;
 import persistence.manager.GroupManager;
 import persistence.model.Group;
@@ -24,6 +25,9 @@ public class GroupService {
     @Inject
     private ModelBuilder modelBuilder;
 
+    @Inject
+    private ChatService chatService;
+
     public List<Group> getAll(){
         return groupManager.list()
                 .stream()
@@ -33,7 +37,9 @@ public class GroupService {
 
     public int newGroup(int slots, int activityID, int ownerID){
         GroupEntity group = new GroupEntity(slots, activityID, null, null, ownerID);
-        return groupManager.add(group);
+        final int groupID = groupManager.add(group);
+        chatService.newGroupChat(groupID);
+        return groupID;
     }
 
     public Group getGroup(int id){
@@ -54,6 +60,7 @@ public class GroupService {
     public void deleteGroup(int id){
         try {
             groupManager.delete(id);
+            chatService.deleteChat(getGroupChat(id));
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
@@ -62,6 +69,7 @@ public class GroupService {
     public void addMember(int id, int userID){
         try {
             groupManager.addMemberToGroup(id, userID);
+            chatService.addMember(getGroupChat(id), userID);
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
@@ -70,8 +78,13 @@ public class GroupService {
     public void removeMember(int id, int userID){
         try {
             groupManager.removeMemberFromGroup(id, userID);
+            chatService.removeMember(getGroupChat(id), userID);
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
+    }
+
+    private int getGroupChat(int groupID){
+        return groupManager.getGroupChat(groupID);
     }
 }
