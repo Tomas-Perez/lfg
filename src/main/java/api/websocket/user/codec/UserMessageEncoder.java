@@ -11,7 +11,7 @@ import javax.websocket.EndpointConfig;
 /**
  * @author Tomas Perez Molina
  */
-public class ChatMessageEncoder implements Encoder.Text<UserSocketMessage> {
+public class UserMessageEncoder implements Encoder.Text<UserSocketMessage> {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Override

@@ -13,8 +13,8 @@ import api.common.event.post.PostEvent;
 import api.websocket.common.AuthenticatedEndpoint;
 import api.websocket.common.config.CdiAwareConfigurator;
 import api.websocket.common.model.Payload;
-import api.websocket.user.codec.ChatMessageDecoder;
-import api.websocket.user.codec.ChatMessageEncoder;
+import api.websocket.user.codec.UserMessageDecoder;
+import api.websocket.user.codec.UserMessageEncoder;
 import api.websocket.user.model.UserSocketMessage;
 import api.websocket.user.model.payload.*;
 import org.apache.logging.log4j.LogManager;
@@ -38,8 +38,8 @@ import java.util.stream.Collectors;
 
 @Dependent
 @ServerEndpoint(value = "/websockets/user",
-        encoders = ChatMessageEncoder.class,
-        decoders = ChatMessageDecoder.class,
+        encoders = UserMessageEncoder.class,
+        decoders = UserMessageDecoder.class,
         configurator = CdiAwareConfigurator.class)
 public class UserEndpoint extends AuthenticatedEndpoint {
     private static final Map<Integer, Session> sessionsMap = Collections.synchronizedMap(new HashMap<>());

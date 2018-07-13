@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  * @author Tomas Perez Molina
  */
-public class ChatMessageDecoder implements Decoder.Text<UserSocketMessage> {
+public class UserMessageDecoder implements Decoder.Text<UserSocketMessage> {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
