@@ -4,6 +4,9 @@ import api.common.event.chat.ChatEvent;
 import api.common.event.chat.DeleteChat;
 import api.common.event.chat.NewChat;
 import api.common.event.friendrequest.*;
+import api.common.event.group.DeleteGroup;
+import api.common.event.group.GroupEvent;
+import api.common.event.group.NewGroup;
 import api.common.event.post.DeletePost;
 import api.common.event.post.NewPost;
 import api.common.event.post.PostEvent;
@@ -188,6 +191,16 @@ public class UserEndpoint extends AuthenticatedEndpoint {
     private void deletePost(@Observes @DeletePost PostEvent event){
         DeletePostPayload payload = new DeletePostPayload(event.getPostID());
         sendMessage(payload, event.getOwnerID());
+    }
+
+    private void newGroup(@Observes @NewGroup GroupEvent event){
+        NewGroupPayload payload = new NewGroupPayload(event.getId());
+        broadcastTo(payload, event.getNotifySet());
+    }
+
+    private void deleteGroup(@Observes @DeleteGroup GroupEvent event){
+        DeleteGroupPayload payload = new DeleteGroupPayload(event.getId());
+        broadcastTo(payload, event.getNotifySet());
     }
 
     private Set<Integer> getUserFriends(int id){

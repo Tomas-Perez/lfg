@@ -1,14 +1,14 @@
-package api.websocket.chat.model;
+package api.websocket.group.model;
 
-import api.websocket.chat.model.payload.*;
 import api.websocket.common.model.Payload;
+import api.websocket.group.model.payload.*;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * @author Tomas Perez Molina
  */
-public class ChatSocketMessage{
+public class GroupSocketMessage {
 
     private String type;
 
@@ -18,17 +18,15 @@ public class ChatSocketMessage{
             property = "type"
     )
     @JsonSubTypes({
-            @JsonSubTypes.Type(value = BroadcastAvailableUsersPayload.class, name = BroadcastAvailableUsersPayload.TYPE),
-            @JsonSubTypes.Type(value = BroadcastConnectedUserPayload.class, name = BroadcastConnectedUserPayload.TYPE),
-            @JsonSubTypes.Type(value = BroadcastDisconnectedUserPayload.class, name = BroadcastDisconnectedUserPayload.TYPE),
-            @JsonSubTypes.Type(value = BroadcastTextMessagePayload.class, name = BroadcastTextMessagePayload.TYPE),
-            @JsonSubTypes.Type(value = SendTextMessagePayload.class, name = SendTextMessagePayload.TYPE)
+            @JsonSubTypes.Type(value = DeleteMemberPayload.class, name = DeleteMemberPayload.TYPE),
+            @JsonSubTypes.Type(value = NewOwnerPayload.class, name = NewOwnerPayload.TYPE),
+            @JsonSubTypes.Type(value = NewMemberPayload.class, name = NewMemberPayload.TYPE)
     })
     private Payload payload;
 
-    public ChatSocketMessage() {}
+    public GroupSocketMessage() {}
 
-    public ChatSocketMessage(Payload payload) {
+    public GroupSocketMessage(Payload payload) {
         this.type = payload.getType();
         this.payload = payload;
     }

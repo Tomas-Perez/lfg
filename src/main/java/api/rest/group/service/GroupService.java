@@ -1,14 +1,21 @@
 package api.rest.group.service;
 
+import api.common.event.group.*;
 import api.rest.chat.service.ChatService;
+import api.rest.user.model.BasicUserData;
 import persistence.entity.GroupEntity;
+import persistence.entity.UserEntity;
 import persistence.manager.GroupManager;
+import persistence.manager.UserManager;
 import persistence.model.Group;
 import persistence.model.ModelBuilder;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -23,10 +30,33 @@ public class GroupService {
     private GroupManager groupManager;
 
     @Inject
+    private UserManager userManager;
+
+    @Inject
     private ModelBuilder modelBuilder;
 
     @Inject
     private ChatService chatService;
+
+    @Inject
+    @NewMember
+    private Event<MemberEvent> newMemberEvent;
+
+    @Inject
+    @DeleteMember
+    private Event<MemberEvent> deleteMemberEvent;
+
+    @Inject
+    @NewOwner
+    private Event<NewOwnerEvent> newOwnerEvent;
+
+    @Inject
+    @DeleteGroup
+    private Event<GroupEvent> deleteGroupEvent;
+
+    @Inject
+    @NewGroup
+    private Event<GroupEvent> newGroupEvent;
 
     public List<Group> getAll(){
         return groupManager.list()
@@ -39,6 +69,7 @@ public class GroupService {
         GroupEntity group = new GroupEntity(slots, activityID, null, null, ownerID);
         final int groupID = groupManager.add(group);
         chatService.newGroupChat(groupID);
+        newGroupEvent.fire(new GroupEvent(groupID, Collections.singleton(ownerID)));
         return groupID;
     }
 
@@ -58,18 +89,24 @@ public class GroupService {
     }
 
     public void deleteGroup(int id){
+        final List<Integer> groupMembers = groupManager.getGroupMembers(id);
+
         try {
             groupManager.delete(id);
             chatService.deleteChat(getGroupChat(id));
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
+
+        deleteGroupEvent.fire(new GroupEvent(id, new HashSet<>(groupMembers)));
     }
 
     public void addMember(int id, int userID){
         try {
             groupManager.addMemberToGroup(id, userID);
             chatService.addMember(getGroupChat(id), userID);
+            newMemberEvent.fire(createMemberEvent(id, userID));
+            newGroupEvent.fire(new GroupEvent(id, Collections.singleton(userID)));
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
@@ -79,6 +116,17 @@ public class GroupService {
         try {
             groupManager.removeMemberFromGroup(id, userID);
             chatService.removeMember(getGroupChat(id), userID);
+            deleteMemberEvent.fire(createMemberEvent(id, userID));
+            deleteGroupEvent.fire(new GroupEvent(id, Collections.singleton(userID)));
+        } catch (NoSuchElementException exc){
+            throw new NotFoundException();
+        }
+    }
+
+    public void replaceOwner(int id, int newOwnerID){
+        try {
+            int oldOwnerID = groupManager.replaceOwner(id, newOwnerID);
+            newOwnerEvent.fire(new NewOwnerEvent(id, oldOwnerID, newOwnerID));
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
@@ -86,5 +134,11 @@ public class GroupService {
 
     private int getGroupChat(int groupID){
         return groupManager.getGroupChat(groupID);
+    }
+
+    private MemberEvent createMemberEvent(int groupID, int userID){
+        UserEntity user = userManager.get(userID);
+        BasicUserData data = new BasicUserData(user.getId(), user.getUsername());
+        return new MemberEvent(groupID, data);
     }
 }

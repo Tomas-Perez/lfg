@@ -22,7 +22,6 @@ import javax.persistence.EntityManager;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;

@@ -27,7 +27,9 @@ public class UserSocketMessage {
             @JsonSubTypes.Type(value = NewFriendPayload.class, name = NewFriendPayload.TYPE),
             @JsonSubTypes.Type(value = DeleteFriendPayload.class, name = DeleteFriendPayload.TYPE),
             @JsonSubTypes.Type(value = NewPostPayload.class, name = NewPostPayload.TYPE),
-            @JsonSubTypes.Type(value = DeletePostPayload.class, name = DeletePostPayload.TYPE)
+            @JsonSubTypes.Type(value = DeletePostPayload.class, name = DeletePostPayload.TYPE),
+            @JsonSubTypes.Type(value = NewGroupPayload.class, name = NewGroupPayload.TYPE),
+            @JsonSubTypes.Type(value = DeleteGroupPayload.class, name = DeleteGroupPayload.TYPE)
     })
     private Payload payload;
 
