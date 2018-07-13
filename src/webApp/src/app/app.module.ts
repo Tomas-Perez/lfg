@@ -14,6 +14,7 @@ import {AdminPanelModule} from './admin-panel/admin-panel.module';
 import {GameService} from './_services/game.service';
 import { GroupService } from './_services/group.service';
 import {AdminGuardService} from './_services/guards/admin-guard.service';
+import {HttpService} from './_services/http.service';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import {AdminGuardService} from './_services/guards/admin-guard.service';
     AppRouting,
   ],
   providers: [
+    HttpService,
     AuthService,
     httpInterceptorProviders,
     UserService,

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import {catchError, map} from 'rxjs/operators';
 import 'rxjs/add/observable/of';
@@ -7,64 +6,23 @@ import 'rxjs/add/observable/empty';
 import 'rxjs/add/operator/share';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {ActivatedRoute, Router} from '@angular/router';
+import {HttpService} from './http.service';
 
 
 @Injectable()
 export class AuthService {
 
-  static authUrl = 'http://localhost:8080/lfg/sign-in';
-  private userMeUrl = 'http://localhost:8080/lfg/users/me';
+  static authUrl = '/sign-in';
+  private userMeUrl = '/users/me';
 
 
   private loggedIn = false;
   private loggedIn$ = new BehaviorSubject<boolean>(this.loggedIn);
 
-  constructor(private http: HttpClient,
+  constructor(private http: HttpService,
               private router: Router,
               private route: ActivatedRoute
               ) {
-
-    /*
-       const lul = this.jsonConvert.deserialize({
-           'posts': [
-             {
-               'id': 123,
-               'activity': {
-                 'id': 111,
-                 'name': 'activityyy',
-                 'game': {
-                   'id': 222,
-                   'name': 'gameee'
-                 }
-               },
-               'owner': {
-                 'id': 11234123,
-                 'name': 'ownerName',
-               },
-               'date': '1995-12-17T03:24:00',
-               'description': 'descriptionnnn'
-             },
-             {
-               'id': 123,
-               'activity': {
-                 'id': 111,
-                 'name': 'activityyy',
-                 'game': {
-                   'id': 222,
-                   'name': 'gameee'
-                 }
-               },
-               "owner": {
-                 "id": 11234123,
-                 "name": "ownerName",
-               },
-               'date': '1995-12-17T03:24:00',
-               'description': 'descriptionnnn'
-             }
-           ]}.posts,
-         Post);
-       console.log(lul);
-    */
 
     if (this.tokenValid()) {
       this.setLoggedIn(true);
@@ -99,7 +57,7 @@ export class AuthService {
    * @returns {Observable<boolean>}
    */
   authenticate(email: string, password: string): Observable<boolean> {
-    return this.http.post<any>(AuthService.authUrl, {email: email, password: password}, {
+    return this.http.post(AuthService.authUrl, {email: email, password: password}, {
       observe: 'response'
     })
       .pipe(
@@ -123,7 +81,7 @@ export class AuthService {
    * @returns {Observable<boolean>}
    */
   authAdmin(): Observable<boolean> {
-    return this.http.get<any>(this.userMeUrl,
+    return this.http.get(this.userMeUrl,
       {
         observe: 'response'
       })
