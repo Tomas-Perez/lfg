@@ -73,7 +73,7 @@ public class GroupManager extends Manager<GroupEntity>{
         }
 
         if(emptyGroup(groupID)) delete(groupID);
-        else if(reassignOwner) reassignOwner(groupID);
+        else if(reassignOwner) reassignRandomOwner(groupID);
     }
 
     public void delete(int groupID){
@@ -132,7 +132,7 @@ public class GroupManager extends Manager<GroupEntity>{
             throw new ConstraintException(String.format("Group with id: %d does not exist", groupID));
     }
 
-    private void reassignOwner(int groupID){
+    private void reassignRandomOwner(int groupID){
         Integer newOwnerID = getNewOwnerID(groupID);
         assignOwner(groupID, newOwnerID);
     }
@@ -152,6 +152,30 @@ public class GroupManager extends Manager<GroupEntity>{
             if (tx!=null) tx.rollback();
             e.printStackTrace();
         }
+    }
+
+    public int replaceOwner(int groupID, int newOwnerID){
+        EntityTransaction tx = manager.getTransaction();
+        GroupMemberEntityPK newOwnerKey = new GroupMemberEntityPK(groupID, newOwnerID);
+        final Integer oldOwnerID = getGroupOwner(groupID);
+        GroupMemberEntityPK oldOwnerKey = new GroupMemberEntityPK(groupID, oldOwnerID);
+        try {
+            tx.begin();
+            GroupMemberEntity oldOwnerEntity = manager.find(GroupMemberEntity.class, oldOwnerKey);
+            GroupMemberEntity newOwnerEntity = manager.find(GroupMemberEntity.class, newOwnerKey);
+            if(oldOwnerEntity == null || newOwnerEntity == null) throw new IllegalArgumentException();
+            oldOwnerEntity.setOwner(false);
+            newOwnerEntity.setOwner(true);
+            tx.commit();
+        } catch (IllegalArgumentException exc){
+            if (tx!=null) tx.rollback();
+            throw new NoSuchElementException();
+        } catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+        }
+
+        return oldOwnerID;
     }
 
     private Integer getNewOwnerID(int groupID){
