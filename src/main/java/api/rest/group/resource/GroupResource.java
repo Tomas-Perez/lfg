@@ -1,5 +1,6 @@
 package api.rest.group.resource;
 
+import api.rest.group.model.ReplaceOwnerJSON;
 import persistence.model.Group;
 import api.rest.group.model.AddMemberJSON;
 import api.rest.group.model.CreateGroupJSON;
@@ -63,6 +64,13 @@ public class GroupResource {
     public Response get(@PathParam("id") int id){
         Group group = service.getGroup(id);
         return Response.ok(new GroupJSON(group)).build();
+    }
+
+    @POST
+    @Path("{id}")
+    public Response replaceOwner(@PathParam("id") int id, ReplaceOwnerJSON ownerJSON){
+        service.replaceOwner(id, ownerJSON.getNewOwnerID());
+        return Response.noContent().build();
     }
 
     @DELETE
