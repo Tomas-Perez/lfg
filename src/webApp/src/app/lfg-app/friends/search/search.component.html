@@ -1,0 +1,34 @@
+<div class="search-wrapper">
+  <div class="title">
+    <h1>Add a friend</h1>
+  </div>
+  <div class="search-input-wrapper">
+    <label for="InputSearch">
+      <span class="subtitle">Search Friends</span>
+    </label>
+    <input name="InputSearch" [(ngModel)]="searchInput" id="InputSearch" class="form-control form-input"
+           (input)="onSearchChange($event)" placeholder="Search" #search="ngModel">
+  </div>
+  <div class="result-wrapper">
+    <div data-simplebar data-simplebar-auto-hide="false">
+      <div class="friends-wrapper">
+        <div *ngIf="results.length == 0" class="no-found">
+          <span>
+            No user found
+          </span>
+        </div>
+        <div *ngFor="let user of results"  class="friend-wrapper">
+          <div class="friend">
+            <div class="user-img-wrapper">
+              <img src="/assets/user/user-default.png" class="user-img">
+            </div>
+            <span (click)="getUserInfo(user.id)" class="friend-username">
+              {{user.username}}
+            </span>
+            <span class="hand send-request" title="Add friend" (click)="sendFriendRequest(user.id)">Add</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

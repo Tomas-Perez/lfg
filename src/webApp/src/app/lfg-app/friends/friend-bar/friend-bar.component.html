@@ -14,5 +14,12 @@
         <span *ngIf="friendRequests" class="data-count">{{friendRequests}}</span>
       </span>
     </li>
+    <li class="friends-bar-item" (click)="navigate('search')"
+        [ngClass]="{'active': friendLocation == FriendLocation.SEARCH}">
+
+      <span class="fa-stack">
+        <i class="fa fa-search fa-2x"></i>
+      </span>
+    </li>
   </ul>
 </div>

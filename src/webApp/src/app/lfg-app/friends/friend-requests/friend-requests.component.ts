@@ -5,7 +5,7 @@ import {BasicUser} from '../../../_models/BasicUser';
 import {FriendService} from '../../../_services/friend.service';
 import 'rxjs/add/operator/takeUntil';
 import {Subject} from 'rxjs/Subject';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-friend-requests',
@@ -20,8 +20,7 @@ export class FriendRequestsComponent implements OnInit, OnDestroy {
 
   constructor(private friendBarService: FriendStateService,
               private friendService: FriendService,
-              private router: Router,
-              private route: ActivatedRoute
+              private router: Router
               ) { }
 
   ngOnInit() {
@@ -38,20 +37,20 @@ export class FriendRequestsComponent implements OnInit, OnDestroy {
     });
   }
 
-  acceptRequest(id: number) { // TODO interface
+  acceptRequest(id: number) {
     this.friendService.confirmFriendRequest(id).subscribe(response => {
       this.friendService.updateFriendRequests();
       this.friendService.updateFriends();
     });
   }
 
-  deleteRequest(id: number) { // TODO interface
+  deleteRequest(id: number) {
     this.friendService.removeFriend(id).subscribe(response => {
       this.friendService.updateFriendRequests();
     });
   }
 
-  deleteSentRequest(id: number) { // TODO interface
+  deleteSentRequest(id: number) {
     this.friendService.removeFriend(id).subscribe(response => {
       this.friendService.updateSentRequests();
     });

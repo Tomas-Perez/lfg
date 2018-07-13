@@ -6,6 +6,7 @@ import {Chat} from '../../_models/Chat';
 import {Subscription} from 'rxjs/Subscription';
 import {UserService} from '../../_services/user.service';
 import {User} from '../../_models/User';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-chat',
@@ -18,14 +19,18 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   user: User;
   chats: Chat[];
   messageSubscriptions: Map<number, Subscription>;
-  chatTitles: string[];
+  chatTitles: {title: string, id: number}[];
 
   @ViewChildren('messages') messageFor: QueryList<any>;
   activatedTabIndex: number;
   messageInput: string;
   chatOpen: boolean;
 
-  constructor(private chatService: ChatService, private userService: UserService) { }
+  constructor(
+    private chatService: ChatService,
+    private userService: UserService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.messageInput = '';
@@ -110,11 +115,18 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
    * Returns name of the chatter if its only one or 'Group' if its a group
    * @returns {string}
    */
-  getChatTitle(chat: Chat): string {
+  getChatTitle(chat: Chat): {title: string, id: number} {
     if (chat.members.length > 2) {
-      return 'Group';
+      return {title: 'Group', id: -1};
     }
-    return chat.members[0].id === this.user.id ? chat.members[1].username : chat.members[0].username;
+    return chat.members[0].id === this.user.id ? {title: chat.members[1].username, id: chat.members[1].id}
+                                    : {title: chat.members[0].username, id: chat.members[0].id};
+  }
+
+  getUserInfo(id: number) {
+    this.router.navigate(['/app', { outlets: {friends: ['user-info', id] }}], {
+      skipLocationChange: true
+    });
   }
 
   ngOnDestroy() {

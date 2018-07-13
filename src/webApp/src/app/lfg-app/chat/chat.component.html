@@ -4,9 +4,12 @@
       <div *ngFor="let chatTitle of chatTitles; let i = index" class="tab" [ngClass]="{'tab-active': activatedTabIndex == i}" (click)="activateTab(i)">
         <div class="tab-content">
           <span class="tab-username" (click)="openChat()">
-            {{chatTitle}}
+            {{chatTitle.title}}
           </span>
-          <span class="tab-close" (click)="closeTab(i)">×</span>
+          <span *ngIf="chatTitle.id >= 0" class="tab-option" (click)="getUserInfo(chatTitle.id)">
+            <i class="fa fa-info-circle"></i>
+          </span>
+          <span class="tab-option" (click)="closeTab(i)">×</span>
         </div>
       </div>
     </div>
@@ -38,7 +41,7 @@
     <div class="send-message-wrapper">
       <form (ngSubmit)="sendMessage()">
        <input name="InputMessage" [(ngModel)]="messageInput" type="text" id="InputMessage" class="message-input"
-             autocomplete="off" placeholder="{{chats.length ? 'Message ' + chatTitles[activatedTabIndex] : ''}}">
+             autocomplete="off" placeholder="{{chats.length ? 'Message ' + chatTitles[activatedTabIndex].title : ''}}">
         <button type="submit" class="btn btn-send-message">
           »
         </button>

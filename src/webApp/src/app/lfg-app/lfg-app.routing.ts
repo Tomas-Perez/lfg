@@ -12,6 +12,7 @@ import {FriendListComponent} from './friends/friend-list/friend-list.component';
 import {FriendRequestsComponent} from './friends/friend-requests/friend-requests.component';
 import {UserInfoComponent} from './friends/user-info/user-info.component';
 import {EditUserComponent} from './spekbar/edit-user/edit-user.component';
+import {SearchComponent} from './friends/search/search.component';
 
 const routes: Routes = [
   { path: 'app', component: LfgAppComponent, canActivate: [AuthUserGuardService], children: [
@@ -24,7 +25,8 @@ const routes: Routes = [
     {path: '', component: FriendListComponent, outlet: 'friends'},
     {path: 'friend-list', component: FriendListComponent, outlet: 'friends'},
     {path: 'user-info/:id', component: UserInfoComponent, outlet: 'friends'},
-    {path: 'friend-requests', component: FriendRequestsComponent, outlet: 'friends'}
+    {path: 'friend-requests', component: FriendRequestsComponent, outlet: 'friends'},
+    {path: 'search', component: SearchComponent, outlet: 'friends'}
   ]}
 ];
 

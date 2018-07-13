@@ -30,6 +30,7 @@ import { ChatService } from '../_services/chat.service';
 import { UserSocketService } from '../_services/user-socket.service';
 import { EditUserComponent } from './spekbar/edit-user/edit-user.component';
 import {ImageUploadModule} from 'angular2-image-upload';
+import { SearchComponent } from './friends/search/search.component';
 
 
 @NgModule({
@@ -48,7 +49,8 @@ import {ImageUploadModule} from 'angular2-image-upload';
     UserInfoComponent,
     MeInfoComponent,
     ChatComponent,
-    EditUserComponent
+    EditUserComponent,
+    SearchComponent
   ],
   imports: [
     CommonModule,
