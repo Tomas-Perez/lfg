@@ -49,7 +49,7 @@ export class PostFlowComponent implements OnInit, OnDestroy {
   }
 
   joinGroup(groupId: number) {
-    this.groupService.joinGroupRequest(groupId)
+    this.groupService.joinGroup(groupId)
       .subscribe(response => {
         if (response) {
           this.router.navigate(['/app', { outlets: {spekbar: ['group'] }}], {

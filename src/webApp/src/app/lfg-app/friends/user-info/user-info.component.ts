@@ -29,7 +29,6 @@ export class UserInfoComponent implements OnInit {
     this.friendBarService.friendLocationSubject.next(FriendLocation.USERINFO);
 
     this.isAlreadyFriend = false;
-    this.isAlreadyFriend = false;
     this.isRequestSent = false;
     this.isRequestReceived = false;
 
@@ -52,8 +51,6 @@ export class UserInfoComponent implements OnInit {
     this.friendService.sendFriendRequest(this.user.id)
       .subscribe(response => {
         if (response) {
-          this.isRequestSent = true;
-          this.friendService.updateSentRequests();
           this.isRequestSent = true;
         }
     });

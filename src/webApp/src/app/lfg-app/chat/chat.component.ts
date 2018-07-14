@@ -7,6 +7,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {UserService} from '../../_services/user.service';
 import {User} from '../../_models/User';
 import {Router} from '@angular/router';
+import {ChatType} from '../../_models/ChatType';
 
 @Component({
   selector: 'app-chat',
@@ -60,7 +61,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    //this.scrollToBottom();
+    // this.scrollToBottom();
     this.messageFor.changes.subscribe(t => {
       this.scrollToBottom();
     });
@@ -116,7 +117,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
    * @returns {string}
    */
   getChatTitle(chat: Chat): {title: string, id: number} {
-    if (chat.members.length > 2) {
+    if (chat.type === ChatType.GROUP) {
       return {title: 'Group', id: -1};
     }
     return chat.members[0].id === this.user.id ? {title: chat.members[1].username, id: chat.members[1].id}

@@ -7,7 +7,7 @@
       <span class="subtitle">Search Friends</span>
     </label>
     <input name="InputSearch" [(ngModel)]="searchInput" id="InputSearch" class="form-control form-input"
-           (input)="onSearchChange($event)" placeholder="Search" #search="ngModel">
+           (input)="onSearchChanged($event)" placeholder="Search" #search="ngModel">
   </div>
   <div class="result-wrapper">
     <div data-simplebar data-simplebar-auto-hide="false">
@@ -17,15 +17,15 @@
             No user found
           </span>
         </div>
-        <div *ngFor="let user of results"  class="friend-wrapper">
+        <div *ngFor="let result of results"  class="friend-wrapper">
           <div class="friend">
             <div class="user-img-wrapper">
               <img src="/assets/user/user-default.png" class="user-img">
             </div>
-            <span (click)="getUserInfo(user.id)" class="friend-username">
-              {{user.username}}
+            <span (click)="getUserInfo(result.user.id)" class="friend-username">
+              {{result.user.username}}
             </span>
-            <span class="hand send-request" title="Add friend" (click)="sendFriendRequest(user.id)">Add</span>
+            <span *ngIf="!result.isFriend" class="hand send-request" title="Add friend" (click)="sendFriendRequest(result.user.id)">Add</span>
           </div>
         </div>
       </div>

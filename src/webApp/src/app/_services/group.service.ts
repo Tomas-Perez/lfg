@@ -8,27 +8,95 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {UserService} from './user.service';
 import {User} from '../_models/User';
 import {HttpService} from './http.service';
+import {$WebSocket} from 'angular2-websocket/angular2-websocket';
+import {WsService} from './ws.service';
+import {AuthService} from './auth.service';
 
 @Injectable()
 export class GroupService {
 
   private jsonConvert: JsonConvert = new JsonConvert();
   private groupsUrl = '/groups';
+  private groupWsUrl: string;
   private currentGroup: Group;
   private user: User;
+  private groupWs: $WebSocket;
   currentGroupSubject: BehaviorSubject<Group>;
 
-  constructor(private http: HttpService, private userService: UserService) {
+  constructor(private http: HttpService,
+              private userService: UserService,
+              private wsService: WsService,
+              private authService: AuthService
+  ) {
+    this.groupWsUrl = this.wsService.getUrl('/groups/');
+    this.currentGroup = null;
     this.currentGroupSubject = new BehaviorSubject<Group>(null);
-    this.currentGroupSubject.subscribe(group => this.currentGroup = group);
+    this.currentGroupSubject.subscribe(group => {
+      if (group != null) {
+        this.connectToGroupWs(group.id);
+      } else {
+        if (this.groupWs) {
+          this.groupWs.close();
+        }
+      }
+    });
     this.userService.userSubject.subscribe( user => {
       this.user = user;
       if (user !== null && user.groups.length) {
         this.updateGroup(user.groups[0].id).subscribe();
       } else {
+        this.currentGroup = null;
         this.currentGroupSubject.next(null);
+        if (this.groupWs) {
+          this.groupWs.close();
+        }
       }
     });
+  }
+
+
+  onNewMember(id: number, username: string) {
+    this.currentGroup.addMember(id, username);
+  }
+
+  onDeleteMember(id: number) {
+    this.currentGroup.deleteMember(id);
+  }
+
+  onNewOwner(oldOwner: number, newOwner: number) {
+    this.currentGroup.changeOwner(newOwner);
+  }
+
+  private connectToGroupWs(id: number) { // TODO handle error
+
+    if (this.groupWs) {
+      this.groupWs.close();
+    }
+
+    const url = this.groupWsUrl + id + '?access-token=' + this.authService.getAccessToken();
+    const ws = new $WebSocket(url);
+
+    ws.onMessage(
+      (msg: MessageEvent) => {
+        const msgData = JSON.parse(msg.data);
+        console.log(msgData);
+        switch (msgData.type) {
+          case 'newMember': {
+            this.onNewMember(msgData.payload.id, msgData.payload.username);
+            break;
+          }
+          case 'deleteMember': {
+            this.onDeleteMember(msgData.payload.id);
+            break;
+          }
+          case 'newOwner': {
+            this.onNewOwner(msgData.payload.oldOwnerId, msgData.payload.newOwnerId);
+            break;
+          }
+        }
+      });
+
+    this.groupWs = ws;
   }
 
   newGroup(group: DbGroup): Observable<boolean> {
@@ -40,11 +108,12 @@ export class GroupService {
           const createdGroupUrl = response.headers.get('location');
           return this.http.get(createdGroupUrl, {
             observe: 'response'
-          })
+          }, true)
             .pipe(
               switchMap( getGroupResponse => {
-                  const newGroup = this.jsonConvert.deserialize(getGroupResponse.body, Group);
-                  this.currentGroupSubject.next(newGroup);
+                  console.log(getGroupResponse);
+                  this.currentGroup = this.jsonConvert.deserialize(getGroupResponse.body, Group);
+                  this.currentGroupSubject.next(this.currentGroup);
                   return Observable.of(true);
                 }
               ),
@@ -67,8 +136,8 @@ export class GroupService {
     })
       .pipe(
         map( getGroupResponse => {
-            const newGroup = this.jsonConvert.deserialize(getGroupResponse.body, Group);
-            this.currentGroupSubject.next(newGroup);
+            this.currentGroup = this.jsonConvert.deserialize(getGroupResponse.body, Group);
+            this.currentGroupSubject.next(this.currentGroup);
             return true;
           }
         ),
@@ -87,7 +156,7 @@ export class GroupService {
       return this.leaveGroup().pipe(
         switchMap(result => {
           if (result) {
-            return this.joinGroup(idGroup);
+            return this.joinGroupRequest(idGroup);
           } else {
             return this.joinGroupErrorHandle();
           }
@@ -95,7 +164,7 @@ export class GroupService {
         catchError((err: any) => this.leaveGroupErrorHandle(err))
       );
     } else {
-      return this.joinGroup(idGroup);
+      return this.joinGroupRequest(idGroup);
     }
   }
 
@@ -123,6 +192,7 @@ export class GroupService {
     })
       .pipe(
         map(response => {
+          this.currentGroup = null;
           this.currentGroupSubject.next(null);
           return true;
         }),

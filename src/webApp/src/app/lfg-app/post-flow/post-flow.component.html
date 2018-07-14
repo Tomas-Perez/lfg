@@ -47,7 +47,7 @@
           </div>
           <!--<span>{{post.group.id}}</span>-->
           <div class="group-data">
-            <button *ngIf="!inGroup" class="join-group" (click)="joinGroup(post.group.id)">
+            <button *ngIf="!inGroup && post.group.members.length < post.group.slots" class="join-group" (click)="joinGroup(post.group.id)">
               join
             </button>
           </div>

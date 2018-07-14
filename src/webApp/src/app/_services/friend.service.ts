@@ -69,6 +69,10 @@ export class FriendService {
             this.onReceivedRequest(user);
             break;
           }
+          case FriendAction.SENTREQUEST: {
+            this.onSentRequest(user);
+            break;
+          }
           case FriendAction.NEW: {
             this.onDeleteFriend(user);
             this.onNewFriend(user);
@@ -137,6 +141,11 @@ export class FriendService {
   private onReceivedRequest(user: BasicUser) {
     this.receivedFriendRequests.push(user);
     this.receivedRequestsSubject.next(this.receivedFriendRequests);
+  }
+
+  private onSentRequest(user: BasicUser) {
+    this.sentRequestsList.push(user);
+    this.sentRequestsSubject.next(this.sentRequestsList);
   }
 
   private clearStatusBuffer() {
@@ -307,6 +316,10 @@ export class FriendService {
       }
     }
     return false;
+  }
+
+  isFriendOrWillBe(id: number) {
+    return this.isInFriendList(id) || this.isInReceivedRequestsList(id) || this.isInSentRequestsList(id);
   }
 
 }

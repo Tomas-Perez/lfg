@@ -1,6 +1,7 @@
 import {JsonObject, JsonProperty} from 'json2typescript';
 import {Message} from './Message';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {ChatType} from './ChatType';
 
 @JsonObject
 class Member {
@@ -10,7 +11,7 @@ class Member {
   @JsonProperty('username', String)
   username: string = undefined;
 
-  constructor(id?: number, username?: string){
+  constructor(id?: number, username?: string) {
     this.id = id || undefined;
     this.username = username || undefined;
   }
@@ -27,6 +28,9 @@ export class Chat {
 
   @JsonProperty('messages', [Message], true)
   messages: Message[] = [];
+
+  @JsonProperty('type', ChatType, true)
+  type: ChatType = undefined;
 
   messagesSubject: BehaviorSubject<Message[]> = new BehaviorSubject<Message[]>(this.messages);
 

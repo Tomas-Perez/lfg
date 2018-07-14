@@ -5,6 +5,12 @@ import {BasicUser} from '../../../_models/BasicUser';
 import {Router} from '@angular/router';
 import {FriendService} from '../../../_services/friend.service';
 import {Subject} from 'rxjs/Subject';
+import {UserService} from '../../../_services/user.service';
+import 'rxjs/add/operator/takeUntil';
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/distinctUntilChanged';
+import {SearchService} from './search.service';
+import {User} from '../../../_models/User';
 
 @Component({
   selector: 'app-search',
@@ -14,17 +20,34 @@ import {Subject} from 'rxjs/Subject';
 export class SearchComponent implements OnInit, OnDestroy {
 
   private ngUnsubscribe: Subject<any> = new Subject();
+  user: User;
+  searchChanged: Subject<string>;
+  results: {user: BasicUser, isFriend: boolean}[];
   searchInput: string;
-  results: BasicUser[];
 
   constructor(
     private friendBarService: FriendStateService,
     private friendService: FriendService,
+    private userService: UserService,
+    private searchService: SearchService,
     private router: Router
   ) { }
 
   ngOnInit() {
-    this.searchInput = '';
+
+    this.userService.userSubject.take(1).subscribe(user => this.user = user);
+
+    this.searchService.searchTextSubject.take(1).subscribe(searchText => {
+      this.searchInput = searchText;
+      this.search(this.searchInput);
+    });
+
+    this.searchChanged = new Subject<string>();
+
+    this.searchChanged
+      .debounceTime(300)
+      .distinctUntilChanged()
+      .subscribe(searchText => this.search(searchText));
 
     /*
     const a = new BasicUser();
@@ -40,7 +63,12 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.friendBarService.friendLocationSubject.next(FriendLocation.SEARCH);
   }
 
+  onSearchChanged(event) {
+    this.searchChanged.next(this.searchInput);
+  }
+
   getUserInfo(id: number) {
+    if (this.user.id === id) {return; }
     this.router.navigate(['/app', { outlets: {friends: ['user-info', id] }}], {
       skipLocationChange: true
     });
@@ -50,20 +78,34 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.friendService.sendFriendRequest(id)
       .subscribe(response => {
         if (response) {
-          this.friendService.updateSentRequests();
+          this.search(this.searchInput);
         }
       });
   }
 
-  onSearchChange(event: Event) {
-    console.log(event);
-    // TODO search
+  search(text: string) {
     this.ngUnsubscribe.next();
-    // this.friendService.search(this.searchInput).takeUntil(this.ngUnsubscribe).subscribe(result => this.results = results);
+    const sText = text.trim();
+    if (sText === '') {
+      this.results = [];
+      return;
+    }
+    this.userService.searchUsers(sText).takeUntil(this.ngUnsubscribe).subscribe(users => {
+      const results = [];
+      for (const user of users) {
+        results.push({user: user, isFriend: this.isAlreadyFriendOrMe(user.id)});
+      }
+      this.results = results;
+    });
+  }
+
+  isAlreadyFriendOrMe(id: number): boolean {
+    return this.user.id === id || this.friendService.isFriendOrWillBe(id);
   }
 
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+    this.searchService.updateSearchText(this.searchInput);
   }
 }

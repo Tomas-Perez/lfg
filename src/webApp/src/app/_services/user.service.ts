@@ -7,12 +7,14 @@ import {AuthService} from './auth.service';
 import {JsonConvert} from 'json2typescript';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {HttpService} from './http.service';
+import {BasicUser} from '../_models/BasicUser';
 
 @Injectable()
 export class UserService {
 
   private signUpUrl = '/sign-up';
   private userMeUrl = '/users/me';
+  private usersUrl = '/users';
 
   private jsonConvert: JsonConvert = new JsonConvert();
 
@@ -85,5 +87,24 @@ export class UserService {
       // case 420
       default: return Observable.of(SignUpStatus.error);
     }
+  }
+
+  searchUsers(search: string): Observable<BasicUser[]> {
+    return this.http.get(this.usersUrl + '?search=' + search,
+      {
+        observe: 'response'
+      })
+      .pipe(
+        map(response => {
+          console.log(response);
+          return this.jsonConvert.deserialize(response.body, BasicUser);
+        }),
+        catchError(err => this.searchUsersErrorHandle(err))
+      );
+  }
+
+  private searchUsersErrorHandle(err: any): Observable<BasicUser[]> {
+    console.log(err);
+    return Observable.of([]);
   }
 }

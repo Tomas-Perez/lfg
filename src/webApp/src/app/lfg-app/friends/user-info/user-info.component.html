@@ -2,11 +2,13 @@
   <span *ngIf="isAlreadyFriend" class="friend-icon" title="You are friends with {{user.username}}">
     <i class="fas fa-user-check"></i>
   </span>
-  <div class="title">
+  <div class="username-img-wrapper">
     <div class="user-img-wrapper">
       <img src="/assets/user/user-default.png" class="user-img">
     </div>
-    <h1>{{user.username}}</h1>
+    <div class="username-wrapper">
+      <h1>{{user.username}}</h1>
+    </div>
   </div>
   <div class="options">
     <button type="button" class="btn btn-primary-lfg" (click)="newChat()">

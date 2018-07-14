@@ -75,3 +75,7 @@
   margin: 5px 0;
   color: #ffffff9e;
 }
+
+.result-wrapper {
+  max-height: 550px;
+}

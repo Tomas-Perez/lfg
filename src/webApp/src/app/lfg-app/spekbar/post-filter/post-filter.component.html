@@ -7,7 +7,7 @@
       <label for="SelectGame">
         <span class="bold">Game</span>
       </label>
-      <select class="form-control form-select" id="SelectGame" [(ngModel)]="selectedGameIndex" name="game" required>
+      <select (change)="gameChanged($event)" class="form-control form-select" id="SelectGame" [(ngModel)]="selectedGameIndex" name="game" required>
         <option class="form-option" *ngFor="let game of games; index as i" [value]="i">{{game.name}}</option>
       </select>
     </div>

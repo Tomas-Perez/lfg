@@ -11,7 +11,6 @@ import {User} from '../../../_models/User';
 import {SpekbarLocation} from '../../_models/SpekbarLocation';
 import {NavBarService} from '../../_services/nav-bar.service';
 import {ChatService} from '../../../_services/chat.service';
-import {ChatType} from '../../../_models/ChatType';
 
 @Component({
   selector: 'app-new-group',

@@ -50,11 +50,14 @@ export class NewPostComponent implements OnInit, OnDestroy {
         });
     });
 
-    this.postService.currentPostSubject.subscribe(post => this.post = post);
+    this.postService.currentPostSubject.takeUntil(this.ngUnsubscribe).subscribe(post => this.post = post);
 
   }
 
   newPost() {
+    if (this.newPostModel.selectedGameIndex < 0 || this.newPostModel.dbPost.activityID === undefined) {
+      return;
+    }
     this.newPostModel.dbPost.ownerID = this.user.id;
     this.postService.newPost(this.newPostModel.dbPost).subscribe(
       response => {

@@ -32,8 +32,8 @@
 }
 
 .user-img{
-  width: 60px;
-  height: 60px;
+  width: 75px;
+  height: 75px;
   border-radius: 50%;
   background: #b9b9bb;
 }
@@ -151,6 +151,8 @@
 /deep/ .image-upload .img-ul-image{
   background-color: #000000 !important;
   border-radius: 100% !important;
+  height: 75px !important;
+  width: 75px !important;
 }
 
 /deep/ .image-upload .img-ul-x-mark{

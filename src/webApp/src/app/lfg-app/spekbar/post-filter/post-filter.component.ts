@@ -47,6 +47,10 @@ export class PostFilterComponent implements OnInit, OnDestroy {
       .subscribe( activeFilters => this.activeFilters = activeFilters);
   }
 
+  gameChanged(event) {
+    this.selectedActivityIndex = -1;
+  }
+
   addFilter() {
     if (this.selectedGameIndex >= 0) {
       const game = this.games[this.selectedGameIndex];

@@ -13,19 +13,9 @@
   background-color: #a7593f;
 }
 
-.title{
-  display: flex;
-  flex-direction: row;
-  flex: 1 0;
-  text-align: center;
-  margin: 0.5rem 0;
-}
-
-.title h1{
-  margin: unset;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.username-wrapper h1 {
+  font-weight: 600;
+  font-size: 22px;
 }
 
 .friend-icon{
@@ -45,14 +35,30 @@
 }
 
 .user-img{
-  width: 30px;
-  height: 30px;
+  width: 75px;
+  height: 75px;
   border-radius: 50%;
   background: #b9b9bb;
 }
 
 .user-img-wrapper{
-  margin-right: 10px;
-  width: fit-content;
-  height: fit-content;
+  display: flex;
+  flex-direction: row;
+  flex: 0 0 auto;
+  justify-content: center;
+}
+
+.username-img-wrapper{
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  margin: 1.5rem 0;
+}
+
+.username-wrapper{
+  display: flex;
+  flex-direction: row;
+  flex: 0 0 auto;
+  justify-content: center;
+  margin-top: 0.5rem;
 }
