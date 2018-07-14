@@ -59,7 +59,7 @@ public class PostEndpoint {
 
     @OnError
     public void onError(Session session, Throwable throwable){
-        logger.error(throwable.getMessage());
+        logger.error(throwable.getMessage(), throwable);
     }
 
     @OnMessage

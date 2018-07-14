@@ -7,6 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -17,12 +18,16 @@ import java.util.NoSuchElementException;
 public class GroupManager extends Manager<GroupEntity>{
     private UserManager userManager;
     private ActivityManager activityManager;
+    private ChatPlatformManager chatPlatformManager;
+    private GamePlatformManager gamePlatformManager;
 
     @Inject
     public GroupManager(
             EntityManager manager,
             UserManager userManager,
-            ActivityManager activityManager)
+            ActivityManager activityManager,
+            ChatPlatformManager chatPlatformManager,
+            GamePlatformManager gamePlatformManager)
     {
         super(manager);
         this.userManager = userManager;
@@ -107,19 +112,27 @@ public class GroupManager extends Manager<GroupEntity>{
     }
 
     public Integer getGroupOwner(int groupID){
-        return (Integer) manager.createQuery("SELECT M.memberId " +
-                "FROM GroupMemberEntity M " +
-                "WHERE M.groupId = :groupID AND M.owner = true")
-                .setParameter("groupID", groupID)
-                .getSingleResult();
+        try {
+            return (Integer) manager.createQuery("SELECT M.memberId " +
+                    "FROM GroupMemberEntity M " +
+                    "WHERE M.groupId = :groupID AND M.owner = true")
+                    .setParameter("groupID", groupID)
+                    .getSingleResult();
+        } catch (NoResultException exc){
+            throw new NoSuchElementException(String.format("No owner for group with id: %d", groupID));
+        }
     }
 
     public Integer getGroupChat(int groupID){
-        return (Integer) manager.createQuery("SELECT C.id " +
-                "FROM ChatEntity C " +
-                "WHERE C.groupId = :groupID")
-                .setParameter("groupID", groupID)
-                .getSingleResult();
+        try {
+            return (Integer) manager.createQuery("SELECT C.id " +
+                    "FROM ChatEntity C " +
+                    "WHERE C.groupId = :groupID")
+                    .setParameter("groupID", groupID)
+                    .getSingleResult();
+        } catch (NoResultException exc){
+            throw new NoSuchElementException(String.format("No chat for group with id: %d", groupID));
+        }
     }
 
     private void checkValidCreation(int ownerID, int activityID){

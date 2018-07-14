@@ -140,19 +140,24 @@ public class ChatEndpoint extends AuthenticatedEndpoint {
 
     private int sendMessage(int chatID, int userID, String text, LocalDateTime date){
         EntityManager em = entityManagerProducer.createEntityManager();
-        UserManager userManager = new UserManager(em, new FriendHelperManager());
-        GameManager gameManager = new GameManager(em);
-        ActivityManager activityManager = new ActivityManager(em, gameManager);
-        GroupManager groupManager = new GroupManager(em, userManager, activityManager);
-        ChatManager chatManager = new ChatManager(em, userManager, groupManager);
+        ChatManager chatManager = getChatManager(em);
         int id = chatManager.sendMessage(chatID, userID, text, date);
         final List<Integer> closedChatMembers = chatManager.getClosedChatMembers(chatID);
         logger.info("closedChatMembers: " + closedChatMembers);
         newChatEvent.fire(new ChatEvent(chatID, new HashSet<>(closedChatMembers)));
-
         closedChatMembers.forEach(uID -> chatManager.openChat(chatID, uID));
         entityManagerProducer.closeEntityManager(em);
 
         return id;
+    }
+
+    private ChatManager getChatManager(EntityManager em){
+        UserManager userManager = new UserManager(em, new FriendHelperManager());
+        GameManager gameManager = new GameManager(em);
+        ActivityManager activityManager = new ActivityManager(em, gameManager);
+        ChatPlatformManager chatPlatformManager = new ChatPlatformManager(em);
+        GamePlatformManager gamePlatformManager = new GamePlatformManager(em);
+        GroupManager groupManager = new GroupManager(em, userManager, activityManager, chatPlatformManager, gamePlatformManager);
+        return new ChatManager(em, userManager, groupManager);
     }
 }

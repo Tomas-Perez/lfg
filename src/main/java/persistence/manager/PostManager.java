@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * @author Tomas Perez Molina
@@ -23,13 +24,22 @@ public class PostManager extends Manager<PostEntity>{
     private UserManager userManager;
     private ActivityManager activityManager;
     private GroupManager groupManager;
+    private ChatPlatformManager chatPlatformManager;
+    private GamePlatformManager gamePlatformManager;
 
     @Inject
-    public PostManager(EntityManager manager, UserManager userManager, ActivityManager activityManager, GroupManager groupManager) {
+    public PostManager(EntityManager manager,
+                       UserManager userManager,
+                       ActivityManager activityManager,
+                       GroupManager groupManager,
+                       ChatPlatformManager chatPlatformManager,
+                       GamePlatformManager gamePlatformManager) {
         super(manager);
         this.userManager = userManager;
         this.activityManager = activityManager;
         this.groupManager = groupManager;
+        this.chatPlatformManager = chatPlatformManager;
+        this.gamePlatformManager = gamePlatformManager;
     }
 
     public PostManager(){}
@@ -123,5 +133,29 @@ public class PostManager extends Manager<PostEntity>{
     public void checkExistence(int postID){
         if(!exists(postID))
             throw new ConstraintException(String.format("Post with id: %d does not exist", postID));
+    }
+
+    public void addChatPlatformToPost(int chatPlatformID, int postID){
+        addChatPlatformsToPost(postID, Collections.singleton(chatPlatformID));
+    }
+
+    public void addChatPlatformsToPost(int postID, Set<Integer> chatPlatformIDs){
+        checkExistence(postID);
+        chatPlatformIDs.forEach(chatPlatformManager::checkExistence);
+        chatPlatformIDs.stream()
+                .map(id -> new ChatPlatformForPostEntity(postID, id))
+                .forEach(this::persist);
+    }
+
+    public void addGamePlatformToPost(int gamePlatformID, int postID){
+        addGamePlatformsToPost(postID, Collections.singleton(gamePlatformID));
+    }
+
+    public void addGamePlatformsToPost(int postID, Set<Integer> gamePlatformIDs){
+        checkExistence(postID);
+        gamePlatformIDs.forEach(gamePlatformManager::checkExistence);
+        gamePlatformIDs.stream()
+                .map(id -> new GamePlatformForPostEntity(postID, id))
+                .forEach(this::persist);
     }
 }

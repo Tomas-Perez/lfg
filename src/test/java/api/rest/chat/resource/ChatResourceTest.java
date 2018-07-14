@@ -1,10 +1,7 @@
 package api.rest.chat.resource;
 
 import api.rest.ApiTest;
-import api.rest.chat.model.AddMemberJSON;
-import api.rest.chat.model.ChatJSON;
-import api.rest.chat.model.CreateChatJSON;
-import api.rest.chat.model.WebsocketPathJSON;
+import api.rest.chat.model.*;
 import api.rest.group.model.GroupJSON;
 import api.rest.group.model.MemberJSON;
 import org.jboss.arquillian.extension.rest.client.ArquillianResteasyResource;
@@ -65,7 +62,7 @@ public class ChatResourceTest extends ApiTest {
                 new MemberJSON(user3ID, username3)
         );
 
-        ChatJSON expected = new ChatJSON(id, memberJSONS, Collections.emptyList());
+        ChatJSON expected = new ChatJSON(id, ChatType.GROUP, memberJSONS, Collections.emptyList());
 
         assertThat(actual, is(expected));
     }
@@ -147,7 +144,7 @@ public class ChatResourceTest extends ApiTest {
         );
 
 
-        ChatJSON expected = new ChatJSON(chatID, expectedMembers, Collections.emptyList());
+        ChatJSON expected = new ChatJSON(chatID, ChatType.GROUP, expectedMembers, Collections.emptyList());
 
         assertThat(actual, is(expected));
 

@@ -112,7 +112,9 @@ public class ChatManager extends Manager<ChatEntity> {
             e.printStackTrace();
         }
 
-        if(singleMemberChat(chatID) && isChatOfType(chatID, ChatEntity.ChatType.PRIVATE)){
+        final int chatSize = getChatMembers(chatID).size();
+
+        if(chatSize == 0 || (chatSize == 1 && isChatOfType(chatID, ChatEntity.ChatType.PRIVATE))){
             delete(chatID);
         }
     }

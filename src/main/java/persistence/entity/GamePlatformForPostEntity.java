@@ -13,6 +13,14 @@ public class GamePlatformForPostEntity {
     private int postId;
     private int gamePlatformId;
 
+    public GamePlatformForPostEntity(int postId, int gamePlatformId) {
+        this.postId = postId;
+        this.gamePlatformId = gamePlatformId;
+    }
+
+    public GamePlatformForPostEntity() {
+    }
+
     @Id
     @Column(name = "POST_ID", nullable = false)
     public int getPostId() {

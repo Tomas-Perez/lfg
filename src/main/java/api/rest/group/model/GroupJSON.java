@@ -98,7 +98,7 @@ public class GroupJSON {
                 slots == groupJSON.slots &&
                 Objects.equals(activity, groupJSON.activity) &&
                 Objects.equals(owner, groupJSON.owner) &&
-                Objects.equals(members, groupJSON.members) &&
+                Objects.equals(new HashSet<>(members), new HashSet<>(groupJSON.members)) &&
                 Objects.equals(chat, groupJSON.chat);
     }
 

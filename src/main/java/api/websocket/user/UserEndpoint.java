@@ -158,8 +158,14 @@ public class UserEndpoint extends AuthenticatedEndpoint {
         NewFriendPayload friend1Payload = new NewFriendPayload(event.getUser1());
         NewFriendPayload friend2Payload = new NewFriendPayload(event.getUser2());
 
-        sendMessage(friend1Payload, event.getUser2().getId());
-        sendMessage(friend2Payload, event.getUser1().getId());
+        final int user2ID = event.getUser2().getId();
+        final int user1ID = event.getUser1().getId();
+
+        sendMessage(friend1Payload, user2ID);
+        sendMessage(friend2Payload, user1ID);
+
+        notifyNewFriendConnection(user1ID, user2ID);
+        notifyNewFriendConnection(user2ID, user1ID);
     }
 
     private void deleteFriend(@Observes @DeleteFriend FriendEvent event){
@@ -224,5 +230,12 @@ public class UserEndpoint extends AuthenticatedEndpoint {
         }
         if(connectedFriends == null) return;
         connectedFriends.forEach(payload -> sendMessage(payload, userID));
+    }
+
+    private void notifyNewFriendConnection(int userID, int newFriendID){
+        if(sessionsMap.get(userID) != null){
+            FriendConnectedPayload connectedPayload = new FriendConnectedPayload(userID);
+            sendMessage(connectedPayload, newFriendID);
+        }
     }
 }

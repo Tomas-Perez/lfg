@@ -53,9 +53,4 @@ public class CreateChatJSON {
     public void setType(ChatType type) {
         this.type = type;
     }
-
-    public enum ChatType {
-        @JsonProperty("group") GROUP,
-        @JsonProperty("private") PRIVATE
-    }
 }

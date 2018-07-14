@@ -41,6 +41,8 @@ public abstract class ApiTest {
     private GroupManager groupManager;
     private PostManager postManager;
     private ChatManager chatManager;
+    private ChatPlatformManager chatPlatformManager;
+    private GamePlatformManager gamePlatformManager;
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
@@ -85,9 +87,13 @@ public abstract class ApiTest {
         userManager.wipe();
         activityManager = new ActivityManager(emp.createEntityManager(), gameManager);
         activityManager.wipe();
-        groupManager = new GroupManager(emp.createEntityManager(), userManager, activityManager);
+        gamePlatformManager = new GamePlatformManager(emp.createEntityManager());
+        gamePlatformManager.wipe();
+        chatPlatformManager = new ChatPlatformManager(emp.createEntityManager());
+        chatPlatformManager.wipe();
+        groupManager = new GroupManager(emp.createEntityManager(), userManager, activityManager, chatPlatformManager, gamePlatformManager);
         groupManager.wipe();
-        postManager = new PostManager(emp.createEntityManager(), userManager, activityManager, groupManager);
+        postManager = new PostManager(emp.createEntityManager(), userManager, activityManager, groupManager, chatPlatformManager, gamePlatformManager);
         postManager.wipe();
         chatManager = new ChatManager(emp.createEntityManager(), userManager, groupManager);
         chatManager.wipe();
@@ -122,9 +128,13 @@ public abstract class ApiTest {
         userManager.wipe();
         activityManager = new ActivityManager(emp.createEntityManager(), gameManager);
         activityManager.wipe();
-        groupManager = new GroupManager(emp.createEntityManager(), userManager, activityManager);
+        gamePlatformManager = new GamePlatformManager(emp.createEntityManager());
+        gamePlatformManager.wipe();
+        chatPlatformManager = new ChatPlatformManager(emp.createEntityManager());
+        chatPlatformManager.wipe();
+        groupManager = new GroupManager(emp.createEntityManager(), userManager, activityManager, chatPlatformManager, gamePlatformManager);
         groupManager.wipe();
-        postManager = new PostManager(emp.createEntityManager(), userManager, activityManager, groupManager);
+        postManager = new PostManager(emp.createEntityManager(), userManager, activityManager, groupManager, chatPlatformManager, gamePlatformManager);
         postManager.wipe();
         chatManager = new ChatManager(emp.createEntityManager(), userManager, groupManager);
         chatManager.wipe();

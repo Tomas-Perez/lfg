@@ -13,6 +13,15 @@ public class ChatPlatformEntity {
     private String image;
     private String name;
 
+    public ChatPlatformEntity(int id, String name, String image) {
+        this.id = id;
+        this.image = image;
+        this.name = name;
+    }
+
+    public ChatPlatformEntity() {
+    }
+
     @Id
     @GeneratedValue
     @Column(name = "ID", nullable = false)

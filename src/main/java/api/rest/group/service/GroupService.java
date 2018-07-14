@@ -89,22 +89,22 @@ public class GroupService {
     }
 
     public void deleteGroup(int id){
-        final List<Integer> groupMembers = groupManager.getGroupMembers(id);
-
         try {
+            final List<Integer> groupMembers = groupManager.getGroupMembers(id);
+            final int groupChat = getGroupChat(id);
             groupManager.delete(id);
-            chatService.deleteChat(getGroupChat(id));
+            deleteGroupEvent.fire(new GroupEvent(id, new HashSet<>(groupMembers)));
+            chatService.deleteChat(groupChat);
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
-
-        deleteGroupEvent.fire(new GroupEvent(id, new HashSet<>(groupMembers)));
     }
 
     public void addMember(int id, int userID){
         try {
+            final int groupChat = getGroupChat(id);
             groupManager.addMemberToGroup(id, userID);
-            chatService.addMember(getGroupChat(id), userID);
+            chatService.addMember(groupChat, userID);
             newMemberEvent.fire(createMemberEvent(id, userID));
             newGroupEvent.fire(new GroupEvent(id, Collections.singleton(userID)));
         } catch (NoSuchElementException exc){
@@ -114,8 +114,9 @@ public class GroupService {
 
     public void removeMember(int id, int userID){
         try {
+            final int groupChat = getGroupChat(id);
             groupManager.removeMemberFromGroup(id, userID);
-            chatService.removeMember(getGroupChat(id), userID);
+            chatService.removeMember(groupChat, userID);
             deleteMemberEvent.fire(createMemberEvent(id, userID));
             deleteGroupEvent.fire(new GroupEvent(id, Collections.singleton(userID)));
         } catch (NoSuchElementException exc){

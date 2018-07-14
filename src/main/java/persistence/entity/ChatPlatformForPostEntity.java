@@ -13,6 +13,14 @@ public class ChatPlatformForPostEntity {
     private int postId;
     private int chatPlatformId;
 
+    public ChatPlatformForPostEntity(int postId, int chatPlatformId) {
+        this.postId = postId;
+        this.chatPlatformId = chatPlatformId;
+    }
+
+    public ChatPlatformForPostEntity() {
+    }
+
     @Id
     @Column(name = "POST_ID", nullable = false)
     public int getPostId() {

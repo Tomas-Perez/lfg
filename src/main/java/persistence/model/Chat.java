@@ -12,11 +12,13 @@ import java.util.Set;
  */
 public class Chat {
     private int id;
+    private ChatEntity.ChatType type;
     private Set<User> members;
     private List<Message> messages;
 
     public Chat(ChatEntity entity, Set<User> members, List<Message> messages) {
         this.id = entity.getId();
+        this.type = entity.getType();
         this.members = members;
         this.messages = messages;
     }
@@ -33,27 +35,34 @@ public class Chat {
         return messages;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Chat)) return false;
-        Chat chat = (Chat) o;
-        return id == chat.id &&
-                Objects.equals(members, chat.members) &&
-                Objects.equals(messages, chat.messages);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, members, messages);
+    public ChatEntity.ChatType getType() {
+        return type;
     }
 
     @Override
     public String toString() {
         return "Chat{" +
                 "id=" + id +
+                ", type=" + type +
                 ", members=" + members +
                 ", messages=" + messages +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Chat)) return false;
+        Chat chat = (Chat) o;
+        return id == chat.id &&
+                type == chat.type &&
+                Objects.equals(members, chat.members) &&
+                Objects.equals(messages, chat.messages);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, type, members, messages);
     }
 }
