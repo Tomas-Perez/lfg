@@ -13,8 +13,7 @@ public class ChatPlatformEntity {
     private String image;
     private String name;
 
-    public ChatPlatformEntity(int id, String name, String image) {
-        this.id = id;
+    public ChatPlatformEntity(String name, String image) {
         this.image = image;
         this.name = name;
     }

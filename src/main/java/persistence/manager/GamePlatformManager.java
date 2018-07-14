@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import persistence.entity.GamePlatformEntity;
 import persistence.entity.GamePlatformForPostEntity;
 import persistence.manager.exception.ConstraintException;
+import persistence.manager.patcher.GamePlatformPatcher;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -80,5 +81,26 @@ public class GamePlatformManager extends Manager<GamePlatformEntity> {
                 .getResultList().size() > 0;
     }
 
+    public void updateGamePlatform(int id, GamePlatformPatcher patcher) throws ConstraintException {
+        checkValidUpdate(patcher);
 
+        EntityTransaction tx = manager.getTransaction();
+        try {
+            tx.begin();
+            GamePlatformEntity entity = manager.find(GamePlatformEntity.class, id);
+            patcher.patch(entity);
+            tx.commit();
+        } catch (NullPointerException exc){
+            if (tx!=null) tx.rollback();
+            throw new NoSuchElementException();
+        } catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+        }
+    }
+
+    private void checkValidUpdate(@NotNull GamePlatformPatcher patcher){
+        if(patcher.patchesName())
+            checkValidCreation(patcher.getName());
+    }
 }

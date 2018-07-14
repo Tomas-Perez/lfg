@@ -13,8 +13,7 @@ public class GamePlatformEntity {
     private String image;
     private String name;
 
-    public GamePlatformEntity(int id, String name, String image) {
-        this.id = id;
+    public GamePlatformEntity(String name, String image) {
         this.image = image;
         this.name = name;
     }

@@ -65,8 +65,8 @@ public class GroupService {
                 .collect(Collectors.toList());
     }
 
-    public int newGroup(int slots, int activityID, int ownerID){
-        GroupEntity group = new GroupEntity(slots, activityID, null, null, ownerID);
+    public int newGroup(int slots, int activityID, int ownerID, Integer chatPlatformID, Integer gamePlatformID){
+        GroupEntity group = new GroupEntity(slots, activityID, chatPlatformID, gamePlatformID, ownerID);
         final int groupID = groupManager.add(group);
         chatService.newGroupChat(groupID);
         newGroupEvent.fire(new GroupEvent(groupID, Collections.singleton(ownerID)));

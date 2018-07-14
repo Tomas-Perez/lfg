@@ -21,7 +21,7 @@ public class Post {
     private Set<GamePlatform> gamePlatforms;
     private Set<ChatPlatform> chatPlatforms;
 
-    public Post(PostEntity entity, Activity activity, User owner, Group group, Set<GamePlatform> gamePlatforms, Set<ChatPlatform> chatPlatforms) {
+    public Post(PostEntity entity, Activity activity, User owner, Group group, Set<ChatPlatform> chatPlatforms, Set<GamePlatform> gamePlatforms) {
         this.id = entity.getId();
         this.description = entity.getDescription();
         this.date = entity.getDate();

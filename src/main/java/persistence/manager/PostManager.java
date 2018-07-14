@@ -10,10 +10,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Tomas Perez Molina
@@ -45,14 +43,33 @@ public class PostManager extends Manager<PostEntity>{
     public PostManager(){}
 
     public int add(PostEntity post) {
-        checkValidCreation(post.getOwnerId(), post.getActivityId());
+        checkValidCreation(post, new HashSet<>(), new HashSet<>());
         persist(post);
         return post.getId();
     }
 
-    public int addGroupPost(String description,
-                             @NotNull LocalDateTime date,
-                             @NotNull GroupEntity group)
+    public int add(
+            @NotNull PostEntity post,
+            @NotNull Set<Integer> chatPlatformIDs,
+            @NotNull Set<Integer> gamePlatformIDs)
+    {
+        checkValidCreation(post, chatPlatformIDs, gamePlatformIDs);
+        persist(post);
+        final int postID = post.getId();
+        gamePlatformIDs.stream()
+                .map(id -> new GamePlatformForPostEntity(postID, id))
+                .forEach(this::persist);
+        chatPlatformIDs.stream()
+                .map(id -> new ChatPlatformForPostEntity(postID, id))
+                .forEach(this::persist);
+        return postID;
+    }
+
+    public int addGroupPost(@NotNull String description,
+                            @NotNull LocalDateTime date,
+                            @NotNull GroupEntity group,
+                            @NotNull Set<Integer> chatPlatformIDs,
+                            @NotNull Set<Integer> gamePlatformIDs)
     {
         Integer groupOwner = groupManager.getGroupOwner(group.getId());
         PostEntity post = new PostEntity(
@@ -62,9 +79,18 @@ public class PostManager extends Manager<PostEntity>{
                 groupOwner,
                 group.getId()
         );
+        checkValidCreation(post, chatPlatformIDs, gamePlatformIDs);
         persist(post);
+        final int postID = post.getId();
 
-        return post.getId();
+        gamePlatformIDs.stream()
+                .map(id -> new GamePlatformForPostEntity(postID, id))
+                .forEach(this::persist);
+        chatPlatformIDs.stream()
+                .map(id -> new ChatPlatformForPostEntity(postID, id))
+                .forEach(this::persist);
+
+        return postID;
     }
 
     public void delete(int postID){
@@ -125,9 +151,11 @@ public class PostManager extends Manager<PostEntity>{
         return manager.find(PostEntity.class, postID);
     }
 
-    private void checkValidCreation(int ownerID, int activityID){
-        userManager.checkExistence(ownerID);
-        activityManager.checkExistence(activityID);
+    private void checkValidCreation(PostEntity post, Set<Integer> chatPlatformIDs, Set<Integer> gamePlatformIDs){
+        userManager.checkExistence(post.getOwnerId());
+        activityManager.checkExistence(post.getActivityId());
+        gamePlatformIDs.forEach(gamePlatformManager::checkExistence);
+        chatPlatformIDs.forEach(chatPlatformManager::checkExistence);
     }
 
     public void checkExistence(int postID){
@@ -157,5 +185,23 @@ public class PostManager extends Manager<PostEntity>{
         gamePlatformIDs.stream()
                 .map(id -> new GamePlatformForPostEntity(postID, id))
                 .forEach(this::persist);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Set<Integer> getPostGamePlatforms(int postID){
+        return (Set<Integer>) new HashSet<>(manager.createQuery("SELECT G.gamePlatformId " +
+                "FROM GamePlatformForPostEntity G " +
+                "WHERE G.postId = :postID")
+                .setParameter("postID", postID)
+                .getResultList());
+    }
+
+    @SuppressWarnings("unchecked")
+    public Set<Integer> getPostChatPlatforms(int postID){
+        return (Set<Integer>) new HashSet<>(manager.createQuery("SELECT C.chatPlatformId " +
+                "FROM ChatPlatformForPostEntity C " +
+                "WHERE C.postId = :postID")
+                .setParameter("postID", postID)
+                .getResultList());
     }
 }

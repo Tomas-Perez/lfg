@@ -1,5 +1,6 @@
 package api.rest.group.resource;
 
+import api.rest.user.model.ChatJSON;
 import org.jboss.arquillian.extension.rest.client.ArquillianResteasyResource;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
@@ -15,9 +16,7 @@ import util.RequestUtil;
 
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -42,7 +41,7 @@ public class GroupResourceTest extends ApiTest {
         int ownerID = addUser(username, password, email);
         final int slots = 5;
 
-        final Response postResponse = RequestUtil.post(groupsTarget, token, new CreateGroupJSON(slots, activityID, ownerID));
+        final Response postResponse = RequestUtil.post(groupsTarget, token, new CreateGroupJSON(slots, activityID, ownerID, null, null));
 
         assertThat(postResponse.getStatus(), is(CREATED));
 
@@ -60,7 +59,7 @@ public class GroupResourceTest extends ApiTest {
                 gameID, gameName,
                 activityID, activityName,
                 ownerID, username,
-                Integer.parseInt(id), slots
+                Integer.parseInt(id), slots, actual.getChat()
         );
 
         assertThat(actual, is(expected));
@@ -123,14 +122,14 @@ public class GroupResourceTest extends ApiTest {
                 gameID, gameName,
                 activityID, activityName,
                 ownerID, username,
-                groupID, slots
+                groupID, slots, actual.getChat()
         );
 
         MemberJSON ownerJSON = new MemberJSON(ownerID, username);
         MemberJSON member1JSON = new MemberJSON(member1ID, username1);
         MemberJSON member2JSON = new MemberJSON(member2ID, username2);
 
-        expected.setMembers(Arrays.asList(ownerJSON, member1JSON, member2JSON));
+        expected.setMembers(new HashSet<>(Arrays.asList(ownerJSON, member1JSON, member2JSON)));
 
         assertThat(actual, is(expected));
 
@@ -149,7 +148,7 @@ public class GroupResourceTest extends ApiTest {
 
         actual = RequestUtil.parseResponse(getResponse2, GroupJSON.class);
 
-        expected.setMembers(Arrays.asList(ownerJSON, member2JSON));
+        expected.setMembers(new HashSet<>(Arrays.asList(ownerJSON, member2JSON)));
 
         assertThat(actual, is(expected));
     }
@@ -157,11 +156,11 @@ public class GroupResourceTest extends ApiTest {
     private GroupJSON createExpectedJSON(int gameID, String gameName,
                                          int activityID, String activityName,
                                          int ownerID, String username,
-                                         int id, int slots){
+                                         int id, int slots, ChatJSON chatJSON){
         GameJSON gameJSON = new GameJSON(gameID, gameName);
         ActivityJSON activityJSON = new ActivityJSON(activityID, activityName, gameJSON);
         MemberJSON memberJSON = new MemberJSON(ownerID, username);
-        return new GroupJSON(id, slots, activityJSON, memberJSON, Collections.singletonList(memberJSON), null);
+        return new GroupJSON(id, slots, activityJSON, memberJSON, Collections.singleton(memberJSON), chatJSON, null, null);
     }
     @Test
     public void getAll(){
@@ -171,7 +170,7 @@ public class GroupResourceTest extends ApiTest {
                 new UserDetails("member31", "132", "member31@mail.com"),
                 new UserDetails("member41", "132", "member41@mail.com")
         );
-        GroupJSON group1 = fullExpected("Overwatch1", "Ranked1", new UserDetails("owner1", "123", "owner1@mail.com"), group1Members);
+        GroupJSON group1 = fullExpected("Overwatch1", "Ranked1", new UserDetails("owner1", "123", "owner1@mail.com"), group1Members, null);
 
         List<UserDetails> group2Members = Arrays.asList(
                 new UserDetails("member12", "132", "member12@mail.com"),
@@ -179,7 +178,7 @@ public class GroupResourceTest extends ApiTest {
                 new UserDetails("member32", "132", "member32@mail.com"),
                 new UserDetails("member42", "132", "member42@mail.com")
         );
-        GroupJSON group2 = fullExpected("Overwatch2", "Ranked2", new UserDetails("owner2", "123", "owner2@mail.com"), group2Members);
+        GroupJSON group2 = fullExpected("Overwatch2", "Ranked2", new UserDetails("owner2", "123", "owner2@mail.com"), group2Members, null);
 
         List<UserDetails> group3Members = Arrays.asList(
                 new UserDetails("member13", "132", "member13@mail.com"),
@@ -187,7 +186,7 @@ public class GroupResourceTest extends ApiTest {
                 new UserDetails("member33", "132", "member33@mail.com"),
                 new UserDetails("member43", "132", "member43@mail.com")
         );
-        GroupJSON group3 = fullExpected("Overwatch3", "Ranked3", new UserDetails("owner3", "123", "owner3@mail.com"), group3Members);
+        GroupJSON group3 = fullExpected("Overwatch3", "Ranked3", new UserDetails("owner3", "123", "owner3@mail.com"), group3Members, null);
 
         final Response getAllResponse = RequestUtil.get(groupsTarget, token);
         List<GroupJSON> actual = RequestUtil.parseListResponse(getAllResponse, GroupJSON.class);
@@ -199,11 +198,11 @@ public class GroupResourceTest extends ApiTest {
         assertTrue(actual.contains(group3));
     }
 
-    private GroupJSON fullExpected(String gameName, String activityName, UserDetails owner, List<UserDetails> members){
+    private GroupJSON fullExpected(String gameName, String activityName, UserDetails owner, List<UserDetails> members, ChatJSON chatJSON){
         int gameID = addGame(gameName);
         int activityID = addActivity(activityName, gameID);
         int ownerID = addUser(owner.getUsername(), owner.getPassword(), owner.getEmail());
-        List<MemberJSON> membersJSON = members.stream().map(this::userDetailToMemberJSON).collect(Collectors.toList());
+        Set<MemberJSON> membersJSON = members.stream().map(this::userDetailToMemberJSON).collect(Collectors.toSet());
         List<AddMemberJSON> addMemberJSONS = membersJSON.stream().map(memberJSON -> new AddMemberJSON(memberJSON.getId())).collect(Collectors.toList());
         final int slots = 5;
         int groupID = addGroup(slots, activityID, ownerID);
@@ -216,7 +215,7 @@ public class GroupResourceTest extends ApiTest {
                 gameID, gameName,
                 activityID, activityName,
                 ownerID, owner.getUsername(),
-                groupID, slots
+                groupID, slots, chatJSON
         );
 
         membersJSON.add(new MemberJSON(ownerID, owner.getUsername()));

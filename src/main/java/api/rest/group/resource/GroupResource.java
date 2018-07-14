@@ -46,7 +46,9 @@ public class GroupResource {
         int id = service.newGroup(
                 groupJSON.getSlots(),
                 groupJSON.getActivityID(),
-                groupJSON.getOwnerID()
+                groupJSON.getOwnerID(),
+                groupJSON.getChatPlatformID(),
+                groupJSON.getGamePlatformID()
         );
         URI path = uriInfo.getAbsolutePathBuilder().path(Integer.toString(id)).build();
         return Response.created(path).build();

@@ -1,12 +1,16 @@
 package api.rest.group.model;
 
+import api.rest.chatPlatform.model.ChatPlatformJSON;
+import api.rest.gamePlatform.model.GamePlatformJSON;
 import api.rest.user.model.ChatJSON;
+import persistence.model.ChatPlatform;
+import persistence.model.GamePlatform;
 import persistence.model.Group;
 import api.rest.activity.model.ActivityJSON;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -17,16 +21,27 @@ public class GroupJSON {
     private int slots;
     private ActivityJSON activity;
     private MemberJSON owner;
-    private List<MemberJSON> members;
+    private Set<MemberJSON> members;
     private ChatJSON chat;
+    private GamePlatformJSON gamePlatform;
+    private ChatPlatformJSON chatPlatform;
 
-    public GroupJSON(int id, int slots, ActivityJSON activity, MemberJSON owner, List<MemberJSON> members, ChatJSON chat) {
+    public GroupJSON(int id,
+                     int slots,
+                     ActivityJSON activity,
+                     MemberJSON owner,
+                     Set<MemberJSON> members,
+                     ChatJSON chat,
+                     GamePlatformJSON gamePlatform,
+                     ChatPlatformJSON chatPlatform) {
         this.id = id;
         this.slots = slots;
         this.activity = activity;
         this.owner = owner;
         this.members = members;
         this.chat = chat;
+        this.gamePlatform = gamePlatform;
+        this.chatPlatform = chatPlatform;
     }
 
     public GroupJSON() {
@@ -37,8 +52,12 @@ public class GroupJSON {
         this.slots = group.getSlots();
         this.activity = new ActivityJSON(group.getActivity());
         this.owner = new MemberJSON(group.getOwner());
-        this.members = group.getMembers().stream().map(MemberJSON::new).collect(Collectors.toList());
+        this.members = group.getMembers().stream().map(MemberJSON::new).collect(Collectors.toSet());
         this.chat = new ChatJSON(group.getChat());
+        final GamePlatform gamePlatform = group.getGamePlatform();
+        this.gamePlatform = gamePlatform == null? null : new GamePlatformJSON(gamePlatform);
+        final ChatPlatform chatPlatform = group.getChatPlatform();
+        this.chatPlatform = chatPlatform == null? null : new ChatPlatformJSON(chatPlatform);
     }
 
     public int getId() {
@@ -73,11 +92,11 @@ public class GroupJSON {
         this.owner = owner;
     }
 
-    public List<MemberJSON> getMembers() {
+    public Set<MemberJSON> getMembers() {
         return members;
     }
 
-    public void setMembers(List<MemberJSON> members) {
+    public void setMembers(Set<MemberJSON> members) {
         this.members = members;
     }
 
@@ -98,14 +117,16 @@ public class GroupJSON {
                 slots == groupJSON.slots &&
                 Objects.equals(activity, groupJSON.activity) &&
                 Objects.equals(owner, groupJSON.owner) &&
-                Objects.equals(new HashSet<>(members), new HashSet<>(groupJSON.members)) &&
-                Objects.equals(chat, groupJSON.chat);
+                Objects.equals(members, groupJSON.members) &&
+//                Objects.equals(chat, groupJSON.chat) &&
+                Objects.equals(gamePlatform, groupJSON.gamePlatform) &&
+                Objects.equals(chatPlatform, groupJSON.chatPlatform);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, slots, activity, owner, members, chat);
+        return Objects.hash(id, slots, activity, owner, members, gamePlatform, chatPlatform);
     }
 
     @Override
@@ -117,6 +138,8 @@ public class GroupJSON {
                 ", owner=" + owner +
                 ", members=" + members +
                 ", chat=" + chat +
+                ", gamePlatform=" + gamePlatform +
+                ", chatPlatform=" + chatPlatform +
                 '}';
     }
 }

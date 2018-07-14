@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -45,7 +46,7 @@ public class PostResourceTest extends ApiTest {
         int ownerID = addUser(ownerName, ownerPass, ownerEmail);
 
         final String description = "posty";
-        final Response postResponse = RequestUtil.post(postsTarget, token, new CreatePostJSON(description, activityID, ownerID, null));
+        final Response postResponse = RequestUtil.post(postsTarget, token, new CreatePostJSON(description, activityID, ownerID, null, new HashSet<>(), new HashSet<>()));
         assertThat(postResponse.getStatus(), is(CREATED));
 
         final String location = postResponse.getHeaderString("Location");
@@ -62,7 +63,7 @@ public class PostResourceTest extends ApiTest {
         GameJSON gameJSON = new GameJSON(gameID, gameName);
         ActivityJSON activityJSON = new ActivityJSON(activityID, activityName, gameJSON);
 
-        PostJSON expected = new PostJSON(Integer.parseInt(id), description, null, activityJSON, ownerJSON, null);
+        PostJSON expected = new PostJSON(Integer.parseInt(id), description, actual.getDate(), activityJSON, ownerJSON, null, new HashSet<>(), new HashSet<>());
 
         assertThat(actual, is(expected));
     }
@@ -82,7 +83,7 @@ public class PostResourceTest extends ApiTest {
         int groupID = addGroup(slots, activityID, ownerID);
 
         final String description = "posty";
-        final Response postResponse = RequestUtil.post(postsTarget, token, new CreatePostJSON(description, null, null, groupID));
+        final Response postResponse = RequestUtil.post(postsTarget, token, new CreatePostJSON(description, null, null, groupID, new HashSet<>(), new HashSet<>()));
 
         assertThat(postResponse.getStatus(), is(CREATED));
 
@@ -101,7 +102,7 @@ public class PostResourceTest extends ApiTest {
         ActivityJSON activityJSON = new ActivityJSON(activityID, activityName, gameJSON);
         GroupJSON groupJSON = new GroupJSON(groupID, slots, Collections.singletonList(ownerJSON));
 
-        PostJSON expected = new PostJSON(Integer.parseInt(id), description, null, activityJSON, ownerJSON, groupJSON);
+        PostJSON expected = new PostJSON(Integer.parseInt(id), description, null, activityJSON, ownerJSON, groupJSON, new HashSet<>(), new HashSet<>());
 
         assertThat(actual, is(expected));
     }
@@ -118,7 +119,7 @@ public class PostResourceTest extends ApiTest {
         int ownerID = addUser(ownerName, ownerPass, ownerEmail);
 
         final String description = "posty";
-        final Response postResponse = RequestUtil.post(postsTarget, token, new CreatePostJSON(description, activityID, ownerID, null));
+        final Response postResponse = RequestUtil.post(postsTarget, token, new CreatePostJSON(description, activityID, ownerID, null, new HashSet<>(), new HashSet<>()));
 
         final String location = postResponse.getHeaderString("Location");
         final WebTarget postTarget = RequestUtil.newTarget(location);
@@ -156,7 +157,7 @@ public class PostResourceTest extends ApiTest {
         int groupID = addGroup(slots, activityID, ownerID);
 
         final String description = "posty";
-        final Response postResponse = RequestUtil.post(postsTarget, token, new CreatePostJSON(description, null, null, groupID));
+        final Response postResponse = RequestUtil.post(postsTarget, token, new CreatePostJSON(description, null, null, groupID, new HashSet<>(), new HashSet<>()));
 
         final String location = postResponse.getHeaderString("Location");
         final WebTarget postTarget = RequestUtil.newTarget(location);
@@ -172,9 +173,9 @@ public class PostResourceTest extends ApiTest {
         UserData expected = new UserData(
                 ownerID, ownerName,
                 ownerEmail, false,
-                Collections.singletonList(new api.rest.user.model.GroupJSON(groupID)), new ArrayList<>(),
-                new ArrayList<>(), new ArrayList<>(),
-                new ArrayList<>(), new api.rest.user.model.PostJSON(Integer.parseInt(id)));
+                Collections.singletonList(new api.rest.user.model.GroupJSON(groupID)), actual.getFriends(),
+                actual.getReceivedRequests(), actual.getSentRequests(),
+                actual.getChats(), new api.rest.user.model.PostJSON(Integer.parseInt(id)));
 
         assertThat(expected, is(actual));
     }
@@ -191,7 +192,7 @@ public class PostResourceTest extends ApiTest {
         int ownerID = addUser(ownerName, ownerPass, ownerEmail);
 
         final String description = "posty";
-        final Response postResponse = RequestUtil.post(postsTarget, token, new CreatePostJSON(description, activityID, ownerID, null));
+        final Response postResponse = RequestUtil.post(postsTarget, token, new CreatePostJSON(description, activityID, ownerID, null, new HashSet<>(), new HashSet<>()));
 
         final String location = postResponse.getHeaderString("Location");
         final WebTarget postTarget = RequestUtil.newTarget(location);
@@ -205,7 +206,7 @@ public class PostResourceTest extends ApiTest {
         GameJSON gameJSON = new GameJSON(gameID, gameName);
         ActivityJSON activityJSON = new ActivityJSON(activityID, activityName, gameJSON);
 
-        PostJSON expected = new PostJSON(Integer.parseInt(id), description, null, activityJSON, ownerJSON, null);
+        PostJSON expected = new PostJSON(Integer.parseInt(id), description, null, activityJSON, ownerJSON, null, new HashSet<>(), new HashSet<>());
 
         List<PostJSON> expectedList = Collections.singletonList(expected);
 

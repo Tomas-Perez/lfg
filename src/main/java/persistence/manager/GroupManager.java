@@ -32,13 +32,15 @@ public class GroupManager extends Manager<GroupEntity>{
         super(manager);
         this.userManager = userManager;
         this.activityManager = activityManager;
+        this.chatPlatformManager = chatPlatformManager;
+        this.gamePlatformManager = gamePlatformManager;
     }
 
     public GroupManager(){}
 
 
     public int add(GroupEntity group) {
-        checkValidCreation(group.getOwnerId(), group.getActivityId());
+        checkValidCreation(group);
         persist(group);
         GroupMemberEntity groupMemberEntity = new GroupMemberEntity(group.getId(), group.getOwnerId(), true);
         persist(groupMemberEntity);
@@ -135,9 +137,11 @@ public class GroupManager extends Manager<GroupEntity>{
         }
     }
 
-    private void checkValidCreation(int ownerID, int activityID){
-        userManager.checkExistence(ownerID);
-        activityManager.checkExistence(activityID);
+    private void checkValidCreation(GroupEntity group){
+        userManager.checkExistence(group.getOwnerId());
+        activityManager.checkExistence(group.getActivityId());
+        if(group.getChatPlatformId() != null) chatPlatformManager.checkExistence(group.getChatPlatformId());
+        if(group.getGamePlatformId() != null) gamePlatformManager.checkExistence(group.getGamePlatformId());
     }
 
     public void checkExistence(int groupID){

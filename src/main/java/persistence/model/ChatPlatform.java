@@ -1,5 +1,7 @@
 package persistence.model;
 
+import persistence.entity.ChatPlatformEntity;
+
 import java.util.Objects;
 
 /**
@@ -11,7 +13,7 @@ public class ChatPlatform {
     private String name;
     private String image;
 
-    public ChatPlatform(ChatPlatform entity) {
+    public ChatPlatform(ChatPlatformEntity entity) {
         this.id = entity.getId();
         this.name = entity.getName();
         this.image = entity.getImage();

@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -133,7 +134,7 @@ public class PostManagerTest {
         final LocalDateTime dateTime = LocalDateTime.now();
 
         final String description = "whatever";
-        postManager.addGroupPost(description, dateTime, group);
+        postManager.addGroupPost(description, dateTime, group, new HashSet<>(), new HashSet<>());
 
         posts = postManager.list()
                 .stream()

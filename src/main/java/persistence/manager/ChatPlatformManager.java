@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import persistence.entity.ChatPlatformEntity;
 import persistence.entity.ChatPlatformForPostEntity;
 import persistence.manager.exception.ConstraintException;
+import persistence.manager.patcher.ChatPlatformPatcher;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -79,5 +80,28 @@ public class ChatPlatformManager extends Manager<ChatPlatformEntity> {
                 .createQuery("SELECT 1 FROM ChatPlatformEntity C WHERE C.name = :name")
                 .setParameter("name", name)
                 .getResultList().size() > 0;
+    }
+
+    public void updateChatPlatform(int id, ChatPlatformPatcher patcher) throws ConstraintException {
+        checkValidUpdate(patcher);
+
+        EntityTransaction tx = manager.getTransaction();
+        try {
+            tx.begin();
+            ChatPlatformEntity entity = manager.find(ChatPlatformEntity.class, id);
+            patcher.patch(entity);
+            tx.commit();
+        } catch (NullPointerException exc){
+            if (tx!=null) tx.rollback();
+            throw new NoSuchElementException();
+        } catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+        }
+    }
+
+    private void checkValidUpdate(@NotNull ChatPlatformPatcher patcher){
+        if(patcher.patchesName())
+            checkValidCreation(patcher.getName());
     }
 }

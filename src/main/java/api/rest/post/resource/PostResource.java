@@ -54,9 +54,18 @@ public class PostResource {
     public Response post(CreatePostJSON postJSON){
         int id;
         if(postJSON.getGroupID() == null)
-            id = service.newPost(postJSON.getDescription(), postJSON.getActivityID(), postJSON.getOwnerID());
+            id = service.newPost(
+                    postJSON.getDescription(),
+                    postJSON.getActivityID(),
+                    postJSON.getOwnerID(),
+                    postJSON.getChatPlatformIDs(),
+                    postJSON.getGamePlatformIDs());
         else
-            id = service.newGroupPost(postJSON.getDescription(), postJSON.getGroupID());
+            id = service.newGroupPost(
+                    postJSON.getDescription(),
+                    postJSON.getGroupID(),
+                    postJSON.getChatPlatformIDs(),
+                    postJSON.getGamePlatformIDs());
         URI path = uriInfo.getAbsolutePathBuilder().path(Integer.toString(id)).build();
         return Response.created(path).build();
     }
@@ -71,9 +80,7 @@ public class PostResource {
     @GET
     @Path("{id}")
     public Response get(@PathParam("id") int id){
-        System.out.println(id);
         Post post = service.getPost(id);
-        System.out.println(post);
         return Response.ok(new PostJSON(post)).build();
     }
 

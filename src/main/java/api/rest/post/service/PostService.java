@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -56,24 +57,31 @@ public class PostService {
                 .sorted(Comparator.comparing(Post::getDate).reversed()).collect(Collectors.toList());
     }
 
-    public int newPost(String description, int activityID, int ownerID){
+    public int newPost(String description,
+                       int activityID,
+                       int ownerID,
+                       Set<Integer> chatPlatformIDs,
+                       Set<Integer> gamePlatformIDs){
         Integer previousPostID = postManager.getUserPost(ownerID);
         if(previousPostID != null) {
             deletePost(previousPostID);
         }
         PostEntity postEntity = new PostEntity(description, LocalDateTime.now(), activityID, ownerID, null);
-        final int id = postManager.add(postEntity);
+        final int id = postManager.add(postEntity, chatPlatformIDs, gamePlatformIDs);
         newPostEvent.fire(createEvent(id));
         return id;
     }
 
-    public int newGroupPost(String description, int groupID){
+    public int newGroupPost(String description,
+                            int groupID,
+                            Set<Integer> chatPlatformIDs,
+                            Set<Integer> gamePlatformIDs){
         GroupEntity group = getGroup(groupID);
         Integer previousPostID = postManager.getUserPost(group.getOwnerId());
         if(previousPostID != null) {
             deletePost(previousPostID);
         }
-        final int id = postManager.addGroupPost(description, LocalDateTime.now(), group);
+        final int id = postManager.addGroupPost(description, LocalDateTime.now(), group, chatPlatformIDs, gamePlatformIDs);
         newPostEvent.fire(createEvent(id));
         return id;
     }

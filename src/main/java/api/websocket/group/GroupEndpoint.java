@@ -62,11 +62,13 @@ public class GroupEndpoint extends AuthenticatedEndpoint {
 
         synchronized (sessionsMap) {
             Set<Session> chatSessions = sessionsMap.get(chatID);
-            chatSessions.stream()
-                    .filter(Session::isOpen)
-                    .forEach(session -> session.getAsyncRemote().sendObject(msg));
+            if(chatSessions != null) {
+                chatSessions.stream()
+                        .filter(Session::isOpen)
+                        .forEach(session -> session.getAsyncRemote().sendObject(msg));
 
-            logger.info(String.format("Broadcasting \"%s\" to %d sessions in group %d", msg, chatSessions.size(), chatID));
+                logger.info(String.format("Broadcasting \"%s\" to %d sessions in group %d", msg, chatSessions.size(), chatID));
+            }
         }
     }
 

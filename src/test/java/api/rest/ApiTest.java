@@ -1,6 +1,8 @@
 package api.rest;
 
 import api.rest.chat.model.CreateChatJSON;
+import api.rest.chatPlatform.model.CreateChatPlatformJSON;
+import api.rest.gamePlatform.model.CreateGamePlatformJSON;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -65,6 +67,8 @@ public abstract class ApiTest {
     protected WebTarget usersTarget;
     protected WebTarget meTarget;
     protected WebTarget chatsTarget;
+    protected WebTarget chatPlatformsTarget;
+    protected WebTarget gamePlatformsTarget;
 
     private static final String USERNAME = "testUser";
     private static final String EMAIL = "test@mail.com";
@@ -116,6 +120,8 @@ public abstract class ApiTest {
         usersTarget = RequestUtil.newRelativeTarget(base, "users");
         meTarget = RequestUtil.newRelativeTarget(base, "users/me");
         chatsTarget = RequestUtil.newRelativeTarget(base, "chats");
+        chatPlatformsTarget = RequestUtil.newRelativeTarget(base, "chat-platforms");
+        gamePlatformsTarget = RequestUtil.newRelativeTarget(base, "game-platforms");
 
         token = RequestUtil.getToken(signInTarget, EMAIL, PASSWORD);
     }
@@ -149,6 +155,22 @@ public abstract class ApiTest {
         return Integer.parseInt(RequestUtil.getRelativePathDiff(gamesTarget, gameTarget));
     }
 
+    protected int addChatPlatform(String name){
+        final Response postResponse = RequestUtil.post(chatPlatformsTarget, token, new CreateChatPlatformJSON(name));
+        assertThat(postResponse.getStatus(), is(CREATED));
+        final String location = postResponse.getHeaderString("Location");
+        final WebTarget chatPlatformTarget = RequestUtil.newTarget(location);
+        return Integer.parseInt(RequestUtil.getRelativePathDiff(chatPlatformsTarget, chatPlatformTarget));
+    }
+
+    protected int addGamePlatform(String name){
+        final Response postResponse = RequestUtil.post(gamePlatformsTarget, token, new CreateGamePlatformJSON(name));
+        assertThat(postResponse.getStatus(), is(CREATED));
+        final String location = postResponse.getHeaderString("Location");
+        final WebTarget gamePlatformTarget = RequestUtil.newTarget(location);
+        return Integer.parseInt(RequestUtil.getRelativePathDiff(gamePlatformsTarget, gamePlatformTarget));
+    }
+
     protected int addActivity(String name, int gameID){
         final Response postResponse = RequestUtil.post(activitiesTarget, token, new CreateActivityJSON(name, gameID));
         assertThat(postResponse.getStatus(), is(CREATED));
@@ -158,7 +180,7 @@ public abstract class ApiTest {
     }
 
     protected int addGroup(int slots, int activityID, int userID){
-        final Response postResponse = RequestUtil.post(groupsTarget, token, new CreateGroupJSON(slots, activityID, userID));
+        final Response postResponse = RequestUtil.post(groupsTarget, token, new CreateGroupJSON(slots, activityID, userID, null, null));
         assertThat(postResponse.getStatus(), is(CREATED));
         final String location = postResponse.getHeaderString("Location");
         final WebTarget groupTarget = RequestUtil.newTarget(location);

@@ -31,7 +31,7 @@ public class GameManager extends Manager<GameEntity>{
         return game.getId();
     }
 
-    public void updateGame(int gameID, GamePatcher patcher)  throws ConstraintException {
+    public void updateGame(int gameID, GamePatcher patcher) throws ConstraintException {
         checkValidUpdate(patcher);
 
         EntityTransaction tx = manager.getTransaction();

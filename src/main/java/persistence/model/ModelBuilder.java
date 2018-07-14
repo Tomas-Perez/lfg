@@ -5,9 +5,7 @@ import persistence.manager.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -22,6 +20,8 @@ public class ModelBuilder {
     @Inject private ActivityManager activityManager;
     @Inject private GroupManager groupManager;
     @Inject private ChatManager chatManager;
+    @Inject private ChatPlatformManager chatPlatformManager;
+    @Inject private GamePlatformManager gamePlatformManager;
 
     private Activity huskActivity(int activityID){
         ActivityEntity activityEntity = activityManager.get(activityID);
@@ -156,12 +156,17 @@ public class ModelBuilder {
         User owner = huskUser(groupManager.getGroupOwner(groupEntity.getId()));
         Chat chat = huskChat(groupManager.getGroupChat(groupID));
 
+        final Integer gamePlatformId = groupEntity.getGamePlatformId();
+        GamePlatform gamePlatform = gamePlatformId == null? null : buildGamePlatform(gamePlatformId);
+        final Integer chatPlatformId = groupEntity.getChatPlatformId();
+        ChatPlatform chatPlatform = chatPlatformId == null? null : buildChatPlatform(chatPlatformId);
+
         return new Group(
                 groupEntity,
                 buildActivity(groupEntity.getActivityId()),
                 owner,
-                null,
-                null,
+                chatPlatform,
+                gamePlatform,
                 members,
                 chat
         );
@@ -191,15 +196,41 @@ public class ModelBuilder {
         User owner = huskUser(postEntity.getOwnerId());
 
         final Integer groupID = postEntity.getGroupId();
-        Group group = groupID == null? null : buildGroup(groupID);
+        Group group;
+
+        Set<GamePlatform> gamePlatforms;
+        Set<ChatPlatform> chatPlatforms;
+
+        if(groupID == null) {
+            group = null;
+
+            gamePlatforms = postManager
+                    .getPostGamePlatforms(postID)
+                    .stream()
+                    .map(this::buildGamePlatform)
+                    .collect(Collectors.toSet());
+
+            chatPlatforms = postManager
+                    .getPostChatPlatforms(postID)
+                    .stream()
+                    .map(this::buildChatPlatform)
+                    .collect(Collectors.toSet());
+
+        } else {
+            group = buildGroup(groupID);
+            final GamePlatform gamePlatform = group.getGamePlatform();
+            gamePlatforms = gamePlatform == null? new HashSet<>() : Collections.singleton(gamePlatform);
+            final ChatPlatform chatPlatform = group.getChatPlatform();
+            chatPlatforms = chatPlatform == null? new HashSet<>() : Collections.singleton(chatPlatform);
+        }
 
         return new Post(
                 postEntity,
                 activity,
                 owner,
                 group,
-                null,
-                null
+                chatPlatforms,
+                gamePlatforms
         );
     }
 
@@ -214,8 +245,8 @@ public class ModelBuilder {
                 activity,
                 null,
                 null,
-                null,
-                null
+                new HashSet<>(),
+                new HashSet<>()
         );
     }
 
@@ -252,5 +283,19 @@ public class ModelBuilder {
         User sender = huskUser(messageEntity.getSenderId());
 
         return new Message(messageEntity, sender);
+    }
+
+    public GamePlatform buildGamePlatform(int gamePlatformID){
+        GamePlatformEntity entity = gamePlatformManager.get(gamePlatformID);
+        if(entity == null) throw new NoSuchElementException();
+
+        return new GamePlatform(entity);
+    }
+
+    public ChatPlatform buildChatPlatform(int chatPlatformID){
+        ChatPlatformEntity entity = chatPlatformManager.get(chatPlatformID);
+        if(entity == null) throw new NoSuchElementException();
+
+        return new ChatPlatform(entity);
     }
 }
