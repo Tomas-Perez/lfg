@@ -99,6 +99,6 @@ export class UserInfoComponent implements OnInit {
   }
 
   newChat() {
-    this.chatService.newChat(ChatType.PRIVATE, [this.user.id]);
+    this.chatService.newChat(ChatType.PRIVATE, this.user.id);
   }
 }

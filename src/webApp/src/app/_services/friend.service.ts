@@ -11,16 +11,17 @@ import {UserSocketService} from './user-socket.service';
 import {ChatAction} from '../_models/sockets/ChatAction';
 import {FriendAction} from '../_models/sockets/FriendAction';
 import {OnlineStatus} from '../_models/OnlineStatus';
+import {HttpService} from './http.service';
 
 @Injectable()
 export class FriendService {
 
   private jsonConvert: JsonConvert = new JsonConvert();
-  private userUrl = 'http://localhost:8080/lfg/users';
-  private friendUrl = 'http://localhost:8080/lfg/users/me/friends';
-  private friendRequestUrl = 'http://localhost:8080/lfg/users/me/friend-requests';
-  private friendRequestReceivedUrl = 'http://localhost:8080/lfg/users/me/friend-requests/received';
-  private friendRequestSentUrl = 'http://localhost:8080/lfg/users/me/friend-requests/sent';
+  private userUrl = '/users';
+  private friendUrl = '/users/me/friends';
+  private friendRequestUrl = '/users/me/friend-requests';
+  private friendRequestReceivedUrl = '/users/me/friend-requests/received';
+  private friendRequestSentUrl = '/users/me/friend-requests/sent';
   private user: User;
   private friendList: BasicUser[];
   friendListSubject: BehaviorSubject<BasicUser[]>;
@@ -32,7 +33,7 @@ export class FriendService {
   // Buffer for friend status updates before the friend list is retrieved.
   private friendStatusBuffer: {user: BasicUser, status: OnlineStatus}[];
 
-  constructor(private http: HttpClient, private userService: UserService, private userSocketService: UserSocketService) {
+  constructor(private http: HttpService, private userService: UserService, private userSocketService: UserSocketService) {
     this.friendStatusBuffer = [];
     this.friendList = [];
     this.receivedFriendRequests = [];
@@ -149,7 +150,7 @@ export class FriendService {
   }
 
   getUserInfo(id: number): Observable<BasicUser> { // TODO when backend is ready
-    return this.http.get<any>(this.userUrl + '/' + id, {
+    return this.http.get(this.userUrl + '/' + id, {
       observe: 'response'
     })
       .pipe(
@@ -159,7 +160,7 @@ export class FriendService {
   }
 
   requestFriends(): Observable<BasicUser[]> {
-    return this.http.get<any>(this.friendUrl, {
+    return this.http.get(this.friendUrl, {
       observe: 'response'
     })
       .pipe(
@@ -184,7 +185,7 @@ export class FriendService {
   }
 
   confirmFriendRequest(id: number): Observable<boolean> {
-    return this.http.post<any>(this.friendUrl, id, {
+    return this.http.post(this.friendUrl, id, {
       observe: 'response'
     })
       .pipe(
@@ -202,7 +203,7 @@ export class FriendService {
   }
 
   removeFriend(id: number): Observable<boolean> {
-    return this.http.delete<any>(this.friendUrl + '/' + id, {
+    return this.http.delete(this.friendUrl + '/' + id, {
       observe: 'response'
     })
       .pipe(
@@ -220,7 +221,7 @@ export class FriendService {
   }
 
   sendFriendRequest(id: number): Observable<boolean> {
-    return this.http.post<any>(this.friendRequestUrl, id, {
+    return this.http.post(this.friendRequestUrl, id, {
       observe: 'response'
     })
       .pipe(
@@ -238,7 +239,7 @@ export class FriendService {
   }
 
   getFriendRequests(): Observable<BasicUser[]> {
-    return this.http.get<any>(this.friendRequestReceivedUrl, {
+    return this.http.get(this.friendRequestReceivedUrl, {
       observe: 'response'
     })
       .pipe(
@@ -260,7 +261,7 @@ export class FriendService {
   }
 
   getSentFriendRequests(): Observable<BasicUser[]> {
-    return this.http.get<any>(this.friendRequestSentUrl, {
+    return this.http.get(this.friendRequestSentUrl, {
       observe: 'response'
     })
       .pipe(

@@ -5,16 +5,18 @@ import {UserService} from './user.service';
 import {Subject} from 'rxjs/Subject';
 import {ChatAction} from '../_models/sockets/ChatAction';
 import {FriendAction} from '../_models/sockets/FriendAction';
+import {WsService} from './ws.service';
 
 @Injectable()
 export class UserSocketService {
 
-  private userWsUrl = 'ws://localhost:8080/lfg/websockets/user';
+  private userWsUrl: string;
   private userWs: $WebSocket;
   chatSubject: Subject<{action: ChatAction, id: number}>; // new|delete, id
   friendSubject: Subject<{action: FriendAction, id: number, username?: string}>;
 
-  constructor(private authService: AuthService, private userService: UserService) {
+  constructor(private wsService: WsService, private authService: AuthService, private userService: UserService) {
+    this.userWsUrl = this.wsService.getUrl('/user');
     this.chatSubject = new Subject();
     this.friendSubject = new Subject();
     this.userService.userSubject.subscribe( user => {

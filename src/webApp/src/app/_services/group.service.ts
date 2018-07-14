@@ -2,23 +2,23 @@ import { Injectable } from '@angular/core';
 import {JsonConvert} from 'json2typescript';
 import {DbGroup} from '../_models/DbModels/DbGroup';
 import {Observable} from 'rxjs/Observable';
-import {HttpClient} from '@angular/common/http';
 import {catchError, map, switchMap} from 'rxjs/operators';
 import {Group} from '../_models/Group';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {UserService} from './user.service';
 import {User} from '../_models/User';
+import {HttpService} from './http.service';
 
 @Injectable()
 export class GroupService {
 
   private jsonConvert: JsonConvert = new JsonConvert();
-  private groupsUrl = 'http://localhost:8080/lfg/groups';
+  private groupsUrl = '/groups';
   private currentGroup: Group;
   private user: User;
   currentGroupSubject: BehaviorSubject<Group>;
 
-  constructor(private http: HttpClient, private userService: UserService) {
+  constructor(private http: HttpService, private userService: UserService) {
     this.currentGroupSubject = new BehaviorSubject<Group>(null);
     this.currentGroupSubject.subscribe(group => this.currentGroup = group);
     this.userService.userSubject.subscribe( user => {
@@ -32,13 +32,13 @@ export class GroupService {
   }
 
   newGroup(group: DbGroup): Observable<boolean> {
-    return this.http.post<any>(this.groupsUrl, this.jsonConvert.serialize(group), {
+    return this.http.post(this.groupsUrl, this.jsonConvert.serialize(group), {
       observe: 'response'
     })
       .pipe(
         switchMap(response => {
           const createdGroupUrl = response.headers.get('location');
-          return this.http.get<any>(createdGroupUrl, {
+          return this.http.get(createdGroupUrl, {
             observe: 'response'
           })
             .pipe(
@@ -62,7 +62,7 @@ export class GroupService {
   }
 
   updateGroup(id: number): Observable<boolean> {
-    return this.http.get<any>(this.groupsUrl + '/' + id, {
+    return this.http.get(this.groupsUrl + '/' + id, {
       observe: 'response'
     })
       .pipe(
@@ -100,7 +100,7 @@ export class GroupService {
   }
 
   joinGroupRequest(idGroup: number): Observable<boolean> {
-    return this.http.post<any>(this.groupsUrl + '/' + idGroup + '/members' , {id: this.user.id}, {
+    return this.http.post(this.groupsUrl + '/' + idGroup + '/members' , {id: this.user.id}, {
       observe: 'response'
     })
       .pipe(
@@ -118,7 +118,7 @@ export class GroupService {
   }
 
   leaveGroup(): Observable<boolean> {
-    return this.http.delete<any>(this.groupsUrl + '/' + this.currentGroup.id + '/members/' + this.user.id, {
+    return this.http.delete(this.groupsUrl + '/' + this.currentGroup.id + '/members/' + this.user.id, {
       observe: 'response'
     })
       .pipe(
@@ -137,7 +137,7 @@ export class GroupService {
   }
 
   kickMember(idMember: number): Observable<boolean> {
-    return this.http.delete<any>(this.groupsUrl + '/' + this.currentGroup.id + '/members/' + idMember, {
+    return this.http.delete(this.groupsUrl + '/' + this.currentGroup.id + '/members/' + idMember, {
       observe: 'response'
     })
       .pipe(

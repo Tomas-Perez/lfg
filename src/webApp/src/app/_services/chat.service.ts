@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import {$WebSocket} from 'angular2-websocket/angular2-websocket';
 import {Chat} from '../_models/Chat';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {HttpClient} from '@angular/common/http';
 import {catchError, map, switchMap} from 'rxjs/operators';
 import {Observable} from 'rxjs/Observable';
 import {JsonConvert} from 'json2typescript';
@@ -14,23 +13,28 @@ import {User} from '../_models/User';
 import {UserService} from './user.service';
 import {UserSocketService} from './user-socket.service';
 import {ChatAction} from '../_models/sockets/ChatAction';
+import {HttpService} from './http.service';
+import {WsService} from './ws.service';
 
 @Injectable()
 export class ChatService {
 
   private user: User;
-  private chatUrl = 'http://localhost:8080/lfg/chats';
-  private chatWsUrl = 'ws://localhost:8080/lfg/websockets/chats/';
+  private chatUrl = '/chats';
+  private chatWsUrl: string;
   private jsonConvert: JsonConvert = new JsonConvert();
   private chatsWs: Map<number, $WebSocket>;
   private chats: Chat[];
   chatsSubject: BehaviorSubject<Chat[]>;
 
 
-  constructor(private http: HttpClient,
+  constructor(private http: HttpService,
+              private wsService: WsService,
               private authService: AuthService,
               private userService: UserService,
               private userSocketService: UserSocketService) {
+
+    this.chatWsUrl = this.wsService.getUrl('/chats/');
 
     this.chatsWs = new Map();
     this.chatsSubject = new BehaviorSubject<Chat[]>([]);
@@ -92,7 +96,7 @@ export class ChatService {
   }
 
   getChat(id: number): Observable<Chat> {
-    return this.http.get<any>(this.chatUrl + '/' + id, {
+    return this.http.get(this.chatUrl + '/' + id, {
       observe: 'response'
     })
       .pipe(
@@ -200,15 +204,15 @@ export class ChatService {
   /**
    *
    * @param {ChatType} type
-   * @param {number[]} ids chat participants ids excluiding current user id.
+   * @param {number} id chat recipient's id.
    * @returns {boolean}
    */
-  newChat(type: ChatType, ids: number[]): boolean {
-    const idArray = [this.user.id].concat(ids);
+  newChat(type: ChatType, id: number): boolean {
+    const idArray = [this.user.id, id];
 
     if (this.chatExistsByIds(idArray)) { return false; }
 
-    this.requestNewChat(type, idArray).subscribe((data: {chat: Chat, wsUrl: string}) => {
+    this.requestNewChat(type, id).subscribe((data: {chat: Chat, wsUrl: string}) => {
       const chat = data.chat;
       const wsUrl = data.wsUrl;
       this.addChat(chat);
@@ -228,8 +232,8 @@ export class ChatService {
     return true;
   }
 
-  requestNewChat(type: ChatType, ids: number[]): Observable<{chat: Chat, wsUrl: string}> {
-    return this.http.post<any>(this.chatUrl, {type: type, members: ids} , {
+  requestNewChat(type: ChatType, id: number): Observable<{chat: Chat, wsUrl: string}> {
+    return this.http.post(this.chatUrl, {type: type, recipient: id} , {
       observe: 'response'
     })
       .pipe(
@@ -238,9 +242,9 @@ export class ChatService {
           console.log(response);
           console.log(chatWsUrl);
           const createdChatUrl = response.headers.get('location');
-          return this.http.get<any>(createdChatUrl, {
+          return this.http.get(createdChatUrl, {
             observe: 'response'
-          })
+          }, true)
             .pipe(
               switchMap( getGameResponse => {
                   const newChat = this.jsonConvert.deserialize(getGameResponse.body, Chat);
@@ -271,7 +275,7 @@ export class ChatService {
   }
 
   deleteChat(id: number): Observable<boolean> {
-     return this.http.post<any>(this.chatUrl + '/' + id, {close: true, memberID: this.user.id}, {
+     return this.http.post(this.chatUrl + '/' + id, {close: true, memberID: this.user.id}, {
        observe: 'response'
      })
        .pipe(

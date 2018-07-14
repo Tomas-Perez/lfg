@@ -21,21 +21,21 @@ export class HttpService {
     set authToken(value: string) { this._authToken = value; }
     */
 
-    get defaultHeaders(): HttpHeaders { return new HttpHeaders(this.DEFAULT_HEADERS); }
-    get defaultOptions(): any { return { headers: this.defaultHeaders }; }
-
-    get defaultHttp(): HttpClient { return this._http; }
-
     constructor(private _http: HttpClient,
                 private platformLocation: PlatformLocation
                 ) {
       const loc = (platformLocation as any).location;
       this.baseUrl = 'http://' + loc.hostname + ':8080/lfg'; // get base url
-      console.log(this.baseUrl);
     }
 
-    public get(url: string, options: any): Observable<any> {
-        return this._http.get(this.baseUrl + url, options);
+    get defaultHeaders(): HttpHeaders { return new HttpHeaders(this.DEFAULT_HEADERS); }
+
+    get defaultOptions(): any { return { headers: this.defaultHeaders }; }
+
+    get defaultHttp(): HttpClient { return this._http; }
+
+    public get(url: string, options: any, ignoreBaseUrl?: boolean): Observable<any> {
+      return this._http.get((ignoreBaseUrl ? '' : this.baseUrl) + url, options);
     }
 
     public post(url: string, body: any, options: any): Observable<any> {
@@ -46,8 +46,8 @@ export class HttpService {
         return (this._http.put(this.baseUrl + url, body, this.requestOptions()));
     }
 
-    public delete(url: string): Observable<any> {
-        return (this._http.delete(this.baseUrl + url, this.requestOptions()));
+    public delete(url: string, options: any): Observable<any> {
+        return (this._http.delete(this.baseUrl + url, options));
     }
 
     public patch(url: string, body: any): Observable<any> {

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {HttpClient} from '@angular/common/http';
 import {catchError, map, switchMap} from 'rxjs/operators';
 import {Game} from '../_models/Game';
 import {JsonConvert} from 'json2typescript';
@@ -8,16 +7,17 @@ import {DbGame} from '../_models/DbModels/DbGame';
 import {DbActivity} from '../_models/DbModels/DbActivity';
 import {Activity} from '../_models/Activity';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {HttpService} from './http.service';
 
 @Injectable()
 export class GameService {
 
   private jsonConvert: JsonConvert = new JsonConvert();
-  private gamesUrl = 'http://localhost:8080/lfg/games';
-  private activitiesUrl = 'http://localhost:8080/lfg/activities';
+  private gamesUrl = '/games';
+  private activitiesUrl = '/activities';
   gamesSubject: BehaviorSubject<Game[]>;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpService) {
     this.gamesSubject = new BehaviorSubject([]);
     this.updateGameList();
   }
@@ -43,7 +43,7 @@ export class GameService {
   }
 
   requestGames(): Observable<Game[]> {
-    return this.http.get<any>(this.gamesUrl,
+    return this.http.get(this.gamesUrl,
       {
         observe: 'response'
       })
@@ -57,15 +57,15 @@ export class GameService {
   }
 
   newGame(game: DbGame): Observable<number> {
-    return this.http.post<any>(this.gamesUrl, this.jsonConvert.serialize(game), {
+    return this.http.post(this.gamesUrl, this.jsonConvert.serialize(game), {
       observe: 'response'
     })
       .pipe(
         switchMap(response => {
           const createdGameUrl = response.headers.get('location');
-          return this.http.get<any>(createdGameUrl, {
+          return this.http.get(createdGameUrl, {
             observe: 'response'
-          })
+          }, true)
             .pipe(
               switchMap( getGameResponse => {
                   const newGame = this.jsonConvert.deserialize(getGameResponse.body, Game);
@@ -92,7 +92,7 @@ export class GameService {
   }
 
   updateGame(game: DbGame, id: number): Observable<boolean> {
-    return this.http.post<any>(this.gamesUrl + '/' + id, this.jsonConvert.serialize(game), {
+    return this.http.post(this.gamesUrl + '/' + id, this.jsonConvert.serialize(game), {
       observe: 'response'
     })
       .pipe(
@@ -110,15 +110,15 @@ export class GameService {
   }
 
   newActivityWithId(activity: DbActivity): Observable<number> {
-    return this.http.post<any>(this.activitiesUrl, this.jsonConvert.serialize(activity), {
+    return this.http.post(this.activitiesUrl, this.jsonConvert.serialize(activity), {
       observe: 'response'
     })
       .pipe(
         switchMap(response => {
           const createdActivityUrl = response.headers.get('location');
-          return this.http.get<any>(createdActivityUrl, {
+          return this.http.get(createdActivityUrl, {
             observe: 'response'
-          })
+          }, true)
             .pipe(
               switchMap( getActivityResponse => {
                   const newActivity = this.jsonConvert.deserialize(getActivityResponse.body, DbActivity);
@@ -138,7 +138,7 @@ export class GameService {
   }
 
   newActivity(activity: DbActivity): Observable<boolean> {
-    return this.http.post<any>(this.activitiesUrl, this.jsonConvert.serialize(activity), {
+    return this.http.post(this.activitiesUrl, this.jsonConvert.serialize(activity), {
       observe: 'response'
     })
       .pipe(
@@ -157,7 +157,7 @@ export class GameService {
   }
 
   updateActivity(activity: DbActivity, id: number): Observable<boolean> {
-    return this.http.post<any>(this.activitiesUrl + '/' + id, this.jsonConvert.serialize(activity), {
+    return this.http.post(this.activitiesUrl + '/' + id, this.jsonConvert.serialize(activity), {
       observe: 'response'
     })
       .pipe(
@@ -176,7 +176,7 @@ export class GameService {
   }
 
   deleteActivity(id: number): Observable<boolean> {
-    return this.http.delete<any>(this.activitiesUrl + '/' + id, {
+    return this.http.delete(this.activitiesUrl + '/' + id, {
       observe: 'response'
     })
       .pipe(
@@ -196,7 +196,7 @@ export class GameService {
 
 
   getGame(id: number): Observable<Game> {
-    return this.http.get<any>(this.gamesUrl + '/' + id,
+    return this.http.get(this.gamesUrl + '/' + id,
       {
         observe: 'response'
       })
@@ -210,7 +210,7 @@ export class GameService {
   }
 
   deleteGame(id: number): Observable<boolean> {
-    return this.http.delete<any>(this.gamesUrl + '/' + id,
+    return this.http.delete(this.gamesUrl + '/' + id,
       {
         observe: 'response'
       })

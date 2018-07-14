@@ -40,7 +40,7 @@ export class FriendListComponent implements OnInit, OnDestroy {
   }
 
   newChat(id: number) {
-    this.chatService.newChat(ChatType.PRIVATE, [id]);
+    this.chatService.newChat(ChatType.PRIVATE, id);
   }
 
   ngOnDestroy() {

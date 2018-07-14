@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {Post} from '../_models/Post';
 import {PostFilter} from '../_models/post-filters/PostFilter';
 import {JsonConvert} from 'json2typescript';
-import {Filter} from '../_models/post-filters/Filter';
 import {DbPost} from '../_models/DbModels/DbPost';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {User} from '../_models/User';
@@ -14,6 +12,8 @@ import {$WebSocket} from 'angular2-websocket/angular2-websocket';
 import {AuthService} from './auth.service';
 import {FilterByGame} from '../_models/post-filters/FilterByGame';
 import {FilterByActivity} from '../_models/post-filters/FilterByActivity';
+import {HttpService} from './http.service';
+import {Subscription} from 'rxjs/Subscription';
 
 @Injectable()
 export class PostService {
@@ -24,29 +24,39 @@ export class PostService {
   private filters: PostFilter[];
   filtersSubject: BehaviorSubject<PostFilter[]>;
   private jsonConvert: JsonConvert = new JsonConvert();
-  private postUrl = 'http://localhost:8080/lfg/posts';
+  private postUrl = '/posts';
   private currentPost: Post;
+  private filterSubscribe: Subscription;
   currentPostSubject: BehaviorSubject<Post>;
 
-  // private postWsUrl = 'ws://localhost:8080/lfg/websockets/posts';
   private postWs: $WebSocket;
 
-  constructor(private http: HttpClient, private authService: AuthService, private userService: UserService) {
+  constructor(private http: HttpService, private authService: AuthService, private userService: UserService) {
     this.postsSubject = new BehaviorSubject([]);
 
     this.currentPostSubject = new BehaviorSubject<Post>(null);
     this.currentPostSubject.subscribe(post => this.currentPost = post);
 
     this.filtersSubject = new BehaviorSubject([]);
-    this.filtersSubject.subscribe(filters => {
-      this.filters = filters;
-      // this.newPostSocket();
-      this.updatePosts();
-    });
+
     this.userService.userSubject.subscribe( user => {
       this.user = user;
+
+      if (user != null) {
+        this.filterSubscribe = this.filtersSubject.subscribe(filters => {
+          this.filters = filters;
+          this.updatePosts();
+        });
+      } else {
+        if (this.filterSubscribe) {
+          this.filterSubscribe.unsubscribe();
+        }
+      }
+
       if (user !== null && user.post) {
         this.getCurrentPost(user.post.id).subscribe();
+
+
       } else {
         this.currentPostSubject.next(null);
         if (this.postWs) {
@@ -63,7 +73,6 @@ export class PostService {
     }
 
     const url = wsUrl + this.authService.getAccessToken();
-    console.log(url);
     /*
     if (this.filters.length > 0) {
 
@@ -78,7 +87,9 @@ export class PostService {
       }
     }
     */
-    const ws = new $WebSocket(url);
+
+    const ws = new $WebSocket(url, null, JSON.parse('{"reconnectIfNotNormalClose": true}'));
+
 
     ws.onMessage(
       (msg: MessageEvent) => {
@@ -118,7 +129,7 @@ export class PostService {
   }
 
   getPost(id: number): Observable<Post> {
-    return this.http.get<any>(this.postUrl + '/' + id, {
+    return this.http.get(this.postUrl + '/' + id, {
       observe: 'response'
     })
       .pipe(
@@ -138,7 +149,7 @@ export class PostService {
   }
 
   getCurrentPost(id: number): Observable<boolean> {
-    return this.http.get<any>(this.postUrl + '/' + id, {
+    return this.http.get(this.postUrl + '/' + id, {
       observe: 'response'
     })
       .pipe(
@@ -181,7 +192,7 @@ export class PostService {
       }
     }
 
-    return this.http.get<any>(url, {
+    return this.http.get(url, {
       observe: 'response'
     })
       .pipe(
@@ -211,15 +222,15 @@ export class PostService {
   }
 
   newPost(post: DbPost): Observable<boolean> {
-    return this.http.post<any>(this.postUrl, this.jsonConvert.serialize(post), {
+    return this.http.post(this.postUrl, this.jsonConvert.serialize(post), {
       observe: 'response'
     })
       .pipe(
         switchMap(response => {
           const newPostUrl = response.headers.get('location');
-          return this.http.get<any>(newPostUrl, {
+          return this.http.get(newPostUrl, {
             observe: 'response'
-          })
+          }, true)
             .pipe(
               switchMap( getGroupResponse => {
                   const newPost = this.jsonConvert.deserialize(getGroupResponse.body, Post);
@@ -241,7 +252,7 @@ export class PostService {
   }
 
   deleteCurrentPost(): Observable<boolean> {
-    return this.http.delete<any>(this.postUrl + '/' + this.currentPost.id, {
+    return this.http.delete(this.postUrl + '/' + this.currentPost.id, {
       observe: 'response'
     })
       .pipe(

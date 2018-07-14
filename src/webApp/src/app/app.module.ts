@@ -15,6 +15,7 @@ import {GameService} from './_services/game.service';
 import { GroupService } from './_services/group.service';
 import {AdminGuardService} from './_services/guards/admin-guard.service';
 import {HttpService} from './_services/http.service';
+import {WsService} from './_services/ws.service';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import {HttpService} from './_services/http.service';
   ],
   providers: [
     HttpService,
+    WsService,
     AuthService,
     httpInterceptorProviders,
     UserService,

@@ -28,7 +28,7 @@ public class FilterPair {
     public boolean filter(Integer gameID, Integer activityID){
         if(this.gameID == null) return true;
         if(this.gameID.equals(gameID)){
-            if(activityID == null) return true;
+            if(this.activityID == null) return true;
             return this.activityID.equals(activityID);
         }
         return false;
