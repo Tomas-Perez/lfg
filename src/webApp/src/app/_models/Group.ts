@@ -1,5 +1,7 @@
 import {JsonObject, JsonProperty} from 'json2typescript';
 import {DbActivity} from './DbModels/DbActivity';
+import {GamePlatform} from './GamePlatform';
+import {ChatPlatform} from './ChatPlatform';
 
 @JsonObject
 class Member {
@@ -27,6 +29,10 @@ export class Group {
   owner?: Member = undefined;
   @JsonProperty('members', [Member], true)
   members?: Member[] = undefined;
+  @JsonProperty('gamePlatform', GamePlatform, true)
+  gamePlatform?: GamePlatform = undefined;
+  @JsonProperty('chatPlatform', ChatPlatform, true)
+  chatPlatform?: ChatPlatform = undefined;
 
   addMember(id: number, username: string) {
     for (const member of this.members) {

@@ -22,7 +22,7 @@ h2{
   display: flex;
   flex-direction: row;
   flex: 0 0 auto;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.4rem;
 }
 
 .group-subtitle {
@@ -45,7 +45,7 @@ h2{
   display: flex;
   flex-direction: row;
   margin: 0.3em 0;
-  padding-left: 0.2rem;
+  padding: 0 0.2rem;
   flex: 1 0 auto;
   /*
   border-bottom: solid 1px #ffffff1a;
@@ -100,6 +100,8 @@ h2{
 
 .btn-group-leave{
   margin-top: auto;
+  margin-bottom: 10px;
+  min-height: 36px;
 }
 
 .post-info{
@@ -137,9 +139,19 @@ h2{
 
 .post-group{
   display: flex;
+  margin-bottom: 0.2rem;
+}
+
+.platform-img{
+  height: 20px;
+  width: auto;
 }
 
 .post-inactive{
   flex-direction: row;
   justify-content: center;
+}
+
+.post-info-margin-top {
+  margin-top: 1rem;
 }

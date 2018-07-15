@@ -17,8 +17,8 @@ public class CreateGroupJSON {
     public CreateGroupJSON(@JsonProperty(value = "slots", required = true) int slots,
                            @JsonProperty(value = "activityID", required = true) int activityID,
                            @JsonProperty(value = "ownerID") int ownerID,
-                           @JsonProperty(value = "chatPlatformID") Integer chatPlatformID,
-                           @JsonProperty(value = "gamePlatformID") Integer gamePlatformID)
+                           @JsonProperty(value = "chatPlatform") Integer chatPlatformID,
+                           @JsonProperty(value = "gamePlatform") Integer gamePlatformID)
     {
         this.slots = slots;
         this.activityID = activityID;

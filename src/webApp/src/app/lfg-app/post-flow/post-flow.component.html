@@ -20,21 +20,19 @@
 
         </div>
         <div class="post-info-left-bottom">
-          <div class="post-info-platform">
+          <div *ngIf="post.gamePlatforms.length > 0" class="post-info-platform">
             <label class="platform-label">Platform:</label>
-            <img src="/assets/platform/pc.png" title="PC" class="platform-img">
-            <img src="/assets/platform/ps.png" title="Playstation" class="platform-img">
-            <img src="/assets/platform/xbox.png" title="Playstation" class="platform-img">
+            <img src="{{'/assets/platform/' + post.gamePlatforms[0].name + '.png'}}" title="{{post.gamePlatforms[0].name}}" class="platform-img">
           </div>
-          <div class="post-info-vc">
+          <div *ngIf="post.chatPlatforms.length > 0" class="post-info-vc">
             <label class="platform-label">Voice Chat:</label>
-            <a href="https://discordapp.com" target="_blank">
-              <img src="/assets/platform/discord.svg" title="Discord" class="platform-img">
+            <a *ngIf="post.chatPlatforms[0].name == 'Discord'" href="https://discordapp.com" target="_blank">
+              <img src="/assets/platform/Discord.png" title="Discord" class="platform-img">
             </a>
-            <a href="https://www.teamspeak.com" target="_blank">
-              <img src="/assets/platform/teamspeak.png" title="TeamSpeak" class="platform-img">
+            <a *ngIf="post.chatPlatforms[0].name == 'Teamspeak'" href="https://www.teamspeak.com" target="_blank">
+              <img src="/assets/platform/Teamspeak.png" title="TeamSpeak" class="platform-img">
             </a>
-            <img src="/assets/platform/ingame.png" title="In-Game" class="platform-img">
+            <img *ngIf="post.chatPlatforms[0].name == 'In-game'" src="/assets/platform/In-game.png" title="In-Game" class="platform-img">
           </div>
         </div>
       </div>

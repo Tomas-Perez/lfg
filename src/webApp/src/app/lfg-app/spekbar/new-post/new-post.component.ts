@@ -41,6 +41,10 @@ export class NewPostComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
+    this.games = [];
+    this.gamePlatforms = [];
+    this.chatPlatforms = [];
+
     this.navBarService.spekbarLocationSubject.next(SpekbarLocation.NEWPOST);
 
     this.userService.userSubject.takeUntil(this.ngUnsubscribe)

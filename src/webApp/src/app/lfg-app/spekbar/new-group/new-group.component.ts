@@ -11,6 +11,9 @@ import {User} from '../../../_models/User';
 import {SpekbarLocation} from '../../_models/SpekbarLocation';
 import {NavBarService} from '../../_services/nav-bar.service';
 import {ChatService} from '../../../_services/chat.service';
+import {PlatformService} from '../../../_services/platform.service';
+import {GamePlatform} from '../../../_models/GamePlatform';
+import {ChatPlatform} from '../../../_models/ChatPlatform';
 
 @Component({
   selector: 'app-new-group',
@@ -21,33 +24,57 @@ export class NewGroupComponent implements OnInit, OnDestroy {
 
   private ngUnsubscribe: Subject<any> = new Subject();
   private games: Game[];
+  private gamePlatforms: GamePlatform[];
+  private chatPlatforms: ChatPlatform[];
   private group: DbGroup;
   private selectedGameIndex: number;
   private selectedActivityIndex: number;
+  private selectedGamePlatformIndex: number;
+  private selectedChatPlatformIndex: number;
   private user: User;
 
   constructor(private groupService: GroupService,
               private userService: UserService,
               private gameService: GameService,
+              private platformService: PlatformService,
               private router: Router,
               private chatService: ChatService,
               private navBarService: NavBarService
               ) { }
 
   ngOnInit() {
+    this.games = [];
+    this.gamePlatforms = [];
+    this.chatPlatforms = [];
+    this.selectedGameIndex = null;
+    this.selectedActivityIndex = null;
+    this.selectedGamePlatformIndex = null;
+    this.selectedChatPlatformIndex = -1;
+
     this.group = new DbGroup();
 
     this.navBarService.spekbarLocationSubject.next(SpekbarLocation.GROUP);
 
+    this.userService.userSubject.takeUntil(this.ngUnsubscribe)
+      .subscribe(user => this.user = user);
+
     this.gameService.gamesSubject.takeUntil(this.ngUnsubscribe)
       .subscribe(games => this.games = games);
 
-    this.userService.userSubject.takeUntil(this.ngUnsubscribe)
-      .subscribe(user => this.user = user);
+    this.platformService.gamePlatformsSubject.takeUntil(this.ngUnsubscribe)
+      .subscribe(platforms => this.gamePlatforms = platforms);
+
+    this.platformService.chatPlatformsSubject.takeUntil(this.ngUnsubscribe)
+      .subscribe(platforms => this.chatPlatforms = platforms);
+
   }
 
   newGroup() {
     this.group.activityID = this.games[this.selectedGameIndex].activities[this.selectedActivityIndex].id;
+    this.group.gamePlatform = this.gamePlatforms[this.selectedGamePlatformIndex].id;
+    if (this.selectedChatPlatformIndex >= 0) {
+      this.group.chatPlatform = this.chatPlatforms[this.selectedChatPlatformIndex].id;
+    }
     this.group.ownerID = this.user.id;
     this.groupService.newGroup(this.group).subscribe(
       response => {

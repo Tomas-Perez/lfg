@@ -6,7 +6,7 @@
 
     <div class="form-group">
       <label for="SelectGamePlatform">
-        <span class="bold">Game platform</span>
+        <span class="bold">Platform</span>
       </label>
       <select class="form-control form-select" id="SelectGamePlatform" [(ngModel)]="newPostModel.selectedGamePlatformIndex" name="gamePlatform" required>
         <option class="form-option" *ngFor="let platform of gamePlatforms; index as j" [ngValue]="j">{{platform.name}}</option>
@@ -30,7 +30,7 @@
     </div>
     <div class="form-group">
       <label for="SelectChatPlatform">
-        <span class="bold">Chat platform</span>
+        <span class="bold">Voice chat</span>
       </label>
       <select class="form-control form-select" id="SelectChatPlatform" [(ngModel)]="newPostModel.selectedChatPlatformIndex" name="chatPlatform" required>
         <option class="form-option" [ngValue]="-1">No chat</option>
@@ -68,6 +68,15 @@
           <span>
             {{post.activity.game.name}}, {{post.activity.name}}
           </span>
+        </div>
+        <div class="post-group">
+          <img *ngIf="post.gamePlatforms.length > 0" src="{{'/assets/platform/' + post.gamePlatforms[0].name + '.png'}}" title="{{post.gamePlatforms[0].name}}" class="platform-img">
+          <img *ngIf="post.chatPlatforms.length > 0 && post.chatPlatforms[0].name == 'Discord'"
+               src="/assets/platform/Discord.png" title="Discord" class="platform-img">
+          <img *ngIf="post.chatPlatforms.length > 0 && post.chatPlatforms[0].name == 'Teamspeak'"
+               src="/assets/platform/Teamspeak.png" title="TeamSpeak" class="platform-img">
+          <img *ngIf="post.chatPlatforms.length > 0 && post.chatPlatforms[0].name == 'In-game'"
+               src="/assets/platform/In-game.png" title="In-Game" class="platform-img">
         </div>
         <div class="post-group">
           <p class="m-0">{{post.description}}</p>

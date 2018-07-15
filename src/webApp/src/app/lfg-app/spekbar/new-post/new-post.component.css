@@ -47,9 +47,15 @@ h2{
 
 .post-group{
   display: flex;
+  margin-bottom: 0.2rem;
 }
 
 .post-inactive{
   flex-direction: row;
   justify-content: center;
+}
+
+.platform-img{
+  height: 20px;
+  width: auto;
 }

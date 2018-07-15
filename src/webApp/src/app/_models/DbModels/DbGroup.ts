@@ -8,6 +8,10 @@ export class DbGroup {
   ownerID: number = undefined;
   @JsonProperty('slots', Number)
   slots: number = undefined;
+  @JsonProperty('gamePlatform', Number, true)
+  gamePlatform?: number = undefined;
+  @JsonProperty('chatPlatform', Number, true)
+  chatPlatform?: number = undefined;
 
   constructor() { }
 }

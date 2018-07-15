@@ -1,79 +1,90 @@
-<div class="group-wrapper" *ngIf="group !== null">
-  <div class="title">
-    <h1>Group</h1>
-  </div>
-  <div class="game-activity">{{group.activity.game.name + ': ' + group.activity.name}}</div>
+<div data-simplebar>
+  <div class="group-wrapper" *ngIf="group !== null">
+    <div class="title">
+      <h1>Group</h1>
+    </div>
+    <div class="game-activity">{{group.activity.game.name + ': ' + group.activity.name}}</div>
 
-  <div class="group-subtitle-wrapper">
-    <h2 class="group-subtitle">Members</h2>
-    <label class="member-count">{{group.members.length}}/{{group.slots}}</label>
-  </div>
-  <div class="members-wrapper">
-    <div *ngFor="let member of group.members" class="member">
-      <div class="user-img-wrapper">
-        <img src="/assets/user/user-default.png" class="user-img">
-      </div>
-      <!--
-      <fa name="circle" alt="far"></fa>
-      -->
-      <span class="member-username">
-        {{member.username}}
-      </span>
-      <span *ngIf="isOwner && member.id != user.id" class="hand member-option kick-player" title="Kick player" (click)="kickPlayer(member.id)">
-        x
-      </span>
-      <span *ngIf="member.id == group.owner.id" class="member-option leader" title="Group leader">
-        <i class="fa fa-star"></i>
-      </span>
+    <div class="group-subtitle-wrapper">
+      <h2 class="group-subtitle">Members</h2>
+      <label class="member-count">{{group.members.length}}/{{group.slots}}</label>
     </div>
-  </div>
-
-  <form *ngIf="isOwner" #postForm="ngForm" class="post-group-form" (ngSubmit)="postForm.valid && postGroup()" novalidate>
-    <h2 class="group-subtitle">Post group</h2>
-    <div class="form-group">
-      <textarea name="TextAreaDescription" placeholder="Description" [(ngModel)]="newPost.description"
-                id="TextAreaDescription" class="form-control form-text description-post"
-                aria-describedby="descriptionHelp">
-      </textarea>
-    </div>
-    <div class="form-group text-center">
-      <button *ngIf="post == null" type="submit" class="btn btn-primary-lfg btn-submit">Post</button>
-    </div>
-    <div class="form-group text-center">
-      <button *ngIf="post != null" type="button" (click)="deletePost()" class="btn btn-primary-lfg btn-submit">Delete post</button>
-      <button *ngIf="post != null" type="submit" class="btn btn-primary-lfg btn-submit">Repost</button>
-    </div>
-  </form>
-
-  <!-- post info -->
-  <div *ngIf="isOwner" class="post-info-wrapper" [ngClass]="{'inactive': post == null}">
-    <h2 >Active post</h2>
-    <div class="post-info" *ngIf="post == null">
-      <div class="post-group post-inactive">
-          <span>
-            No active post
-          </span>
+    <div class="members-wrapper">
+      <div *ngFor="let member of group.members" class="member">
+        <div class="user-img-wrapper">
+          <img src="/assets/user/user-default.png" class="user-img">
+        </div>
+        <!--
+        <fa name="circle" alt="far"></fa>
+        -->
+        <span class="member-username">
+          {{member.username}}
+        </span>
+        <span *ngIf="isOwner && member.id != user.id" class="hand member-option kick-player" title="Kick player" (click)="kickPlayer(member.id)">
+          x
+        </span>
+        <span *ngIf="member.id == group.owner.id" class="member-option leader" title="Group leader">
+          <i class="fa fa-star"></i>
+        </span>
       </div>
     </div>
-    <div class="hidden-zone" [ngClass]="{'post-height': post == null}">
-      <div class="post-info" *ngIf="post != null">
-        <div class="post-group">
-          <span>
-            {{post.activity.game.name}}, {{post.activity.name}}
-          </span>
+
+    <form *ngIf="isOwner" #postForm="ngForm" class="post-group-form" (ngSubmit)="postForm.valid && postGroup()" novalidate>
+      <h2 class="group-subtitle">Post group</h2>
+      <div class="form-group">
+        <textarea name="TextAreaDescription" placeholder="Description" [(ngModel)]="newPost.description"
+                  id="TextAreaDescription" class="form-control form-text description-post"
+                  aria-describedby="descriptionHelp">
+        </textarea>
+      </div>
+      <div class="form-group text-center">
+        <button *ngIf="post == null" type="submit" class="btn btn-primary-lfg btn-submit">Post</button>
+      </div>
+      <div class="form-group text-center">
+        <button *ngIf="post != null" type="button" (click)="deletePost()" class="btn btn-primary-lfg btn-submit">Delete post</button>
+        <button *ngIf="post != null" type="submit" class="btn btn-primary-lfg btn-submit">Repost</button>
+      </div>
+    </form>
+
+    <!-- post info -->
+    <div class="post-info-wrapper" [ngClass]="{'inactive': post == null, 'post-info-margin-top': !isOwner}">
+      <h2 >Active post</h2>
+      <div class="post-info" *ngIf="post == null">
+        <div class="post-group post-inactive">
+            <span>
+              No active post
+            </span>
         </div>
-        <div class="post-group">
-          <p class="m-0">{{post.description}}</p>
-        </div>
-        <div class="post-group">
-          <span>
-            {{post.date | timeAgo}}
-          </span>
+      </div>
+      <div class="hidden-zone" [ngClass]="{'post-height': post == null}">
+        <div class="post-info" *ngIf="post != null">
+          <div class="post-group">
+            <span>
+              {{post.activity.game.name}}, {{post.activity.name}}
+            </span>
+          </div>
+          <div class="post-group">
+            <img *ngIf="post.gamePlatforms.length > 0" src="{{'/assets/platform/' + post.gamePlatforms[0].name + '.png'}}" title="{{post.gamePlatforms[0].name}}" class="platform-img">
+            <img *ngIf="post.chatPlatforms.length > 0 && post.chatPlatforms[0].name == 'Discord'"
+                 src="/assets/platform/Discord.png" title="Discord" class="platform-img">
+            <img *ngIf="post.chatPlatforms.length > 0 && post.chatPlatforms[0].name == 'Teamspeak'"
+                 src="/assets/platform/Teamspeak.png" title="TeamSpeak" class="platform-img">
+            <img *ngIf="post.chatPlatforms.length > 0 && post.chatPlatforms[0].name == 'In-game'"
+                 src="/assets/platform/In-game.png" title="In-Game" class="platform-img">
+          </div>
+          <div class="post-group">
+            <p class="m-0">{{post.description}}</p>
+          </div>
+          <div class="post-group">
+            <span>
+              {{post.date | timeAgo}}
+            </span>
+          </div>
         </div>
       </div>
     </div>
+
+
   </div>
-
-  <button type="button" class="btn btn-primary btn-primary-lfg btn-group-leave" (click)="leaveGroup()">Leave group</button>
-
 </div>
+<button type="button" class="btn btn-primary-lfg btn-group-leave" (click)="leaveGroup()">Leave group</button>
