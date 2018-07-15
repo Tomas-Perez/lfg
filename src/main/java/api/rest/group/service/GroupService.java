@@ -5,11 +5,11 @@ import api.common.event.post.DeleteGroupPost;
 import api.common.event.post.GroupPostEvent;
 import api.common.event.post.NewGroupPost;
 import api.rest.chat.service.ChatService;
+import api.rest.post.service.PostService;
 import api.rest.user.model.BasicUserData;
 import persistence.entity.GroupEntity;
 import persistence.entity.UserEntity;
 import persistence.manager.GroupManager;
-import persistence.manager.PostManager;
 import persistence.manager.UserManager;
 import persistence.model.Group;
 import persistence.model.ModelBuilder;
@@ -32,6 +32,9 @@ public class GroupService {
 
     @Inject
     private UserManager userManager;
+
+    @Inject
+    private PostService postService;
 
     @Inject
     private ModelBuilder modelBuilder;
@@ -114,12 +117,9 @@ public class GroupService {
             final int groupChat = getGroupChat(id);
             groupManager.addMemberToGroup(id, userID);
             chatService.addMember(groupChat, userID);
+            postService.deleteUserPost(userID);
 
-            final Integer postID = groupManager.getGroupPost(id);
-            final Set<Integer> singleton = Collections.singleton(userID);
-            if(postID != null) newGroupPostEvent.fire(new GroupPostEvent(postID, singleton));
-            newMemberEvent.fire(createMemberEvent(id, userID));
-            newGroupEvent.fire(new GroupEvent(id, singleton));
+            notifyNewMember(id, userID);
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
@@ -129,14 +129,10 @@ public class GroupService {
         try {
             final int groupChat = getGroupChat(id);
             final Integer postID = groupManager.getGroupPost(id);
-            final Set<Integer> singleton = Collections.singleton(userID);
-
             chatService.removeMember(groupChat, userID);
             groupManager.removeMemberFromGroup(id, userID);
 
-            if(postID != null) deleteGroupPostEvent.fire(new GroupPostEvent(postID, singleton));
-            deleteMemberEvent.fire(createMemberEvent(id, userID));
-            deleteGroupEvent.fire(new GroupEvent(id, singleton));
+            notifyRemovedMember(id, userID, postID);
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
@@ -149,6 +145,21 @@ public class GroupService {
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
+    }
+
+    private void notifyRemovedMember(int id, int userID, Integer postID) {
+        final Set<Integer> singleton = Collections.singleton(userID);
+        if(postID != null) deleteGroupPostEvent.fire(new GroupPostEvent(postID, singleton));
+        deleteMemberEvent.fire(createMemberEvent(id, userID));
+        deleteGroupEvent.fire(new GroupEvent(id, singleton));
+    }
+
+    private void notifyNewMember(int id, int userID) {
+        final Integer postID = groupManager.getGroupPost(id);
+        final Set<Integer> singleton = Collections.singleton(userID);
+        if(postID != null) newGroupPostEvent.fire(new GroupPostEvent(postID, singleton));
+        newMemberEvent.fire(createMemberEvent(id, userID));
+        newGroupEvent.fire(new GroupEvent(id, singleton));
     }
 
     private int getGroupChat(int groupID){

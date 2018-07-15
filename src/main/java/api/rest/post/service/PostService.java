@@ -149,4 +149,9 @@ public class PostService {
                 .collect(Collectors.toSet());
         return new GroupPostEvent(id, members);
     }
+
+    public void deleteUserPost(int userID){
+        final Integer userPost = postManager.getUserPost(userID);
+        if(userPost != null) deletePost(userPost);
+    }
 }

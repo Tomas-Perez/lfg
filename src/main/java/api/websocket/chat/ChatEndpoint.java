@@ -2,7 +2,6 @@ package api.websocket.chat;
 
 import api.common.event.chat.ChatEvent;
 import api.common.event.chat.NewChat;
-import api.rest.chat.model.MessageJSON;
 import api.rest.user.model.BasicUserData;
 import api.websocket.chat.codec.ChatMessageDecoder;
 import api.websocket.chat.codec.ChatMessageEncoder;
@@ -63,8 +62,8 @@ public class ChatEndpoint extends AuthenticatedEndpoint {
     public void onMessage(Session currentSession, ChatSocketMessage msg, @PathParam("id") int id) {
         if(msg.getPayload() instanceof SendTextMessagePayload){
             SendTextMessagePayload payload = (SendTextMessagePayload) msg.getPayload();
-            final int userID = getUserID(currentSession);
-            broadcastTextMessage(userID, payload.getContent(), id);
+            final BasicUserData data = getPrincipal(currentSession).getData();
+            broadcastTextMessage(data, payload.getContent(), id);
         }
     }
 
@@ -98,6 +97,7 @@ public class ChatEndpoint extends AuthenticatedEndpoint {
 
     private void broadcastAvailableUsers(int chatID) {
         Set<Session> chatSessions = sessionsMap.get(chatID);
+
         Set<BasicUserData> users = chatSessions.stream()
                 .map(this::getPrincipal)
                 .map(AuthenticatedPrincipal::getData)
@@ -107,11 +107,11 @@ public class ChatEndpoint extends AuthenticatedEndpoint {
         broadcast(new ChatSocketMessage(payload), chatID);
     }
 
-    private void broadcastTextMessage(int userID, String text, int chatID) {
+    private void broadcastTextMessage(BasicUserData data, String text, int chatID) {
         final LocalDateTime date = LocalDateTime.now();
-        int id = sendMessage(chatID, userID, text, date);
-        MessageJSON message = new MessageJSON(id, userID, text, date.toString());
-        BroadcastTextMessagePayload payload = new BroadcastTextMessagePayload(message);
+        int id = sendMessage(chatID, data.getId(), text, date);
+
+        BroadcastTextMessagePayload payload = new BroadcastTextMessagePayload(text, id, data,date.toString());
         broadcast(new ChatSocketMessage(payload), chatID);
     }
 

@@ -1,7 +1,6 @@
 package api.websocket.chat.model.payload;
 
-
-import api.rest.chat.model.MessageJSON;
+import api.rest.user.model.BasicUserData;
 import api.websocket.common.model.Payload;
 
 /**
@@ -15,17 +14,17 @@ public class BroadcastTextMessagePayload implements Payload {
 
     private int id;
     private String message;
-    private int sender;
+    private BasicUserData sender;
     private String date;
 
 
     public BroadcastTextMessagePayload() {}
 
-    public BroadcastTextMessagePayload(MessageJSON message) {
-        this.message = message.getMessage();
-        this.id = message.getId();
-        this.sender = message.getSender();
-        this.date = message.getDate();
+    public BroadcastTextMessagePayload(String message, int id, BasicUserData sender, String date) {
+        this.message = message;
+        this.id = id;
+        this.sender = sender;
+        this.date = date;
     }
 
     public int getId() {
@@ -44,11 +43,11 @@ public class BroadcastTextMessagePayload implements Payload {
         this.message = message;
     }
 
-    public int getSender() {
+    public BasicUserData getSender() {
         return sender;
     }
 
-    public void setSender(int sender) {
+    public void setSender(BasicUserData sender) {
         this.sender = sender;
     }
 
