@@ -9,13 +9,15 @@ public class UserPatcher {
     private String username;
     private String password;
     private String email;
+    private String image;
     private boolean admin;
 
-    public UserPatcher(String username, String password, String email, boolean admin) {
+    public UserPatcher(String username, String password, String email, boolean admin, String image) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.admin = admin;
+        this.image = image;
     }
 
     public boolean patchesUsername(){
@@ -24,6 +26,10 @@ public class UserPatcher {
 
     public boolean patchesEmail(){
         return email != null;
+    }
+
+    public boolean patchesImage(){
+        return image != null;
     }
 
     public String getUsername() {
@@ -59,9 +65,10 @@ public class UserPatcher {
     }
 
     public void patch(UserEntity user){
-        if(this.username != null) user.setUsername(username);
+        if(patchesUsername()) user.setUsername(username);
         if(this.password != null) user.setPassword(password);
-        if(this.email != null) user.setEmail(email);
+        if(patchesEmail()) user.setEmail(email);
+        if(patchesImage()) user.setImage(image);
         user.setAdmin(admin);
     }
 
@@ -70,6 +77,7 @@ public class UserPatcher {
         private String password;
         private String email;
         private boolean admin = false;
+        private String image;
 
         public Builder withUsername(String username){
             this.username = username;
@@ -86,13 +94,18 @@ public class UserPatcher {
             return this;
         }
 
+        public Builder withImage(String image){
+            this.image = image;
+            return this;
+        }
+
         public Builder admin(){
             this.admin = true;
             return this;
         }
 
         public UserPatcher build(){
-            return new UserPatcher(username, password, email, admin);
+            return new UserPatcher(username, password, email, admin, image);
         }
     }
 }

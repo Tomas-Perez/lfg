@@ -3,6 +3,7 @@ package api.rest.user.service;
 import api.common.event.friendrequest.*;
 import api.rest.user.model.BasicUserData;
 import persistence.entity.UserEntity;
+import persistence.manager.ImageManager;
 import persistence.manager.UserManager;
 import persistence.manager.patcher.UserPatcher;
 import persistence.model.ModelBuilder;
@@ -13,6 +14,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -29,6 +31,9 @@ public class UserService {
 
     @Inject
     private ModelBuilder modelBuilder;
+
+    @Inject
+    private ImageManager imageManager;
 
     @Inject
     @FriendRequest
@@ -135,6 +140,23 @@ public class UserService {
     public void removeFriend(int id1, int id2){
         manager.removeFriend(id1, id2);
         deleteFriendEvent.fire(createFriendEvent(id1, id2));
+    }
+
+    public void uploadImage(int userID, InputStream uploadedInputStream){
+        manager.checkExistence(userID);
+        String path = imageManager.saveImage(uploadedInputStream, String.format("users/%d", userID));
+        UserPatcher patcher = new UserPatcher.Builder()
+                .withImage(path)
+                .build();
+        manager.updateUser(userID, patcher);
+    }
+
+    public byte[] getImage(int userID){
+        try {
+            return imageManager.getImage(String.format("users/%d", userID));
+        } catch (NoSuchElementException exc){
+            throw new NotFoundException();
+        }
     }
 
     private FriendRequestEvent createFriendRequestEvent(int senderID, int receiverID){

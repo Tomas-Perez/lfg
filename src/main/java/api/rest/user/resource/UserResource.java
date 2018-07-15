@@ -1,5 +1,7 @@
 package api.rest.user.resource;
 
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import persistence.model.User;
 import api.rest.user.model.*;
 import api.rest.user.service.UserService;
@@ -9,6 +11,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -140,5 +144,34 @@ public class UserResource {
         List<User> requests = service.getSentRequests(id);
         List<BasicUserData> memberJSONS = requests.stream().map(BasicUserData::new).collect(Collectors.toList());
         return Response.ok(memberJSONS).build();
+    }
+
+    @GET
+    @Path("me/image")
+    @Produces("image/png")
+    public Response getMyImage(){
+        Principal principal = securityContext.getUserPrincipal();
+        int id = service.getIDByEmail(principal.getName());
+        final byte[] imageArray = service.getImage(id);
+        return Response.ok(new ByteArrayInputStream(imageArray)).build();
+    }
+
+    @GET
+    @Path("{id}/image")
+    @Produces("image/png")
+    public Response getImage(@PathParam("id") int id){
+        final byte[] imageArray = service.getImage(id);
+        return Response.ok(new ByteArrayInputStream(imageArray)).build();
+    }
+
+    @POST
+    @Path("me/image")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response uploadMyImage(@FormDataParam("file") InputStream uploadedInputStream,
+                                  @FormDataParam("file") FormDataContentDisposition fileDetail){
+        Principal principal = securityContext.getUserPrincipal();
+        int id = service.getIDByEmail(principal.getName());
+        service.uploadImage(id, uploadedInputStream);
+        return Response.noContent().build();
     }
 }
