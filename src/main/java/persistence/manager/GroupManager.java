@@ -15,6 +15,7 @@ import java.util.NoSuchElementException;
  * @author Tomas Perez Molina
  */
 @ApplicationScoped
+@SuppressWarnings("unchecked")
 public class GroupManager extends Manager<GroupEntity>{
     private UserManager userManager;
     private ActivityManager activityManager;
@@ -99,12 +100,10 @@ public class GroupManager extends Manager<GroupEntity>{
         }
     }
 
-    @SuppressWarnings("unchecked")
     public List<Integer> list(){
         return manager.createQuery("SELECT G.id FROM GroupEntity G").getResultList();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Integer> getGroupMembers(int groupID){
         return manager.createQuery("SELECT M.memberId " +
                 "FROM GroupMemberEntity M " +
@@ -193,6 +192,14 @@ public class GroupManager extends Manager<GroupEntity>{
         }
 
         return oldOwnerID;
+    }
+
+    public Integer getGroupPost(int groupID){
+        return (Integer) manager.createQuery("SELECT P.id " +
+                "FROM PostEntity P " +
+                "WHERE P.groupId = :groupID")
+                .setParameter("groupID", groupID)
+                .getResultList().stream().findFirst().orElse(null);
     }
 
     private Integer getNewOwnerID(int groupID){

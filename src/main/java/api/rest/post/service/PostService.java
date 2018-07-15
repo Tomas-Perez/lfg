@@ -1,8 +1,6 @@
 package api.rest.post.service;
 
-import api.common.event.post.DeletePost;
-import api.common.event.post.NewPost;
-import api.common.event.post.PostEvent;
+import api.common.event.post.*;
 import common.postfilter.FilterPair;
 import persistence.entity.GroupEntity;
 import persistence.entity.PostEntity;
@@ -41,8 +39,16 @@ public class PostService {
     private Event<PostEvent> newPostEvent;
 
     @Inject
+    @NewGroupPost
+    private Event<GroupPostEvent> newGroupPostEvent;
+
+    @Inject
     @DeletePost
     private Event<PostEvent> deletePostEvent;
+
+    @Inject
+    @DeleteGroupPost
+    private Event<GroupPostEvent> deleteGroupPostEvent;
 
     public List<Post> getAll(){
         return postManager.list().stream().map(modelBuilder::buildPost).collect(Collectors.toList());
@@ -83,6 +89,7 @@ public class PostService {
         }
         final int id = postManager.addGroupPost(description, LocalDateTime.now(), group, chatPlatformIDs, gamePlatformIDs);
         newPostEvent.fire(createEvent(id));
+        newGroupPostEvent.fire(createGroupEvent(id));
         return id;
     }
 
@@ -100,14 +107,25 @@ public class PostService {
 
     public void deletePost(int id){
         try {
-            PostEvent event = createEvent(id);
-            postManager.delete(id);
-            deletePostEvent.fire(event);
+            Integer groupID = postManager.getPostGroup(id);
+            if(groupID != null) deleteGroupPost(id);
+            else deleteLonePost(id);
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
     }
 
+    private void deleteGroupPost(int id){
+        GroupPostEvent event = createGroupEvent(id);
+        deleteLonePost(id);
+        deleteGroupPostEvent.fire(event);
+    }
+
+    private void deleteLonePost(int id){
+        PostEvent event = createEvent(id);
+        postManager.delete(id);
+        deletePostEvent.fire(event);
+    }
 
     private GroupEntity getGroup(int groupID){
         GroupEntity group = groupManager.get(groupID);
@@ -121,5 +139,14 @@ public class PostService {
         final Game game = activity.getGame();
         final User owner = post.getOwner();
         return new PostEvent(owner.getId(), post.getId(), game.getId(), activity.getId());
+    }
+
+    private GroupPostEvent createGroupEvent(int id){
+        Integer groupID = postManager.getPostGroup(id);
+        Integer ownerID = postManager.getUserPost(id);
+        final Set<Integer> members = groupManager.getGroupMembers(groupID).stream()
+                .filter(x -> !x.equals(ownerID))
+                .collect(Collectors.toSet());
+        return new GroupPostEvent(id, members);
     }
 }

@@ -108,6 +108,22 @@ public class GroupJSON {
         this.chat = chat;
     }
 
+    public GamePlatformJSON getGamePlatform() {
+        return gamePlatform;
+    }
+
+    public void setGamePlatform(GamePlatformJSON gamePlatform) {
+        this.gamePlatform = gamePlatform;
+    }
+
+    public ChatPlatformJSON getChatPlatform() {
+        return chatPlatform;
+    }
+
+    public void setChatPlatform(ChatPlatformJSON chatPlatform) {
+        this.chatPlatform = chatPlatform;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

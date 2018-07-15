@@ -7,9 +7,7 @@ import api.common.event.friendrequest.*;
 import api.common.event.group.DeleteGroup;
 import api.common.event.group.GroupEvent;
 import api.common.event.group.NewGroup;
-import api.common.event.post.DeletePost;
-import api.common.event.post.NewPost;
-import api.common.event.post.PostEvent;
+import api.common.event.post.*;
 import api.websocket.common.AuthenticatedEndpoint;
 import api.websocket.common.config.CdiAwareConfigurator;
 import api.websocket.common.model.Payload;
@@ -197,6 +195,16 @@ public class UserEndpoint extends AuthenticatedEndpoint {
     private void deletePost(@Observes @DeletePost PostEvent event){
         DeletePostPayload payload = new DeletePostPayload(event.getPostID());
         sendMessage(payload, event.getOwnerID());
+    }
+
+    private void newGroupPost(@Observes @NewGroupPost GroupPostEvent event){
+        NewGroupPostPayload payload = new NewGroupPostPayload(event.getPostID());
+        broadcastTo(payload, event.getNotifySet());
+    }
+
+    private void deleteGroupPost(@Observes @DeleteGroupPost GroupPostEvent event){
+        DeleteGroupPostPayload payload = new DeleteGroupPostPayload(event.getPostID());
+        broadcastTo(payload, event.getNotifySet());
     }
 
     private void newGroup(@Observes @NewGroup GroupEvent event){

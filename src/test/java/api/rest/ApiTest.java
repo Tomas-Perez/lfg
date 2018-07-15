@@ -190,6 +190,10 @@ public abstract class ApiTest {
         return addJSON(postsTarget, postJSON);
     }
 
+    protected int addGroup(CreateGroupJSON groupJSON){
+        return addJSON(groupsTarget, groupJSON);
+    }
+
     protected <T> int addJSON(WebTarget target, T json){
         final Response postResponse = RequestUtil.post(target, token, json);
         System.out.println(postResponse.readEntity(String.class));
