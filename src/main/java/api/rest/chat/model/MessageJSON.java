@@ -1,5 +1,6 @@
 package api.rest.chat.model;
 
+import api.rest.user.model.BasicUserData;
 import persistence.model.Message;
 
 import java.util.Objects;
@@ -9,11 +10,11 @@ import java.util.Objects;
  */
 public class MessageJSON {
     private int id;
-    private int sender;
+    private BasicUserData sender;
     private String message;
     private String date;
 
-    public MessageJSON(int id, int sender, String message, String date) {
+    public MessageJSON(int id, BasicUserData sender, String message, String date) {
         this.id = id;
         this.sender = sender;
         this.message = message;
@@ -22,7 +23,7 @@ public class MessageJSON {
 
     public MessageJSON(Message message) {
         this.id = message.getId();
-        this.sender = message.getSender().getId();
+        this.sender = new BasicUserData(message.getSender());
         this.message = message.getMessage();
         this.date = message.getDate().toString();
     }
@@ -37,11 +38,11 @@ public class MessageJSON {
         this.id = id;
     }
 
-    public int getSender() {
+    public BasicUserData getSender() {
         return sender;
     }
 
-    public void setSender(int sender) {
+    public void setSender(BasicUserData sender) {
         this.sender = sender;
     }
 
