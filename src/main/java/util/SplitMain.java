@@ -1,6 +1,7 @@
 package util;
 
 import api.common.postfilter.FilterParameterDecoder;
+import common.postfilter.FilterData;
 
 import java.util.Arrays;
 
@@ -9,6 +10,27 @@ import java.util.Arrays;
  */
 public class SplitMain {
     public static void main(String[] args) {
+        FilterData data = new FilterData.Builder()
+                .withActivity(45, 56)
+                .withChatPlatform(46)
+                .withGamePlatform(10)
+                .withType(FilterData.PostType.LFG)
+                .build();
+
+        System.out.println(data.asQueryParam());
+
+        FilterData empty = FilterData.emptyPair();
+
+        System.out.println(empty.asQueryParam());
+
+        FilterData data2 = new FilterData.Builder()
+                .withActivity(45, 56)
+                .withGamePlatform(10)
+                .build();
+
+        System.out.println(data2.asQueryParam());
+
+
 //        FilterParameterDecoder decoder = new FilterParameterDecoder();
 //        String empty = "";
 //        String justGame = "1542";

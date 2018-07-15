@@ -1,5 +1,7 @@
 package persistence.model;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import persistence.entity.*;
 import persistence.manager.*;
 
@@ -22,6 +24,9 @@ public class ModelBuilder {
     @Inject private ChatManager chatManager;
     @Inject private ChatPlatformManager chatPlatformManager;
     @Inject private GamePlatformManager gamePlatformManager;
+
+    private static final Logger logger = LogManager.getLogger(ModelBuilder.class);
+
 
     private Activity huskActivity(int activityID){
         ActivityEntity activityEntity = activityManager.get(activityID);
@@ -145,6 +150,7 @@ public class ModelBuilder {
 
     public Group buildGroup(int groupID){
         GroupEntity groupEntity = groupManager.get(groupID);
+        logger.info(groupEntity);
         if(groupEntity == null) throw new NoSuchElementException();
 
         Set<User> members = groupManager

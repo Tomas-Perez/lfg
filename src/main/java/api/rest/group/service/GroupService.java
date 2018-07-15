@@ -7,6 +7,8 @@ import api.common.event.post.NewGroupPost;
 import api.rest.chat.service.ChatService;
 import api.rest.post.service.PostService;
 import api.rest.user.model.BasicUserData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import persistence.entity.GroupEntity;
 import persistence.entity.UserEntity;
 import persistence.manager.GroupManager;
@@ -26,6 +28,8 @@ import java.util.stream.Collectors;
  */
 @ApplicationScoped
 public class GroupService {
+    private static final Logger logger = LogManager.getLogger(GroupService.class);
+
 
     @Inject
     private GroupManager groupManager;
@@ -115,10 +119,11 @@ public class GroupService {
     public void addMember(int id, int userID){
         try {
             final int groupChat = getGroupChat(id);
+            logger.info("groupChatID: " + groupChat);
             groupManager.addMemberToGroup(id, userID);
             chatService.addMember(groupChat, userID);
             postService.deleteUserPost(userID);
-
+            logger.info("we get here?");
             notifyNewMember(id, userID);
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
@@ -128,11 +133,18 @@ public class GroupService {
     public void removeMember(int id, int userID){
         try {
             final int groupChat = getGroupChat(id);
+            logger.info("groupChatID: " + groupChat);
             final Integer postID = groupManager.getGroupPost(id);
+            logger.info("postID: " + postID);
+            final Integer ownerID = groupManager.getGroupOwner(id);
+            logger.info("ownerID: " + ownerID);
+
             chatService.removeMember(groupChat, userID);
             groupManager.removeMemberFromGroup(id, userID);
-
+            if(ownerID == userID) postService.deleteUserPost(ownerID);
+            logger.info("we get here?");
             notifyRemovedMember(id, userID, postID);
+            logger.info("we dont get here");
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
@@ -141,6 +153,7 @@ public class GroupService {
     public void replaceOwner(int id, int newOwnerID){
         try {
             int oldOwnerID = groupManager.replaceOwner(id, newOwnerID);
+            postService.deleteUserPost(oldOwnerID);
             newOwnerEvent.fire(new NewOwnerEvent(id, oldOwnerID, newOwnerID));
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
@@ -153,6 +166,7 @@ public class GroupService {
             deleteGroupPostEvent.fire(new GroupPostEvent(postID, singleton));
             postService.notifyPostUpdate(postID);
         }
+        logger.info("after update notify");
         deleteMemberEvent.fire(createMemberEvent(id, userID));
         deleteGroupEvent.fire(new GroupEvent(id, singleton));
     }

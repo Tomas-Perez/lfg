@@ -41,7 +41,6 @@ public class EntityManagerProducer {
     @Produces
     @RequestScoped
     public EntityManager createEntityManager() {
-        logger.debug("Creating Entity Manager");
         return factory.createEntityManager();
     }
 

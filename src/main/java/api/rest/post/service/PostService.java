@@ -2,6 +2,8 @@ package api.rest.post.service;
 
 import api.common.event.post.*;
 import common.postfilter.FilterData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import persistence.entity.GroupEntity;
 import persistence.entity.PostEntity;
 import persistence.manager.GroupManager;
@@ -24,6 +26,8 @@ import java.util.stream.Collectors;
  */
 @ApplicationScoped
 public class PostService {
+    private static final Logger logger = LogManager.getLogger(PostService.class);
+
 
     @Inject
     private GroupManager groupManager;
@@ -146,10 +150,13 @@ public class PostService {
     }
 
     private UpdatePostEvent createGroupUpdateEvent(int id, int groupID) {
+        logger.info(groupID);
         Group group = modelBuilder.buildGroup(groupID);
+        logger.info(group);
         final Activity activity = group.getActivity();
         final Game game = activity.getGame();
         Set<Integer> members = group.getMembers().stream().map(User::getId).collect(Collectors.toSet());
+        logger.info("we get here? UPDATE POST");
         return new UpdatePostEvent(id, game.getId(), activity.getId(), members);
     }
 
@@ -164,11 +171,13 @@ public class PostService {
 
     public void deleteUserPost(int userID){
         final Integer userPost = postManager.getUserPost(userID);
+        logger.info("userPost: " + userPost);
         if(userPost != null) deletePost(userPost);
     }
 
     public void notifyPostUpdate(int postID){
         Integer groupID = postManager.getPostGroup(postID);
+        logger.info("groupID: " + groupID);
         if(groupID != null) updatePostEvent.fire(createGroupUpdateEvent(postID, groupID));
     }
 }

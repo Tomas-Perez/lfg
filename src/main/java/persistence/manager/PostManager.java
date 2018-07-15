@@ -206,7 +206,6 @@ public class PostManager extends Manager<PostEntity>{
 
     public Integer getPostGroup(int postID){
         final PostEntity postEntity = get(postID);
-        if(postEntity == null) throw new NoSuchElementException();
-        return postEntity.getGroupId();
+        return postEntity == null? null : postEntity.getGroupId();
     }
 }

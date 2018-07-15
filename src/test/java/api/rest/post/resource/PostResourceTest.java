@@ -3,7 +3,6 @@ package api.rest.post.resource;
 import api.rest.chatPlatform.model.ChatPlatformJSON;
 import api.rest.gamePlatform.model.GamePlatformJSON;
 import api.rest.post.model.FilterPostsJSON;
-import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
