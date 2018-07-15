@@ -5,24 +5,29 @@ import java.util.Objects;
 /**
  * @author Tomas Perez Molina
  */
-public class FilterPair {
+public class FilterData {
+    public static final char ACTIVITY_DELIM = 'A';
+    public static final char GAME_PLATFORM_DELIM = 'G';
+    public static final char CHAT_PLATFORM_DELIM = 'C';
+    public static final char TYPE_DELIM = 'T';
+
     private Integer gameID;
     private Integer activityID;
 
-    public FilterPair(Integer gameID, Integer activities) {
+    public FilterData(Integer gameID, Integer activities) {
         this.gameID = gameID;
         this.activityID = activities;
     }
 
-    public FilterPair(Integer gameID) {
+    public FilterData(Integer gameID) {
         this.gameID = gameID;
     }
 
-    public static FilterPair emptyPair() {
-        return new FilterPair();
+    public static FilterData emptyPair() {
+        return new FilterData();
     }
 
-    private FilterPair() {
+    private FilterData() {
     }
 
     public boolean filter(Integer gameID, Integer activityID){
@@ -44,7 +49,7 @@ public class FilterPair {
 
     @Override
     public String toString() {
-        return "FilterPair{" +
+        return "FilterData{" +
                 "gameID=" + gameID +
                 ", activityID=" + activityID +
                 '}';
@@ -63,8 +68,8 @@ public class FilterPair {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FilterPair)) return false;
-        FilterPair that = (FilterPair) o;
+        if (!(o instanceof FilterData)) return false;
+        FilterData that = (FilterData) o;
         return Objects.equals(gameID, that.gameID) &&
                 Objects.equals(activityID, that.activityID);
     }
@@ -72,5 +77,17 @@ public class FilterPair {
     @Override
     public int hashCode() {
         return Objects.hash(gameID, activityID);
+    }
+
+    public enum PostType{
+        LFG, LFM
+    }
+
+    public static class Builder{
+        private Integer gameID;
+        private Integer activityID;
+        private Integer chatPlatformID;
+        private Integer gamePlatformID;
+        private PostType type;
     }
 }

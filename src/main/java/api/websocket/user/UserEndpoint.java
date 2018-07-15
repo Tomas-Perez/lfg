@@ -207,6 +207,11 @@ public class UserEndpoint extends AuthenticatedEndpoint {
         broadcastTo(payload, event.getNotifySet());
     }
 
+    private void updatePost(@Observes @UpdatePost UpdatePostEvent event){
+        UpdatePostPayload payload = new UpdatePostPayload(event.getPostID());
+        broadcastTo(payload, event.getNotifySet());
+    }
+
     private void newGroup(@Observes @NewGroup GroupEvent event){
         NewGroupPayload payload = new NewGroupPayload(event.getId());
         broadcastTo(payload, event.getNotifySet());

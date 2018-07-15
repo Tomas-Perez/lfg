@@ -1,6 +1,6 @@
 package persistence.manager;
 
-import common.postfilter.FilterPair;
+import common.postfilter.FilterData;
 import org.jetbrains.annotations.NotNull;
 import persistence.manager.exception.ConstraintException;
 import persistence.entity.*;
@@ -11,7 +11,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Tomas Perez Molina
@@ -115,7 +114,7 @@ public class PostManager extends Manager<PostEntity>{
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> filteredList(FilterPair filter){
+    public List<Integer> filteredList(FilterData filter){
         if(filter.getGameID() == null) return list();
         if(filter.getActivityID() == null) return getGamePosts(filter.getGameID());
         return getGameActivityPosts(filter.getGameID(), filter.getActivityID());

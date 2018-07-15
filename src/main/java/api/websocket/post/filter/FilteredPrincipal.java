@@ -1,6 +1,6 @@
 package api.websocket.post.filter;
 
-import common.postfilter.FilterPair;
+import common.postfilter.FilterData;
 
 import java.security.Principal;
 import java.util.List;
@@ -10,9 +10,9 @@ import java.util.List;
  */
 public class FilteredPrincipal implements Principal {
     private Principal principal;
-    private List<FilterPair> filters;
+    private List<FilterData> filters;
 
-    public FilteredPrincipal(Principal principal, List<FilterPair> filters) {
+    public FilteredPrincipal(Principal principal, List<FilterData> filters) {
         this.filters = filters;
         this.principal = principal;
     }
@@ -22,7 +22,7 @@ public class FilteredPrincipal implements Principal {
         return principal.getName();
     }
 
-    public List<FilterPair> getFilters() {
+    public List<FilterData> getFilters() {
         return filters;
     }
 }

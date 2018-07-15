@@ -149,7 +149,10 @@ public class GroupService {
 
     private void notifyRemovedMember(int id, int userID, Integer postID) {
         final Set<Integer> singleton = Collections.singleton(userID);
-        if(postID != null) deleteGroupPostEvent.fire(new GroupPostEvent(postID, singleton));
+        if(postID != null){
+            deleteGroupPostEvent.fire(new GroupPostEvent(postID, singleton));
+            postService.notifyPostUpdate(postID);
+        }
         deleteMemberEvent.fire(createMemberEvent(id, userID));
         deleteGroupEvent.fire(new GroupEvent(id, singleton));
     }
@@ -157,7 +160,10 @@ public class GroupService {
     private void notifyNewMember(int id, int userID) {
         final Integer postID = groupManager.getGroupPost(id);
         final Set<Integer> singleton = Collections.singleton(userID);
-        if(postID != null) newGroupPostEvent.fire(new GroupPostEvent(postID, singleton));
+        if(postID != null){
+            newGroupPostEvent.fire(new GroupPostEvent(postID, singleton));
+            postService.notifyPostUpdate(postID);
+        }
         newMemberEvent.fire(createMemberEvent(id, userID));
         newGroupEvent.fire(new GroupEvent(id, singleton));
     }

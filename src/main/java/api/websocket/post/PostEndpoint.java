@@ -1,13 +1,12 @@
 package api.websocket.post;
 
-import api.common.event.post.DeletePost;
-import api.common.event.post.NewPost;
-import api.common.event.post.PostEvent;
+import api.common.event.post.*;
 import api.websocket.common.config.CdiAwareConfigurator;
 import api.websocket.common.model.Payload;
 import api.websocket.post.codec.PostMessageDecoder;
 import api.websocket.post.codec.PostMessageEncoder;
-import common.postfilter.FilterPair;
+import api.websocket.post.model.payload.UpdatePostPayload;
+import common.postfilter.FilterData;
 import api.websocket.post.filter.FilteredPrincipal;
 import api.websocket.post.model.PostSocketMessage;
 import api.websocket.post.model.payload.DeletePostPayload;
@@ -32,12 +31,12 @@ import java.util.*;
         decoders = PostMessageDecoder.class,
         configurator = CdiAwareConfigurator.class)
 public class PostEndpoint {
-    private static final Map<FilterPair, Set<Session>> sessionsMap = Collections.synchronizedMap(new HashMap<>());
+    private static final Map<FilterData, Set<Session>> sessionsMap = Collections.synchronizedMap(new HashMap<>());
     private static final Logger logger = LogManager.getLogger(PostEndpoint.class);
 
     @OnOpen
     public void onOpen(Session currentSession){
-        List<FilterPair> filters = getFilters(currentSession);
+        List<FilterData> filters = getFilters(currentSession);
         filters.forEach(filter -> {
             Set<Session> sessionSet =
                     sessionsMap.getOrDefault(filter, Collections.synchronizedSet(new HashSet<>()));
@@ -48,7 +47,7 @@ public class PostEndpoint {
 
     @OnClose
     public void onClose(Session currentSession){
-        List<FilterPair> filters = getFilters(currentSession);
+        List<FilterData> filters = getFilters(currentSession);
         filters.forEach(filter -> {
             Set<Session> sessionSet =
                     sessionsMap.get(filter);
@@ -65,7 +64,7 @@ public class PostEndpoint {
     @OnMessage
     public void onMessage(Session currentSession, PostSocketMessage message) {}
 
-    private List<FilterPair> getFilters(Session session){
+    private List<FilterData> getFilters(Session session){
         Principal principal = session.getUserPrincipal();
         if(principal instanceof FilteredPrincipal){
             return ((FilteredPrincipal) principal).getFilters();
@@ -81,6 +80,11 @@ public class PostEndpoint {
 
     private void deletePost(@Observes @DeletePost PostEvent event){
         DeletePostPayload payload = new DeletePostPayload(event.getPostID());
+        filteredBroadcast(payload, event.getGameID(), event.getActivityID());
+    }
+
+    private void updatePost(@Observes @UpdatePost UpdatePostEvent event){
+        UpdatePostPayload payload = new UpdatePostPayload(event.getPostID());
         filteredBroadcast(payload, event.getGameID(), event.getActivityID());
     }
 

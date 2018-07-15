@@ -3,6 +3,7 @@ package api.websocket.post.model;
 import api.websocket.common.model.Payload;
 import api.websocket.post.model.payload.DeletePostPayload;
 import api.websocket.post.model.payload.NewPostPayload;
+import api.websocket.post.model.payload.UpdatePostPayload;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -19,6 +20,7 @@ public class PostSocketMessage {
     )
     @JsonSubTypes({
             @JsonSubTypes.Type(value = NewPostPayload.class, name = NewPostPayload.TYPE),
+            @JsonSubTypes.Type(value = UpdatePostPayload.class, name = UpdatePostPayload.TYPE),
             @JsonSubTypes.Type(value = DeletePostPayload.class, name = DeletePostPayload.TYPE)
     })
     private Payload payload;

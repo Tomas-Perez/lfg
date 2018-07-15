@@ -1,6 +1,6 @@
 package api.websocket.post.filter;
 
-import common.postfilter.FilterPair;
+import common.postfilter.FilterData;
 import api.common.postfilter.FilterParameterDecoder;
 import api.websocket.post.filter.exception.MalformedParameterException;
 import org.apache.logging.log4j.LogManager;
@@ -43,7 +43,7 @@ public class PostFilter implements Filter {
         final String[] actualParams = filterParams != null? filterParams: empty;
 
         try {
-            List<FilterPair> filters = Arrays.stream(actualParams)
+            List<FilterData> filters = Arrays.stream(actualParams)
                     .map(decoder::decode)
                     .distinct()
                     .collect(Collectors.toList());
@@ -69,10 +69,10 @@ public class PostFilter implements Filter {
 
     private static class FilteredRequest extends HttpServletRequestWrapper {
 
-        private List<FilterPair> filters;
+        private List<FilterData> filters;
         private Principal principal;
 
-        private FilteredRequest(HttpServletRequest request, List<FilterPair> filters) {
+        private FilteredRequest(HttpServletRequest request, List<FilterData> filters) {
             super(request);
             this.principal = request.getUserPrincipal();
             this.filters = filters;

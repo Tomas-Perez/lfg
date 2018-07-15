@@ -1,7 +1,7 @@
 package api.rest.post.service;
 
 import api.common.event.post.*;
-import common.postfilter.FilterPair;
+import common.postfilter.FilterData;
 import persistence.entity.GroupEntity;
 import persistence.entity.PostEntity;
 import persistence.manager.GroupManager;
@@ -50,11 +50,15 @@ public class PostService {
     @DeleteGroupPost
     private Event<GroupPostEvent> deleteGroupPostEvent;
 
+    @Inject
+    @UpdatePost
+    private Event<UpdatePostEvent> updatePostEvent;
+
     public List<Post> getAll(){
         return postManager.list().stream().map(modelBuilder::buildPost).collect(Collectors.toList());
     }
 
-    public List<Post> getFilteredPosts(List<FilterPair> filters){
+    public List<Post> getFilteredPosts(List<FilterData> filters){
         return filters.stream()
                 .map(filter -> postManager.filteredList(filter))
                 .flatMap(List::stream)
@@ -141,6 +145,14 @@ public class PostService {
         return new PostEvent(owner.getId(), post.getId(), game.getId(), activity.getId());
     }
 
+    private UpdatePostEvent createGroupUpdateEvent(int id, int groupID) {
+        Group group = modelBuilder.buildGroup(groupID);
+        final Activity activity = group.getActivity();
+        final Game game = activity.getGame();
+        Set<Integer> members = group.getMembers().stream().map(User::getId).collect(Collectors.toSet());
+        return new UpdatePostEvent(id, game.getId(), activity.getId(), members);
+    }
+
     private GroupPostEvent createGroupEvent(int id){
         Integer groupID = postManager.getPostGroup(id);
         Integer ownerID = postManager.getUserPost(id);
@@ -153,5 +165,10 @@ public class PostService {
     public void deleteUserPost(int userID){
         final Integer userPost = postManager.getUserPost(userID);
         if(userPost != null) deletePost(userPost);
+    }
+
+    public void notifyPostUpdate(int postID){
+        Integer groupID = postManager.getPostGroup(postID);
+        if(groupID != null) updatePostEvent.fire(createGroupUpdateEvent(postID, groupID));
     }
 }

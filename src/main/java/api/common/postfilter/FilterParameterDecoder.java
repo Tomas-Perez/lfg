@@ -1,23 +1,23 @@
 package api.common.postfilter;
 
 import api.websocket.post.filter.exception.MalformedParameterException;
-import common.postfilter.FilterPair;
+import common.postfilter.FilterData;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * @author Tomas Perez Molina
  */
 public class FilterParameterDecoder {
-    public FilterPair decode(String parameter){
+
+    public FilterData decode(String parameter){
         String[] separatedParam = Arrays.stream(parameter.split(":"))
                 .filter(str -> str.length() > 0)
                 .toArray(String[]::new);
 
         switch (separatedParam.length){
             case 0:
-                return FilterPair.emptyPair();
+                return FilterData.emptyPair();
             case 1:
                 return justGamePair(separatedParam[0]);
             case 2:
@@ -27,20 +27,20 @@ public class FilterParameterDecoder {
         }
     }
 
-    private FilterPair justGamePair(String gameIDStr){
+    private FilterData justGamePair(String gameIDStr){
         try {
             Integer id = Integer.parseInt(gameIDStr);
-            return new FilterPair(id);
+            return new FilterData(id);
         } catch (NumberFormatException exc) {
             throw new MalformedParameterException("Filter parameter is malformed");
         }
     }
 
-    private FilterPair fullPair(String gameIDStr, String activityStr){
+    private FilterData fullPair(String gameIDStr, String activityStr){
         try {
             Integer gameID = Integer.parseInt(gameIDStr);
             Integer activityID = Integer.parseInt(activityStr);
-            return new FilterPair(gameID, activityID);
+            return new FilterData(gameID, activityID);
         } catch (NumberFormatException exc) {
             throw new MalformedParameterException("Filter parameter is malformed");
         }
