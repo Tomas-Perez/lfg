@@ -2,6 +2,7 @@ package api.rest.gamePlatform.service;
 
 import persistence.entity.GamePlatformEntity;
 import persistence.manager.GamePlatformManager;
+import persistence.manager.ImageManager;
 import persistence.manager.patcher.GamePlatformPatcher;
 import persistence.model.GamePlatform;
 import persistence.model.ModelBuilder;
@@ -9,6 +10,7 @@ import persistence.model.ModelBuilder;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -21,6 +23,11 @@ public class GamePlatformService {
 
     @Inject
     private GamePlatformManager manager;
+
+    @Inject
+    private ImageManager imageManager;
+
+    private static final String IMAGE_FOLDER = "game-platforms";
 
     @Inject
     private ModelBuilder modelBuilder;
@@ -63,5 +70,22 @@ public class GamePlatformService {
                 .withImage(image)
                 .build();
         manager.updateGamePlatform(id, patcher);
+    }
+
+    public void uploadImage(int id, InputStream uploadedInputStream){
+        manager.checkExistence(id);
+        String path = imageManager.saveImage(uploadedInputStream, String.format("%s/%d", IMAGE_FOLDER, id));
+        GamePlatformPatcher patcher = new GamePlatformPatcher.Builder()
+                .withImage(path)
+                .build();
+        manager.updateGamePlatform(id, patcher);
+    }
+
+    public byte[] getImage(int id){
+        try {
+            return imageManager.getImage(String.format("%s/%d", IMAGE_FOLDER, id));
+        } catch (NoSuchElementException exc){
+            throw new NotFoundException();
+        }
     }
 }

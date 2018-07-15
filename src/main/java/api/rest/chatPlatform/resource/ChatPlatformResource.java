@@ -4,6 +4,8 @@ import api.rest.chatPlatform.model.CreateChatPlatformJSON;
 import api.rest.chatPlatform.model.UpdateChatPlatformJSON;
 import api.rest.chatPlatform.service.ChatPlatformService;
 import api.rest.chatPlatform.model.ChatPlatformJSON;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import persistence.model.ChatPlatform;
 
 import javax.annotation.security.RolesAllowed;
@@ -14,6 +16,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -78,6 +82,25 @@ public class ChatPlatformResource {
     @RolesAllowed({"ADMIN"})
     public Response update(@PathParam("id") int id, UpdateChatPlatformJSON updateJSON){
         service.updateChatPlatform(id, updateJSON.getName(), updateJSON.getImage());
+        return Response.noContent().build();
+    }
+
+    @GET
+    @Path("{id}/image")
+    @Produces("image/png")
+    public Response getImage(@PathParam("id") int id){
+        final byte[] imageArray = service.getImage(id);
+        return Response.ok(new ByteArrayInputStream(imageArray)).build();
+    }
+
+    @POST
+    @Path("{id}/image")
+    @RolesAllowed({"ADMIN"})
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response uploadMyImage(@PathParam("id") int id,
+                                  @FormDataParam("file") InputStream uploadedInputStream,
+                                  @FormDataParam("file") FormDataContentDisposition fileDetail){
+        service.uploadImage(id, uploadedInputStream);
         return Response.noContent().build();
     }
 }
