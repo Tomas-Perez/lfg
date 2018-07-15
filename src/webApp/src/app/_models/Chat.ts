@@ -2,6 +2,7 @@ import {JsonObject, JsonProperty} from 'json2typescript';
 import {Message} from './Message';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {ChatType} from './ChatType';
+import {ChatTypeConverter} from './JsonConverters/ChatTypeConverter';
 
 @JsonObject
 class Member {
@@ -29,7 +30,7 @@ export class Chat {
   @JsonProperty('messages', [Message], true)
   messages: Message[] = [];
 
-  @JsonProperty('type', ChatType, true)
+  @JsonProperty('type', ChatTypeConverter, true)
   type: ChatType = undefined;
 
   messagesSubject: BehaviorSubject<Message[]> = new BehaviorSubject<Message[]>(this.messages);
@@ -47,18 +48,18 @@ export class Chat {
     }
   }
 
-  addMember(id: number) {
+  addMember(id: number, username: string) {
     for (const member of this.members) {
       if (member.id === id) {
         return;
       }
     }
-    const newMember = new Member(id);
+    const newMember = new Member(id, username);
     this.members.push(newMember);
   }
 
   removeMember(id: number) {
-    for(let i = 0; i < this.members.length; i++) {
+    for (let i = 0; i < this.members.length; i++) {
       if (this.members[i].id === id) {
         this.members.splice(i, 1);
         return;

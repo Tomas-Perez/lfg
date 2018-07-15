@@ -9,7 +9,7 @@
           <span *ngIf="chatTitle.id >= 0" class="tab-option" (click)="getUserInfo(chatTitle.id)">
             <i class="fa fa-info-circle"></i>
           </span>
-          <span class="tab-option" (click)="closeTab(i)">×</span>
+          <span *ngIf="chatTitle.id >= 0" class="tab-option" (click)="closeTab(i)">×</span>
         </div>
       </div>
     </div>

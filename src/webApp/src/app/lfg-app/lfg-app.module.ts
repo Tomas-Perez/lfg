@@ -32,6 +32,7 @@ import { EditUserComponent } from './spekbar/edit-user/edit-user.component';
 import {ImageUploadModule} from 'angular2-image-upload';
 import { SearchComponent } from './friends/search/search.component';
 import {SearchService} from './friends/search/search.service';
+import { PlatformService } from '../_services/platform.service';
 
 
 @NgModule({
@@ -72,7 +73,8 @@ import {SearchService} from './friends/search/search.service';
     FriendService,
     ChatService,
     UserSocketService,
-    SearchService
+    SearchService,
+    PlatformService
   ],
 })
 export class LfgAppModule { }

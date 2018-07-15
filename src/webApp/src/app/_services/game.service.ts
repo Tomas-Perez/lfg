@@ -52,8 +52,14 @@ export class GameService {
           console.log(response);
           return this.jsonConvert.deserializeArray(response.body, Game);
         }),
-        catchError(err => Observable.throw(err))
+        catchError(err => this.requestGamesErrorHandle(err))
       );
+  }
+
+  private requestGamesErrorHandle(err: any) {
+    console.log('Error getting games');
+    console.log(err);
+    return Observable.of([]);
   }
 
   newGame(game: DbGame): Observable<number> {

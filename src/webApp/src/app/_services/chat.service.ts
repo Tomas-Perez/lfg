@@ -163,8 +163,8 @@ export class ChatService {
     chat.pushMessage(message);
   }
 
-  onConnectedUser(id: number, chat: Chat) {
-    chat.addMember(id);
+  onConnectedUser(id: number, username: string, chat: Chat) {
+    chat.addMember(id, username);
   }
 
   onDisconnectedUser(id: number, chat: Chat) {
@@ -188,11 +188,11 @@ export class ChatService {
           break;
         }
         case 'broadcastConnectedUser': {
-          this.onConnectedUser(msgData.payload, chat);
+          this.onConnectedUser(msgData.payload.id, msgData.payload.username, chat);
           break;
         }
         case 'broadcastDisconnectedUser': {
-          this.onDisconnectedUser(msgData.payload, chat);
+          this.onDisconnectedUser(msgData.payload.id, chat);
           break;
         }
       }

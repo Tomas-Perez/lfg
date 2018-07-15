@@ -6,6 +6,7 @@ import {Subject} from 'rxjs/Subject';
 import {ChatAction} from '../_models/sockets/ChatAction';
 import {FriendAction} from '../_models/sockets/FriendAction';
 import {WsService} from './ws.service';
+import {GroupAction} from '../_models/sockets/GroupAction';
 
 @Injectable()
 export class UserSocketService {
@@ -14,11 +15,13 @@ export class UserSocketService {
   private userWs: $WebSocket;
   chatSubject: Subject<{action: ChatAction, id: number}>; // new|delete, id
   friendSubject: Subject<{action: FriendAction, id: number, username?: string}>;
+  groupSubject: Subject<{action: GroupAction, id: number}>;
 
   constructor(private wsService: WsService, private authService: AuthService, private userService: UserService) {
     this.userWsUrl = this.wsService.getUrl('/user');
     this.chatSubject = new Subject();
     this.friendSubject = new Subject();
+    this.groupSubject = new Subject();
     this.userService.userSubject.subscribe( user => {
       if (user != null) {
         this.connect();
@@ -62,6 +65,10 @@ export class UserSocketService {
     this.friendSubject.next({action: FriendAction.SENTREQUEST, id: id, username: username});
   }
 
+  onDeleteGroup(id: number) {
+    this.groupSubject.next({action: GroupAction.DELETE, id: id});
+  }
+
   private connect() { // TODO handle error
     const ws = new $WebSocket(this.userWsUrl + '?access-token=' + this.authService.getAccessToken());
 
@@ -100,6 +107,19 @@ export class UserSocketService {
           }
           case 'sentFriendRequest': {
             this.onSentFriendRequest(msgData.payload.id, msgData.payload.username);
+            break;
+          }
+          case 'newGroup': {
+            break;
+          }
+          case 'deleteGroup': {
+            this.onDeleteGroup(msgData.payload.id);
+            break;
+          }
+          case 'newPost': {
+            break;
+          }
+          case 'deletePost': {
             break;
           }
         }

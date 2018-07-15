@@ -134,6 +134,7 @@ export class PostService {
     })
       .pipe(
         map( getPostResponse => {
+            console.log(getPostResponse);
             const post = this.jsonConvert.deserialize(getPostResponse.body, Post);
             return post;
           }
@@ -198,6 +199,7 @@ export class PostService {
       .pipe(
         tap(response => console.log(response)),
         map(response => {
+          console.log(this.jsonConvert.deserialize(response.body.posts, Post));
           return {posts: this.jsonConvert.deserialize(response.body.posts, Post), wsPath: response.body.socketPath};
         }),
         // map(posts => posts.filter(post => filterer.filter(post, this.filters))),

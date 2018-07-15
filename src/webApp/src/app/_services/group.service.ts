@@ -11,6 +11,8 @@ import {HttpService} from './http.service';
 import {$WebSocket} from 'angular2-websocket/angular2-websocket';
 import {WsService} from './ws.service';
 import {AuthService} from './auth.service';
+import {UserSocketService} from './user-socket.service';
+import {GroupAction} from '../_models/sockets/GroupAction';
 
 @Injectable()
 export class GroupService {
@@ -25,6 +27,7 @@ export class GroupService {
 
   constructor(private http: HttpService,
               private userService: UserService,
+              private userSocketService: UserSocketService,
               private wsService: WsService,
               private authService: AuthService
   ) {
@@ -40,6 +43,7 @@ export class GroupService {
         }
       }
     });
+
     this.userService.userSubject.subscribe( user => {
       this.user = user;
       if (user !== null && user.groups.length) {
@@ -52,6 +56,24 @@ export class GroupService {
         }
       }
     });
+
+    this.setUpUserSocket();
+  }
+
+  private setUpUserSocket() {
+    this.userSocketService.groupSubject.subscribe(
+      (element: {action: GroupAction, id: number}) => {
+
+        switch (element.action) {
+          case GroupAction.NEW: {
+            break;
+          }
+          case GroupAction.DELETE: {
+            this.onDeleteGroup();
+            break;
+          }
+        }
+      });
   }
 
 
@@ -61,6 +83,11 @@ export class GroupService {
 
   onDeleteMember(id: number) {
     this.currentGroup.deleteMember(id);
+  }
+
+  onDeleteGroup() {
+    this.currentGroup = null;
+    this.currentGroupSubject.next(null);
   }
 
   onNewOwner(oldOwner: number, newOwner: number) {

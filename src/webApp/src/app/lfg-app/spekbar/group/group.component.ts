@@ -48,6 +48,8 @@ export class GroupComponent implements OnInit, OnDestroy {
               this.user = user;
               this.isOwner = user.id === group.owner.id;
           });
+        } else {
+          this.navigateToNewGroup();
         }
       });
 
@@ -85,10 +87,7 @@ export class GroupComponent implements OnInit, OnDestroy {
     this.groupService.leaveGroup().subscribe(
       response => {
         if (response) {
-          this.router.navigate(['app/', { outlets: {spekbar: ['new-group'] }}],
-            {
-              skipLocationChange: true
-            });
+          this.navigateToNewGroup();
         } else {
           // TODO notify error leaving group
         }
@@ -96,11 +95,18 @@ export class GroupComponent implements OnInit, OnDestroy {
     );
   }
 
+  navigateToNewGroup() {
+    this.router.navigate(['app/', { outlets: {spekbar: ['new-group'] }}],
+      {
+        skipLocationChange: true
+      });
+  }
+
   kickPlayer(id: number) {
     this.groupService.kickMember(id).subscribe(
       response => {
         if (response) {
-          this.groupService.updateGroup(this.group.id).subscribe();
+          console.log('Kicked user');
         }
       }
     );

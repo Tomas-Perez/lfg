@@ -11,6 +11,9 @@ import {User} from '../../../_models/User';
 import {Post} from '../../../_models/Post';
 import {NavBarService} from '../../_services/nav-bar.service';
 import {SpekbarLocation} from '../../_models/SpekbarLocation';
+import {PlatformService} from '../../../_services/platform.service';
+import {GamePlatform} from '../../../_models/GamePlatform';
+import {ChatPlatform} from '../../../_models/ChatPlatform';
 
 @Component({
   selector: 'app-new-post',
@@ -20,6 +23,8 @@ import {SpekbarLocation} from '../../_models/SpekbarLocation';
 export class NewPostComponent implements OnInit, OnDestroy {
 
   private games: Game[];
+  private gamePlatforms: GamePlatform[];
+  private chatPlatforms: ChatPlatform[];
   private newPostModel: NewPostModel = new NewPostModel;
   private user: User;
   private ngUnsubscribe: Subject<any> = new Subject();
@@ -28,6 +33,7 @@ export class NewPostComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UserService,
     private gameService: GameService,
+    private platformService: PlatformService,
     private newPostService: NewPostService,
     private navBarService: NavBarService,
     private postService: PostService
@@ -41,22 +47,28 @@ export class NewPostComponent implements OnInit, OnDestroy {
       .subscribe( user => this.user = user);
 
     this.gameService.gamesSubject.takeUntil(this.ngUnsubscribe)
-      .subscribe(games => {
-        this.games = games;
+      .subscribe(games => this.games = games);
 
-        this.newPostService.postSubject.takeUntil(this.ngUnsubscribe)
-          .subscribe(newPostModel => {
-            this.newPostModel = newPostModel;
-        });
-    });
+    this.newPostService.postSubject.takeUntil(this.ngUnsubscribe)
+      .subscribe(newPostModel => this.newPostModel = newPostModel);
 
-    this.postService.currentPostSubject.takeUntil(this.ngUnsubscribe).subscribe(post => this.post = post);
+    this.platformService.gamePlatformsSubject.takeUntil(this.ngUnsubscribe)
+      .subscribe(platforms => this.gamePlatforms = platforms);
+
+    this.platformService.chatPlatformsSubject.takeUntil(this.ngUnsubscribe)
+      .subscribe(platforms => this.chatPlatforms = platforms);
+
+    this.postService.currentPostSubject.takeUntil(this.ngUnsubscribe)
+      .subscribe(post => this.post = post);
 
   }
 
   newPost() {
-    if (this.newPostModel.selectedGameIndex < 0 || this.newPostModel.dbPost.activityID === undefined) {
-      return;
+    this.newPostModel.dbPost.activityID = this.games[this.newPostModel.selectedGameIndex]
+                                            .activities[this.newPostModel.selectedActivityIndex].id;
+    this.newPostModel.dbPost.gamePlatforms = [this.gamePlatforms[this.newPostModel.selectedGamePlatformIndex].id];
+    if (this.newPostModel.selectedChatPlatformIndex >= 0) {
+      this.newPostModel.dbPost.chatPlatforms = [this.chatPlatforms[this.newPostModel.selectedChatPlatformIndex].id];
     }
     this.newPostModel.dbPost.ownerID = this.user.id;
     this.postService.newPost(this.newPostModel.dbPost).subscribe(

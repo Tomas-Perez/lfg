@@ -173,8 +173,8 @@ export class FriendService {
       observe: 'response'
     })
       .pipe(
-        map(response => this.jsonConvert.deserialize(response.body, BasicUser)),
         tap(response => console.log(response)),
+        map(response => this.jsonConvert.deserialize(response.body, BasicUser)),
         catchError(err => this.requestFriendsErrorHandle(err))
       );
   }

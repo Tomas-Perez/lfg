@@ -11,6 +11,10 @@ export class DbPost {
   ownerID?: number = undefined;
   @JsonProperty('groupID', Number, true)
   groupID?: number = undefined;
+  @JsonProperty('gamePlatforms', [Number], true)
+  gamePlatforms?: number[] = undefined;
+  @JsonProperty('chatPlatforms', [Number], true)
+  chatPlatforms?: number[] = undefined;
 
   constructor() {
     this.description = '';

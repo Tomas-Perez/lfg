@@ -2,6 +2,8 @@ import {JsonObject, JsonProperty} from 'json2typescript';
 import {DbActivity} from './DbModels/DbActivity';
 import {Group} from './Group';
 import {DateConverter} from './JsonConverters/DateConverter';
+import {GamePlatform} from './GamePlatform';
+import {ChatPlatform} from './ChatPlatform';
 
 @JsonObject
 class Owner {
@@ -25,4 +27,8 @@ export class Post {
   group?: Group = undefined;
   @JsonProperty('date', DateConverter, true)
   date?: Date = undefined;
+  @JsonProperty('gamePlatforms', [GamePlatform], true)
+  gamePlatforms?: GamePlatform[] = undefined;
+  @JsonProperty('chatPlatforms', [ChatPlatform], true)
+  chatPlatforms?: ChatPlatform[] = undefined;
 }
