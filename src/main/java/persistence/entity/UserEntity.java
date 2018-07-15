@@ -14,6 +14,7 @@ public class UserEntity {
     private String email;
     private String password;
     private String username;
+    private String image;
 
     public UserEntity(boolean admin, String email, String password, String username) {
         this.admin = admin;
@@ -76,6 +77,16 @@ public class UserEntity {
         this.username = username;
     }
 
+    @Basic
+    @Column(name = "IMAGE")
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -104,4 +115,6 @@ public class UserEntity {
                 ", username='" + username + '\'' +
                 '}';
     }
+
+
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import api.rest.common.exception.BadRequestException;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -14,16 +15,16 @@ public class CreatePostJSON {
     private Integer activityID;
     private Integer ownerID;
     private Integer groupID;
-    private Set<Integer> gamePlatformIDs;
-    private Set<Integer> chatPlatformIDs;
+    private Set<Integer> gamePlatforms;
+    private Set<Integer> chatPlatforms;
 
     @JsonCreator
     public CreatePostJSON(@JsonProperty(value = "description", required = true) String description,
                           @JsonProperty(value = "activityID") Integer activityID,
                           @JsonProperty(value = "ownerID") Integer ownerID,
                           @JsonProperty(value = "groupID") Integer groupID,
-                          @JsonProperty(value = "gamePlatformIDs") Set<Integer> gamePlatformID,
-                          @JsonProperty(value = "chatPlatformIDs") Set<Integer> chatPlatformID)
+                          @JsonProperty(value = "gamePlatforms") Set<Integer> gamePlatformID,
+                          @JsonProperty(value = "chatPlatforms") Set<Integer> chatPlatformID)
     {
         if(groupID == null && (activityID == null || ownerID == null)) {
             throw new BadRequestException("Invalid post creation syntax");
@@ -32,8 +33,8 @@ public class CreatePostJSON {
         this.activityID = activityID;
         this.ownerID = ownerID;
         this.groupID = groupID;
-        this.gamePlatformIDs = gamePlatformID;
-        this.chatPlatformIDs = chatPlatformID;
+        this.gamePlatforms = gamePlatformID == null? new HashSet<>() : gamePlatformID;
+        this.chatPlatforms = chatPlatformID == null? new HashSet<>() : chatPlatformID;
     }
 
     public CreatePostJSON() {
@@ -71,19 +72,19 @@ public class CreatePostJSON {
         this.groupID = groupID;
     }
 
-    public Set<Integer> getGamePlatformIDs() {
-        return gamePlatformIDs;
+    public Set<Integer> getGamePlatforms() {
+        return gamePlatforms;
     }
 
-    public void setGamePlatformIDs(Set<Integer> gamePlatformIDs) {
-        this.gamePlatformIDs = gamePlatformIDs;
+    public void setGamePlatforms(Set<Integer> gamePlatforms) {
+        this.gamePlatforms = gamePlatforms;
     }
 
-    public Set<Integer> getChatPlatformIDs() {
-        return chatPlatformIDs;
+    public Set<Integer> getChatPlatforms() {
+        return chatPlatforms;
     }
 
-    public void setChatPlatformIDs(Set<Integer> chatPlatformIDs) {
-        this.chatPlatformIDs = chatPlatformIDs;
+    public void setChatPlatforms(Set<Integer> chatPlatforms) {
+        this.chatPlatforms = chatPlatforms;
     }
 }

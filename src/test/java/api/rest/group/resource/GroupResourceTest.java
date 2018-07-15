@@ -153,6 +153,55 @@ public class GroupResourceTest extends ApiTest {
         assertThat(actual, is(expected));
     }
 
+    @Test
+    public void removeOnlyMember(){
+        final String gameName = "Overwatch";
+        int gameID = addGame(gameName);
+        final String activityName = "Ranked";
+        int activityID = addActivity(activityName, gameID);
+        final String username = "wewey";
+        final String password = "123123";
+        final String email = "wewey@lfg.com";
+        int ownerID = addUser(username, password, email);
+        final int slots = 5;
+
+        int groupID = addGroup(slots, activityID, ownerID);
+
+        WebTarget groupTarget = RequestUtil.newRelativeTarget(base, String.format("groups/%d", groupID));
+
+        final Response getResponse = RequestUtil.get(groupTarget, token);
+
+        assertThat(getResponse.getStatus(), is(OK));
+
+        GroupJSON actual = RequestUtil.parseResponse(getResponse, GroupJSON.class);
+
+        GroupJSON expected = createExpectedJSON(
+                gameID, gameName,
+                activityID, activityName,
+                ownerID, username,
+                groupID, slots, actual.getChat()
+        );
+
+        MemberJSON ownerJSON = new MemberJSON(ownerID, username);
+
+        expected.setMembers(new HashSet<>(Collections.singletonList(ownerJSON)));
+
+        assertThat(actual, is(expected));
+
+        WebTarget groupMember1Target = RequestUtil.newRelativeTarget(
+                base,
+                String.format("groups/%d/members/%d", groupID, ownerID)
+        );
+
+        final Response deleteResponse = RequestUtil.delete(groupMember1Target, token);
+
+        assertThat(deleteResponse.getStatus(), is(NO_CONTENT));
+
+        final Response getResponse2 = RequestUtil.get(groupTarget, token);
+
+        assertThat(getResponse2.getStatus(), is(NOT_FOUND));
+    }
+
     private GroupJSON createExpectedJSON(int gameID, String gameName,
                                          int activityID, String activityName,
                                          int ownerID, String username,

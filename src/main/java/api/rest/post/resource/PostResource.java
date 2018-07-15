@@ -58,14 +58,14 @@ public class PostResource {
                     postJSON.getDescription(),
                     postJSON.getActivityID(),
                     postJSON.getOwnerID(),
-                    postJSON.getChatPlatformIDs(),
-                    postJSON.getGamePlatformIDs());
+                    postJSON.getChatPlatforms(),
+                    postJSON.getGamePlatforms());
         else
             id = service.newGroupPost(
                     postJSON.getDescription(),
                     postJSON.getGroupID(),
-                    postJSON.getChatPlatformIDs(),
-                    postJSON.getGamePlatformIDs());
+                    postJSON.getChatPlatforms(),
+                    postJSON.getGamePlatforms());
         URI path = uriInfo.getAbsolutePathBuilder().path(Integer.toString(id)).build();
         return Response.created(path).build();
     }

@@ -92,9 +92,9 @@ public class GroupService {
         try {
             final List<Integer> groupMembers = groupManager.getGroupMembers(id);
             final int groupChat = getGroupChat(id);
+            chatService.deleteChat(groupChat);
             groupManager.delete(id);
             deleteGroupEvent.fire(new GroupEvent(id, new HashSet<>(groupMembers)));
-            chatService.deleteChat(groupChat);
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
@@ -115,8 +115,8 @@ public class GroupService {
     public void removeMember(int id, int userID){
         try {
             final int groupChat = getGroupChat(id);
-            groupManager.removeMemberFromGroup(id, userID);
             chatService.removeMember(groupChat, userID);
+            groupManager.removeMemberFromGroup(id, userID);
             deleteMemberEvent.fire(createMemberEvent(id, userID));
             deleteGroupEvent.fire(new GroupEvent(id, Collections.singleton(userID)));
         } catch (NoSuchElementException exc){

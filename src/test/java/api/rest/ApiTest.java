@@ -3,6 +3,7 @@ package api.rest;
 import api.rest.chat.model.CreateChatJSON;
 import api.rest.chatPlatform.model.CreateChatPlatformJSON;
 import api.rest.gamePlatform.model.CreateGamePlatformJSON;
+import api.rest.post.model.CreatePostJSON;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -156,19 +157,13 @@ public abstract class ApiTest {
     }
 
     protected int addChatPlatform(String name){
-        final Response postResponse = RequestUtil.post(chatPlatformsTarget, token, new CreateChatPlatformJSON(name));
-        assertThat(postResponse.getStatus(), is(CREATED));
-        final String location = postResponse.getHeaderString("Location");
-        final WebTarget chatPlatformTarget = RequestUtil.newTarget(location);
-        return Integer.parseInt(RequestUtil.getRelativePathDiff(chatPlatformsTarget, chatPlatformTarget));
+        final CreateChatPlatformJSON entity = new CreateChatPlatformJSON(name);
+        return addJSON(chatPlatformsTarget, entity);
     }
 
     protected int addGamePlatform(String name){
-        final Response postResponse = RequestUtil.post(gamePlatformsTarget, token, new CreateGamePlatformJSON(name));
-        assertThat(postResponse.getStatus(), is(CREATED));
-        final String location = postResponse.getHeaderString("Location");
-        final WebTarget gamePlatformTarget = RequestUtil.newTarget(location);
-        return Integer.parseInt(RequestUtil.getRelativePathDiff(gamePlatformsTarget, gamePlatformTarget));
+        final CreateGamePlatformJSON entity = new CreateGamePlatformJSON(name);
+        return addJSON(gamePlatformsTarget, entity);
     }
 
     protected int addActivity(String name, int gameID){
@@ -188,11 +183,20 @@ public abstract class ApiTest {
     }
 
     protected int addChat(CreateChatJSON chatJSON){
-        final Response postResponse = RequestUtil.post(chatsTarget, token, chatJSON);
+        return addJSON(chatsTarget, chatJSON);
+    }
+
+    protected int addPost(CreatePostJSON postJSON){
+        return addJSON(postsTarget, postJSON);
+    }
+
+    protected <T> int addJSON(WebTarget target, T json){
+        final Response postResponse = RequestUtil.post(target, token, json);
+        System.out.println(postResponse.readEntity(String.class));
         assertThat(postResponse.getStatus(), is(CREATED));
         final String location = postResponse.getHeaderString("Location");
-        final WebTarget chatTarget = RequestUtil.newTarget(location);
-        return Integer.parseInt(RequestUtil.getRelativePathDiff(chatsTarget, chatTarget));
+        final WebTarget jsonTarget = RequestUtil.newTarget(location);
+        return Integer.parseInt(RequestUtil.getRelativePathDiff(target, jsonTarget));
     }
 
     protected int addUser(String username, String password, String email){
