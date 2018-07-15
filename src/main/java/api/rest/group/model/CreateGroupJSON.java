@@ -10,21 +10,21 @@ public class CreateGroupJSON {
     private int slots;
     private int activityID;
     private int ownerID;
-    private Integer chatPlatformID;
-    private Integer gamePlatformID;
+    private Integer chatPlatform;
+    private Integer gamePlatform;
 
     @JsonCreator
     public CreateGroupJSON(@JsonProperty(value = "slots", required = true) int slots,
                            @JsonProperty(value = "activityID", required = true) int activityID,
                            @JsonProperty(value = "ownerID") int ownerID,
-                           @JsonProperty(value = "chatPlatform") Integer chatPlatformID,
-                           @JsonProperty(value = "gamePlatform") Integer gamePlatformID)
+                           @JsonProperty(value = "chatPlatform") Integer chatPlatform,
+                           @JsonProperty(value = "gamePlatform") Integer gamePlatform)
     {
         this.slots = slots;
         this.activityID = activityID;
         this.ownerID = ownerID;
-        this.chatPlatformID = chatPlatformID;
-        this.gamePlatformID = gamePlatformID;
+        this.chatPlatform = chatPlatform;
+        this.gamePlatform = gamePlatform;
     }
 
     public int getSlots() {
@@ -51,19 +51,19 @@ public class CreateGroupJSON {
         this.ownerID = ownerID;
     }
 
-    public Integer getChatPlatformID() {
-        return chatPlatformID;
+    public Integer getChatPlatform() {
+        return chatPlatform;
     }
 
-    public void setChatPlatformID(Integer chatPlatformID) {
-        this.chatPlatformID = chatPlatformID;
+    public void setChatPlatform(Integer chatPlatform) {
+        this.chatPlatform = chatPlatform;
     }
 
-    public Integer getGamePlatformID() {
-        return gamePlatformID;
+    public Integer getGamePlatform() {
+        return gamePlatform;
     }
 
-    public void setGamePlatformID(Integer gamePlatformID) {
-        this.gamePlatformID = gamePlatformID;
+    public void setGamePlatform(Integer gamePlatform) {
+        this.gamePlatform = gamePlatform;
     }
 }
