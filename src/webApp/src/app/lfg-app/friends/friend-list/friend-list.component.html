@@ -8,7 +8,8 @@
         <div class="friend">
           <div class="user-img-wrapper">
             <div>
-              <img src="/assets/user/user-default.png" class="user-img">
+              <img *ngIf="friend.image != null" [src]="friend.image" class="user-img">
+              <img *ngIf="friend.image == null" src="/assets/user/user-default.png" class="user-img">
             </div>
             <div class="friend-status" title="{{friend.status == OnlineStatus.ONLINE ? 'Online' : 'Offline'}}"
                  [ngClass]="{'online': friend.status == OnlineStatus.ONLINE}">

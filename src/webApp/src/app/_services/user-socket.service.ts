@@ -7,6 +7,7 @@ import {ChatAction} from '../_models/sockets/ChatAction';
 import {FriendAction} from '../_models/sockets/FriendAction';
 import {WsService} from './ws.service';
 import {GroupAction} from '../_models/sockets/GroupAction';
+import {PostAction} from '../_models/sockets/PostAction';
 
 @Injectable()
 export class UserSocketService {
@@ -16,12 +17,14 @@ export class UserSocketService {
   chatSubject: Subject<{action: ChatAction, id: number}>; // new|delete, id
   friendSubject: Subject<{action: FriendAction, id: number, username?: string}>;
   groupSubject: Subject<{action: GroupAction, id: number}>;
+  postSubject: Subject<{action: PostAction, id: number}>;
 
   constructor(private wsService: WsService, private authService: AuthService, private userService: UserService) {
     this.userWsUrl = this.wsService.getUrl('/user');
     this.chatSubject = new Subject();
     this.friendSubject = new Subject();
     this.groupSubject = new Subject();
+    this.postSubject = new Subject();
     this.userService.userSubject.subscribe( user => {
       if (user != null) {
         this.connect();
@@ -67,6 +70,22 @@ export class UserSocketService {
 
   onDeleteGroup(id: number) {
     this.groupSubject.next({action: GroupAction.DELETE, id: id});
+  }
+
+  onNewGroupPost(id: number) {
+    this.postSubject.next({action: PostAction.NEW, id: id});
+  }
+
+  onDeleteGroupPost(id: number) {
+    this.postSubject.next({action: PostAction.DELETE, id: id});
+  }
+
+  onNewPost(id: number) {
+    this.postSubject.next({action: PostAction.NEW, id: id});
+  }
+
+  onDeletePost(id: number) {
+    this.postSubject.next({action: PostAction.DELETE, id: id});
   }
 
   private connect() { // TODO handle error
@@ -117,9 +136,19 @@ export class UserSocketService {
             break;
           }
           case 'newPost': {
+            // this.onNewPost(msgData.payload.id); is already added on http response
             break;
           }
           case 'deletePost': {
+            // this.onDeletePost(msgData.payload.id); is already deleted on http response
+            break;
+          }
+          case 'newGroupPost': {
+            this.onNewGroupPost(msgData.payload.id);
+            break;
+          }
+          case 'deleteGroupPost': {
+            this.onDeleteGroupPost(msgData.payload.id);
             break;
           }
         }

@@ -22,7 +22,6 @@ export class GroupComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<any> = new Subject();
   group: Group;
   user: User;
-  isOwner: boolean;
   newPost: DbPost;
   post: Post;
 
@@ -46,7 +45,6 @@ export class GroupComponent implements OnInit, OnDestroy {
           this.userService.userSubject.takeUntil(this.ngUnsubscribe)
             .subscribe( (user: User) => {
               this.user = user;
-              this.isOwner = user.id === group.owner.id;
           });
         } else {
           this.navigateToNewGroup();
@@ -82,8 +80,11 @@ export class GroupComponent implements OnInit, OnDestroy {
     );
   }
 
+  promoteToLeader(newOwnerId: number) {
+    this.groupService.promoteToLeader(newOwnerId).subscribe();
+  }
+
   leaveGroup() {
-    if (this.post !== null) { this.deletePost(); }
     this.groupService.leaveGroup().subscribe(
       response => {
         if (response) {

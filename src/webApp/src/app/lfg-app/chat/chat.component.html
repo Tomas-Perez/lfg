@@ -26,7 +26,7 @@
             chats[activatedTabIndex].messages[i+1].senderId}">
           <div *ngIf="i == 0 || message.id != chats[activatedTabIndex].messages[i-1].id" class="message-info">
             <span class="message-username">
-              {{message.senderId == user.id ? 'You' : getSenderUsername(message.senderId)}}:
+              {{message.sender.id == user.id ? 'You' : message.sender.username}}:
             </span>
             <span class="message-time">
               {{message.date.getDate()}}/{{message.date.getMonth()+1}}/{{message.date.getFullYear()}},

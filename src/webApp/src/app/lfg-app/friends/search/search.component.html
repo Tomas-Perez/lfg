@@ -20,7 +20,8 @@
         <div *ngFor="let result of results"  class="friend-wrapper">
           <div class="friend">
             <div class="user-img-wrapper">
-              <img src="/assets/user/user-default.png" class="user-img">
+              <img *ngIf="result.user.image != null" [src]="result.user.image" class="user-img">
+              <img *ngIf="result.user.image == null" src="/assets/user/user-default.png" class="user-img">
             </div>
             <span (click)="getUserInfo(result.user.id)" class="friend-username">
               {{result.user.username}}

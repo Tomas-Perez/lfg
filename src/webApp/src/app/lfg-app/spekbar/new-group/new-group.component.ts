@@ -32,6 +32,7 @@ export class NewGroupComponent implements OnInit, OnDestroy {
   private selectedGamePlatformIndex: number;
   private selectedChatPlatformIndex: number;
   private user: User;
+  slots: number;
 
   constructor(private groupService: GroupService,
               private userService: UserService,
@@ -50,6 +51,7 @@ export class NewGroupComponent implements OnInit, OnDestroy {
     this.selectedActivityIndex = null;
     this.selectedGamePlatformIndex = null;
     this.selectedChatPlatformIndex = -1;
+    this.slots = 2;
 
     this.group = new DbGroup();
 
@@ -70,6 +72,7 @@ export class NewGroupComponent implements OnInit, OnDestroy {
   }
 
   newGroup() {
+    this.group.slots = this.slots < 2 ? 2 : (this.slots > 15 ? 15 : this.slots);
     this.group.activityID = this.games[this.selectedGameIndex].activities[this.selectedActivityIndex].id;
     this.group.gamePlatform = this.gamePlatforms[this.selectedGamePlatformIndex].id;
     if (this.selectedChatPlatformIndex >= 0) {

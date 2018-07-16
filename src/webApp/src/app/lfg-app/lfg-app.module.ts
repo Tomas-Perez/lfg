@@ -33,6 +33,8 @@ import {ImageUploadModule} from 'angular2-image-upload';
 import { SearchComponent } from './friends/search/search.component';
 import {SearchService} from './friends/search/search.service';
 import { PlatformService } from '../_services/platform.service';
+import {GroupService} from '../_services/group.service';
+import {GameService} from '../_services/game.service';
 
 
 @NgModule({
@@ -64,6 +66,8 @@ import { PlatformService } from '../_services/platform.service';
   providers: [
     PostService,
     NewPostService,
+    GroupService,
+    GameService,
     PostFilterService,
     GroupGuardService,
     NoGroupGuardService,

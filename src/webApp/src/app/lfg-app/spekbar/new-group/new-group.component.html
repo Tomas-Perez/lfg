@@ -38,9 +38,9 @@
     </div>
     <div class="form-group">
       <label for="InputSlots">
-        <span class="bold">Members</span>
+        <span class="bold">Members</span><span class="info">(2 - 15)</span>
       </label>
-      <input type="number" name="InputSlots" [(ngModel)]="group.slots" id="InputSlots" class="form-control form-input"
+      <input type="number" name="InputSlots" [(ngModel)]="slots" id="InputSlots" min="2" max="15" class="form-control form-input"
              aria-describedby="slotsHelp" required>
     </div>
     <div class="form-group text-center">

@@ -117,7 +117,7 @@ export class GroupService {
             break;
           }
           case 'newOwner': {
-            this.onNewOwner(msgData.payload.oldOwnerId, msgData.payload.newOwnerId);
+            this.onNewOwner(msgData.payload.oldOwnerID, msgData.payload.newOwnerID);
             break;
           }
         }
@@ -247,6 +247,24 @@ export class GroupService {
 
   private kickMemberErrorHandle(err: any) {
     console.log('Error kicking member');
+    console.log(err);
+    return Observable.of(false);
+  }
+
+  promoteToLeader(newOwnerId: number): Observable<boolean> {
+    return this.http.post(this.groupsUrl + '/' + this.currentGroup.id , {newOwnerID: newOwnerId}, {
+      observe: 'response'
+    })
+      .pipe(
+        map(response => {
+          return true;
+        }),
+        catchError((err: any) => this.promoteToLeaderErrorHandle(err))
+      );
+  }
+
+  private promoteToLeaderErrorHandle(err?: any) {
+    console.log('Error promoting to leader');
     console.log(err);
     return Observable.of(false);
   }

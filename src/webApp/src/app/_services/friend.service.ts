@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {BasicUser} from '../_models/BasicUser';
 import {JsonConvert} from 'json2typescript';
@@ -8,10 +7,10 @@ import {catchError, map, tap} from 'rxjs/operators';
 import {User} from '../_models/User';
 import {UserService} from './user.service';
 import {UserSocketService} from './user-socket.service';
-import {ChatAction} from '../_models/sockets/ChatAction';
 import {FriendAction} from '../_models/sockets/FriendAction';
 import {OnlineStatus} from '../_models/OnlineStatus';
 import {HttpService} from './http.service';
+import {ImageService} from './image.service';
 
 @Injectable()
 export class FriendService {
@@ -33,17 +32,33 @@ export class FriendService {
   // Buffer for friend status updates before the friend list is retrieved.
   private friendStatusBuffer: {user: BasicUser, status: OnlineStatus}[];
 
-  constructor(private http: HttpService, private userService: UserService, private userSocketService: UserSocketService) {
+  constructor(private http: HttpService,
+              private userService: UserService,
+              private imageService: ImageService,
+              private userSocketService: UserSocketService) {
     this.friendStatusBuffer = [];
     this.friendList = [];
     this.receivedFriendRequests = [];
     this.sentRequestsList = [];
-    this.friendListSubject = new BehaviorSubject<BasicUser[]>([]);
     this.receivedRequestsSubject = new BehaviorSubject<BasicUser[]>([]);
     this.sentRequestsSubject = new BehaviorSubject<BasicUser[]>([]);
+    this.friendListSubject = new BehaviorSubject<BasicUser[]>([]);
 
     this.setUpUserSubject();
     this.setUpFriendSocket();
+  }
+
+  private getImages(list: BasicUser[]) {
+    for (const user of list) {
+      if (user.image == null) {
+        this.getImage(user);
+      }
+    }
+  }
+
+  private getImage(user: BasicUser) {
+    this.imageService.getImage(this.userUrl + '/' + user.id + '/image')
+      .subscribe(img => user.image = img);
   }
 
   private setUpUserSubject() {
@@ -136,16 +151,19 @@ export class FriendService {
   private onNewFriend(user: BasicUser) {
     this.friendList.push(user);
     this.friendListSubject.next(this.friendList);
+    this.getImage(user);
   }
 
   private onReceivedRequest(user: BasicUser) {
     this.receivedFriendRequests.push(user);
     this.receivedRequestsSubject.next(this.receivedFriendRequests);
+    this.getImage(user);
   }
 
   private onSentRequest(user: BasicUser) {
     this.sentRequestsList.push(user);
     this.sentRequestsSubject.next(this.sentRequestsList);
+    this.getImage(user);
   }
 
   private clearStatusBuffer() {
@@ -158,12 +176,16 @@ export class FriendService {
     this.friendStatusBuffer = [];
   }
 
-  getUserInfo(id: number): Observable<BasicUser> { // TODO when backend is ready
+  getUserInfo(id: number): Observable<BasicUser> {
     return this.http.get(this.userUrl + '/' + id, {
       observe: 'response'
     })
       .pipe(
-        map(response => this.jsonConvert.deserialize(response.body, BasicUser)),
+        map(response => {
+          const user = this.jsonConvert.deserialize(response.body, BasicUser);
+          this.getImage(user);
+          return user;
+        }),
         catchError(err => this.requestFriendsErrorHandle(err))
       );
   }
@@ -189,6 +211,7 @@ export class FriendService {
     this.requestFriends().subscribe(friends => {
       this.friendList = friends;
       this.friendListSubject.next(friends);
+      this.getImages(friends);
       this.clearStatusBuffer();
     });
   }
@@ -266,6 +289,7 @@ export class FriendService {
     this.getFriendRequests().subscribe(requests => {
       this.receivedFriendRequests = requests;
       this.receivedRequestsSubject.next(requests);
+      this.getImages(requests);
     });
   }
 
@@ -288,6 +312,7 @@ export class FriendService {
     this.getSentFriendRequests().subscribe(requests => {
       this.sentRequestsList = requests;
       this.sentRequestsSubject.next(requests);
+      this.getImages(requests);
     });
   }
 
@@ -322,4 +347,24 @@ export class FriendService {
     return this.isInFriendList(id) || this.isInReceivedRequestsList(id) || this.isInSentRequestsList(id);
   }
 
+  searchUsers(search: string): Observable<BasicUser[]> {
+    return this.http.get(this.userUrl + '?search=' + search,
+      {
+        observe: 'response'
+      })
+      .pipe(
+        map(response => {
+          console.log(response);
+          const users = this.jsonConvert.deserialize(response.body, BasicUser);
+          this.getImages(users);
+          return users;
+        }),
+        catchError(err => this.searchUsersErrorHandle(err))
+      );
+  }
+
+  private searchUsersErrorHandle(err: any): Observable<BasicUser[]> {
+    console.log(err);
+    return Observable.of([]);
+  }
 }

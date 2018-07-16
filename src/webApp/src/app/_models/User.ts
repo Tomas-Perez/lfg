@@ -42,7 +42,8 @@ export class User {
   @JsonProperty('post', PostId, true)
   post?: PostId = undefined;
 
-
   @JsonProperty('chats', [ChatId], true)
   chats?: ChatId[] = undefined;
+
+  image: any = null;
 }

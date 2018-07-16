@@ -209,7 +209,7 @@ public class GroupManager extends Manager<GroupEntity>{
                 "FROM GroupMemberEntity M " +
                 "WHERE M.groupId = :groupID AND M.owner = false")
                 .setParameter("groupID", groupID)
-                .getSingleResult();
+                .getResultList().stream().findFirst().orElse(null);
     }
 
     private boolean emptyGroup(int groupID){

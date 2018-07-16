@@ -90,7 +90,7 @@ export class SearchComponent implements OnInit, OnDestroy {
       this.results = [];
       return;
     }
-    this.userService.searchUsers(sText).takeUntil(this.ngUnsubscribe).subscribe(users => {
+    this.friendService.searchUsers(sText).takeUntil(this.ngUnsubscribe).subscribe(users => {
       const results = [];
       for (const user of users) {
         results.push({user: user, isFriend: this.isAlreadyFriendOrMe(user.id)});

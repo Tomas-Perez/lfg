@@ -11,11 +11,10 @@ import {LfgAppModule} from './lfg-app/lfg-app.module';
 import {AuthUserGuardService} from './_services/guards/auth-user-guard.service';
 import {UnauthUserGuardService} from './_services/guards/unauth-user-guard.service';
 import {AdminPanelModule} from './admin-panel/admin-panel.module';
-import {GameService} from './_services/game.service';
-import { GroupService } from './_services/group.service';
 import {AdminGuardService} from './_services/guards/admin-guard.service';
 import {HttpService} from './_services/http.service';
 import {WsService} from './_services/ws.service';
+import {ImageService} from './_services/image.service';
 
 @NgModule({
   declarations: [
@@ -38,8 +37,7 @@ import {WsService} from './_services/ws.service';
     AuthUserGuardService,
     UnauthUserGuardService,
     AdminGuardService,
-    GameService,
-    GroupService
+    ImageService
   ],
   bootstrap: [AppComponent]
 })

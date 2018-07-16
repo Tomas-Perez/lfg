@@ -3,8 +3,16 @@
     <div class="title">
       <h1>Group</h1>
     </div>
-    <div class="game-activity">{{group.activity.game.name + ': ' + group.activity.name}}</div>
-
+    <div class="group-info">
+      <div class="game-activity">{{group.activity.game.name + ', ' + group.activity.name}}</div>
+      <img *ngIf="group.gamePlatform" src="{{'/assets/platform/' + group.gamePlatform.name + '.png'}}" title="{{group.gamePlatform.name}}" class="platform-img">
+      <img *ngIf="group.chatPlatform && group.chatPlatform.name == 'Discord'"
+           src="/assets/platform/Discord.png" title="Discord" class="platform-img">
+      <img *ngIf="group.chatPlatform && group.chatPlatform.name == 'Teamspeak'"
+           src="/assets/platform/Teamspeak.png" title="TeamSpeak" class="platform-img">
+      <img *ngIf="group.chatPlatform && group.chatPlatform.name == 'In-game'"
+           src="/assets/platform/In-game.png" title="In-Game" class="platform-img">
+    </div>
     <div class="group-subtitle-wrapper">
       <h2 class="group-subtitle">Members</h2>
       <label class="member-count">{{group.members.length}}/{{group.slots}}</label>
@@ -20,16 +28,21 @@
         <span class="member-username">
           {{member.username}}
         </span>
-        <span *ngIf="isOwner && member.id != user.id" class="hand member-option kick-player" title="Kick player" (click)="kickPlayer(member.id)">
-          x
-        </span>
+        <div *ngIf="user.id === group.owner.id && member.id != user.id" class="member-option">
+          <span class="hand promote-leader" title="Promote to leader" (click)="promoteToLeader(member.id)">
+            <i class="fa fa-star"></i>
+          </span>
+          <span class="hand kick-player" title="Kick player" (click)="kickPlayer(member.id)">x</span>
+
+        </div>
+
         <span *ngIf="member.id == group.owner.id" class="member-option leader" title="Group leader">
           <i class="fa fa-star"></i>
         </span>
       </div>
     </div>
 
-    <form *ngIf="isOwner" #postForm="ngForm" class="post-group-form" (ngSubmit)="postForm.valid && postGroup()" novalidate>
+    <form *ngIf="user.id === group.owner.id" #postForm="ngForm" class="post-group-form" (ngSubmit)="postForm.valid && postGroup()" novalidate>
       <h2 class="group-subtitle">Post group</h2>
       <div class="form-group">
         <textarea name="TextAreaDescription" placeholder="Description" [(ngModel)]="newPost.description"
@@ -47,7 +60,7 @@
     </form>
 
     <!-- post info -->
-    <div class="post-info-wrapper" [ngClass]="{'inactive': post == null, 'post-info-margin-top': !isOwner}">
+    <div class="post-info-wrapper" [ngClass]="{'inactive': post == null, 'post-info-margin-top': user.id != group.owner.id}">
       <h2 >Active post</h2>
       <div class="post-info" *ngIf="post == null">
         <div class="post-group post-inactive">

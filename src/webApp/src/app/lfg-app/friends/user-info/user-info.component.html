@@ -4,7 +4,8 @@
   </span>
   <div class="username-img-wrapper">
     <div class="user-img-wrapper">
-      <img src="/assets/user/user-default.png" class="user-img">
+      <img *ngIf="user.image != null" [src]="user.image" class="user-img">
+      <img *ngIf="user.image == null" src="/assets/user/user-default.png" class="user-img">
     </div>
     <div class="username-wrapper">
       <h1>{{user.username}}</h1>

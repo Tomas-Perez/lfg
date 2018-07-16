@@ -38,22 +38,15 @@ export class FriendRequestsComponent implements OnInit, OnDestroy {
   }
 
   acceptRequest(id: number) {
-    this.friendService.confirmFriendRequest(id).subscribe(response => {
-      this.friendService.updateFriendRequests();
-      this.friendService.updateFriends();
-    });
+    this.friendService.confirmFriendRequest(id).subscribe(response => {});
   }
 
   deleteRequest(id: number) {
-    this.friendService.removeFriend(id).subscribe(response => {
-      this.friendService.updateFriendRequests();
-    });
+    this.friendService.removeFriend(id).subscribe(response => {});
   }
 
   deleteSentRequest(id: number) {
-    this.friendService.removeFriend(id).subscribe(response => {
-      this.friendService.updateSentRequests();
-    });
+    this.friendService.removeFriend(id).subscribe(response => {});
   }
 
   ngOnDestroy() {

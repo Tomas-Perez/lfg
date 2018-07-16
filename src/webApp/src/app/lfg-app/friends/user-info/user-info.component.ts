@@ -60,7 +60,6 @@ export class UserInfoComponent implements OnInit {
     this.friendService.confirmFriendRequest(this.user.id).subscribe(response => {
       if (response) {
         this.friendService.updateFriendRequests();
-        this.friendService.updateFriends();
         this.isRequestReceived = false;
         this.isAlreadyFriend = true;
       }
@@ -70,7 +69,6 @@ export class UserInfoComponent implements OnInit {
   cancelRequest() {
     this.friendService.removeFriend(this.user.id).subscribe(response => {
       if (response) {
-        this.friendService.updateSentRequests();
         this.isRequestSent = false;
       }
     });
@@ -79,7 +77,6 @@ export class UserInfoComponent implements OnInit {
   deleteRequest() {
     this.friendService.removeFriend(this.user.id).subscribe(response => {
       if (response) {
-        this.friendService.updateFriendRequests();
         this.isRequestReceived = false;
       }
     });
@@ -89,7 +86,6 @@ export class UserInfoComponent implements OnInit {
     this.friendService.removeFriend(this.user.id)
       .subscribe(response => {
         if (response) {
-          this.friendService.updateFriends();
           this.isAlreadyFriend = false;
         }
       });

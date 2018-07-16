@@ -7,14 +7,14 @@ import {AuthService} from './auth.service';
 import {JsonConvert} from 'json2typescript';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {HttpService} from './http.service';
-import {BasicUser} from '../_models/BasicUser';
+import {ImageService} from './image.service';
 
 @Injectable()
 export class UserService {
 
   private signUpUrl = '/sign-up';
   private userMeUrl = '/users/me';
-  private usersUrl = '/users';
+  private userMeImageUrl = '/users/me/image';
 
   private jsonConvert: JsonConvert = new JsonConvert();
 
@@ -22,15 +22,15 @@ export class UserService {
   private user: User;
   userSubject: BehaviorSubject<User>;
 
-  constructor(private http: HttpService, private authService: AuthService) {
+  constructor(private http: HttpService, private authService: AuthService, private imageService: ImageService) {
+    this.user = null;
     this.userSubject = new BehaviorSubject<User>(null);
-
-    this.userSubject.subscribe(user => this.user = user);
 
     this.authService.isLoggedInBS().subscribe(loggedIn => {
       if (loggedIn) {
         this.updateUserInfo();
       } else {
+        this.user = null;
         this.userSubject.next(null);
       }
     });
@@ -38,7 +38,18 @@ export class UserService {
   }
 
   updateUserInfo(): void {
-    this.requestUserInfo().subscribe( user => this.userSubject.next(user));
+    this.requestUserInfo().subscribe( user => {
+      this.user = user;
+      this.userSubject.next(user);
+      this.getUserImage();
+    });
+  }
+
+  getUserImage() {
+    this.imageService.getImage(this.userMeImageUrl)
+      .subscribe( img => {
+        this.user.image = img;
+      });
   }
 
   /**
@@ -89,22 +100,5 @@ export class UserService {
     }
   }
 
-  searchUsers(search: string): Observable<BasicUser[]> {
-    return this.http.get(this.usersUrl + '?search=' + search,
-      {
-        observe: 'response'
-      })
-      .pipe(
-        map(response => {
-          console.log(response);
-          return this.jsonConvert.deserialize(response.body, BasicUser);
-        }),
-        catchError(err => this.searchUsersErrorHandle(err))
-      );
-  }
 
-  private searchUsersErrorHandle(err: any): Observable<BasicUser[]> {
-    console.log(err);
-    return Observable.of([]);
-  }
 }

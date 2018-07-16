@@ -12,7 +12,8 @@
       <div *ngFor="let request of receivedRequests"  class="friend-wrapper">
         <div class="friend">
           <div class="user-img-wrapper">
-            <img src="/assets/user/user-default.png" class="user-img">
+            <img *ngIf="request.image != null" [src]="request.image" class="user-img">
+            <img *ngIf="request.image == null" src="/assets/user/user-default.png" class="user-img">
           </div>
           <span (click)="getUserInfo(request.id)" class="friend-username">
             {{request.username}}
@@ -33,7 +34,8 @@
       <div *ngFor="let request of sentRequests" class="friend-wrapper">
         <div class="friend">
           <div class="user-img-wrapper">
-            <img src="/assets/user/user-default.png" class="user-img">
+            <img *ngIf="request.image != null" [src]="request.image" class="user-img">
+            <img *ngIf="request.image == null" src="/assets/user/user-default.png" class="user-img">
           </div>
           <span (click)="getUserInfo(request.id)" class="friend-username">
             {{request.username}}

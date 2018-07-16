@@ -14,6 +14,8 @@ import {FilterByGame} from '../_models/post-filters/FilterByGame';
 import {FilterByActivity} from '../_models/post-filters/FilterByActivity';
 import {HttpService} from './http.service';
 import {Subscription} from 'rxjs/Subscription';
+import {UserSocketService} from './user-socket.service';
+import {PostAction} from '../_models/sockets/PostAction';
 
 @Injectable()
 export class PostService {
@@ -31,7 +33,10 @@ export class PostService {
 
   private postWs: $WebSocket;
 
-  constructor(private http: HttpService, private authService: AuthService, private userService: UserService) {
+  constructor(private http: HttpService,
+              private authService: AuthService,
+              private userSocketService: UserSocketService,
+              private userService: UserService) {
     this.postsSubject = new BehaviorSubject([]);
 
     this.currentPostSubject = new BehaviorSubject<Post>(null);
@@ -64,9 +69,35 @@ export class PostService {
         }
       }
     });
+
+    this.setUpCurrentPostSocket();
   }
 
-   private newPostSocket(wsUrl: string) {
+  private setUpCurrentPostSocket() {
+    this.userSocketService.postSubject.subscribe(
+      (element: {action: PostAction, id: number}) => {
+        if (element.action === PostAction.NEW) {
+          this.onNewCurrentPost(element.id);
+        } else if (element.action === PostAction.DELETE) {
+          this.onDeleteCurrentPost();
+        }
+      }
+    );
+  }
+
+  private onNewCurrentPost(id: number) {
+    this.getPost(id).subscribe(
+      post => {
+        this.currentPostSubject.next(post);
+      }
+    );
+  }
+
+  private onDeleteCurrentPost() {
+    this.currentPostSubject.next(null);
+  }
+
+  private newPostSocket(wsUrl: string) {
 
     if (this.postWs) {
       this.postWs.close();
@@ -104,10 +135,26 @@ export class PostService {
               this.onDeletePost(msgData.payload.id);
               break;
             }
+            case 'updatePost': {
+              this.onUpdatePost(msgData.payload.id);
+              break;
+            }
           }
         });
 
     this.postWs = ws;
+  }
+
+  onUpdatePost(id: number) {
+    for (let i = 0; i < this.posts.length; i++) {
+      if (this.posts[i].id === id) {
+        this.getPost(id).subscribe(
+          post => {
+            this.posts[i] = post;
+          }
+        );
+      }
+    }
   }
 
   onDeletePost(id: number) {
