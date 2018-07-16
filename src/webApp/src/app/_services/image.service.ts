@@ -33,4 +33,24 @@ export class ImageService {
     return Observable.of(this.defaultImg);
   }
 
+  uploadImage(url: string, image: any): Observable<boolean> {
+    const formData = new FormData();
+    formData.append('file', image);
+    return this.http.post(url, formData, {
+      observe: 'response'
+    })
+      .pipe(
+        map(response => {
+          console.log(response);
+          return true;
+        }),
+        catchError((err: any) => this.handleImageUploadError(err))
+      );
+  }
+
+  private handleImageUploadError(err): Observable<boolean> {
+    console.log('Image upload error');
+    console.log(err);
+    return Observable.of(false);
+  }
 }

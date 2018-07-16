@@ -4,7 +4,8 @@
   </div>
   <div class="user-info-wrapper">
     <div class="user-img-wrapper">
-      <img src="/assets/user/user-default.png" class="user-img">
+      <img *ngIf="user.image != null" [src]="user.image" class="user-img">
+      <img *ngIf="user.image == null" src="/assets/user/user-default.png" class="user-img">
     </div>
     <div class="username-wrapper">
       <h2>{{user.username}}</h2>
@@ -26,7 +27,7 @@
           ></image-upload>
         </div>
         <div class="upload-wrapper">
-          <button [disabled]="!imgState" class="btn btn-primary-lfg btn-upload">Upload</button>
+          <button [disabled]="!imgState" (click)="onUpload()" class="btn btn-primary-lfg btn-upload">Upload</button>
         </div>
       </div>
     </div>

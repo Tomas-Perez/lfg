@@ -71,7 +71,7 @@ export class ChatService {
       (element: {action: ChatAction, id: number}) => {
         if (element.action === ChatAction.NEW) {
           if (!this.chatExistsById(element.id)) {
-            this.getChatAndConnect(element.id).subscribe(chat => this.addChat(chat));
+            this.getChatAndConnect(element.id).subscribe(chat => this.addChat(chat))
           }
         } else if (element.action === ChatAction.DELETE) {
           this.deleteChatFromArray(element.id);
@@ -82,6 +82,7 @@ export class ChatService {
 
   private addChat(chat: Chat) {
     this.chatsSubject.next(this.chats.concat([chat]));
+    console.log(this.chats);
   }
 
   getChatAndConnect(id: number): Observable<Chat> {
@@ -120,6 +121,7 @@ export class ChatService {
    */
   chatExistsByIds(ids: number[]): boolean {
     for (const chat of this.chats) {
+      if(chat.type === ChatType.GROUP) continue;
       let checks = false;
       for (const chatMember of chat.members) {
         checks = false;
@@ -208,9 +210,15 @@ export class ChatService {
    * @returns {boolean}
    */
   newChat(type: ChatType, id: number): boolean {
+
     const idArray = [this.user.id, id];
 
+    console.log('me: ' + this.user.id + ' him:' + id);
+    console.dir(this.chats);
+
     if (this.chatExistsByIds(idArray)) { return false; }
+
+
 
     this.requestNewChat(type, id).subscribe((data: {chat: Chat, wsUrl: string}) => {
       const chat = data.chat;

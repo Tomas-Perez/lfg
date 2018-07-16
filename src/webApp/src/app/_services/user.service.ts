@@ -100,5 +100,11 @@ export class UserService {
     }
   }
 
+  updateUserImage(image: any) {
+    this.imageService.uploadImage(this.userMeImageUrl, image).subscribe(res => {
+      if (res) this.getUserImage();
+    });
+  }
+
 
 }

@@ -15,7 +15,7 @@ export class EditUserComponent implements OnInit, OnDestroy {
 
   private ngUnsubscribe: Subject<any> = new Subject();
   user: User;
-  file: FileHolder;
+  fileHolder: FileHolder;
   imgState: boolean;
 
   constructor(
@@ -25,7 +25,7 @@ export class EditUserComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.imgState = false;
-    this.file = null;
+    this.fileHolder = null;
 
     this.navBarService.spekbarLocationSubject.next(SpekbarLocation.EDITUSER);
 
@@ -35,21 +35,22 @@ export class EditUserComponent implements OnInit, OnDestroy {
       });
   }
 
-  onUploadFinished(file: FileHolder) {
+  onUploadFinished(file: any) {
+    console.log(file);
     this.imgState = true;
-    this.file = file;
+    this.fileHolder = file;
   }
 
   onRemoved(file: FileHolder) {
     this.imgState = false;
-    this.file = null;
+    this.fileHolder = null;
   }
 
   onUpload() {
-    if (this.file == null) {
+    if (this.fileHolder == null) {
       return;
     }
-    // TODO upload file (use userService)
+    this.userService.updateUserImage(this.fileHolder.file);
   }
 
   ngOnDestroy() {
