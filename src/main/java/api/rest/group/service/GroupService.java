@@ -140,8 +140,11 @@ public class GroupService {
             logger.info("ownerID: " + ownerID);
 
             chatService.removeMember(groupChat, userID);
-            groupManager.removeMemberFromGroup(id, userID);
-            if(ownerID == userID) postService.deleteUserPost(ownerID);
+            Integer newOwnerID = groupManager.removeMemberFromGroup(id, userID);
+            if(ownerID == userID){
+                postService.deleteUserPost(ownerID);
+                if(newOwnerID != null) newOwnerEvent.fire(new NewOwnerEvent(id, userID, newOwnerID));
+            }
             logger.info("we get here?");
             notifyRemovedMember(id, userID, postID);
             logger.info("we dont get here");

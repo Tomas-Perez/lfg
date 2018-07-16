@@ -61,7 +61,7 @@ public class GroupManager extends Manager<GroupEntity>{
         persist(groupMemberEntity);
     }
 
-    public void removeMemberFromGroup(int groupID, int memberID){
+    public Integer removeMemberFromGroup(int groupID, int memberID){
         EntityTransaction tx = manager.getTransaction();
         GroupMemberEntityPK key = new GroupMemberEntityPK(groupID, memberID);
         boolean reassignOwner = false;
@@ -81,7 +81,8 @@ public class GroupManager extends Manager<GroupEntity>{
         }
 
         if(emptyGroup(groupID)) delete(groupID);
-        else if(reassignOwner) reassignRandomOwner(groupID);
+        else if(reassignOwner) return reassignRandomOwner(groupID);
+        return null;
     }
 
     public void delete(int groupID){
@@ -148,9 +149,10 @@ public class GroupManager extends Manager<GroupEntity>{
             throw new ConstraintException(String.format("Group with id: %d does not exist", groupID));
     }
 
-    private void reassignRandomOwner(int groupID){
+    private Integer reassignRandomOwner(int groupID){
         Integer newOwnerID = getNewOwnerID(groupID);
         assignOwner(groupID, newOwnerID);
+        return newOwnerID;
     }
 
     private void assignOwner(int groupID, int newOwnerID){
