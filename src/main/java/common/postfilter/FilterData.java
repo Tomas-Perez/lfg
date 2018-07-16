@@ -1,5 +1,6 @@
 package common.postfilter;
 
+import api.websocket.post.filter.exception.MalformedParameterException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -27,7 +28,7 @@ public class FilterData {
         this.activityID = activities;
     }
 
-    public FilterData(Integer gameID, Integer activityID, Integer chatPlatformID, Integer gamePlatformID, PostType type) {
+    private FilterData(Integer gameID, Integer activityID, Integer chatPlatformID, Integer gamePlatformID, PostType type) {
         this.gameID = gameID;
         this.activityID = activityID;
         this.chatPlatformID = chatPlatformID;
@@ -75,13 +76,6 @@ public class FilterData {
         return type;
     }
 
-    @Override
-    public String toString() {
-        return "FilterData{" +
-                "gameID=" + gameID +
-                ", activityID=" + activityID +
-                '}';
-    }
 
     public String asQueryParam(){
         List<String> params = Arrays.asList(activityCode(), chatPlatfromCode(), gamePlatfromCode(), typeCode());
@@ -122,12 +116,27 @@ public class FilterData {
         if (!(o instanceof FilterData)) return false;
         FilterData that = (FilterData) o;
         return Objects.equals(gameID, that.gameID) &&
-                Objects.equals(activityID, that.activityID);
+                Objects.equals(activityID, that.activityID) &&
+                Objects.equals(chatPlatformID, that.chatPlatformID) &&
+                Objects.equals(gamePlatformID, that.gamePlatformID) &&
+                type == that.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(gameID, activityID);
+
+        return Objects.hash(gameID, activityID, chatPlatformID, gamePlatformID, type);
+    }
+
+    @Override
+    public String toString() {
+        return "FilterData{" +
+                "gameID=" + gameID +
+                ", activityID=" + activityID +
+                ", chatPlatformID=" + chatPlatformID +
+                ", gamePlatformID=" + gamePlatformID +
+                ", type=" + type +
+                '}';
     }
 
     public enum PostType{
@@ -142,6 +151,12 @@ public class FilterData {
         @Override
         public String toString() {
             return name;
+        }
+
+        public static PostType fromString(String str){
+            if(str.equals(LFG.name)) return LFG;
+            else if(str.equals(LFM.name)) return LFM;
+            return null;
         }
     }
 
@@ -177,6 +192,26 @@ public class FilterData {
         public Builder withType(@NotNull PostType type){
             this.type = type;
             return this;
+        }
+
+        public Builder withActivityFromString(@NotNull String str){
+            String[] separatedParam = Arrays.stream(str.split(":"))
+                    .filter(x -> !x.isEmpty())
+                    .toArray(String[]::new);
+
+            switch (separatedParam.length){
+                case 0:
+                    return this;
+                case 1:
+                    this.gameID = Integer.parseInt(separatedParam[0]);
+                    return this;
+                case 2:
+                    this.gameID = Integer.parseInt(separatedParam[0]);
+                    this.activityID = Integer.parseInt(separatedParam[1]);
+                    return this;
+                default:
+                    throw new MalformedParameterException("Filter parameter is malformed");
+            }
         }
 
         public FilterData build(){

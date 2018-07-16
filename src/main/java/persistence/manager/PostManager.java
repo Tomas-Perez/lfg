@@ -1,6 +1,8 @@
 package persistence.manager;
 
 import common.postfilter.FilterData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import persistence.manager.exception.ConstraintException;
 import persistence.entity.*;
@@ -18,6 +20,8 @@ import java.util.*;
 
 @ApplicationScoped
 public class PostManager extends Manager<PostEntity>{
+    private static final Logger logger = LogManager.getLogger(PostManager.class);
+
     private UserManager userManager;
     private ActivityManager activityManager;
     private GroupManager groupManager;
@@ -115,9 +119,27 @@ public class PostManager extends Manager<PostEntity>{
 
     @SuppressWarnings("unchecked")
     public List<Integer> filteredList(FilterData filter){
-        if(filter.getGameID() == null) return list();
-        if(filter.getActivityID() == null) return getGamePosts(filter.getGameID());
-        return getGameActivityPosts(filter.getGameID(), filter.getActivityID());
+        logger.info(filter);
+        return manager.createNativeQuery("SELECT P.id FROM POST P " +
+                "LEFT JOIN GAME_PLATFORM_FOR_POST G on G.POST_ID = P.id " +
+                "LEFT JOIN CHAT_PLATFORM_FOR_POST C on C.POST_ID = P.id " +
+                "JOIN ACTIVITY A on A.id = P.ACTIVITY_ID " +
+                "WHERE (A.GAME_ID = :gameID OR :gameID is null) " +
+                "AND (A.ID = :activityID OR :activityID is null) " +
+                "AND (G.GAME_PLATFORM_ID = :gamePlatformID OR :gamePlatformID is null) " +
+                "AND (C.CHAT_PLATFORM_ID = :chatPlatformID OR :chatPlatformID is null) " +
+                "AND ((P.GROUP_ID is not null) = :hasGroup) " +
+                "ORDER BY P.date DESC")
+                .setParameter("gameID", filter.getGameID())
+                .setParameter("activityID", filter.getActivityID())
+                .setParameter("chatPlatformID", filter.getChatPlatformID())
+                .setParameter("gamePlatformID", filter.getGamePlatformID())
+                .setParameter("hasGroup", filter.getType() == FilterData.PostType.LFM)
+                .getResultList();
+
+//        if(filter.getGameID() == null) return list();
+//        if(filter.getActivityID() == null) return getGamePosts(filter.getGameID());
+//        return getGameActivityPosts(filter.getGameID(), filter.getActivityID());
     }
 
     @SuppressWarnings("unchecked")
