@@ -12,7 +12,7 @@
       <th>Edit</th>
       <th>Delete</th>
     </tr>
-    <tr *ngFor="let game of games">
+    <tr *ngFor="let game of games; let i = index">
       <td>{{game.id}}</td>
       <td>{{game.name}}</td>
       <td>
@@ -24,22 +24,7 @@
         </ul>
       </td>
       <td>
-        <div class="image-upload-wrapper">
-          <div [ngClass]="{'hide': imgState}">
-            <image-upload
-              [max]="1"
-              [class]="'image-upload'"
-              [buttonCaption]="'Select image'"
-              dropBoxMessage="Drop image here"
-              [clearButtonCaption]="'Clear'"
-              (removed)="onImgRemoved($event)"
-              (uploadFinished)="onImgUploadFinished($event)"
-            ></image-upload>
-          </div>
-          <div class="upload-wrapper">
-            <button [disabled]="!imgState" (click)="onImgUpload(game.id)" class="btn btn-primary-lfg btn-upload">Upload</button>
-          </div>
-        </div>
+        <img *ngIf="gameImages[i] != null" [src]="gameImages[i]" title="{{game.name}}" class="game-img">
       </td>
       <td>
         <a class="" [routerLink]="['../edit-game', game.id]">

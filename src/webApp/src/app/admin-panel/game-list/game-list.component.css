@@ -16,3 +16,8 @@ th, td{
 li{
   text-align: left;
 }
+
+.game-img {
+  height: 70px;
+  width: auto;
+}

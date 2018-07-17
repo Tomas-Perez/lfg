@@ -15,8 +15,7 @@ export class GameListComponent implements OnInit, OnDestroy {
 
   private games: Game[];
   private ngUnsubscribe: Subject<any> = new Subject();
-  fileHolder: FileHolder;
-  imgState: boolean;
+  gameImages: any[];
 
   constructor(
     private gameService: GameService,
@@ -30,9 +29,21 @@ export class GameListComponent implements OnInit, OnDestroy {
         //this.selectedId = +params.get('id');
       });
       */
-    this.fileHolder = null;
+    this.gameImages = [];
     this.gameService.updateGameList();
-    this.gameService.gamesSubject.takeUntil(this.ngUnsubscribe).subscribe(games => this.games = games);
+    this.gameService.gamesSubject.takeUntil(this.ngUnsubscribe).subscribe(games => {
+      this.games = games;
+      this.getGameImages();
+    });
+  }
+
+  getGameImages() {
+    for (let i = 0; i < this.games.length; i++) {
+      this.gameImages.push(null);
+      this.gameService.getGameImage(this.games[i].id).subscribe(img => {
+        this.gameImages[i] = img;
+      });
+    }
   }
 
   deleteGame(id: number) {
@@ -47,23 +58,7 @@ export class GameListComponent implements OnInit, OnDestroy {
     );
   }
 
-  onImgUploadFinished(file: any) {
-    console.log(file);
-    this.imgState = true;
-    this.fileHolder = file;
-  }
 
-  onImgRemoved(file: FileHolder) {
-    this.imgState = false;
-    this.fileHolder = null;
-  }
-
-  onImgUpload(id: number) {
-    if (this.fileHolder == null) {
-      return;
-    }
-    this.gameService.updateGameImage(id, this.fileHolder.file);
-  }
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();

@@ -7,6 +7,7 @@ import {Activity} from '../../_models/Activity';
 import {Status} from '../../_models/Status';
 import {DbGame} from '../../_models/DbModels/DbGame';
 import {Location} from '@angular/common';
+import {FileHolder} from 'angular2-image-upload';
 
 @Component({
   selector: 'app-game-edit',
@@ -22,6 +23,8 @@ export class GameEditComponent implements OnInit {
   activityState: {activity: Activity, status: Status}[];
   activityToDeleteState: {activity: Activity, status: Status}[];
   deleteActivityCount: number; // If activityToDeleteState.length === deleteActivityCount then the deletion is finished.
+  fileHolder: FileHolder;
+  imgState: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -31,6 +34,8 @@ export class GameEditComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.fileHolder = null;
+    this.imgState = false;
     this.nameState = Status.NOTHING;
     this.activityToDeleteState = [];
     this.deleteActivityCount = 0;
@@ -186,6 +191,24 @@ export class GameEditComponent implements OnInit {
 
   getStatus(status: Status): string {
     return Status[status];
+  }
+
+  onImgUploadFinished(file: any) {
+    console.log(file);
+    this.imgState = true;
+    this.fileHolder = file;
+  }
+
+  onImgRemoved(file: FileHolder) {
+    this.imgState = false;
+    this.fileHolder = null;
+  }
+
+  onImgUpload(id: number) {
+    if (this.fileHolder == null) {
+      return;
+    }
+    this.gameService.updateGameImage(id, this.fileHolder.file);
   }
 
 }

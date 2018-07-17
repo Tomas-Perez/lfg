@@ -7,8 +7,6 @@ import {ImageUtil} from '../_models/util/ImageUtil';
 @Injectable()
 export class ImageService {
 
-  private defaultImg = '/assets/user/user-default.png';
-
   constructor(private http: HttpService) {
 
   }
@@ -30,7 +28,7 @@ export class ImageService {
   private handleRequestImageError(err): Observable<any> {
     console.log('Image retrieval error');
     console.log(err);
-    return Observable.of(this.defaultImg);
+    return Observable.of(null);
   }
 
   uploadImage(url: string, image: any): Observable<boolean> {

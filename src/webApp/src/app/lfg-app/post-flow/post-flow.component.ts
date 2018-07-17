@@ -81,8 +81,6 @@ export class PostFlowComponent implements OnInit, OnDestroy {
         array.push(id);
         this.gameService.getGameImage(id).subscribe(img => {
           this.gameImages.set(id, img);
-          console.log('-----------------------');
-          console.log('i: ' + i);
         });
       }
     }
