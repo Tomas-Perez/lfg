@@ -1,15 +1,17 @@
 <div class="chat-container">
   <div class="chat-header">
-    <div class="chat-tabs-wrapper">
-      <div *ngFor="let chatTitle of chatTitles; let i = index" class="tab" [ngClass]="{'tab-active': activatedTabIndex == i}" (click)="activateTab(i)">
-        <div class="tab-content">
-          <span class="tab-username" (click)="openChat()">
-            {{chatTitle.title}}
-          </span>
-          <span *ngIf="chatTitle.id >= 0" class="tab-option" (click)="getUserInfo(chatTitle.id)">
-            <i class="fa fa-info-circle"></i>
-          </span>
-          <span *ngIf="chatTitle.id >= 0" class="tab-option" (click)="closeTab(i)">×</span>
+    <div data-simplebar>
+      <div class="chat-tabs-wrapper">
+        <div *ngFor="let chatTitle of chatTitles; let i = index" class="tab" [ngClass]="{'tab-active': activatedTabIndex == i}" (click)="activateTab(i)">
+          <div class="tab-content">
+            <span class="tab-username" (click)="openChat()">
+              {{chatTitle.title}}
+            </span>
+            <span *ngIf="chatTitle.id >= 0" class="tab-option" (click)="getUserInfo(chatTitle.id)">
+              <i class="fa fa-info-circle"></i>
+            </span>
+            <span *ngIf="chatTitle.id >= 0" class="tab-option" (click)="closeTab(i)">×</span>
+          </div>
         </div>
       </div>
     </div>

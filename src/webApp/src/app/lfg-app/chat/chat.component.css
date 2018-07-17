@@ -1,6 +1,6 @@
 .chat-container{
   display: flex;
-  flex: 1 0;
+  flex: 1 0 auto;
   flex-direction: column;
   -ms-flex-direction: column;
   -webkit-box-direction: normal;
@@ -10,12 +10,14 @@
   box-shadow: 0 -1px 0 rgba(0,0,0,.1);
   border-top: solid 1px #343a40;
   background-color: #18191c;
+  width: 100%;
 }
 
 .chat-header{
   display: flex;
-  height: 35px;
   flex: 0 0 auto;
+  justify-content: space-between;
+  height: 35px;
   flex-direction: row;
   background: #27292d;
 }
