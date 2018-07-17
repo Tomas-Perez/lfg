@@ -1,8 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Game} from '../../../_models/Game';
 import {GameService} from '../../../_services/game.service';
-import {FilterByGame} from '../../../_models/post-filters/FilterByGame';
-import {FilterByActivity} from '../../../_models/post-filters/FilterByActivity';
 import {PostFilterService} from './post-filter.service';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
@@ -52,15 +50,15 @@ export class PostFilterComponent implements OnInit, OnDestroy {
   }
 
   addFilter() {
-    if (this.selectedGameIndex >= 0) {
-      const game = this.games[this.selectedGameIndex];
-      if (this.selectedActivityIndex > -1) {
-        const activity = game.activities[this.selectedActivityIndex];
-        this.postFilterService.addFilter(new FilterByActivity(game.name, game.id, activity.name, activity.id));
-      } else {
-        this.postFilterService.addFilter(new FilterByGame(game.name, game.id));
-      }
+    if (this.selectedGameIndex < 0) {
+      return;
     }
+    const game = this.games[this.selectedGameIndex];
+    const filter = new PostFilter(game);
+    if (this.selectedActivityIndex > -1) {
+      filter.activity = game.activities[this.selectedActivityIndex];
+    }
+    this.postFilterService.addFilter(filter);
   }
 
   removeFilter(filter: PostFilter) {

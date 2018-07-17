@@ -29,6 +29,9 @@ export class NewPostComponent implements OnInit, OnDestroy {
   private user: User;
   private ngUnsubscribe: Subject<any> = new Subject();
   private post: Post;
+  private postErrorTimer: any;
+  private isPostError: boolean;
+  private postErrorTime: number;
 
   constructor(
     private userService: UserService,
@@ -40,7 +43,7 @@ export class NewPostComponent implements OnInit, OnDestroy {
     ) { }
 
   ngOnInit() {
-
+    this.isPostError = false;
     this.games = [];
     this.gamePlatforms = [];
     this.chatPlatforms = [];
@@ -75,10 +78,22 @@ export class NewPostComponent implements OnInit, OnDestroy {
       this.newPostModel.dbPost.chatPlatforms = [this.chatPlatforms[this.newPostModel.selectedChatPlatformIndex].id];
     }
     this.newPostModel.dbPost.ownerID = this.user.id;
+
     this.postService.newPost(this.newPostModel.dbPost).subscribe(
       response => {
-        if (response) {
+        if (response == 0) {
           console.log('Post created');
+        //} else if (response < 0) {
+          // error getting new post
+        //} else if (response > 0){
+          if (this.postErrorTimer) {
+            clearTimeout(this.postErrorTimer);
+          }
+          this.isPostError = true;
+          this.postErrorTimer = setTimeout( () => {
+            this.isPostError = false;
+          }, 5000 );
+          this.postErrorTime = response;
         }
       }
     );

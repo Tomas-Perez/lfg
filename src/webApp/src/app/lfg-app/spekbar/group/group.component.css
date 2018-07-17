@@ -10,7 +10,7 @@ h2{
   display: flex;
   flex-direction: column;
   flex: 1 0;
-  padding-bottom: 5px;
+  padding: 0 5px 5px 5px;
 }
 
 .game-activity {
@@ -168,4 +168,19 @@ h2{
 
 .post-info-margin-top {
   margin-top: 1rem;
+}
+
+.postError {
+  transition: height 0.5s;
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: red;
+  display: block;
+  overflow: hidden;
+  height: 17px;
+}
+
+.postErrorHide {
+  height: 0;
 }

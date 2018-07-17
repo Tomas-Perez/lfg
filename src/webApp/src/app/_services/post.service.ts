@@ -10,8 +10,6 @@ import {User} from '../_models/User';
 import {UserService} from './user.service';
 import {$WebSocket} from 'angular2-websocket/angular2-websocket';
 import {AuthService} from './auth.service';
-import {FilterByGame} from '../_models/post-filters/FilterByGame';
-import {FilterByActivity} from '../_models/post-filters/FilterByActivity';
 import {HttpService} from './http.service';
 import {Subscription} from 'rxjs/Subscription';
 import {UserSocketService} from './user-socket.service';
@@ -28,8 +26,10 @@ export class PostService {
   private jsonConvert: JsonConvert = new JsonConvert();
   private postUrl = '/posts';
   private currentPost: Post;
-  private filterSubscribe: Subscription;
   currentPostSubject: BehaviorSubject<Post>;
+  private currentGroupPost: Post;
+  currentGroupPostSubject: BehaviorSubject<Post>;
+  private filterSubscribe: Subscription;
 
   private postWs: $WebSocket;
 
@@ -41,6 +41,9 @@ export class PostService {
 
     this.currentPostSubject = new BehaviorSubject<Post>(null);
     this.currentPostSubject.subscribe(post => this.currentPost = post);
+
+    this.currentGroupPostSubject = new BehaviorSubject<Post>(null);
+    this.currentGroupPostSubject.subscribe(post => this.currentGroupPost = post);
 
     this.filtersSubject = new BehaviorSubject([]);
 
@@ -77,7 +80,7 @@ export class PostService {
     this.userSocketService.postSubject.subscribe(
       (element: {action: PostAction, id: number}) => {
         if (element.action === PostAction.NEW) {
-          this.onNewCurrentPost(element.id);
+          this.onNewCurrentGroupPost(element.id);
         } else if (element.action === PostAction.DELETE) {
           this.onDeleteCurrentPost();
         }
@@ -85,16 +88,17 @@ export class PostService {
     );
   }
 
-  private onNewCurrentPost(id: number) {
+  private onNewCurrentGroupPost(id: number) {
     this.getPost(id).subscribe(
       post => {
-        this.currentPostSubject.next(post);
+        this.currentGroupPostSubject.next(post);
       }
     );
   }
 
   private onDeleteCurrentPost() {
     this.currentPostSubject.next(null);
+    this.currentGroupPostSubject.next(null);
   }
 
   private newPostSocket(wsUrl: string) {
@@ -223,19 +227,14 @@ export class PostService {
     let url = this.postUrl;
 
     if (this.filters.length > 0) {
+      console.log(this.filters);
       url = url + '?';
       let first = true;
       for (const filter of this.filters) {
         if (!first) {
           url += '&';
         }
-        if (filter.isFilterByGame()) {
-          const gameFilter = <FilterByGame>filter;
-          url += 'filter=' + gameFilter.gameId;
-        } else {
-          const activityFilter = <FilterByActivity>filter;
-          url += 'filter=' + activityFilter.gameId + ':' + activityFilter.activityId;
-        }
+        url += filter.toQueryParam();
         first = false;
       }
     }
@@ -260,6 +259,7 @@ export class PostService {
     return Observable.of(null);
   }
 
+
   updatePosts(): void {
     this.requestPosts().subscribe(element => {
       if (element != null) {
@@ -270,7 +270,7 @@ export class PostService {
     });
   }
 
-  newPost(post: DbPost): Observable<boolean> {
+  newPost(post: DbPost): Observable<number> {
     return this.http.post(this.postUrl, this.jsonConvert.serialize(post), {
       observe: 'response'
     })
@@ -284,20 +284,26 @@ export class PostService {
               switchMap( getGroupResponse => {
                   const newPost = this.jsonConvert.deserialize(getGroupResponse.body, Post);
                   this.currentPostSubject.next(newPost);
-                  return Observable.of(true);
+                  return Observable.of(0);
                 }
               ),
-              catchError((err: any) => this.newPostErrorHandle(err))
+              catchError((err: any) => this.newPostGetErrorHandle(err))
             );
         }),
         catchError((err: any) => this.newPostErrorHandle(err))
       );
   }
 
-  private newPostErrorHandle(err: any) {
+  newPostGetErrorHandle(err): Observable<number> {
+    console.log('Error getting new post');
+    console.log(err);
+    return Observable.of(-1);
+  }
+
+  private newPostErrorHandle(err: any): Observable<number> {
     console.log('Error creating new post');
     console.log(err);
-    return Observable.of(false);
+    return Observable.of(30);
   }
 
   deleteCurrentPost(): Observable<boolean> {

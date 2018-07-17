@@ -59,3 +59,18 @@ h2{
   height: 20px;
   width: auto;
 }
+
+.postError {
+  transition: height 0.5s;
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: red;
+  display: block;
+  overflow: hidden;
+  height: 17px;
+}
+
+.postErrorHide {
+  height: 0;
+}

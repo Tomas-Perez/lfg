@@ -140,7 +140,7 @@ export class UserSocketService {
             break;
           }
           case 'deletePost': {
-            // this.onDeletePost(msgData.payload.id); is already deleted on http response
+            this.onDeletePost(msgData.payload.id);
             break;
           }
           case 'newGroupPost': {

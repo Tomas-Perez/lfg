@@ -11,7 +11,7 @@ export class Activity {
 
   @JsonProperty('id', Number, true)
   id?: number = undefined;
-  @JsonProperty('name', String)
-  name: string = undefined;
+  @JsonProperty('name', String, true)
+  name?: string = undefined;
 
 }

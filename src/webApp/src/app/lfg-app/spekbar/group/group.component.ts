@@ -24,6 +24,9 @@ export class GroupComponent implements OnInit, OnDestroy {
   user: User;
   newPost: DbPost;
   post: Post;
+  private postErrorTimer: any;
+  private isPostError: boolean;
+  private postErrorTime: number;
 
   constructor(private groupService: GroupService,
               private userService: UserService,
@@ -35,6 +38,7 @@ export class GroupComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.newPost = new DbPost();
+    this.isPostError = false;
 
     this.navBarService.spekbarLocationSubject.next(SpekbarLocation.GROUP);
 
@@ -51,7 +55,10 @@ export class GroupComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.postService.currentPostSubject.takeUntil(this.ngUnsubscribe).subscribe(post => this.post = post);
+    this.postService.currentGroupPostSubject.takeUntil(this.ngUnsubscribe).subscribe(post => {
+      this.post = post;
+      console.log(post);
+    });
 
     this.groupPostService.postSubject.takeUntil(this.ngUnsubscribe)
       .subscribe((post: DbPost) => {
@@ -63,8 +70,19 @@ export class GroupComponent implements OnInit, OnDestroy {
   postGroup() {
     this.postService.newPost(this.newPost).subscribe(
       response => {
-        if (response) {
+        if (response == 0) {
           console.log('Post created');
+          //} else if (response < 0) {
+            // error getting new post
+          //} else if (response > 0){
+          if (this.postErrorTimer) {
+            clearTimeout(this.postErrorTimer);
+          }
+          this.isPostError = true;
+          this.postErrorTimer = setTimeout( () => {
+            this.isPostError = false;
+          }, 5000 );
+          this.postErrorTime = response;
         }
       }
     );

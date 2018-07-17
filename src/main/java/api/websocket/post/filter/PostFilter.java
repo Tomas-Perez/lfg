@@ -39,7 +39,9 @@ public class PostFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
 
-        List<String> filterParamList = Arrays.asList(request.getParameterValues("filter"));
+        String[] filters = request.getParameterValues("filter");
+        String[] empty = {};
+        List<String> filterParamList = Arrays.asList(filters == null? empty : filters);
         FilterParams filterParams = new FilterParams(filterParamList);
 
         filterChain.doFilter(new FilteredRequest(request, filterParams.getFilterData()), response);

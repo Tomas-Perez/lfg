@@ -5,8 +5,8 @@ import {Activity} from './Activity';
 export class Game {
   @JsonProperty('id', Number, true)
   id?: number = undefined;
-  @JsonProperty('name', String)
-  name: string = undefined;
-  @JsonProperty('activities', [Activity])
-  activities: Activity[] = undefined;
+  @JsonProperty('name', String, true)
+  name?: string = undefined;
+  @JsonProperty('activities', [Activity], true)
+  activities?: Activity[] = undefined;
 }
