@@ -86,6 +86,7 @@ public class GroupService {
         final int groupID = groupManager.add(group);
         chatService.newGroupChat(groupID);
         newGroupEvent.fire(new GroupEvent(groupID, Collections.singleton(ownerID)));
+        postService.deleteUserPost(ownerID);
         return groupID;
     }
 

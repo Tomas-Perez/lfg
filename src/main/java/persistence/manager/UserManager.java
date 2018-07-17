@@ -9,6 +9,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @ApplicationScoped
@@ -187,5 +188,23 @@ public class UserManager extends Manager<UserEntity>{
 
     public Set<Integer> getReceivedRequests(int userID){
         return friendHelper.getReceivedRequests(manager, userID);
+    }
+
+    public LocalDateTime getLastPosted(int userID){
+        final UserEntity userEntity = get(userID);
+        return userEntity == null? null : userEntity.getLastPosted();
+    }
+
+    public void setLastPosted(int userID, LocalDateTime time){
+        EntityTransaction tx = manager.getTransaction();
+        try {
+            tx.begin();
+            UserEntity user = manager.find(UserEntity.class, userID);
+            user.setLastPosted(time);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+        }
     }
 }

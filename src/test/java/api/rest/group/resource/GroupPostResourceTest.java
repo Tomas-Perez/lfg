@@ -91,7 +91,9 @@ public class GroupPostResourceTest extends ApiTest {
         WebTarget groupMembersTarget = RequestUtil.newRelativeTarget(base, String.format("groups/%d/members", groupID));
 
         final Response addMemberResponse = RequestUtil.post(groupMembersTarget, token, new AddMemberJSON(member1ID));
-
+        if(addMemberResponse.getStatus() == 500){
+            RequestUtil.parseResponse(addMemberResponse, String.class);
+        }
         assertThat(addMemberResponse.getStatus(), is(NO_CONTENT));
 
         final Response deleteResponse = RequestUtil.delete(ownerTarget, token);

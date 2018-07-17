@@ -1,6 +1,8 @@
 package api.rest.post.service;
 
 import api.common.event.post.*;
+import api.rest.common.exception.PostTimeoutException;
+import api.rest.user.service.UserService;
 import common.postfilter.FilterData;
 import common.postfilter.PostData;
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +18,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,6 +32,9 @@ public class PostService {
 
     @Inject
     private GroupManager groupManager;
+
+    @Inject
+    private UserService userService;
 
     @Inject
     private PostManager postManager;
@@ -55,6 +61,8 @@ public class PostService {
     @Inject
     @UpdatePost
     private Event<UpdatePostEvent> updatePostEvent;
+
+    private static final long POST_TIMEOUT_SECONDS = 30;
 
     public List<Post> getAll(){
         return postManager.list().stream().map(modelBuilder::buildPost).collect(Collectors.toList());
@@ -159,10 +167,12 @@ public class PostService {
         logger.info(group);
         final Activity activity = group.getActivity();
         final Game game = activity.getGame();
+        final ChatPlatform chatPlatform = group.getChatPlatform();
+        final GamePlatform gamePlatform = group.getGamePlatform();
         PostData data = new PostData.Builder()
                 .withActivity(game.getId(), activity.getId())
-                .withChatPlatforms(Collections.singleton(group.getChatPlatform().getId()))
-                .withGamePlatforms(Collections.singleton(group.getGamePlatform().getId()))
+                .withChatPlatforms(chatPlatform == null? new HashSet<>() : Collections.singleton(chatPlatform.getId()))
+                .withGamePlatforms(gamePlatform == null? new HashSet<>() : Collections.singleton(gamePlatform.getId()))
                 .withType(FilterData.PostType.LFM)
                 .build();
         Set<Integer> members = group.getMembers().stream().map(User::getId).collect(Collectors.toSet());
@@ -188,5 +198,21 @@ public class PostService {
         Integer groupID = postManager.getPostGroup(postID);
         logger.info("groupID: " + groupID);
         if(groupID != null) updatePostEvent.fire(createGroupUpdateEvent(postID, groupID));
+    }
+
+    private long timeToNextPost(int userID){
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime lastPosted = postManager.getUserLastPosted(userID);
+        if(lastPosted == null) return 0;
+        return POST_TIMEOUT_SECONDS - ChronoUnit.SECONDS.between(lastPosted, now);
+    }
+
+    public void checkTimeout(int userID){
+        final long timeToNextPost = timeToNextPost(userID);
+        if(timeToNextPost > 0) throw new PostTimeoutException(timeToNextPost);
+    }
+
+    public int getUserIDfromEmail(String email){
+        return userService.getIDByEmail(email);
     }
 }

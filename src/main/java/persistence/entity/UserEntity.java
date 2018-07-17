@@ -1,6 +1,7 @@
 package persistence.entity;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -15,6 +16,7 @@ public class UserEntity {
     private String password;
     private String username;
     private String image;
+    private LocalDateTime lastPosted;
 
     public UserEntity(boolean admin, String email, String password, String username) {
         this.admin = admin;
@@ -85,6 +87,16 @@ public class UserEntity {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    @Basic
+    @Column(name = "LAST_POSTED")
+    public LocalDateTime getLastPosted() {
+        return lastPosted;
+    }
+
+    public void setLastPosted(LocalDateTime lastPosted) {
+        this.lastPosted = lastPosted;
     }
 
     @Override

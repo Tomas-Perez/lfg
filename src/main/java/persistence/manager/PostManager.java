@@ -165,9 +165,12 @@ public class PostManager extends Manager<PostEntity>{
                 .getResultList();
     }
 
-    @SuppressWarnings("unchecked")
     public Integer getUserPost(int userID){
         return userManager.getUserPost(userID);
+    }
+
+    public LocalDateTime getUserLastPosted(int userID){
+        return userManager.getLastPosted(userID);
     }
 
     public PostEntity get(int postID){

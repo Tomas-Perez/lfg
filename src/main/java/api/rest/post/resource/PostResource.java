@@ -35,6 +35,9 @@ public class PostResource {
     @Context
     private UriInfo uriInfo;
 
+    @Context
+    private SecurityContext securityContext;
+
     @GET
     public Response getPosts(@BeanParam FilterParams filtersParams){
         logger.info(filtersParams);
@@ -47,6 +50,8 @@ public class PostResource {
 
     @POST
     public Response post(CreatePostJSON postJSON){
+        int posterID = service.getUserIDfromEmail(securityContext.getUserPrincipal().getName());
+        service.checkTimeout(posterID);
         int id;
         if(postJSON.getGroupID() == null)
             id = service.newPost(
