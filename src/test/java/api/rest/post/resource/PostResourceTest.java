@@ -3,6 +3,7 @@ package api.rest.post.resource;
 import api.rest.chatPlatform.model.ChatPlatformJSON;
 import api.rest.gamePlatform.model.GamePlatformJSON;
 import api.rest.post.model.FilterPostsJSON;
+import common.postfilter.FilterData;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -211,21 +212,21 @@ public class PostResourceTest extends ApiTest {
         assertThat(actual.getPosts(), is(expectedList));
         System.out.println(actual.getSocketPath());
 
-        final Response getResponseFiltered = RequestUtil.get(postsTarget.queryParam("filter", Integer.toString(gameID)), token);
+        final Response getResponseFiltered = RequestUtil.get(postsTarget.queryParam("filter", String.format("%c%d", FilterData.ACTIVITY_DELIM, gameID)), token);
 
         FilterPostsJSON actualFiltered = RequestUtil.parseResponse(getResponseFiltered, FilterPostsJSON.class);
 
         assertThat(actualFiltered.getPosts(), is(expectedList));
         System.out.println(actualFiltered.getSocketPath());
 
-        final Response getResponseFiltered2 = RequestUtil.get(postsTarget.queryParam("filter", Integer.toString(gameID) + ":" + Integer.toString(activityID)), token);
+        final Response getResponseFiltered2 = RequestUtil.get(postsTarget.queryParam("filter", String.format("%c%d:%d", FilterData.ACTIVITY_DELIM, gameID, activityID)), token);
 
         FilterPostsJSON actualFiltered2 = RequestUtil.parseResponse(getResponseFiltered2, FilterPostsJSON.class);
 
         assertThat(actualFiltered2.getPosts(), is(expectedList));
         System.out.println(actualFiltered2.getSocketPath());
 
-        final Response getResponseFiltered3 = RequestUtil.get(postsTarget.queryParam("filter", 0 + ":" + 0), token);
+        final Response getResponseFiltered3 = RequestUtil.get(postsTarget.queryParam("filter", String.format("%c%d:%d", FilterData.ACTIVITY_DELIM, 0, 0)), token);
 
         FilterPostsJSON actualFiltered3 = RequestUtil.parseResponse(getResponseFiltered3, FilterPostsJSON.class);
 
