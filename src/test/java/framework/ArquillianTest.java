@@ -29,12 +29,5 @@ public class ArquillianTest {
         System.out.println("Arquillian works");
         String result = "Arquillian";
         assertThat(result, equalTo(result));
-//        final String name = "Earthling";
-//
-//        // when
-//        final String result = greeter.createGreeting(name);
-//
-//        // then
-//        assertThat(result, equalTo("Hello, " + name + "!"));
     }
 }

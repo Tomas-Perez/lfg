@@ -179,61 +179,7 @@ public class PostResourceTest extends ApiTest {
         assertThat(expected, is(actual));
     }
 
-    @Test
-    public void filterPosts(){
-        final String gameName = "Overwatch";
-        int gameID = addGame(gameName);
-        final String activityName = "Ranked";
-        int activityID = addActivity(activityName, gameID);
-        final String ownerName = "owner";
-        final String ownerPass = "123";
-        final String ownerEmail = "owner@mail.com";
-        int ownerID = addUser(ownerName, ownerPass, ownerEmail);
 
-        final String description = "posty";
-        final Response postResponse = RequestUtil.post(postsTarget, token, new CreatePostJSON(description, activityID, ownerID, null, new HashSet<>(), new HashSet<>()));
-
-        final String location = postResponse.getHeaderString("Location");
-        final WebTarget postTarget = RequestUtil.newTarget(location);
-        final String id = RequestUtil.getRelativePathDiff(postsTarget, postTarget);
-
-        final Response getResponse = RequestUtil.get(postsTarget, token);
-
-        FilterPostsJSON actual = RequestUtil.parseResponse(getResponse, FilterPostsJSON.class);
-
-        MemberJSON ownerJSON = new MemberJSON(ownerID, ownerName);
-        GameJSON gameJSON = new GameJSON(gameID, gameName);
-        ActivityJSON activityJSON = new ActivityJSON(activityID, activityName, gameJSON);
-
-        PostJSON expected = new PostJSON(Integer.parseInt(id), description, null, activityJSON, ownerJSON, null, new HashSet<>(), new HashSet<>());
-
-        List<PostJSON> expectedList = Collections.singletonList(expected);
-
-        assertThat(actual.getPosts(), is(expectedList));
-        System.out.println(actual.getSocketPath());
-
-        final Response getResponseFiltered = RequestUtil.get(postsTarget.queryParam("filter", String.format("%c%d", FilterData.ACTIVITY_DELIM, gameID)), token);
-
-        FilterPostsJSON actualFiltered = RequestUtil.parseResponse(getResponseFiltered, FilterPostsJSON.class);
-
-        assertThat(actualFiltered.getPosts(), is(expectedList));
-        System.out.println(actualFiltered.getSocketPath());
-
-        final Response getResponseFiltered2 = RequestUtil.get(postsTarget.queryParam("filter", String.format("%c%d:%d", FilterData.ACTIVITY_DELIM, gameID, activityID)), token);
-
-        FilterPostsJSON actualFiltered2 = RequestUtil.parseResponse(getResponseFiltered2, FilterPostsJSON.class);
-
-        assertThat(actualFiltered2.getPosts(), is(expectedList));
-        System.out.println(actualFiltered2.getSocketPath());
-
-        final Response getResponseFiltered3 = RequestUtil.get(postsTarget.queryParam("filter", String.format("%c%d:%d", FilterData.ACTIVITY_DELIM, 0, 0)), token);
-
-        FilterPostsJSON actualFiltered3 = RequestUtil.parseResponse(getResponseFiltered3, FilterPostsJSON.class);
-
-        assertThat(actualFiltered3.getPosts(), is(new ArrayList<>()));
-
-        System.out.println(actualFiltered3.getSocketPath());
-    }
 
     @Test
     public void addPlatformPost(){
