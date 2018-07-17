@@ -9,4 +9,6 @@ export class DbActivity {
   name: string = undefined;
   @JsonProperty('game', DbGame, true)
   game?: DbGame = undefined;
+  @JsonProperty('gameID', Number, true)
+  gameID?: number = undefined;
 }

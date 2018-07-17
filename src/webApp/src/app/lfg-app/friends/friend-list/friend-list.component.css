@@ -36,6 +36,8 @@
   display: flex;
   flex: 1 0 auto;
   flex-direction: column;
+  font-weight: 600;
+  font-size: 14px;
   justify-content: center;
   cursor: pointer;
 }
