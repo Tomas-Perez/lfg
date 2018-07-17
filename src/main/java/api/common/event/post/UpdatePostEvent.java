@@ -1,5 +1,7 @@
 package api.common.event.post;
 
+import common.postfilter.PostData;
+
 import java.util.Set;
 
 /**
@@ -7,14 +9,12 @@ import java.util.Set;
  */
 public class UpdatePostEvent {
     private int postID;
-    private Integer gameID;
-    private Integer activityID;
+    private PostData data;
     private Set<Integer> notifySet;
 
-    public UpdatePostEvent(int postID, Integer gameID, Integer activityID, Set<Integer> notifySet) {
+    public UpdatePostEvent(int postID, PostData data, Set<Integer> notifySet) {
         this.postID = postID;
-        this.gameID = gameID;
-        this.activityID = activityID;
+        this.data = data;
         this.notifySet = notifySet;
     }
 
@@ -22,12 +22,8 @@ public class UpdatePostEvent {
         return postID;
     }
 
-    public Integer getGameID() {
-        return gameID;
-    }
-
-    public Integer getActivityID() {
-        return activityID;
+    public PostData getData() {
+        return data;
     }
 
     public Set<Integer> getNotifySet() {
@@ -38,8 +34,7 @@ public class UpdatePostEvent {
     public String toString() {
         return "UpdatePostEvent{" +
                 "postID=" + postID +
-                ", gameID=" + gameID +
-                ", activityID=" + activityID +
+                ", data=" + data +
                 ", notifySet=" + notifySet +
                 '}';
     }

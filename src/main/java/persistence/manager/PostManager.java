@@ -120,7 +120,7 @@ public class PostManager extends Manager<PostEntity>{
     @SuppressWarnings("unchecked")
     public List<Integer> filteredList(FilterData filter){
         logger.info(filter);
-        return manager.createNativeQuery("SELECT P.id FROM POST P " +
+        final List resultList = manager.createNativeQuery("SELECT P.id FROM POST P " +
                 "LEFT JOIN GAME_PLATFORM_FOR_POST G on G.POST_ID = P.id " +
                 "LEFT JOIN CHAT_PLATFORM_FOR_POST C on C.POST_ID = P.id " +
                 "JOIN ACTIVITY A on A.id = P.ACTIVITY_ID " +
@@ -136,6 +136,8 @@ public class PostManager extends Manager<PostEntity>{
                 .setParameter("gamePlatformID", filter.getGamePlatformID())
                 .setParameter("hasGroup", filter.getType() == FilterData.PostType.LFM)
                 .getResultList();
+        logger.info(resultList);
+        return resultList;
 
 //        if(filter.getGameID() == null) return list();
 //        if(filter.getActivityID() == null) return getGamePosts(filter.getGameID());

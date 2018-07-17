@@ -4,6 +4,7 @@ import common.postfilter.FilterData;
 
 import javax.ws.rs.QueryParam;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +32,7 @@ public class FilterParams {
                         .map(decoder::decode)
                         .distinct()
                         .collect(Collectors.toList());
-            else filterData = new ArrayList<>();
+            else filterData = Collections.singletonList(FilterData.emptyPair());
         }
         return filterData;
     }

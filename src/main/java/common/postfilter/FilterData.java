@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -22,6 +23,7 @@ public class FilterData {
     private Integer chatPlatformID;
     private Integer gamePlatformID;
     private PostType type;
+    private static final FilterData EMPTY = new FilterData();
 
     public FilterData(Integer gameID, Integer activities) {
         this.gameID = gameID;
@@ -36,24 +38,42 @@ public class FilterData {
         this.type = type;
     }
 
-    public FilterData(Integer gameID) {
-        this.gameID = gameID;
-    }
-
     public static FilterData emptyPair() {
-        return new FilterData();
+        return EMPTY;
     }
 
     private FilterData() {
     }
 
-    public boolean filter(Integer gameID, Integer activityID){
+    public boolean filter(PostData postData){
+        return filterActivity(postData.getGameID(), postData.getActivityID()) &&
+                filterChatPlatform(postData.getChatPlatformIDs()) &&
+                filterGamePlatform(postData.getGamePlatformIDs()) &&
+                filterType(postData.getType());
+    }
+
+    private boolean filterActivity(Integer gameID, Integer activityID){
         if(this.gameID == null) return true;
         if(this.gameID.equals(gameID)){
             if(this.activityID == null) return true;
             return this.activityID.equals(activityID);
         }
         return false;
+    }
+
+    private boolean filterChatPlatform(Set<Integer> chatPlatformIDs){
+        if(this.chatPlatformID == null) return true;
+        return chatPlatformIDs.contains(this.chatPlatformID);
+    }
+
+    private boolean filterGamePlatform(Set<Integer> gamePlatformIDs){
+        if(this.gamePlatformID == null) return true;
+        return gamePlatformIDs.contains(this.gamePlatformID);
+    }
+
+    private boolean filterType(PostType type){
+        if(this.type == null) return true;
+        return this.type.equals(type);
     }
 
     public Integer getGameID() {
@@ -85,6 +105,7 @@ public class FilterData {
         if(strParams.isEmpty()) return "";
         else return "filter=" + strParams;
     }
+
 
 
     private String chatPlatformCode(){
