@@ -14,6 +14,7 @@ import {HttpService} from './http.service';
 import {Subscription} from 'rxjs/Subscription';
 import {UserSocketService} from './user-socket.service';
 import {PostAction} from '../_models/sockets/PostAction';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Injectable()
 export class PostService {
@@ -297,7 +298,10 @@ export class PostService {
   newPostGetErrorHandle(err): Observable<number> {
     console.log('Error getting new post');
     console.log(err);
-    return Observable.of(-1);
+    if (err.instanceOf(HttpErrorResponse)){
+      const cooldown = err.headers.get('Retry-After');
+      return Observable.of(cooldown);
+    }
   }
 
   private newPostErrorHandle(err: any): Observable<number> {

@@ -37,8 +37,8 @@
         <th></th>
       </tr>
       <tr *ngFor="let filter of activeFilters">
-        <td>{{filter.gameName}}</td>
-        <td>{{filter.activityName || 'Any'}}</td>
+        <td>{{filter.game.name}}</td>
+        <td>{{filter.activity != null ? filter.activity.name : 'Any'}}</td>
         <td class="hand" (click)="removeFilter(filter)">X</td>
       </tr>
     </table>
