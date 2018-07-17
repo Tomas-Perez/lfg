@@ -2,7 +2,7 @@
   <i class="fa fa-retweet"></i>
 </a>
 
-<div *ngFor="let post of posts" class="post-wrapper">
+<div *ngFor="let post of posts; let i = index" class="post-wrapper">
   <div class="post-container">
     <div class="post-info-container">
       <div class="post-info-left">
@@ -60,7 +60,14 @@
       </div>
       <div class="post-description-options">
         <div class="post-description"><p>{{post.description}}</p></div>
-        <div class="post-options"></div>
+        <div class="post-options">
+          <div class="game-img-wrapper">
+            <!--<img *ngIf="imageReady[i]" [src]="gameImages.get(post.activity.game.id)" title="{{post.gamePlatforms[0].name}}" class="game-img">
+            <img *ngIf="!imageReady[i]" src="/assets/platform/Discord.png" title="{{post.gamePlatforms[0].name}}" class="game-img">
+            -->
+            <img *ngIf="gameImages.has(post.activity.game.id)" [src]="gameImages.get(post.activity.game.id)" title="{{post.activity.game.name}}" class="game-img">
+          </div>
+        </div>
       </div>
     </div>
   </div>

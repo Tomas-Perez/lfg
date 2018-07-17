@@ -65,12 +65,13 @@ export class UserService {
           console.log(response);
           return this.jsonConvert.deserialize(response.body, User);
         }),
-        catchError(err => this.handleUserInfoError())
+        catchError(err => this.handleUserInfoError(err))
       );
   }
 
-  handleUserInfoError(): Observable<User> {
+  handleUserInfoError(err: any): Observable<User> {
     console.log('User info retrieval error');
+    console.log(err);
     this.authService.logout();
     return Observable.of(null);
   }
@@ -102,7 +103,7 @@ export class UserService {
 
   updateUserImage(image: any) {
     this.imageService.uploadImage(this.userMeImageUrl, image).subscribe(res => {
-      if (res) this.getUserImage();
+      if (res) { this.getUserImage(); }
     });
   }
 

@@ -8,6 +8,7 @@ import {DbActivity} from '../_models/DbModels/DbActivity';
 import {Activity} from '../_models/Activity';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {HttpService} from './http.service';
+import {ImageService} from './image.service';
 
 @Injectable()
 export class GameService {
@@ -17,7 +18,7 @@ export class GameService {
   private activitiesUrl = '/activities';
   gamesSubject: BehaviorSubject<Game[]>;
 
-  constructor(private http: HttpService) {
+  constructor(private http: HttpService, private imageService: ImageService) {
     this.gamesSubject = new BehaviorSubject([]);
     this.updateGameList();
   }
@@ -240,6 +241,20 @@ export class GameService {
 
   private deleteGameErrorHandling(err) {
     return Observable.of(false);
+  }
+
+  updateGameImage(id: number, image: any) {
+    this.imageService.uploadImage(this.gamesUrl + '/' + id + '/image', image).subscribe(res => {
+      if (res) { }
+    });
+  }
+
+  getGameImage(id: number): Observable<any> {
+    return this.imageService.getImage(this.gamesUrl + '/' + id + '/image');
+  }
+
+  getAndAsignGameImage(game: Game) {
+    this.getGameImage(game.id).subscribe( img => game.image = img);
   }
 
 }

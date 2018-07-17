@@ -7,6 +7,7 @@ import {AdminPanelComponent} from './admin-panel.component';
 import { GameListComponent } from './game-list/game-list.component';
 import { GameEditComponent } from './game-edit/game-edit.component';
 import { GameNewComponent } from './game-new/game-new.component';
+import {ImageUploadModule} from 'angular2-image-upload';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { GameNewComponent } from './game-new/game-new.component';
   imports: [
     CommonModule,
     FormsModule,
+    ImageUploadModule.forRoot(),
     NgbModule.forRoot(),
     AdminPanelRouting
   ],

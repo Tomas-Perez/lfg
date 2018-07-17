@@ -8,6 +8,7 @@
       <th>Id</th>
       <th>Name</th>
       <th>Activities</th>
+      <th>Image</th>
       <th>Edit</th>
       <th>Delete</th>
     </tr>
@@ -21,6 +22,24 @@
             Name: {{activity.name}}
           </li>
         </ul>
+      </td>
+      <td>
+        <div class="image-upload-wrapper">
+          <div [ngClass]="{'hide': imgState}">
+            <image-upload
+              [max]="1"
+              [class]="'image-upload'"
+              [buttonCaption]="'Select image'"
+              dropBoxMessage="Drop image here"
+              [clearButtonCaption]="'Clear'"
+              (removed)="onImgRemoved($event)"
+              (uploadFinished)="onImgUploadFinished($event)"
+            ></image-upload>
+          </div>
+          <div class="upload-wrapper">
+            <button [disabled]="!imgState" (click)="onImgUpload(game.id)" class="btn btn-primary-lfg btn-upload">Upload</button>
+          </div>
+        </div>
       </td>
       <td>
         <a class="" [routerLink]="['../edit-game', game.id]">

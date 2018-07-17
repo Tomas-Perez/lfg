@@ -298,9 +298,9 @@ export class PostService {
   newPostGetErrorHandle(err): Observable<number> {
     console.log('Error getting new post');
     console.log(err);
-    if (err.instanceOf(HttpErrorResponse)){
+    if (err instanceof HttpErrorResponse) {
       const cooldown = err.headers.get('Retry-After');
-      return Observable.of(cooldown);
+      return Observable.of(parseInt(cooldown));
     }
   }
 

@@ -1,10 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Game} from '../../_models/Game';
 import {GameService} from '../../_services/game.service';
-import {ActivatedRoute, ParamMap} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/takeUntil';
+import {FileHolder} from 'angular2-image-upload';
 
 @Component({
   selector: 'app-game-list',
@@ -15,6 +15,8 @@ export class GameListComponent implements OnInit, OnDestroy {
 
   private games: Game[];
   private ngUnsubscribe: Subject<any> = new Subject();
+  fileHolder: FileHolder;
+  imgState: boolean;
 
   constructor(
     private gameService: GameService,
@@ -28,6 +30,7 @@ export class GameListComponent implements OnInit, OnDestroy {
         //this.selectedId = +params.get('id');
       });
       */
+    this.fileHolder = null;
     this.gameService.updateGameList();
     this.gameService.gamesSubject.takeUntil(this.ngUnsubscribe).subscribe(games => this.games = games);
   }
@@ -42,6 +45,24 @@ export class GameListComponent implements OnInit, OnDestroy {
         }
       }
     );
+  }
+
+  onImgUploadFinished(file: any) {
+    console.log(file);
+    this.imgState = true;
+    this.fileHolder = file;
+  }
+
+  onImgRemoved(file: FileHolder) {
+    this.imgState = false;
+    this.fileHolder = null;
+  }
+
+  onImgUpload(id: number) {
+    if (this.fileHolder == null) {
+      return;
+    }
+    this.gameService.updateGameImage(id, this.fileHolder.file);
   }
 
   ngOnDestroy(): void {

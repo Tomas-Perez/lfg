@@ -87,13 +87,13 @@
 }
 
 /deep/ .image-upload .img-ul-button:active,
-/deep/ .image-upload .img-ul-button.active,
-/deep/ .image-upload .img-ul-button:active:focus,
-/deep/ .image-upload .img-ul-button.active:focus,
-/deep/ .image-upload .img-ul-button:active:hover,
-/deep/ .image-upload .img-ul-button.active:hover {
-  background-color: rgba(145,162,255,.85) !important;
-}
+ /deep/ .image-upload .img-ul-button.active,
+ /deep/ .image-upload .img-ul-button:active:focus,
+ /deep/ .image-upload .img-ul-button.active:focus,
+ /deep/ .image-upload .img-ul-button:active:hover,
+ /deep/ .image-upload .img-ul-button.active:hover {
+   background-color: rgba(145,162,255,.85) !important;
+ }
 
 /deep/ .image-upload .img-ul-button:focus {
   box-shadow: 0 0 0 0.1rem rgba(8, 17, 27, 0.43) !important;

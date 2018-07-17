@@ -9,6 +9,7 @@ import {UserService} from '../../_services/user.service';
 import {User} from '../../_models/User';
 import {ChatService} from '../../_services/chat.service';
 import {ChatType} from '../../_models/ChatType';
+import {GameService} from '../../_services/game.service';
 
 @Component({
   selector: 'app-post-flow',
@@ -17,19 +18,26 @@ import {ChatType} from '../../_models/ChatType';
 })
 export class PostFlowComponent implements OnInit, OnDestroy {
 
-  posts: Post[];
   private ngUnsubscribe: Subject<any> = new Subject();
+  posts: Post[];
   inGroup: boolean;
   user: User;
+  gameImages: Map<number, any>;
+  imageReady: boolean[];
 
   constructor(private postService: PostService,
               private groupService: GroupService,
               private chatService: ChatService,
+              private gameService: GameService,
               private userService: UserService,
               private router: Router
   ) { }
 
   ngOnInit() {
+    this.gameImages = new Map<number, any>();
+    this.imageReady = [];
+    this.posts = [];
+
     this.userService.userSubject.takeUntil(this.ngUnsubscribe).subscribe(
       user => this.user = user
     );
@@ -39,9 +47,45 @@ export class PostFlowComponent implements OnInit, OnDestroy {
     this.postService.postsSubject.takeUntil(this.ngUnsubscribe).subscribe(
       posts => {
         this.posts = posts;
+        this.getGameImages();
       }
     );
     // this.postService.updatePosts();
+  }
+
+
+
+  getGameImages() {
+    /*
+    const array = [];
+    for (let i = 0; i < this.posts.length; i++) {
+      const id = this.posts[i].activity.game.id;
+      this.imageReady.push(false);
+      console.log(array.indexOf(id));
+      if (array.indexOf(id) < 0 && !this.gameImages.has(id)) {
+        array.push(id);
+        this.gameService.getGameImage(id).subscribe(img => {
+          this.gameImages.set(id, img);
+          this.imageReady[i] = true;
+          console.log('-----------------------');
+          console.log('i: ' + i);
+        });
+      }
+    }
+    */
+
+    const array = [];
+    for (let i = 0; i < this.posts.length; i++) {
+      const id = this.posts[i].activity.game.id;
+      if (array.indexOf(id) < 0 && !this.gameImages.has(id)) {
+        array.push(id);
+        this.gameService.getGameImage(id).subscribe(img => {
+          this.gameImages.set(id, img);
+          console.log('-----------------------');
+          console.log('i: ' + i);
+        });
+      }
+    }
   }
 
   updatePosts() {

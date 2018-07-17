@@ -9,4 +9,6 @@ export class Game {
   name?: string = undefined;
   @JsonProperty('activities', [Activity], true)
   activities?: Activity[] = undefined;
+
+  image: any = null;
 }

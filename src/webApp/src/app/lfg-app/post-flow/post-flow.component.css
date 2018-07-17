@@ -77,14 +77,16 @@
 
 .post-description{
   display: flex;
-  flex: 15 0;
+  flex: 1 0;
   padding: 0.3rem;
   overflow: hidden;
 }
 
 .post-options{
   display: flex;
-  flex: 1 0;
+  flex-direction: column;
+  justify-content: center;
+  flex: 0 0 auto;
   padding: 0.3rem;
 }
 
@@ -210,4 +212,9 @@
 .join-group:hover {
   box-shadow: 0 6px 8px -4px #0000009c;
   background: linear-gradient(#565d69, #5e6673);
+}
+
+.game-img {
+  height: 50px;
+  width: auto;
 }
