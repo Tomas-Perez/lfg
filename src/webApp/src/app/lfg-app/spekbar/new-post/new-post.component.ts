@@ -81,11 +81,11 @@ export class NewPostComponent implements OnInit, OnDestroy {
 
     this.postService.newPost(this.newPostModel.dbPost).subscribe(
       response => {
-        if (response == 0) {
+        if (response === 0) {
           console.log('Post created');
-        //} else if (response < 0) {
+        } else if (response < 0) {
           // error getting new post
-        //} else if (response > 0){
+        } else if (response > 0) {
           if (this.postErrorTimer) {
             clearTimeout(this.postErrorTimer);
           }

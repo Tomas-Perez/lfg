@@ -70,11 +70,11 @@ export class GroupComponent implements OnInit, OnDestroy {
   postGroup() {
     this.postService.newPost(this.newPost).subscribe(
       response => {
-        if (response == 0) {
+        if (response === 0) {
           console.log('Post created');
         } else if (response < 0) {
             // error getting new post
-        } else if (response > 0){
+        } else if (response > 0) {
           if (this.postErrorTimer) {
             clearTimeout(this.postErrorTimer);
           }
