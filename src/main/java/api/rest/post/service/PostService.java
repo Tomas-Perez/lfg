@@ -2,6 +2,7 @@ package api.rest.post.service;
 
 import api.common.event.post.*;
 import common.postfilter.FilterData;
+import common.postfilter.PostData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import persistence.entity.GroupEntity;
@@ -15,10 +16,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -146,7 +144,13 @@ public class PostService {
         final Activity activity = post.getActivity();
         final Game game = activity.getGame();
         final User owner = post.getOwner();
-        return new PostEvent(owner.getId(), post.getId(), game.getId(), activity.getId());
+        PostData data = new PostData.Builder()
+                .withActivity(game.getId(), activity.getId())
+                .withChatPlatforms(post.getChatPlatforms().stream().map(ChatPlatform::getId).collect(Collectors.toSet()))
+                .withGamePlatforms(post.getGamePlatforms().stream().map(GamePlatform::getId).collect(Collectors.toSet()))
+                .withType(post.getGroup() == null ? FilterData.PostType.LFG : FilterData.PostType.LFM)
+                .build();
+        return new PostEvent(owner.getId(), post.getId(), data);
     }
 
     private UpdatePostEvent createGroupUpdateEvent(int id, int groupID) {
@@ -155,9 +159,14 @@ public class PostService {
         logger.info(group);
         final Activity activity = group.getActivity();
         final Game game = activity.getGame();
+        PostData data = new PostData.Builder()
+                .withActivity(game.getId(), activity.getId())
+                .withChatPlatforms(Collections.singleton(group.getChatPlatform().getId()))
+                .withGamePlatforms(Collections.singleton(group.getGamePlatform().getId()))
+                .withType(FilterData.PostType.LFM)
+                .build();
         Set<Integer> members = group.getMembers().stream().map(User::getId).collect(Collectors.toSet());
-        logger.info("we get here? UPDATE POST");
-        return new UpdatePostEvent(id, game.getId(), activity.getId(), members);
+        return new UpdatePostEvent(id, data, members);
     }
 
     private GroupPostEvent createGroupEvent(int id){

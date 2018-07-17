@@ -11,6 +11,7 @@ import api.websocket.post.filter.FilteredPrincipal;
 import api.websocket.post.model.PostSocketMessage;
 import api.websocket.post.model.payload.DeletePostPayload;
 import api.websocket.post.model.payload.NewPostPayload;
+import common.postfilter.PostData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,7 +37,9 @@ public class PostEndpoint {
 
     @OnOpen
     public void onOpen(Session currentSession){
+        logger.info(String.format("Session %s opened", currentSession.getId()));
         List<FilterData> filters = getFilters(currentSession);
+        logger.info(filters);
         filters.forEach(filter -> {
             Set<Session> sessionSet =
                     sessionsMap.getOrDefault(filter, Collections.synchronizedSet(new HashSet<>()));
@@ -74,32 +77,38 @@ public class PostEndpoint {
     }
 
     private void newPost(@Observes @NewPost PostEvent event){
+        logger.info("firing: " + event);
         NewPostPayload payload = new NewPostPayload(event.getPostID());
-        filteredBroadcast(payload, event.getGameID(), event.getActivityID());
+        filteredBroadcast(payload, event.getData());
     }
 
     private void deletePost(@Observes @DeletePost PostEvent event){
         DeletePostPayload payload = new DeletePostPayload(event.getPostID());
-        filteredBroadcast(payload, event.getGameID(), event.getActivityID());
+        filteredBroadcast(payload, event.getData());
     }
 
     private void updatePost(@Observes @UpdatePost UpdatePostEvent event){
         UpdatePostPayload payload = new UpdatePostPayload(event.getPostID());
-        filteredBroadcast(payload, event.getGameID(), event.getActivityID());
+        filteredBroadcast(payload, event.getData());
     }
 
-    private void filteredBroadcast(Payload payload, Integer gameID, Integer activityID){
+    private void filteredBroadcast(Payload payload, PostData postData){
         PostSocketMessage msg = new PostSocketMessage(payload);
 
         synchronized (sessionsMap){
+            sessionsMap.entrySet().forEach(logger::info);
+
             sessionsMap.entrySet().stream()
-                    .filter(e -> e.getKey().filter(gameID, activityID))
+                    .filter(e -> e.getKey().filter(postData))
                     .map(Map.Entry::getValue)
                     .flatMap(Set::stream)
                     .distinct()
                     .filter(Session::isOpen)
-                    .forEach(session -> session.getAsyncRemote().sendObject(msg));
-            System.out.println("Broadcasting: " + msg);
+                    .forEach(session -> {
+                        logger.info("Sending %s to session %d", msg, session.getId());
+                        session.getAsyncRemote().sendObject(msg);
+                    });
+            logger.info("Broadcasting: " + msg);
         }
     }
 }

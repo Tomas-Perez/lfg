@@ -1,19 +1,19 @@
 package api.common.event.post;
 
+import common.postfilter.PostData;
+
 /**
  * @author Tomas Perez Molina
  */
 public class PostEvent {
     private int ownerID;
     private int postID;
-    private Integer gameID;
-    private Integer activityID;
+    private PostData data;
 
-    public PostEvent(int ownerID, int postID, Integer gameID, Integer activityID) {
+    public PostEvent(int ownerID, int postID, PostData data) {
         this.ownerID = ownerID;
         this.postID = postID;
-        this.gameID = gameID;
-        this.activityID = activityID;
+        this.data = data;
     }
 
     public int getOwnerID() {
@@ -24,12 +24,8 @@ public class PostEvent {
         return postID;
     }
 
-    public Integer getGameID() {
-        return gameID;
-    }
-
-    public Integer getActivityID() {
-        return activityID;
+    public PostData getData() {
+        return data;
     }
 
     @Override
@@ -37,8 +33,7 @@ public class PostEvent {
         return "PostEvent{" +
                 "ownerID=" + ownerID +
                 ", postID=" + postID +
-                ", gameID=" + gameID +
-                ", activityID=" + activityID +
+                ", data=" + data +
                 '}';
     }
 }
