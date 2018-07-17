@@ -78,7 +78,7 @@ public class FilterData {
 
 
     public String asQueryParam(){
-        List<String> params = Arrays.asList(activityCode(), chatPlatfromCode(), gamePlatfromCode(), typeCode());
+        List<String> params = Arrays.asList(activityCode(), chatPlatformCode(), gamePlatformCode(), typeCode());
         String strParams = params.stream()
                 .filter(x -> !x.isEmpty())
                 .collect(Collectors.joining(","));
@@ -87,11 +87,11 @@ public class FilterData {
     }
 
 
-    private String chatPlatfromCode(){
+    private String chatPlatformCode(){
         return chatPlatformID == null? "" : String.format("%c%d", CHAT_PLATFORM_DELIM, chatPlatformID);
     }
 
-    private String gamePlatfromCode(){
+    private String gamePlatformCode(){
         return gamePlatformID == null? "" : String.format("%c%d", GAME_PLATFORM_DELIM, gamePlatformID);
     }
 

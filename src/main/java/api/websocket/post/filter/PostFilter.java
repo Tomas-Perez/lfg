@@ -1,5 +1,6 @@
 package api.websocket.post.filter;
 
+import api.common.postfilter.FilterParams;
 import common.postfilter.FilterData;
 import api.common.postfilter.FilterParameterDecoder;
 import api.websocket.post.filter.exception.MalformedParameterException;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,27 +37,12 @@ public class PostFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        FilterParameterDecoder decoder = new FilterParameterDecoder();
 
-        String[] filterParams = request.getParameterValues("filter");
-        String[] empty = {""};
 
-        final String[] actualParams = filterParams != null? filterParams: empty;
+        List<String> filterParamList = Arrays.asList(request.getParameterValues("filter"));
+        FilterParams filterParams = new FilterParams(filterParamList);
 
-        try {
-            List<FilterData> filters = Arrays.stream(actualParams)
-                    .map(decoder::decode)
-                    .distinct()
-                    .collect(Collectors.toList());
-            logger.info("filters= " + filters);
-            filterChain.doFilter(new FilteredRequest(request, filters), response);
-        } catch (MalformedParameterException exc){
-            returnBadRequestError(response, exc.getMessage());
-        }
-    }
-
-    private void returnBadRequestError(HttpServletResponse response, String message) throws IOException {
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
+        filterChain.doFilter(new FilteredRequest(request, filterParams.getFilterData()), response);
     }
 
     @Override

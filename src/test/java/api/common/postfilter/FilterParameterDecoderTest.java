@@ -24,7 +24,7 @@ public class FilterParameterDecoderTest {
         int gameID = 45;
         int activityID = 5;
 
-        FilterData actual = decoder.decode2(String.format("%c%d:%d", FilterData.ACTIVITY_DELIM, gameID, activityID));
+        FilterData actual = decoder.decode(String.format("%c%d:%d", FilterData.ACTIVITY_DELIM, gameID, activityID));
         FilterData expected = new FilterData.Builder().withActivity(gameID, activityID).build();
 
         assertThat(actual, is(expected));
@@ -33,7 +33,7 @@ public class FilterParameterDecoderTest {
     @Test
     public void decodeGame(){
         int gameID = 45;
-        FilterData actual = decoder.decode2(String.format("%c%d", FilterData.ACTIVITY_DELIM, gameID));
+        FilterData actual = decoder.decode(String.format("%c%d", FilterData.ACTIVITY_DELIM, gameID));
         FilterData expected = new FilterData.Builder().withGame(gameID).build();
 
         assertThat(actual, is(expected));
@@ -43,7 +43,7 @@ public class FilterParameterDecoderTest {
     public void decodeChatPlatform(){
         int chatPlatformID = 45;
 
-        FilterData actual = decoder.decode2(String.format("%c%d", FilterData.CHAT_PLATFORM_DELIM, chatPlatformID));
+        FilterData actual = decoder.decode(String.format("%c%d", FilterData.CHAT_PLATFORM_DELIM, chatPlatformID));
         FilterData expected = new FilterData.Builder().withChatPlatform(chatPlatformID).build();
 
         assertThat(actual, is(expected));
@@ -53,7 +53,7 @@ public class FilterParameterDecoderTest {
     public void decodeGamePlatform(){
         int gamePlatformID = 45;
 
-        FilterData actual = decoder.decode2(String.format("%c%d", FilterData.GAME_PLATFORM_DELIM, gamePlatformID));
+        FilterData actual = decoder.decode(String.format("%c%d", FilterData.GAME_PLATFORM_DELIM, gamePlatformID));
         FilterData expected = new FilterData.Builder().withGamePlatform(gamePlatformID).build();
 
         assertThat(actual, is(expected));
@@ -64,12 +64,12 @@ public class FilterParameterDecoderTest {
         FilterData.PostType lfg = FilterData.PostType.LFG;
         FilterData.PostType lfm = FilterData.PostType.LFM;
 
-        FilterData actual = decoder.decode2(String.format("%c%s", FilterData.TYPE_DELIM, lfg.toString()));
+        FilterData actual = decoder.decode(String.format("%c%s", FilterData.TYPE_DELIM, lfg.toString()));
         FilterData expected = new FilterData.Builder().withType(lfg).build();
 
         assertThat(actual, is(expected));
 
-        FilterData actual2 = decoder.decode2(String.format("%c%s", FilterData.TYPE_DELIM, lfm.toString()));
+        FilterData actual2 = decoder.decode(String.format("%c%s", FilterData.TYPE_DELIM, lfm.toString()));
         FilterData expected2 = new FilterData.Builder().withType(lfm).build();
 
         assertThat(actual2, is(expected2));
@@ -77,7 +77,7 @@ public class FilterParameterDecoderTest {
 
     @Test
     public void decodeEmpty(){
-        FilterData actual = decoder.decode2("");
+        FilterData actual = decoder.decode("");
         FilterData expected = FilterData.emptyPair();
 
         assertThat(actual, is(expected));
@@ -85,7 +85,7 @@ public class FilterParameterDecoderTest {
 
     @Test
     public void decodeWrongParam(){
-        FilterData actual = decoder.decode2(String.format("%c%c5", FilterData.ACTIVITY_DELIM, FilterData.TYPE_DELIM));
+        FilterData actual = decoder.decode(String.format("%c%c5", FilterData.ACTIVITY_DELIM, FilterData.TYPE_DELIM));
         FilterData expected = FilterData.emptyPair();
 
         assertThat(actual, is(expected));
@@ -93,7 +93,7 @@ public class FilterParameterDecoderTest {
 
     @Test
     public void decodeCommas(){
-        FilterData actual = decoder.decode2(",,");
+        FilterData actual = decoder.decode(",,");
         FilterData expected = FilterData.emptyPair();
 
         assertThat(actual, is(expected));
@@ -106,7 +106,7 @@ public class FilterParameterDecoderTest {
         int gamePlatformID = 68;
         int chatPlatformID = 12;
         FilterData.PostType type = FilterData.PostType.LFG;
-        FilterData actual = decoder.decode2(
+        FilterData actual = decoder.decode(
                 String.format(
                         "%c%d:%d,%c%d,%c%d,%c%s",
                         FilterData.ACTIVITY_DELIM,
@@ -149,7 +149,7 @@ public class FilterParameterDecoderTest {
         String typeParam = String.format("%c%s", FilterData.TYPE_DELIM, type.toString());
 
         Permutations.of(Arrays.asList(activityParam, gamePlatformParam, chatPlatformParam, typeParam))
-                .map(stream -> stream.collect(Collectors.joining(","))).map(decoder::decode2)
+                .map(stream -> stream.collect(Collectors.joining(","))).map(decoder::decode)
                 .forEach(data -> assertThat(data, is(expected)));
     }
 }

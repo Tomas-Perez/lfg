@@ -1,7 +1,8 @@
 package api.rest.post.resource;
-import api.common.postfilter.FilterParameterDecoder;
+import api.common.postfilter.FilterParams;
 import api.rest.post.model.FilterPostsJSON;
-import common.postfilter.FilterData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import persistence.model.Post;
 import api.rest.post.model.CreatePostJSON;
 import api.rest.post.model.PostJSON;
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
 @Produces(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class PostResource {
+    private static final Logger logger = LogManager.getLogger(PostResource.class);
+
     @Inject
     private PostService service;
 
@@ -33,21 +36,13 @@ public class PostResource {
     private UriInfo uriInfo;
 
     @GET
-    public Response getPosts(@QueryParam("filter") List<String> filters){
-        List<Post> posts;
-        if(filters == null || filters.isEmpty()){
-            posts = service.getAll();
-        }
-        else {
-            FilterParameterDecoder decoder = new FilterParameterDecoder();
-            List<FilterData> filterDatas = filters.stream()
-                    .map(decoder::decode)
-                    .distinct()
-                    .collect(Collectors.toList());
-            posts = service.getFilteredPosts(filterDatas);
-        }
+    public Response getPosts(@BeanParam FilterParams filtersParams){
+        logger.info(filtersParams);
+        List<Post> posts = filtersParams.hasFilters() ?
+                service.getFilteredPosts(filtersParams.getFilterData()) :
+                service.getAll();
         List<PostJSON> postJSONS = posts.stream().map(PostJSON::new).collect(Collectors.toList());
-        return Response.ok(new FilterPostsJSON(postJSONS, buildWsPath())).build();
+        return Response.ok(new FilterPostsJSON(postJSONS, buildWsPath(filtersParams))).build();
     }
 
     @POST
@@ -91,17 +86,13 @@ public class PostResource {
         return Response.noContent().build();
     }
 
-    private String buildWsPath(){
+    private String buildWsPath(FilterParams filterParams){
         URI base = uriInfo.getBaseUri();
-        final MultivaluedMap<String, String> queryParamMap = uriInfo.getQueryParameters();
-        String queryParams = queryParamMap.entrySet().stream()
-                .map(this::entryToQueryParam)
-                .collect(Collectors.joining("&"));
 
         String baseWsPath = String.format("ws://%s:%s%swebsockets/posts",
                 base.getHost(), base.getPort(), base.getPath());
 
-        return addParams(baseWsPath, queryParams);
+        return addParams(baseWsPath, filterParams.asQueryParams());
     }
 
     private String entryToQueryParam(Map.Entry<String, List<String>> entry){
