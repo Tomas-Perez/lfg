@@ -88,4 +88,12 @@ public class GamePlatformService {
             throw new NotFoundException();
         }
     }
+
+    public void deleteImage(int id){
+        try {
+            imageManager.deleteImage(String.format("%s/%d", IMAGE_FOLDER, id));
+        } catch (NoSuchElementException exc){
+            throw new NotFoundException();
+        }
+    }
 }

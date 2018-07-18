@@ -97,10 +97,18 @@ public class ChatPlatformResource {
     @Path("{id}/image")
     @RolesAllowed({"ADMIN"})
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadMyImage(@PathParam("id") int id,
+    public Response uploadImage(@PathParam("id") int id,
                                   @FormDataParam("file") InputStream uploadedInputStream,
                                   @FormDataParam("file") FormDataContentDisposition fileDetail){
         service.uploadImage(id, uploadedInputStream);
+        return Response.noContent().build();
+    }
+
+    @DELETE
+    @Path("{id}/image")
+    @RolesAllowed({"ADMIN"})
+    public Response deleteImage(@PathParam("id") int id){
+        service.deleteImage(id);
         return Response.noContent().build();
     }
 }

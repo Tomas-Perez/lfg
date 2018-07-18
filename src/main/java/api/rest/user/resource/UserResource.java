@@ -174,4 +174,13 @@ public class UserResource {
         service.uploadImage(id, uploadedInputStream);
         return Response.noContent().build();
     }
+
+    @DELETE
+    @Path("me/image")
+    public Response deleteMyImage(){
+        Principal principal = securityContext.getUserPrincipal();
+        int id = service.getIDByEmail(principal.getName());
+        service.deleteImage(id);
+        return Response.noContent().build();
+    }
 }

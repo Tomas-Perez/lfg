@@ -105,4 +105,12 @@ public class GamePlatformResource {
         service.uploadImage(id, uploadedInputStream);
         return Response.noContent().build();
     }
+
+    @DELETE
+    @Path("{id}/image")
+    @RolesAllowed({"ADMIN"})
+    public Response deleteImage(@PathParam("id") int id){
+        service.deleteImage(id);
+        return Response.noContent().build();
+    }
 }

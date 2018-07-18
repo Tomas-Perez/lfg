@@ -52,4 +52,12 @@ public class ImageManager {
             throw new NoSuchElementException("No image found");
         }
     }
+
+    public void deleteImage(String filename){
+        File file = new File(String.format("%s%s.png", IMAGE_ROOT, filename));
+
+        if(!file.delete()) {
+            throw new NoSuchElementException("No image found");
+        }
+    }
 }

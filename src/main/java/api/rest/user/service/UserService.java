@@ -47,6 +47,8 @@ public class UserService {
     @DeleteFriend
     private Event<FriendEvent> deleteFriendEvent;
 
+    private static final String IMAGE_FOLDER = "users";
+
     public User getUserByEmail(String email){
         UserEntity userEntity = manager.getByEmail(email)
                 .orElseThrow(AuthenticationException::noUser);
@@ -144,7 +146,7 @@ public class UserService {
 
     public void uploadImage(int userID, InputStream uploadedInputStream){
         manager.checkExistence(userID);
-        String path = imageManager.saveImage(uploadedInputStream, String.format("users/%d", userID));
+        String path = imageManager.saveImage(uploadedInputStream, String.format("%s/%d", IMAGE_FOLDER, userID));
         UserPatcher patcher = new UserPatcher.Builder()
                 .withImage(path)
                 .build();
@@ -153,7 +155,15 @@ public class UserService {
 
     public byte[] getImage(int userID){
         try {
-            return imageManager.getImage(String.format("users/%d", userID));
+            return imageManager.getImage(String.format("%s/%d", IMAGE_FOLDER, userID));
+        } catch (NoSuchElementException exc){
+            throw new NotFoundException();
+        }
+    }
+
+    public void deleteImage(int userID){
+        try {
+            imageManager.deleteImage(String.format("%s/%d", IMAGE_FOLDER, userID));
         } catch (NoSuchElementException exc){
             throw new NotFoundException();
         }
