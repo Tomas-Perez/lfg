@@ -25,7 +25,6 @@ public class PostTimeoutExceptionMapper implements ExceptionMapper<PostTimeoutEx
     public Response toResponse(PostTimeoutException exception) {
         int statusCode = 429;
         String reasonPhrase = "Too many requests";
-        System.out.println("MAPPING something");
 
         ApiErrorDetails errorDetails = new ApiErrorDetails.Builder()
                 .withStatus(statusCode)
