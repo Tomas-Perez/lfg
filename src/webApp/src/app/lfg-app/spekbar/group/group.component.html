@@ -52,9 +52,9 @@
         </textarea>
       </div>
       <div class="form-group text-center">
-        <button *ngIf="post == null" type="submit" class="btn btn-primary-lfg btn-submit">Post</button>
-        <button *ngIf="post != null" type="button" (click)="deletePost()" class="btn btn-primary-lfg btn-submit">Delete post</button>
-        <button *ngIf="post != null" type="submit" class="btn btn-primary-lfg btn-submit">Repost</button>
+        <button *ngIf="!postExists" type="submit" class="btn btn-primary-lfg btn-submit">Post</button>
+        <button *ngIf="postExists" type="button" (click)="deletePost()" class="btn btn-primary-lfg btn-submit btn-post">Delete post</button>
+        <button *ngIf="postExists" type="submit" class="btn btn-primary-lfg btn-submit btn-post">Repost</button>
         <span class="postError" [ngClass]="{'postErrorHide': !isPostError}">Wait {{postErrorTime}}s to post again</span>
       </div>
     </form>

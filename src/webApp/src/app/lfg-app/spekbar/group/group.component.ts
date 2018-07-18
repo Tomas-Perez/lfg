@@ -26,6 +26,7 @@ export class GroupComponent implements OnInit, OnDestroy {
   post: Post;
   private postErrorTimer: any;
   private isPostError: boolean;
+  private postExists: boolean;
   private postErrorTime: number;
 
   constructor(private groupService: GroupService,
@@ -37,6 +38,7 @@ export class GroupComponent implements OnInit, OnDestroy {
               ) { }
 
   ngOnInit() {
+    this.postExists = false;
     this.newPost = new DbPost();
     this.isPostError = false;
 
@@ -57,7 +59,13 @@ export class GroupComponent implements OnInit, OnDestroy {
 
     this.postService.currentGroupPostSubject.takeUntil(this.ngUnsubscribe).subscribe(post => {
       this.post = post;
-      console.log(post);
+      if (this.post == null) {
+        if (!this.postExists) {
+          this.postExists = false;
+        }
+      } else {
+        this.postExists = true;
+      }
     });
 
     this.groupPostService.postSubject.takeUntil(this.ngUnsubscribe)
@@ -78,11 +86,11 @@ export class GroupComponent implements OnInit, OnDestroy {
           if (this.postErrorTimer) {
             clearTimeout(this.postErrorTimer);
           }
+          this.postErrorTime = response;
           this.isPostError = true;
           this.postErrorTimer = setTimeout( () => {
             this.isPostError = false;
           }, 5000 );
-          this.postErrorTime = response;
         }
       }
     );

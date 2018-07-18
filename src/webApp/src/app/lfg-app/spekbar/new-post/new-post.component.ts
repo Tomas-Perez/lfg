@@ -29,6 +29,7 @@ export class NewPostComponent implements OnInit, OnDestroy {
   private user: User;
   private ngUnsubscribe: Subject<any> = new Subject();
   private post: Post;
+  private postExists: boolean;
   private postErrorTimer: any;
   private isPostError: boolean;
   private postErrorTime: number;
@@ -44,6 +45,7 @@ export class NewPostComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isPostError = false;
+    this.postExists = false;
     this.games = [];
     this.gamePlatforms = [];
     this.chatPlatforms = [];
@@ -66,7 +68,16 @@ export class NewPostComponent implements OnInit, OnDestroy {
       .subscribe(platforms => this.chatPlatforms = platforms);
 
     this.postService.currentPostSubject.takeUntil(this.ngUnsubscribe)
-      .subscribe(post => this.post = post);
+      .subscribe(post => {
+        this.post = post;
+        if (this.post == null) {
+          if (!this.postExists) {
+            this.postExists = false;
+          }
+        } else {
+          this.postExists = true;
+        }
+      });
 
   }
 
@@ -89,11 +100,11 @@ export class NewPostComponent implements OnInit, OnDestroy {
           if (this.postErrorTimer) {
             clearTimeout(this.postErrorTimer);
           }
+          this.postErrorTime = response;
           this.isPostError = true;
           this.postErrorTimer = setTimeout( () => {
             this.isPostError = false;
           }, 5000 );
-          this.postErrorTime = response;
         }
       }
     );
@@ -104,6 +115,7 @@ export class NewPostComponent implements OnInit, OnDestroy {
       response => {
         if (response) {
           console.log('Post deleted');
+          this.postExists = false;
         }
       }
     );

@@ -300,6 +300,7 @@ export class PostService {
     console.log(err);
     if (err instanceof HttpErrorResponse) {
       const cooldown = err.headers.get('Retry-After');
+      console.log(cooldown);
       return Observable.of(parseInt(cooldown));
     }
   }
