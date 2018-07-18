@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -50,8 +51,11 @@ public class PostResource {
 
     @POST
     public Response post(CreatePostJSON postJSON){
-        int posterID = service.getUserIDfromEmail(securityContext.getUserPrincipal().getName());
-        service.checkTimeout(posterID);
+        final Principal userPrincipal = securityContext.getUserPrincipal();
+        if(!securityContext.isUserInRole("ADMIN")) {
+            int posterID = service.getUserIDfromEmail(userPrincipal.getName());
+            service.checkTimeout(posterID);
+        }
         int id;
         if(postJSON.getGroupID() == null)
             id = service.newPost(

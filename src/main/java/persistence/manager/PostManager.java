@@ -58,6 +58,7 @@ public class PostManager extends Manager<PostEntity>{
     {
         checkValidCreation(post, chatPlatformIDs, gamePlatformIDs);
         persist(post);
+        userManager.setLastPosted(post.getOwnerId(), LocalDateTime.now());
         final int postID = post.getId();
         gamePlatformIDs.stream()
                 .map(id -> new GamePlatformForPostEntity(postID, id))
@@ -84,6 +85,7 @@ public class PostManager extends Manager<PostEntity>{
         );
         checkValidCreation(post, chatPlatformIDs, gamePlatformIDs);
         persist(post);
+        userManager.setLastPosted(post.getOwnerId(), LocalDateTime.now());
         final int postID = post.getId();
 
         gamePlatformIDs.stream()

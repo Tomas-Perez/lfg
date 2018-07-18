@@ -105,7 +105,7 @@ public class PostEndpoint {
                     .distinct()
                     .filter(Session::isOpen)
                     .forEach(session -> {
-                        logger.info("Sending %s to session %d", msg, session.getId());
+                        logger.info(String.format("Sending %s to session %s", msg, session.getId()));
                         session.getAsyncRemote().sendObject(msg);
                     });
             logger.info("Broadcasting: " + msg);
