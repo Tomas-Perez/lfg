@@ -208,7 +208,11 @@ export class PostService {
       .pipe(
         map( getPostResponse => {
             const newPost = this.jsonConvert.deserialize(getPostResponse.body, Post);
-            this.currentPostSubject.next(newPost);
+            if (newPost.group != null) {
+              this.currentGroupPostSubject.next(newPost);
+            } else {
+              this.currentPostSubject.next(newPost);
+            }
             return true;
           }
         ),

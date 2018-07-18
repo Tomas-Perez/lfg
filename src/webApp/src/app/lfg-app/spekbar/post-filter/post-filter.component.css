@@ -7,10 +7,14 @@ table{
 }
 
 th{
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 600;
 }
 
 tr{
   border-bottom: solid 1px #6c7377;
+}
+
+td {
+  font-size: 11px;
 }
