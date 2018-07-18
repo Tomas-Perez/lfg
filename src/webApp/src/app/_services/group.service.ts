@@ -3,7 +3,7 @@ import {JsonConvert} from 'json2typescript';
 import {DbGroup} from '../_models/DbModels/DbGroup';
 import {Observable} from 'rxjs/Observable';
 import {catchError, map, switchMap} from 'rxjs/operators';
-import {Group} from '../_models/Group';
+import {Group, Member} from '../_models/Group';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {UserService} from './user.service';
 import {User} from '../_models/User';
@@ -13,11 +13,14 @@ import {WsService} from './ws.service';
 import {AuthService} from './auth.service';
 import {UserSocketService} from './user-socket.service';
 import {GroupAction} from '../_models/sockets/GroupAction';
+import {BasicUser} from '../_models/BasicUser';
+import {ImageService} from './image.service';
 
 @Injectable()
 export class GroupService {
 
   private jsonConvert: JsonConvert = new JsonConvert();
+  private userUrl = '/users';
   private groupsUrl = '/groups';
   private groupWsUrl: string;
   private currentGroup: Group;
@@ -29,6 +32,7 @@ export class GroupService {
               private userService: UserService,
               private userSocketService: UserSocketService,
               private wsService: WsService,
+              private imageService: ImageService,
               private authService: AuthService
   ) {
     this.groupWsUrl = this.wsService.getUrl('/groups/');
@@ -78,7 +82,9 @@ export class GroupService {
 
 
   onNewMember(id: number, username: string) {
-    this.currentGroup.addMember(id, username);
+    const member = new Member(id, username);
+    this.currentGroup.addMember(member);
+    this.getImage(member);
   }
 
   onDeleteMember(id: number) {
@@ -141,6 +147,7 @@ export class GroupService {
                   console.log(getGroupResponse);
                   this.currentGroup = this.jsonConvert.deserialize(getGroupResponse.body, Group);
                   this.currentGroupSubject.next(this.currentGroup);
+                  this.getImages(this.currentGroup.members);
                   return Observable.of(true);
                 }
               ),
@@ -165,6 +172,7 @@ export class GroupService {
         map( getGroupResponse => {
             this.currentGroup = this.jsonConvert.deserialize(getGroupResponse.body, Group);
             this.currentGroupSubject.next(this.currentGroup);
+            this.getImages(this.currentGroup.members);
             return true;
           }
         ),
@@ -267,5 +275,18 @@ export class GroupService {
     console.log('Error promoting to leader');
     console.log(err);
     return Observable.of(false);
+  }
+
+  private getImages(list: Member[]) {
+    for (const user of list) {
+      if (user.image == null) {
+        this.getImage(user);
+      }
+    }
+  }
+
+  private getImage(user: Member) {
+    this.imageService.getImage(this.userUrl + '/' + user.id + '/image')
+      .subscribe(img => user.image = img);
   }
 }

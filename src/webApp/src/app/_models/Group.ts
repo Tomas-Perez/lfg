@@ -4,7 +4,7 @@ import {GamePlatform} from './GamePlatform';
 import {ChatPlatform} from './ChatPlatform';
 
 @JsonObject
-class Member {
+export class Member {
 
   constructor(id?: number, username?: string) {
     this.id = id || undefined;
@@ -15,6 +15,8 @@ class Member {
   id: number = undefined;
   @JsonProperty('username', String)
   username: string = undefined;
+
+  image: any;
 }
 
 @JsonObject
@@ -34,13 +36,13 @@ export class Group {
   @JsonProperty('chatPlatform', ChatPlatform, true)
   chatPlatform?: ChatPlatform = undefined;
 
-  addMember(id: number, username: string) {
+  addMember(newMember: Member) {
     for (const member of this.members) {
-      if (member.id === id) {
+      if (member.id === newMember.id) {
         return;
       }
     }
-    this.members.push(new Member(id, username));
+    this.members.push(newMember);
   }
 
   deleteMember(id: number) {

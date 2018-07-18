@@ -101,6 +101,7 @@ export class GroupComponent implements OnInit, OnDestroy {
       response => {
         if (response) {
           console.log('Post deleted');
+          this.postExists = false;
         }
       }
     );
