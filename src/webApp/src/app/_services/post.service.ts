@@ -277,6 +277,7 @@ export class PostService {
     })
       .pipe(
         switchMap(response => {
+          console.log(response);
           const newPostUrl = response.headers.get('location');
           return this.http.get(newPostUrl, {
             observe: 'response'
@@ -291,7 +292,7 @@ export class PostService {
               catchError((err: any) => this.newPostGetErrorHandle(err))
             );
         }),
-        catchError((err: any) => this.newPostErrorHandle(err))
+        catchError((err: any) => this.newPostGetErrorHandle(err))
       );
   }
 
