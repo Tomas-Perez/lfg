@@ -125,6 +125,7 @@ public class PostService {
             if(groupID != null) deleteGroupPost(id);
             else deleteLonePost(id);
         } catch (NoSuchElementException exc){
+            exc.printStackTrace();
             throw new NotFoundException();
         }
     }

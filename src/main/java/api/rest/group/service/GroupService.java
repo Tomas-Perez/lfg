@@ -132,6 +132,7 @@ public class GroupService {
     }
 
     public void removeMember(int id, int userID){
+        logger.info("removing member: " + userID + "from chat: " + id);
         try {
             final int groupChat = getGroupChat(id);
             logger.info("groupChatID: " + groupChat);
@@ -140,16 +141,17 @@ public class GroupService {
             final Integer ownerID = groupManager.getGroupOwner(id);
             logger.info("ownerID: " + ownerID);
 
+            if(ownerID == userID) postService.deleteUserPost(ownerID);
             chatService.removeMember(groupChat, userID);
             Integer newOwnerID = groupManager.removeMemberFromGroup(id, userID);
             if(ownerID == userID){
-                postService.deleteUserPost(ownerID);
                 if(newOwnerID != null) newOwnerEvent.fire(new NewOwnerEvent(id, userID, newOwnerID));
             }
             logger.info("we get here?");
             notifyRemovedMember(id, userID, postID);
             logger.info("we dont get here");
         } catch (NoSuchElementException exc){
+            logger.error(exc);
             throw new NotFoundException();
         }
     }

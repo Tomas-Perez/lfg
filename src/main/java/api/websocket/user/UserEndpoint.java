@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
         configurator = CdiAwareConfigurator.class)
 public class UserEndpoint extends AuthenticatedEndpoint {
     private static final Map<Integer, Session> sessionsMap = Collections.synchronizedMap(new HashMap<>());
-    private static final Map<Integer, Session> recentlyConnectedMap = Collections.synchronizedMap(new HashMap<>());
     private static final Logger logger = LogManager.getLogger(UserEndpoint.class);
 
     @Inject
@@ -52,9 +51,7 @@ public class UserEndpoint extends AuthenticatedEndpoint {
         final int userID = getUserID(currentSession);
         sessionsMap.put(userID, currentSession);
         sendFriendsConnected(userID);
-
-        if(recentlyConnectedMap.get(userID) == null)
-            broadcastUserConnected(userID);
+        broadcastUserConnected(userID);
 
         logger.info(String.format("Session %s opened", currentSession.getId()));
     }
@@ -63,23 +60,7 @@ public class UserEndpoint extends AuthenticatedEndpoint {
     public void onClose(Session currentSession){
         final int userID = getUserID(currentSession);
         sessionsMap.remove(userID);
-        recentlyConnectedMap.put(userID, currentSession);
-
-        Timer timer = new Timer("Connect Timer");
-
-        timer.schedule(
-                new TimerTask() {
-                    @Override
-                    public void run() {
-                        if(sessionsMap.get(userID) == null) {
-                            recentlyConnectedMap.remove(userID);
-                            broadcastUserDisconnected(userID);
-                            timer.cancel();
-                        }
-                    }
-                },
-                3000
-        );
+        broadcastUserDisconnected(userID);
 
         logger.info(String.format("Session %s closed", currentSession.getId()));
     }

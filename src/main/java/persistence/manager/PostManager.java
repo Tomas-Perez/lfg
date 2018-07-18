@@ -122,6 +122,8 @@ public class PostManager extends Manager<PostEntity>{
     @SuppressWarnings("unchecked")
     public List<Integer> filteredList(FilterData filter){
         logger.info(filter);
+        final FilterData.PostType type = filter.getType();
+        Boolean hasGroup = type == null? null : filter.getType() == FilterData.PostType.LFM;
         final List resultList = manager.createNativeQuery("SELECT P.id FROM POST P " +
                 "LEFT JOIN GAME_PLATFORM_FOR_POST G on G.POST_ID = P.id " +
                 "LEFT JOIN CHAT_PLATFORM_FOR_POST C on C.POST_ID = P.id " +
@@ -130,13 +132,13 @@ public class PostManager extends Manager<PostEntity>{
                 "AND (A.ID = :activityID OR :activityID is null) " +
                 "AND (G.GAME_PLATFORM_ID = :gamePlatformID OR :gamePlatformID is null) " +
                 "AND (C.CHAT_PLATFORM_ID = :chatPlatformID OR :chatPlatformID is null) " +
-                "AND ((P.GROUP_ID is not null) = :hasGroup) " +
+                "AND ((P.GROUP_ID is not null) = :hasGroup OR :hasGroup is null) " +
                 "ORDER BY P.date DESC")
                 .setParameter("gameID", filter.getGameID())
                 .setParameter("activityID", filter.getActivityID())
                 .setParameter("chatPlatformID", filter.getChatPlatformID())
                 .setParameter("gamePlatformID", filter.getGamePlatformID())
-                .setParameter("hasGroup", filter.getType() == FilterData.PostType.LFM)
+                .setParameter("hasGroup", hasGroup)
                 .getResultList();
         logger.info(resultList);
         return resultList;
