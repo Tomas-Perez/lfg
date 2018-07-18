@@ -211,4 +211,8 @@ export class GameEditComponent implements OnInit {
     this.gameService.updateGameImage(id, this.fileHolder.file);
   }
 
+  onImgDelete(id: number) {
+    this.gameService.deleteGameImage(id).subscribe();
+  }
+
 }

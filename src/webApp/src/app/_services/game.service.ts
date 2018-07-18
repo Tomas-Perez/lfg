@@ -257,4 +257,21 @@ export class GameService {
     this.getGameImage(game.id).subscribe( img => game.image = img);
   }
 
+  deleteGameImage(id: number) {
+    return this.http.delete(this.gamesUrl + '/' + id + '/image', {
+      observe: 'response'
+    })
+      .pipe(
+        map(response => {
+          console.log(response);
+          return true;
+        }),
+        catchError((err: any) => this.deleteGameImageErrorHandling(err))
+      );
+  }
+
+  private deleteGameImageErrorHandling(err) {
+    return Observable.of(false);
+  }
+
 }
