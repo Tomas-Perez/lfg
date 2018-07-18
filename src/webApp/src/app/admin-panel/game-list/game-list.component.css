@@ -13,6 +13,10 @@ th, td{
   text-align: center;
 }
 
+ul {
+  margin: 1rem 0;
+}
+
 li{
   text-align: left;
 }
