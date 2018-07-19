@@ -1,9 +1,9 @@
+<div data-simplebar>
 <div class="friend-list-wrapper">
   <div class="title">
     <h1>Friends</h1>
   </div>
   <div *ngIf="friends.length" class="friend-list">
-    <div data-simplebar data-simplebar-auto-hide="false">
       <div *ngFor="let friend of friends" class="friend-wrapper">
         <div class="friend">
           <div class="user-img-wrapper">
@@ -22,7 +22,6 @@
           <span class="friend-message" (click)="newChat(friend.id)">
             <i class="fa fa-envelope-o"></i>
           </span>
-        </div>
       </div>
     </div>
   </div>
@@ -30,4 +29,5 @@
     <span>You don't have any friends</span>
     <i class="fa fa-frown-o fa-5x" ></i>
   </div>
+</div>
 </div>
