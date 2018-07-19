@@ -329,6 +329,19 @@ export class PostService {
       );
   }
 
+  deleteCurrentGroupPost(): Observable<boolean> {
+    return this.http.delete(this.postUrl + '/' + this.currentGroupPost.id, {
+      observe: 'response'
+    })
+      .pipe(
+        map(response => {
+          this.currentPostSubject.next(null);
+          return true;
+        }),
+        catchError((err: any) => this.deleteCurrentPostErrorHandle(err))
+      );
+  }
+
   private deleteCurrentPostErrorHandle(err: any) {
     console.log('Error deleting post');
     console.log(err);

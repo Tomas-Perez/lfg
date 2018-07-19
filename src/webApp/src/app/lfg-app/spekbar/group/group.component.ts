@@ -97,7 +97,8 @@ export class GroupComponent implements OnInit, OnDestroy {
   }
 
   deletePost() {
-    this.postService.deleteCurrentPost().subscribe(
+    if (this.post == null) return;
+    this.postService.deleteCurrentGroupPost().subscribe(
       response => {
         if (response) {
           console.log('Post deleted');
