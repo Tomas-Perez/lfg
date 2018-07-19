@@ -48,6 +48,9 @@ export class SignUpComponent implements OnInit {
 
   // TODO
   signUpUser(): void {
+    if (this.signUpInfo.username.length > 15) {
+      this.signUpInfo.username = this.signUpInfo.username.substring(0, 15);
+    }
     this.userService.signUp(this.signUpInfo)
       .subscribe(response => {
         switch (response) {
@@ -55,7 +58,7 @@ export class SignUpComponent implements OnInit {
             console.log('Signed up');
             this.authService.authenticate(this.signUpInfo.email, this.signUpInfo.password)
               .subscribe(b => {
-                if(b) {
+                if (b) {
                   this.router.navigate(['/app'])}
                 }
               );

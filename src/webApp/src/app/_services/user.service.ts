@@ -95,7 +95,6 @@ export class UserService {
     console.log(err.status);
     switch (err.error.status) {
       case 403: {return Observable.of(SignUpStatus.error); }
-
       // case 420
       default: return Observable.of(SignUpStatus.error);
     }

@@ -16,7 +16,7 @@
             <span *ngIf="!usernameValid" class="error">(field required)</span>
             <span *ngIf="usernameValid && usernameTaken" class="error">(username already taken!)</span>
           </label>
-          <input name="InputUsername" [(ngModel)]="signUpInfo.username" id="InputUsername" class="form-control form-input" aria-describedby="usernameHelp" placeholder="Username" required #username="ngModel">
+          <input name="InputUsername" [(ngModel)]="signUpInfo.username" maxlength="15" id="InputUsername" class="form-control form-input" aria-describedby="usernameHelp" placeholder="Username (Max length: 15)" required #username="ngModel">
         </div>
 
         <div class="form-group" >
