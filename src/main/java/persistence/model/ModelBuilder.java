@@ -115,8 +115,17 @@ public class ModelBuilder {
 
         Integer postID = userManager
                 .getUserPost(userID);
-        Post post = postID == null? null : huskPost(postID);
-
+        Post post = null;
+        if(postID != null) {
+            post = huskPost(postID);
+        } else {
+            Group userGroup = groups.stream().findFirst().orElse(null);
+            if(userGroup != null) {
+                Integer groupPostID = userManager
+                        .getUserPost(userGroup.getOwner().getId());
+                post = groupPostID == null? null : huskPost(groupPostID);
+            }
+        }
 
         return new User(
                 userEntity,
