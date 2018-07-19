@@ -1,4 +1,4 @@
-<div class="filter-wrapper">
+<div data-simplebar class="filter-wrapper">
   <div class="title">
     <h1>Filter Posts</h1>
   </div>
@@ -46,7 +46,7 @@
     </div>
   </form>
 
-  <div *ngIf="activeFilters.length" data-simplebar class="filterList">
+  <!--<div *ngIf="activeFilters.length" class="filterList">
     <h2>Active filters</h2>
     <table>
       <tr class="filter-th">
@@ -64,5 +64,23 @@
         <td class="hand" (click)="removeFilter(filter)">X</td>
       </tr>
     </table>
+  </div>
+  -->
+  <div *ngIf="activeFilters.length" class="filter-list-wrapper">
+    <h2>Active filters</h2>
+    <div class="filter-list">
+      <div *ngFor="let filter of activeFilters" class="filter-card-wrapper">
+        <div class="delete-filter" (click)="removeFilter(filter)"><label>X</label></div>
+        <div class="filter-card">
+          <span>{{filter.game.name}}</span>
+          <hr>
+          <span>{{filter.activity != null ? filter.activity.name : 'Any activity'}}</span>
+          <hr>
+          <span>{{filter.chatPlatform != null ? filter.chatPlatform.name : 'Any chat'}}</span>
+          <hr>
+          <span>Any chat</span>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

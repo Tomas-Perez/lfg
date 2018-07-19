@@ -108,7 +108,7 @@ app-root{
   display: block;
 }
 
-app-group, app-game-list, app-friend-list, app-nav-bar, app-friend-bar,app-me-info, app-chat{
+app-group, app-game-list, app-friend-list, app-nav-bar, app-friend-bar,app-me-info, app-chat, app-post-filter{
   all: inherit;
   padding: 0;
   height: 100%;

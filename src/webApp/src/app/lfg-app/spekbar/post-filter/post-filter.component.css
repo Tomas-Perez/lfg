@@ -1,4 +1,4 @@
-.filterList{
+.filter-list-wrapper{
   width: 100%;
 }
 
@@ -17,4 +17,89 @@ tr{
 
 td {
   font-size: 11px;
+}
+
+.filter-info {
+  display: flex;
+  flex-direction: column;
+  border-bottom: solid 1px #6c7377;
+}
+
+.filter-info-group{
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-info-group span {
+  display: block;
+}
+
+
+.filter-list {
+  font-size: 12px;
+  color: #c2d4ff;
+  display: flex;
+  flex-direction: row;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  justify-content: normal;
+}
+
+.filter-card-wrapper {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  width: 88px;
+  padding: 2px 3px;
+  margin-bottom: 10px;
+}
+
+.filter-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  border: 1px solid #6c7377;
+  padding: 2px;
+  border-radius: 5px;
+  justify-content: space-between;
+}
+
+.filter-card span{
+  text-align: center;
+  margin-bottom: 1px;
+}
+
+.filter-card hr{
+  display: flex;
+  flex: 0 0 auto;
+  width: 90%;
+  border: solid 1px #1b1e22;
+  margin: 0 auto;
+}
+
+.filter-card span:last-child{
+  border-bottom: none;
+}
+
+
+.delete-filter {
+  display: flex;
+  font-size: 10px;
+  width: 13px;
+  height: 13px;
+  background-color: #000000;
+  position: absolute;
+  right: -2px;
+  top: -5px;
+  border-radius: 50%;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.delete-filter label{
+  margin: auto;
+  line-height: normal;
+  cursor: pointer;
 }
