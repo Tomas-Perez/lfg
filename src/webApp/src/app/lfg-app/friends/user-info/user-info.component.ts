@@ -6,23 +6,27 @@ import {FriendStateService} from '../../_services/friend-state.service';
 import {FriendLocation} from '../../_models/FriendLocation';
 import {ChatType} from '../../../_models/ChatType';
 import {ChatService} from '../../../_services/chat.service';
+import {Subject} from 'rxjs/Subject';
 
 @Component({
   selector: 'app-user-info',
   templateUrl: './user-info.component.html',
   styleUrls: ['./user-info.component.css']
 })
-export class UserInfoComponent implements OnInit {
+export class UserInfoComponent implements OnInit, OnDestroy {
 
+  private ngUnsubscribe: Subject<any> = new Subject();
   user: BasicUser;
   isAlreadyFriend: boolean;
   isRequestSent: boolean;
   isRequestReceived: boolean;
+  isFriendsOpen: Boolean;
 
   constructor(private route: ActivatedRoute,
               private friendService: FriendService,
               private chatService: ChatService,
-              private friendBarService: FriendStateService
+              private friendBarService: FriendStateService,
+              private friendStateService: FriendStateService
   ) { }
 
   ngOnInit() {
@@ -33,6 +37,9 @@ export class UserInfoComponent implements OnInit {
     this.isRequestReceived = false;
 
     this.user = null;
+
+    this.friendStateService.openSubject.takeUntil(this.ngUnsubscribe)
+      .subscribe(isOpen => this.isFriendsOpen = isOpen);
 
     this.route.params.subscribe(params => {
       const id = +params['id'];
@@ -93,5 +100,10 @@ export class UserInfoComponent implements OnInit {
 
   newChat() {
     this.chatService.newChat(ChatType.PRIVATE, this.user.id);
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 }

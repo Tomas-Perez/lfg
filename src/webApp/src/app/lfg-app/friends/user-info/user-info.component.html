@@ -1,6 +1,6 @@
-<div *ngIf="user != null" class="user-info-wrapper">
+<div *ngIf="user != null && isFriendsOpen" class="user-info-wrapper">
   <span *ngIf="isAlreadyFriend" class="friend-icon" title="You are friends with {{user.username}}">
-    <i class="fas fa-user-check"></i>
+    <i class="fa fa-users"></i>
   </span>
   <div class="username-img-wrapper">
     <div class="user-img-wrapper">

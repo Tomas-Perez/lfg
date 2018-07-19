@@ -42,7 +42,7 @@
         <span class="bold">Description</span>
       </label>
       <textarea name="TextAreaDescription" placeholder="Description" [(ngModel)]="newPostModel.dbPost.description"
-                id="TextAreaDescription" class="form-control form-text description-post" aria-describedby="descriptionHelp"></textarea>
+                id="TextAreaDescription" maxlength="350" class="form-control form-text description-post" aria-describedby="descriptionHelp"></textarea>
     </div>
     <div class="form-group text-center">
       <button *ngIf="!postExists" type="submit" class="btn btn-primary-lfg btn-submit">Post</button>
